@@ -3,7 +3,6 @@ package com.scdc.csiapp.main;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -90,7 +89,7 @@ public class SettingFragment extends Fragment {
                     if(sPosition=="0"){
 
                         Log.i("settingIP", "settingIP");
-                        switchPageToSettingIP();
+//                        switchPageToSettingIP();
                     }else
                      {
 
@@ -223,12 +222,12 @@ public class SettingFragment extends Fragment {
         }
 
     }
-    protected void switchPageToSettingIP() {
-        Intent gotoIPSettingActivity = new Intent(getActivity(), IPSettingActivity.class);
-
-        startActivity(gotoIPSettingActivity);
-        getActivity().finish();
-    }
+//    protected void switchPageToSettingIP() {
+//        Intent gotoIPSettingActivity = new Intent(getActivity(), IPSettingActivity.class);
+//
+//        startActivity(gotoIPSettingActivity);
+//        getActivity().finish();
+//    }
     public void saveAllData() {
         // TODO Auto-generated method stub
         Log.i("saveAllData", "saveAllData");

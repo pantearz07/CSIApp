@@ -35,6 +35,7 @@ public class WelcomeActivity extends AppCompatActivity {
     long isConnectingToInternet = 0;
     String accestype="";
     boolean userlogin = false;
+    String ipvalue;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
    // private boolean isReceiverRegistered;
     private static final String TAG = "WelcomeActivity";
@@ -50,6 +51,7 @@ public class WelcomeActivity extends AppCompatActivity {
         networkConnectivity = cd.networkConnectivity();
         isConnectingToInternet = cd.isConnectingToInternet();
         userlogin = mManager.getPreferenceDataBoolean(mManager.PREF_USER_LOGGEDIN_STATUS);
+        ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
 
 
         Handler handler = new Handler();

@@ -13,7 +13,6 @@ import com.google.android.gms.iid.InstanceID;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.main.IPSettingActivity;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -102,14 +101,14 @@ public class GcmRegisterService extends IntentService {
                 "saveRegistrationGCM");
         if(resultServer=="error"){
             Log.i("saveRegistrationGCM", "error");
-            switchPageToSettingIP();
+          //  switchPageToSettingIP();
         }else {
             /*** Default Value ***/
             String strStatusID = "0";
             String strError = "Unknow Status!";
             JSONObject c;
             if (resultServer == "error") {
-                switchPageToSettingIP();
+              //  switchPageToSettingIP();
 
             } else {
                 try {
@@ -134,12 +133,12 @@ public class GcmRegisterService extends IntentService {
 
 
     }
-    protected void switchPageToSettingIP() {
-        Intent gotoIPSettingActivity = new Intent(getBaseContext(), IPSettingActivity.class);
-
-        getApplication().startActivity(gotoIPSettingActivity);
-
-    }
+//    protected void switchPageToSettingIP() {
+//        Intent gotoIPSettingActivity = new Intent(getBaseContext(), IPSettingActivity.class);
+//
+//        getApplication().startActivity(gotoIPSettingActivity);
+//
+//    }
     /**
      * Subscribe to any GCM topics of interest, as defined by the TOPICS constant.
      *

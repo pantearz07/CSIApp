@@ -395,11 +395,11 @@ public class MainActivity extends AppCompatActivity {
             ftsetting.replace(R.id.containerView, settingFragment);
             ftsetting.addToBackStack(null);
             ftsetting.commit();*/
-            Intent gotoIPSettingActivity = new Intent(this, IPSettingActivity.class);
-
-            startActivity(gotoIPSettingActivity);
-            this.finish();
-            return true;
+//            Intent gotoIPSettingActivity = new Intent(this, IPSettingActivity.class);
+//
+//            startActivity(gotoIPSettingActivity);
+//            this.finish();
+//            return true;
         }
 
         return super.onOptionsItemSelected(item);

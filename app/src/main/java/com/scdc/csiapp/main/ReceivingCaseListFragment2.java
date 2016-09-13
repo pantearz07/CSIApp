@@ -282,7 +282,7 @@ public class ReceivingCaseListFragment2 extends Fragment {
             if (s == "error") {
                 Toast.makeText(getActivity(), "กรุณาเปลี่ยนค่า IP ใหม่",
                         Toast.LENGTH_LONG).show(); // When Finish Show Content
-                switchPageToSettingIP();
+               // switchPageToSettingIP();
             } else if(s == "0") {
 
             }else{
@@ -516,7 +516,7 @@ public class ReceivingCaseListFragment2 extends Fragment {
             } if (status == "2") {
                     Toast.makeText(getActivity(), "กรุณาเปลี่ยนค่า IP ใหม่",
                             Toast.LENGTH_LONG).show(); // When Finish Show Content
-                    switchPageToSettingIP();
+                   // switchPageToSettingIP();
                 }
             else {
 
@@ -574,12 +574,12 @@ public class ReceivingCaseListFragment2 extends Fragment {
         fragmentTransaction.replace(R.id.containerView, fCSIDataTabFragment).addToBackStack(null).commit();
 
     }
-    protected void switchPageToSettingIP() {
-        Intent gotoIPSettingActivity = new Intent(getActivity(), IPSettingActivity.class);
-
-        startActivity(gotoIPSettingActivity);
-        getActivity().finish();
-    }
+//    protected void switchPageToSettingIP() {
+//        Intent gotoIPSettingActivity = new Intent(getActivity(), IPSettingActivity.class);
+//
+//        startActivity(gotoIPSettingActivity);
+//        getActivity().finish();
+//    }
     class saveReceivingReportFromServer extends AsyncTask<String, Void, String> {
         private final ProgressDialog dialog = new ProgressDialog(
                 getActivity());

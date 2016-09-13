@@ -87,9 +87,6 @@
         <activity
             android:name="com.scdc.csiapp.main.LoginActivity"
             android:label="@string/login"></activity>
-        <activity
-            android:name="com.scdc.csiapp.main.IPSettingActivity"
-            android:label="@string/setip"></activity>
 
         <activity
             android:name="com.scdc.csiapp.csidatatabs.AddSufferer"

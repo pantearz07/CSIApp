@@ -182,12 +182,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    protected void switchPageToSettingIP() {
-        Intent gotoIPSettingActivity = new Intent(mContext, IPSettingActivity.class);
-        finish();
-        startActivity(gotoIPSettingActivity);
-
-    }
+//    protected void switchPageToSettingIP() {
+//        Intent gotoIPSettingActivity = new Intent(mContext, IPSettingActivity.class);
+//        finish();
+//        startActivity(gotoIPSettingActivity);
+//
+//    }
     protected void switchPageToMain() {
         Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
         finish();

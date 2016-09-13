@@ -649,7 +649,7 @@ public class EmergencyListFragment extends Fragment {
             }if (status == "2") {
                 Toast.makeText(getActivity(), "กรุณาเปลี่ยนค่า IP ใหม่",
                         Toast.LENGTH_LONG).show(); // When Finish Show Content
-                switchPageToSettingIP();
+              //  switchPageToSettingIP();
             } else {
                 initializeData();
                 Log.i("log_show draft", "initializeData 0");
@@ -657,12 +657,12 @@ public class EmergencyListFragment extends Fragment {
             }
         }
     }
-    protected void switchPageToSettingIP() {
-        Intent gotoIPSettingActivity = new Intent(getActivity(), IPSettingActivity.class);
-
-        startActivity(gotoIPSettingActivity);
-        getActivity().finish();
-    }
+//    protected void switchPageToSettingIP() {
+//        Intent gotoIPSettingActivity = new Intent(getActivity(), IPSettingActivity.class);
+//
+//        startActivity(gotoIPSettingActivity);
+//        getActivity().finish();
+//    }
     public long saveSufferer(String sCaseReportID) {
         List<NameValuePair> params1 = new ArrayList<NameValuePair>();
         params1.add(new BasicNameValuePair("sCaseReportID", sCaseReportID));
@@ -758,7 +758,7 @@ public class EmergencyListFragment extends Fragment {
             }if (s == "error") {
                 Toast.makeText(getActivity(), "กรุณาเปลี่ยนค่า IP ใหม่",
                         Toast.LENGTH_LONG).show(); // When Finish Show Content
-                switchPageToSettingIP();
+                //switchPageToSettingIP();
             }  else {
 
             }

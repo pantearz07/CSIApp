@@ -295,11 +295,11 @@ public class InqMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent gotoIPSettingActivity = new Intent(this, IPSettingActivity.class);
-
-            startActivity(gotoIPSettingActivity);
-            this.finish();
-            return true;
+//            Intent gotoIPSettingActivity = new Intent(this, IPSettingActivity.class);
+//
+//            startActivity(gotoIPSettingActivity);
+//            this.finish();
+//            return true;
         }
 
         return super.onOptionsItemSelected(item);
