@@ -44,7 +44,7 @@ public class ConnectServer {
 
     public static void updateIP(){
         Context context = WelcomeActivity.mContext;
-        SharedPreferences sp = context.getSharedPreferences(PreferenceData.KEY_PREFS,context.MODE_PRIVATE);
+        SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_IP,context.MODE_PRIVATE);
 
         String IP = sp.getString(PreferenceData.KEY_IP,"192.168.4.101");
         urlIP = "http://"+IP+"/csi/mobile/";

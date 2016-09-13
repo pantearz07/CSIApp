@@ -1,11 +1,14 @@
 package com.scdc.csiapp.connecting;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.scdc.csiapp.main.WelcomeActivity;
 
 import java.io.IOException;
 
@@ -21,12 +24,24 @@ import okhttp3.Response;
 public class ApiConnect {
 
 
-    private String URL = "http://192.168.0.89/mCSI/C_mobile/";
+    public static String urlMobileIP ="http://192.168.0.89/mCSI/C_mobile/";
+   // private String URL = "http://192.168.0.89/mCSI/C_mobile/";
     private String TAG = "DEBUG";
     private OkHttpClient okHttpClient = new OkHttpClient();
     public ApiConnect() {
-    }
 
+
+    }
+    public static void updateIP(){
+        Context context = WelcomeActivity.mContext;
+        SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_IP,context.MODE_PRIVATE);
+
+        String IP = sp.getString(PreferenceData.KEY_IP,"192.168.0.89");
+        urlMobileIP = "http://"+IP+"/mCSI/C_mobile/";
+
+        Log.d("urlMobileIP", urlMobileIP);
+
+    }
     public ApiLoginStatus login(ApiLoginRequest dataLogin) {
         RequestBody formBody = new FormBody.Builder()
                 .add("Username", dataLogin.getUsername())
@@ -34,7 +49,7 @@ public class ApiConnect {
                 .build();
         Request.Builder builder = new Request.Builder();
         Request request = builder
-                .url(URL + "login")
+                .url(urlMobileIP + "login")
                 .post(formBody)
                 .build();
         try {

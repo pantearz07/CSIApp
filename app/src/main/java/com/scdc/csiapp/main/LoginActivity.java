@@ -4,21 +4,24 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
@@ -52,9 +55,9 @@ public class LoginActivity extends AppCompatActivity {
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
-    Spinner accesstype;
-    String[] selectedaccesstype;
+
     GetDateTime getDateTime;
+    TextView txt_ipvalue;
     private static NotificationManager mNotificationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = (Button) findViewById(R.id.loginButton);
         settingip_btn = (Button) findViewById(R.id.settingip_btn);
+        txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
 
         mUsername = (EditText) findViewById(R.id.usernameEdt);
         mPassword = (EditText) findViewById(R.id.passwordEdt);
@@ -82,9 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         username = mUsername.getText().toString().trim().toLowerCase();
 
         password = mPassword.getText().toString().trim();
-        accesstype = (Spinner) findViewById(R.id.spnAccesstype);
-        final String[] Accesstype = getResources().getStringArray(R.array.accesstype);
-        selectedaccesstype = new String[1];
+
 
         /*Boolean pret_IP_status = mManager.getPreferenceDataBoolean(mManager.PREF_IP);
 
@@ -92,22 +94,7 @@ public class LoginActivity extends AppCompatActivity {
             ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
             Log.d("ipvalue", ipvalue);
         }*/
-        accesstype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    selectedaccesstype[0] = "investigator";
-                } else {
-                    selectedaccesstype[0] = "inquiryofficial";
-                }
-
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedaccesstype[0] = "investigator";
-            }
-        });
         //final ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         // final NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -140,8 +127,46 @@ public class LoginActivity extends AppCompatActivity {
                 if (networkConnectivity) {
                     Log.d("internet status", "connected to wifi");
 
-                    switchPageToSettingIP();
-                    //  loginnoconnect();
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(LoginActivity.this);
+                    LayoutInflater inflater = getLayoutInflater();
+
+                    View view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                    builder.setView(view);
+
+                    final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+
+
+                    builder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            if (ipvalueEdt.getText().equals("")) {
+                                Toast.makeText(getApplicationContext(), "กรุณาป้อนข้อมูล",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                String ipvalue =ipvalueEdt.getText().toString();
+                                SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putString(PreferenceData.KEY_IP, ipvalue);
+                                editor.commit();
+                                Log.d("ipvalue",ipvalue);
+
+                                Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย "+ipvalue,
+                                        Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    builder.show();
+
                 } else {
                     Log.d("internet status", "no Internet Access");
 
@@ -172,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loginnoconnect() {
         username = mUsername.getText().toString().trim().toLowerCase();
         password = mPassword.getText().toString().trim();
-        new checklogin().execute(username, password, selectedaccesstype[0]);
+        //new checklogin().execute(username, password, selectedaccesstype[0]);
     }
     public void login() {
         if (!validate()) {
@@ -280,7 +305,7 @@ public class LoginActivity extends AppCompatActivity {
     private void _Login() {
         username = mUsername.getText().toString().trim();
         password = mPassword.getText().toString().trim();
-        Toast.makeText(mContext, "Username: " + username + " Password: " + password + " \nสถานะ: " + selectedaccesstype[0], Toast.LENGTH_SHORT).show();
+       // Toast.makeText(mContext, "Username: " + username + " Password: " + password + " \nสถานะ: " + selectedaccesstype[0], Toast.LENGTH_SHORT).show();
         //new SimpleTask().execute(username, password, selectedaccesstype[0]);
 
 

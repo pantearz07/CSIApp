@@ -27,7 +27,7 @@ public class PreferenceData {
     public static final String PREF_REPORTSTATUS= "status";
     //setting
     public static final String PREF_IP= "pref_ip";
-    public static final String KEY_IP= "url_ip";
+    public static final String KEY_IP= "IPValue";
 
 
 // SharedPreferences mPrefs; mPrefs = getSharedPreferences("pref_ip", MODE_PRIVATE);

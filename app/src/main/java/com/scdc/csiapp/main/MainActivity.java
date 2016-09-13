@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("onStart mainactivity", "");
         if (networkConnectivity) {
-            Log.i("networkConnect main", "connect!! ");
+            Log.i("networkConnect main", "connect!! vvv");
 
         } else {
             Log.i("networkConnect main", "no connect!! ");
