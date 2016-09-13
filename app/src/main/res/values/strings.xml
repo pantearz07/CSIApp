@@ -1,0 +1,166 @@
+<resources>
+    <string name="app_name">CSIApp</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <string name="txt_yo_yo">CSI Report</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">เปลี่ยนค่า IP</string>
+
+    <string name="gcm_defaultSenderId">250026670771</string>
+    <string name="login">เข้าสู่ระบบ</string>
+    <string name="login_error_message">Username or Password is incorrect.</string>
+    <string name="logout">ออกจากระบบ</string>
+    <string name="setip">ตั้งค่า IP</string>
+    <string name="th_appname">ระบบบันทึกข้อมูลการตรวจสถานที่เกิดเหตุ</string>
+    <string name="inq_appname">ระบบแจ้งเหตุ</string>
+    <string name="home">หน้าหลัก</string>
+    <string name="receivingcase">งานเข้า</string>
+    <string name="draftcsidata">กำลังตรวจ</string>
+    <string name="fullcsidata">ตรวจเสร็จแล้ว</string>
+
+    <string name="noticase">แจ้งเหตุ</string>
+    <string name="accept">รับเรื่อง</string>
+    <string name="done">ตรวจแล้ว</string>
+    <string name="listcase">รายการคดี</string>
+    <string name="schedule">ตารางเวร</string>
+    <string name="policelist">รายชื่อ</string>
+    <string name="notification">การแจ้งเตือน</string>
+    <string name="settings">ตั้งค่า</string>
+    <string name="more">อื่นๆ</string>
+    <string name="profile">ข้อมูลส่วนตัว</string>
+    <string name="form_csi">ฟอร์มบันทึกข้อมูลการตรวจสถานที่เกิดเหตุ</string>
+
+    <!-- drawing -->
+    <string name="start_new">New</string>
+    <string name="brush">Brush</string>
+    <string name="erase">Erase</string>
+    <string name="save">Save</string>
+    <string name="paint">Paint</string>
+    <string name="sml">Small</string>
+    <string name="med">Medium</string>
+    <string name="lrg">Large</string>
+
+    <!-- alertdialog -->
+    <string name="ad_title">Really Exit?</string>
+    <string name="ad_message">Are you sure you want to exit?</string>
+    <string name="ad_negativeButton">No</string>
+    <string name="ad_positiveButton">Yes</string>
+
+    <string name="choose_format_title">Choose Audio Format</string>
+    <string name="start_recording">Record</string>
+    <string name="stop_recording">Stop</string>
+    <string name="audio_format">Format</string>
+
+
+    <string-array name="accesstype">
+        <item>ผู้ตรวจสถานที่เกิดเหตุ</item>
+        <item>พนักงานสอบสวน</item>
+
+    </string-array>
+    <string-array name="subcasetypeproperties">
+        <item>ลักทรัพย์</item>
+        <item>ปล้นทรัพย์</item>
+        <item>ชิงทรัพย์</item>
+        <item>อื่นๆ</item>
+    </string-array>
+    <string-array name="casetype">
+        <item>ทรัพย์</item>
+        <item>ชีวิต</item>
+        <item>เพลิงไหม้</item>
+        <item>จราจร</item>
+        <item>ระเบิด</item>
+        <item>อื่นๆ</item>
+    </string-array>
+    <string-array name="suffererStatus">
+        <item>เจ้าของบ้าน</item>
+        <item>ผู้เช่าอาศัย</item>
+        <item>ตัวแทนบริษัทฯ</item>
+    </string-array>
+    <string-array name="type_Receive">
+        <item>หนังสือ</item>
+        <item>โทรศัพท์</item>
+        <item>วิทยุ</item>
+        <item>อื่นๆ</item>
+    </string-array>
+    <string-array name="antecedent">
+        <item>นาย</item>
+        <item>นาง</item>
+        <item>นางสาว</item>
+    </string-array>
+    <string-array name="type_outside">
+        <item>บ้านคอนกรีต</item>
+        <item>บ้านไม้</item>
+        <item>บ้านครึ่งตึกครึ่งไม้</item>
+        <item>อาคารคอนกรีต</item>
+        <item>ทาวน์เฮ้าส์</item>
+        <item>อาคารพานิช (ตึกแถว)</item>
+        <item>อื่นๆ</item>
+    </string-array>
+    <string-array name="rank_inspector">
+        <item>พล.ต.อ.</item>
+        <item>พล.ต.อ.หญิง</item>
+        <item>พล.ต.ท.</item>
+        <item>พล.ต.ท.หญิง</item>
+        <item>พล.ต.ต.</item>
+        <item>พล.ต.ต.หญิง</item>
+        <item>พล.จ.ต.</item>
+        <item>พล.จ.ต.หญิง</item>
+        <item>พ.ต.อ.</item>
+        <item>พ.ต.อ.หญิง</item>
+        <item>พ.ต.ท.</item>
+        <item>พ.ต.ท.หญิง</item>
+        <item>พ.ต.ต.</item>
+        <item>พ.ต.ต.หญิง</item>
+        <item>ร.ต.อ.</item>
+        <item>ร.ต.อ.หญิง</item>
+        <item>ร.ต.ท.</item>
+        <item>ร.ต.ท.หญิง</item>
+        <item>ด.ต.</item>
+        <item>ด.ต.หญิง</item>
+        <item>จ.ส.ต.</item>
+        <item>จ.ส.ต.หญิง</item>
+        <item>ส.ต.อ.</item>
+        <item>ส.ต.อ.หญิง</item>
+        <item>ส.ต.ท.</item>
+        <item>ส.ต.ท.หญิง</item>
+        <item>ส.ต.ต.</item>
+        <item>ส.ต.ต.หญิง</item>
+        <item>พลฯ</item>
+        <item>พลฯ หญิง</item>
+    </string-array>
+    <string-array name="inv_position">
+        <item>นวท.(สบ4)</item>
+        <item>นวท.(สบ3)</item>
+        <item>นวท.(สบ2)</item>
+        <item>นวท.(สบ1)</item>
+        <item>รอง สว.(อก.)</item>
+        <item>ผบ.หมู่</item>
+    </string-array>
+    <string-array name="type_evidence">
+        <item>รอยลายนิ้วมือ/ฝ่ามือแฝง</item>
+        <item>รอยลายฝ่าเท้าแฝง</item>
+        <item>รอยพื้นรองเท้า</item>
+        <item>คราบสีแดงคล้ายโลหิต</item>
+        <item>เส้นผม/เส้นขน</item>
+        <item>เส้นใย</item>
+        <item>อื่นๆ</item>
+    </string-array>
+    <string-array name="gate_clue">
+        <item>การงัด</item>
+        <item>การเจาะ</item>
+    </string-array>
+    <string-array name="property_unit">
+        <item>กระบอก</item>
+        <item>ชิ้น</item>
+        <item>อัน</item>
+        <item>แผ่น</item>
+        <item>กล่อง</item>
+        <item>แท่ง</item>
+        <item>ด้าม</item>
+        <item>เส้น</item>
+        <item>วง</item>
+    </string-array>
+</resources>

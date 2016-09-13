@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dp" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" >
+
+        <TableRow android:gravity="center_vertical" >
+
+            <EditText
+                android:id="@+id/editPropertyLossName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_weight="1"
+                android:hint="ทรัพย์สินที่หายไป"
+                android:textSize="@dimen/small_text" />
+
+            <ImageButton
+                android:id="@+id/imgEdit"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right|center_vertical"
+                android:src="@android:drawable/ic_menu_edit" />
+
+            <ImageButton
+                android:id="@+id/imgDelete"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right|center_vertical"
+                android:src="@android:drawable/ic_delete" />
+        </TableRow>
+
+        <TableRow android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="จำนวน " />
+
+            <EditText
+                android:id="@+id/editPropertyLossAmount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:gravity="center"
+                android:hint="0"
+                android:inputType="number"
+                android:textSize="@dimen/small_text" />
+
+            <AutoCompleteTextView
+                android:id="@+id/autoPropertyLossUnit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:completionThreshold="1"
+                android:ems="10"
+                android:hint="หน่วย"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+
+        <TableRow android:gravity="center_vertical" >
+
+            <EditText
+                android:id="@+id/editPropertyLossPosition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="บริเวณ"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+
+        <TableRow android:gravity="center_vertical" >
+
+
+            <EditText
+                android:id="@+id/editPropertyInsurance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="การประกันทรัพย์สิน"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

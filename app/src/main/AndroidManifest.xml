@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.scdc.csiapp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="23" />
+    <permission
+        android:name="com.scdc.csiapp.main.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    <!-- for GCM -->
+    <permission android:name="com.scdc.csiapp.main.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="com.scdc.csiapp.main.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Required to show current location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo_csi"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:name="android.support.multidex.MultiDexApplication">
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.scdc.csiapp" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.scdc.csiapp.gcmservice.GcmDownstreamService"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.scdc.csiapp.gcmservice.GcmTokenRefreshService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <service
+            android:name="com.scdc.csiapp.gcmservice.GcmRegisterService"
+            android:exported="false" />
+
+        <activity
+            android:name="com.scdc.csiapp.main.WelcomeActivity"
+            android:label="@string/th_appname"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.scdc.csiapp.main.MainActivity"></activity>
+        <activity android:name="com.scdc.csiapp.main.InqMainActivity"></activity>
+        <activity
+            android:name="com.scdc.csiapp.main.LoginActivity"
+            android:label="@string/login"></activity>
+        <activity
+            android:name="com.scdc.csiapp.main.IPSettingActivity"
+            android:label="@string/setip"></activity>
+
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.AddSufferer"
+            android:label="@string/login"></activity>
+        <activity
+            android:name="com.scdc.csiapp.main.MapActivity"
+            android:label="Map"></activity>
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.VideoPlayerActivity"
+            android:label="video"></activity>
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.NoteActivity"
+            android:label="note"
+            android:theme="@style/AppThemeDarkActionBar"
+            />
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.FeatureInsideActivity"
+            android:label="FeatureInside"
+            />
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.GatewayCriminalActivity"
+            android:label="GatewayCriminal"
+            />
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.ClueShownActivity"
+            android:label="ClueShown"
+            />
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.PropertyLossActivity"
+            android:label="PropertyLoss"
+            />
+        <activity
+            android:name="com.scdc.csiapp.csidatatabs.EvidencesActivity"
+            android:label="Evidences"
+            />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyD8rDLd38XOV6R3TZob8S6qtsZkMCtRssw" />
+    </application>
+
+</manifest>

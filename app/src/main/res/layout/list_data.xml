@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <AutoCompleteTextView
+        android:id="@+id/editGatewayCriminalDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:completionThreshold="1"
+        android:ems="10"
+        android:lines="5"
+        android:layout_gravity="left|center_vertical"
+        android:hint="อธิบาย  การงัด, การเจาะ"
+        android:textSize="@dimen/small_text" />
+
+    <ImageButton
+        android:id="@+id/imgEdit"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+
+        android:layout_gravity="right|center_vertical"
+        android:src="@android:drawable/ic_menu_edit"/>
+    <ImageButton
+        android:id="@+id/imgDelete"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+
+        android:layout_gravity="right|center_vertical"
+        android:src="@android:drawable/ic_delete"/>
+
+</LinearLayout>

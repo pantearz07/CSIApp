@@ -1,0 +1,194 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/ScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="@dimen/codelab_fab_margin_right"
+            android:fillViewport="true"
+
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <TableLayout
+                    android:id="@+id/tableGCClass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_s">
+
+                        <TextView
+                            android:id="@+id/editNoti"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ทางเข้า-ออกของคนร้าย ตรวจพบ"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_s">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editGatewayCriminalDetailsLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/editGatewayCriminalDetails"
+
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="อธิบายการงัด, การเจาะ"
+
+                                android:lines="5" />
+
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                    </TableRow>
+                </TableLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/ocean"
+                        android:gravity="center_horizontal">
+
+                        <ImageButton
+                            android:id="@+id/btnTakePhotoGC"
+                            android:layout_width="@dimen/icon_image_l"
+                            android:layout_height="@dimen/icon_image_l"
+                            android:layout_marginRight="10dp"
+
+                            android:gravity="center|center_horizontal"
+                            android:background="@drawable/ic_camera_wh"/>
+
+                        <ImageButton
+                            android:id="@+id/btnVideoGC"
+                            android:layout_width="@dimen/icon_image_l"
+                        android:layout_height="@dimen/icon_image_l"
+                        android:gravity="center|center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/ic_video_wh"
+                            android:visibility="gone"/>
+                        />
+                    </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/txtPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:padding="5dp"
+                    android:text="รูปภาพ"
+                    android:textAppearance="@style/SectionText" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollViewGC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fillViewport="false"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/horizontal_gridView_GC"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
+                            android:gravity="center_vertical"
+                            android:horizontalSpacing="1dp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <TextView
+                    android:id="@+id/txtVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:padding="5dp"
+                    android:text="วิดีโอ"
+                    android:textAppearance="@style/SectionText" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView_GC_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fillViewport="false"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/horizontal_gridView_GC_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
+                            android:gravity="center_vertical"
+                            android:horizontalSpacing="1dp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabBtnDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:src="@drawable/ic_saveas_wh"
+            app:backgroundTint="@color/red_pink"
+            app:fabSize="normal"
+            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:rippleColor="#FFF" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>

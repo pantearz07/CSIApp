@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    card_view:cardCornerRadius="4dp"
+    android:id="@+id/cvSchedule"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        >
+
+        <ImageView
+            android:id="@+id/ic_CaseType"
+            android:layout_width="@dimen/squre_width"
+            android:layout_height="@dimen/squre_height"
+
+            android:layout_alignParentLeft="true"
+android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/icon_squre_shape" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_schedule_date"
+            android:layout_toRightOf="@+id/ic_CaseType"
+            android:layout_alignParentTop="true"
+            android:textSize="@dimen/medium_text"
+            android:text="วันที่"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_namelists"
+            android:layout_toRightOf="@+id/ic_CaseType"
+            android:layout_below="@+id/txt_schedule_date"
+            android:text="มีผู้ตรวจสถานที่เกิดเหตุ"
+            android:textSize="@dimen/mmedium_text"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_investnamelists"
+            android:layout_toRightOf="@+id/ic_CaseType"
+            android:layout_below="@+id/txt_namelists"
+
+            android:textSize="@dimen/ssmall_text"
+            />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
+

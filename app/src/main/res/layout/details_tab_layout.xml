@@ -1,0 +1,588 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/ScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="@dimen/codelab_fab_margin_right"
+            android:fillViewport="true"
+
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <TextView
+                    android:id="@+id/edtUpdateDateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_line"
+
+                    android:textSize="@dimen/ssmall_text" />
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/txtFeatureOutside"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="1"
+                            android:background="@color/orange"
+                            android:padding="5dp"
+                            android:text="ลักษณะภายนอก"
+                            android:textAppearance="@style/SectionText" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <Spinner
+                            android:id="@+id/spnTypeTypeOutside"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:entries="@array/type_outside"
+                            android:visibility="gone" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/edtTypeOutsideLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/autoCompleteTypeOutside"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ลักษณะอาคาร เช่น บ้านคอนกรีต"
+
+
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_14"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <CheckBox
+                            android:id="@+id/checkBoxHaveFence"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="มีรั้วล้อมรอบ"
+                            android:textSize="@dimen/small_text" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <CheckBox
+                            android:id="@+id/checkBoxHaveMezzanine"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="มีชั้นลอย"
+                            android:textSize="@dimen/small_text" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <CheckBox
+                            android:id="@+id/checkBoxHaveRoofTop"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="มีดาดฟ้า"
+                            android:textSize="@dimen/small_text" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/edtFloorNumLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/edtFloorNum"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="จำนวนชั้น"
+                                android:inputType="numberDecimal"
+                                android:maxLines="1"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_15"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/edtCaveNumLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/edtCaveNum"
+                                android:layout_width="match_parent"
+
+                                android:layout_height="wrap_content"
+                                android:hint="จำนวนคูหา"
+                                android:inputType="numberDecimal"
+                                android:maxLines="1"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_16"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editDetailOutsideLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editDetailOutside"
+
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="อธิบายเกี่ยวกับลักษณะภายนอกเพิ่มเติม"
+                                android:maxLines="4"
+                                android:minLines="4" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_17"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                    </TableRow>
+
+        <!--            <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/pink">
+
+                        <TextView
+                            android:id="@+id/txtOutsideAround1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="1"
+                            android:background="@color/pink"
+                            android:padding="5dp"
+                            android:text="สภาพโดยรอบเมื่อหันหน้าเข้า"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/small_text" />
+                        <Button
+                            android:id="@+id/btn_camera"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_camera_wh"
+                             />
+                    </TableRow>-->
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/pink">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+
+                            android:layout_weight="1"
+                            android:padding="5dp"
+                            android:text="สภาพโดยรอบเมื่อหันหน้าเข้า"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/small_text"/>
+                        <ImageButton
+                            android:id="@+id/btn_camera"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_camera_wh"
+                            android:layout_gravity="right|center_vertical"
+                            android:background="@color/transparent" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editOutsideAroundBackLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editOutsideAroundBack"
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านหลังติด"
+                                android:maxLines="3"
+                                android:minLines="1" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_18"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editOutsideAroundLeftLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editOutsideAroundLeft"
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านซ้ายติด"
+
+                                android:minLines="1" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_19"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/imgOutsideAroundHome"
+                            android:layout_width="@dimen/img_home"
+                            android:layout_height="@dimen/img_home"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/home" />
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editOutsideAroundRightLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editOutsideAroundRight"
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านขวาติด"
+                                android:maxLines="5"
+                                android:minLines="1" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_20"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editOutsideAroundFrontLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editOutsideAroundFront"
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านหน้าติด"
+                                android:maxLines="3"
+                                android:minLines="1" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_21"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone"
+                            android:layout_marginBottom="@dimen/margin_line"/>
+
+                    </TableRow>
+
+
+                        <HorizontalScrollView
+                            android:id="@+id/horizontalScrollViewOutside"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:fillViewport="false"
+                            android:scrollbars="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <GridView
+                                    android:id="@+id/horizontal_gridView_Outside"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:columnWidth="70dp" android:horizontalSpacing="1dp" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/orange">
+
+                        <TextView
+                            android:id="@+id/txtFeatureInside"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+
+                            android:layout_weight="1"
+
+                            android:layout_gravity="center_vertical"
+                            android:padding="5dp"
+                            android:text="ลักษณะภายใน"
+                            android:textAppearance="@style/SectionText" />
+                        <ImageButton
+                            android:id="@+id/btnShowHide1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_maxlayout"
+                            android:layout_gravity="right|center_vertical"
+                            android:background="@color/transparent" />
+                    </TableRow>
+
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <Button
+                            android:id="@+id/btnAddFeatureInside"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_button"
+                            android:padding="5dp"
+                            android:textColor="@color/white"
+                            android:text="เพิ่มลักษณะภายใน"
+                            android:textSize="@dimen/small_text" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/tableRowFeatureInsideLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+
+
+                            <ListView
+                                android:id="@+id/listViewAddFeatureInside"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:divider="@color/ocean"
+                                android:dividerHeight="@dimen/divider_height"
+                                android:padding="5dp"
+                                android:textSize="@dimen/small_text" />
+
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editDetailInsideLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editDetailInside"
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="อธิบายลักษณะภายในอื่นๆ"
+                                android:maxLines="3"
+                                android:minLines="3" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_22"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/codelab_fab_margin_right"
+                        android:layout_marginTop="@dimen/margin_line">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editFeatureAtTheSceneLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editFeatureAtTheScene"
+                                style="@style/edtMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="บริเวณที่เกิดเหตุ"
+                                android:maxLines="3"
+                                android:minLines="2" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_clear_txt_23"
+                            android:layout_width="@dimen/icon_image"
+                            android:layout_height="@dimen/icon_image"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_delete"
+                            android:visibility="gone" />
+
+                    </TableRow>
+
+                </TableLayout>
+
+
+            </LinearLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabBtnDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:src="@drawable/ic_saveas_wh"
+            app:backgroundTint="@color/red_pink"
+            app:fabSize="normal"
+            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:rippleColor="#FFF" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>

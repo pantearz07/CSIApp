@@ -1,0 +1,49 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+<!-- Default screen margins, per the Android Design guidelines.
+<dimen name="activity_horizontal_margin">10dp</dimen>
+<dimen name="activity_vertical_margin">10dp</dimen>-->
+<dimen name="codelab_fab_margin_right">16dp</dimen>
+<dimen name="codelab_fab_margin_bottom">16dp</dimen>
+<dimen name="fab_margin_bottom2">84dp</dimen>
+<dimen name="margin_line">8dp</dimen>
+<dimen name="button_corner">15dp</dimen>
+<dimen name="width_menuinsum">300dp</dimen>
+<dimen name="ssmall_text">14sp</dimen>
+<dimen name="mmedium_text">18sp</dimen>
+<dimen name="llarge_text">22sp</dimen>
+<dimen name="small_text">16sp</dimen>
+<dimen name="medium_text">20sp</dimen>
+<dimen name="large_text">24sp</dimen>
+<dimen name="width_edtReportNo">150dp</dimen>
+<dimen name="img_home">50dp</dimen>
+<dimen name="icon_image">18dp</dimen>
+<dimen name="view_height">0.5dp</dimen>
+<dimen name="squre_width">10dp</dimen>
+<dimen name="squre_height">95dp</dimen>
+<!-- Brush sizes -->
+<dimen name="text_1420">14sp</dimen>
+<dimen name="padding_m">8dp</dimen>
+<dimen name="padding_s">5dp</dimen>
+
+<dimen name="divider_height">2dp</dimen>
+<dimen name="small_brush">5dp</dimen>
+<integer name="small_size">5</integer>
+<integer name="vsmall_size">2</integer>
+<dimen name="medium_brush">10dp</dimen>
+<integer name="medium_size">10</integer>
+<dimen name="large_brush">15dp</dimen>
+<integer name="large_size">15</integer>
+<dimen name="iconbrush">30dp</dimen>
+<dimen name="icon_image_l">40dp</dimen>
+<dimen name="tabIndicHeight">5dp</dimen>
+<dimen name="paddingLeftTxt">50dp</dimen>
+paddingLeft
+</resources>

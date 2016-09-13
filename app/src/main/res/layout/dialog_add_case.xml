@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/edtReportNoLayout"
+            android:layout_width="@dimen/width_edtReportNo"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edtReportNo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="รายงานที่"
+                android:textSize="@dimen/small_text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/edtYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/ 2558"
+            android:textSize="@dimen/small_text" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtCaseType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_line"
+        android:text="คดีเกี่ยวกับ"
+        android:textSize="@dimen/small_text" />
+
+    <Spinner
+        android:id="@+id/spnCaseType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_line"
+        android:entries="@array/casetype"/>
+
+    <TextView
+        android:id="@+id/txtSubCaseType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_line"
+        android:text="ประเภทคดี"
+    android:textSize="@dimen/small_text" />
+
+    <Spinner
+        android:id="@+id/spnSubCaseType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_line"
+        />
+</LinearLayout>
+
+

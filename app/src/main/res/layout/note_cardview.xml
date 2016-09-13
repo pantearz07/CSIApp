@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    card_view:cardCornerRadius="4dp"
+    android:id="@+id/cvCSINote"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        >
+
+        <ImageView
+            android:id="@+id/ic_note"
+            android:layout_width="@dimen/squre_width"
+            android:layout_height="50dp"
+
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/icon_squre_shape" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/note_no"
+            android:layout_toRightOf="@+id/ic_note"
+            android:layout_alignParentTop="true"
+            android:textSize="@dimen/llarge_text"
+            android:text="ชื่อไฟล์โน้ตย่อ"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/csidatetime"
+            android:layout_toRightOf="@+id/ic_note"
+            android:layout_below="@+id/note_no"
+            android:text="วันเวลาที่บันทึก"
+            android:textSize="@dimen/ssmall_text"
+            />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
+

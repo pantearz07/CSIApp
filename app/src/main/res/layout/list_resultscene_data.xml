@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dp"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:id="@+id/tableClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_s">
+
+
+        <TableRow
+            android:layout_marginTop="@dimen/padding_s"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/txtNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="1."
+                android:textSize="@dimen/small_text"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/txtDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/small_text"
+                 />
+
+
+        </TableRow>
+
+
+
+
+        <TableRow android:layout_marginTop="@dimen/padding_s">
+            <TextView
+                android:id="@+id/txtPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="รูปภาพ (0)"
+                android:textSize="@dimen/ssmall_text"
+                android:textStyle="bold|italic"  />
+        </TableRow>
+        <TableRow
+            android:layout_marginTop="@dimen/padding_s"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ssmall_text"
+                android:textStyle="bold|italic"
+
+                android:text="วิดีโอ (0)"  />
+        </TableRow>
+        <TableRow android:gravity="center_vertical|right">
+
+            <ImageButton
+                android:id="@+id/imgEdit"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+
+                android:layout_gravity="right|center_vertical"
+                android:src="@android:drawable/ic_menu_edit"/>
+            <ImageButton
+                android:id="@+id/imgDelete"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+
+                android:layout_gravity="right|center_vertical"
+                android:src="@android:drawable/ic_delete"/>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

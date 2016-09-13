@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_evidences_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_vertical_margin" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/txtEvidenceType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="เลือกชนิดวัตถุพยาน"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Spinner
+                android:id="@+id/spinnerEvidenceType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/type_evidence"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editEvidenceType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="วัตถุพยานอื่นๆ"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="พบจำนวน"
+                android:textSize="@dimen/small_text" />
+
+            <EditText
+                android:id="@+id/editEvidenceNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:hint="0"
+                android:inputType="number"
+                android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:id="@+id/txtEvidencesUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="แผ่น"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow39"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editFindEvidenceZone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="บริเวณที่พบ"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editMarking"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="การทำเครื่องหมาย"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow41"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editParceling"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="การบรรจุหีบห่อ"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow42"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editEvidencePerformed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
+                android:textSize="@dimen/small_text" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

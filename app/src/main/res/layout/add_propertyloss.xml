@@ -1,0 +1,201 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/ScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="@dimen/codelab_fab_margin_right"
+            android:fillViewport="true"
+
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <EditText
+                        android:id="@+id/editPropertyLossName"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:hint="ทรัพย์สินที่หายไป"
+                        android:textSize="@dimen/small_text" />
+                    <TextView
+                        android:id="@+id/editNoti"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="*จำเป็น"
+                        android:textSize="18sp"
+                        android:textColor="#FF0000" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="จำนวน " />
+
+                    <EditText
+                        android:id="@+id/editPropertyLossAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:hint="0"
+                        android:inputType="number"
+                        android:textSize="@dimen/small_text" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/autoPropertyLossUnit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:completionThreshold="1"
+                        android:ems="10"
+                        android:hint="หน่วย"
+                        android:textSize="@dimen/small_text" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/editPropertyLossPosition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="บริเวณ"
+                    android:textSize="@dimen/small_text" />
+                <EditText
+                    android:id="@+id/editPropertyInsurance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="การประกันทรัพย์สิน"
+                    android:textSize="@dimen/small_text" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/ocean"
+                    android:gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnTakePhotoPL"
+                        android:layout_width="@dimen/icon_image_l"
+                        android:layout_height="@dimen/icon_image_l"
+                        android:layout_marginRight="10dp"
+
+                        android:gravity="center|center_horizontal"
+                        android:background="@drawable/ic_camera_wh"/>
+
+                    <ImageButton
+                        android:id="@+id/btnVideoPL"
+                        android:layout_width="@dimen/icon_image_l"
+                        android:layout_height="@dimen/icon_image_l"
+                        android:gravity="center|center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/ic_video_wh"
+                        android:visibility="gone"/>
+                    />
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/txtPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:padding="5dp"
+                    android:text="รูปภาพ"
+                    android:textAppearance="@style/SectionText" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollViewPL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fillViewport="false"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/horizontal_gridView_PL_photo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
+                            android:gravity="center_vertical"
+                            android:horizontalSpacing="1dp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <TextView
+                    android:id="@+id/txtVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:padding="5dp"
+                    android:text="วิดีโอ"
+                    android:textAppearance="@style/SectionText" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView_PL_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fillViewport="false"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/horizontal_gridView_PL_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
+                            android:gravity="center_vertical"
+                            android:horizontalSpacing="1dp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabBtnDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:src="@drawable/ic_saveas_wh"
+            app:backgroundTint="@color/red_pink"
+            app:fabSize="normal"
+            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:rippleColor="#FFF" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>

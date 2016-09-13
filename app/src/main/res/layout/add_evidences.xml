@@ -1,0 +1,265 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/ScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="@dimen/codelab_fab_margin_right"
+            android:fillViewport="true"
+
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <TableLayout
+                    android:id="@+id/tableEvidencesClass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/txtEvidenceType"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="เลือกชนิดวัตถุพยาน"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <Spinner
+                            android:id="@+id/spinnerEvidenceType"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:entries="@array/type_evidence"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <EditText
+                            android:id="@+id/editEvidenceType"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="วัตถุพยานอื่นๆ"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="พบจำนวน"
+                            android:textSize="@dimen/small_text" />
+
+                        <EditText
+                            android:id="@+id/editEvidenceNumber"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:hint="0"
+                            android:inputType="number"
+                            android:textSize="@dimen/small_text" />
+
+                        <TextView
+                            android:id="@+id/txtEvidencesUnit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="แผ่น"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/tableRow39"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <EditText
+                            android:id="@+id/editFindEvidenceZone"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="บริเวณที่พบ"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+                    <TableRow
+                        android:id="@+id/tableRow40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <EditText
+                            android:id="@+id/editMarking"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="การทำเครื่องหมาย"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+                    <TableRow
+                        android:id="@+id/tableRow41"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <EditText
+                            android:id="@+id/editParceling"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="การบรรจุหีบห่อ"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+                    <TableRow
+                        android:id="@+id/tableRow42"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <EditText
+                            android:id="@+id/editEvidencePerformed"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+                </TableLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/ocean"
+                    android:gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnTakePhotoEV"
+                        android:layout_width="@dimen/icon_image_l"
+                        android:layout_height="@dimen/icon_image_l"
+                        android:layout_marginRight="10dp"
+
+                        android:gravity="center|center_horizontal"
+                        android:background="@drawable/ic_camera_wh"/>
+
+                    <ImageButton
+                        android:id="@+id/btnVideoEV"
+                        android:layout_width="@dimen/icon_image_l"
+                        android:layout_height="@dimen/icon_image_l"
+                        android:gravity="center|center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/ic_video_wh"
+                        android:visibility="gone"/>
+                    />
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:id="@+id/txtPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:padding="5dp"
+                    android:text="รูปภาพ"
+                    android:textAppearance="@style/SectionText" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollViewEV_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fillViewport="false"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/horizontal_gridView_EV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
+                            android:gravity="center_vertical"
+                            android:horizontalSpacing="1dp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <TextView
+                    android:id="@+id/txtVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange"
+                    android:padding="5dp"
+                    android:text="วิดีโอ"
+                    android:textAppearance="@style/SectionText" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView_EV_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fillViewport="false"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/horizontal_gridView_EV_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
+                            android:gravity="center_vertical"
+                            android:horizontalSpacing="1dp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabBtnDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:src="@drawable/ic_saveas_wh"
+            app:backgroundTint="@color/red_pink"
+            app:fabSize="normal"
+            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:rippleColor="#FFF" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_addsufferer_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="15dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Spinner
+            android:id="@+id/spinnerAntecedent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:entries="@array/antecedent" />
+
+        <EditText
+            android:id="@+id/editSuffererFirstName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="ชื่อ"
+            android:textSize="@dimen/small_text" />
+
+        <EditText
+            android:id="@+id/editSuffererLastName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="นามสกุล"
+            android:textSize="@dimen/small_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txtSuffererAge"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="อายุ"
+            android:textSize="@dimen/small_text" />
+
+        <EditText
+            android:id="@+id/editSuffererAge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:id="@+id/txtSuffererAgeUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ปี"
+            android:textSize="@dimen/small_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txtSuffererTelNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="โทรศัพท์บ้าน"
+            android:textSize="@dimen/small_text" />
+
+
+        <EditText
+            android:id="@+id/editTextSuffererPhone1"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:hint="เช่น 0812345678"
+            android:inputType="phone"
+            android:textSize="@dimen/small_text" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txtSuffererTelNumber2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="โทรศัพท์มือถือ"
+            android:textSize="@dimen/small_text" />
+
+
+        <EditText
+            android:id="@+id/editTextSuffererMobile1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:hint="เช่น 0812345678"
+            android:inputType="phone"
+            android:textSize="@dimen/small_text" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txtSuffererStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="สถานะเป็น"
+            android:textSize="@dimen/small_text" />
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteSuffererStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:completionThreshold="1"
+            android:ems="10"
+            android:hint="ตย. เจ้าของบ้าน"
+            android:textSize="@dimen/small_text" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_media_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="15dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txtMediaName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ชื่อไฟล์ : "
+            android:textSize="@dimen/ssmall_text" />
+
+        <TextView
+            android:id="@+id/editMediaName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ชื่อไฟล์"
+            android:textSize="@dimen/ssmall_text" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editMediaDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="คำอธิบาย"
+        android:textSize="@dimen/ssmall_text" />
+
+</LinearLayout>

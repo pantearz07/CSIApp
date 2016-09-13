@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayoutLogin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.example.pantearz07.main.MapActivity">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/rootLayoutLogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="70dp"
+
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/layoutcurrentlatlng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtCurrentlatlng"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+android:layout_marginRight="5dp"
+                    android:text="จากพิกัดปัจจุบัน"
+
+                    android:textSize="@dimen/ssmall_text" />
+
+                <TextView
+                    android:id="@+id/sh_currentlatlng"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:lines="2"
+                    android:text="Latitude: \nLongitude:"
+                    android:textSize="@dimen/ssmall_text" />
+
+                <Button
+                    android:id="@+id/btn_findcurrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:text="ค้นหา"
+                    android:textSize="@dimen/ssmall_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutdestinationlatlng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutfromlatlng"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="ถึง"
+                    android:textSize="@dimen/ssmall_text" />
+
+                <EditText
+                    android:id="@+id/et_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusableInTouchMode="true"
+                    android:hint="ค้นหาจากข้อมูลสถานที่"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:textSize="@dimen/ssmall_text" />
+
+                <Button
+                    android:id="@+id/btn_find"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="ค้นหา"
+                    android:textSize="@dimen/ssmall_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutdestinationlatlng2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutfromlatlng"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtDestination2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="ถึงพิกัดเกิดเหตุ "
+                    android:textSize="@dimen/ssmall_text" />
+
+                <TextView
+                    android:id="@+id/txt_location"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:lines="2"
+                    android:paddingBottom="5dp"
+                    android:text="Latitude: \nLongitude:"
+                    android:textSize="@dimen/ssmall_text" />
+
+                <Button
+                    android:id="@+id/btn_findpath"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:text="ค้นหา"
+
+                    android:textSize="@dimen/ssmall_text" />
+            </LinearLayout>
+
+
+
+            <Button
+                android:id="@+id/btn_savelocale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutdestinationlatlng"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/selector_button"
+                android:text="บันทึกพิกัดสถานที่เกิดเหตุใหม่"
+
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_text" />
+
+            <fragment
+                android:id="@+id/mapView"
+                class="com.google.android.gms.maps.MapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/white"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title="ค้นหาเส้นทาง" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>
