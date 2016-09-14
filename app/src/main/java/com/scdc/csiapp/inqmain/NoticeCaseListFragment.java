@@ -1,38 +1,38 @@
-package com.scdc.csiapp.invmain;
+package com.scdc.csiapp.inqmain;
 
-        import android.content.Context;
-        import android.content.DialogInterface;
-        import android.database.sqlite.SQLiteDatabase;
-        import android.os.Bundle;
-        import android.support.annotation.Nullable;
-        import android.support.design.widget.CoordinatorLayout;
-        import android.support.design.widget.FloatingActionButton;
-        import android.support.v4.app.Fragment;
-        import android.support.v4.app.FragmentManager;
-        import android.support.v4.app.FragmentTransaction;
-        import android.support.v7.app.AlertDialog;
-        import android.support.v7.app.AppCompatActivity;
-        import android.util.Log;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.AdapterView;
-        import android.widget.ArrayAdapter;
-        import android.widget.EditText;
-        import android.widget.Spinner;
-        import android.widget.TextView;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
-        import com.scdc.csiapp.R;
-        import com.scdc.csiapp.connecting.ConnectionDetector;
-        import com.scdc.csiapp.connecting.PreferenceData;
-        import com.scdc.csiapp.connecting.SQLiteDBHelper;
-        import com.scdc.csiapp.main.CSIDataTabFragment;
-        import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.R;
+import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.main.CSIDataTabFragment;
+import com.scdc.csiapp.main.GetDateTime;
 
 /**
  * Created by Pantearz07 on 14/9/2559.
  */
-public class CaseSceneListFragment extends Fragment {
+public class NoticeCaseListFragment extends Fragment {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -43,6 +43,7 @@ public class CaseSceneListFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
+
     long isConnectingToInternet = 0;
     GetDateTime getDateTime;
     String officialID;

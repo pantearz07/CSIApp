@@ -3,7 +3,7 @@
 
 
 
-    <item android:title="รายการคดี"
+    <item android:title="@string/listcase"
         android:id="@+id/nav_item_casescene"
         android:icon="@drawable/ic_home"/>
     <item android:title="@string/receivingcase"

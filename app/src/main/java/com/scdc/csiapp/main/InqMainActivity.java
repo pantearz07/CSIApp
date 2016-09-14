@@ -38,6 +38,7 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.gcmservice.GcmRegisterService;
+import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 
 public class InqMainActivity extends AppCompatActivity {
     // connect sqlite
@@ -49,28 +50,35 @@ public class InqMainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
 
-
+    //อันเก่า
     EmergencyListFragment emergencyListFragment;
-
     AcceptListFragment acceptListFragment;
     DoneListFragment doneListFragment;
-    PoliceListFragment policeListFragment;
+    //-อันเก่า
 
-    NotiFragment notiFragment;
+    //รายการคดี
+    NoticeCaseListFragment noticeCaseListFragment;
+
+    //ใช้
+    PoliceListFragment policeListFragment;
     SettingFragment settingFragment;
     ProfileFragment profileFragment;
+    //ไม่ใช้
+    NotiFragment notiFragment;
+
     Toolbar toolbar;
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
     String officialID, username;
-    TextView OfficialName,txtusername;
+    TextView OfficialName, txtusername;
     ImageView avatar;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
     private static final String TAG = "InqMainActivity";
     ConnectionDetector cd;
     Boolean networkConnectivity = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +99,9 @@ public class InqMainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff);
         View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
-       OfficialName = (TextView) headerView.findViewById((R.id.officialName));
-         txtusername = (TextView) headerView.findViewById((R.id.username));
-         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
+        OfficialName = (TextView) headerView.findViewById((R.id.officialName));
+        txtusername = (TextView) headerView.findViewById((R.id.username));
+        avatar = (ImageView) headerView.findViewById(R.id.profile_image);
         //OfficialName.setText(officialID);
         txtusername.setText(username);
         Log.i("login", officialID);
@@ -105,14 +113,16 @@ public class InqMainActivity extends AppCompatActivity {
          * Here , we are inflating the CSIDataTabFragment as the first Fragment
          */
 
-        emergencyListFragment = new EmergencyListFragment();
-
-        acceptListFragment = new AcceptListFragment();
-        doneListFragment = new DoneListFragment();
+        noticeCaseListFragment = new NoticeCaseListFragment();
         policeListFragment = new PoliceListFragment();
-          notiFragment = new NotiFragment();
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
+        //อันเก่า//
+        emergencyListFragment = new EmergencyListFragment();
+        acceptListFragment = new AcceptListFragment();
+        doneListFragment = new DoneListFragment();
+        notiFragment = new NotiFragment();
+
         mFragmentManager = getSupportFragmentManager();
         if (networkConnectivity) {
             Log.i("networkConnect inqmain", "connect!! ");
@@ -132,20 +142,13 @@ public class InqMainActivity extends AppCompatActivity {
 
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
-        if (menuFragment != null)
-        {
-            if (menuFragment.equals("acceptListFragment"))
-            {
+        if (menuFragment != null) {
+            if (menuFragment.equals("noticeCaseListFragment")) {
                 FragmentTransaction ftdraft = mFragmentManager.beginTransaction();
-                ftdraft.replace(R.id.containerView, acceptListFragment);
+                ftdraft.replace(R.id.containerView, noticeCaseListFragment);
                 ftdraft.addToBackStack(null);
                 ftdraft.commit();
             }
-        }else{
-            FragmentTransaction fthome = mFragmentManager.beginTransaction();
-            fthome.replace(R.id.containerView, emergencyListFragment);
-            fthome.addToBackStack(null);
-            fthome.commit();
         }
 
         headerView.setOnClickListener(new View.OnClickListener() {
@@ -163,8 +166,6 @@ public class InqMainActivity extends AppCompatActivity {
         });
 
 
-
-
         /**
          * Setup click events on the Navigation View Items.
          */
@@ -180,30 +181,22 @@ public class InqMainActivity extends AppCompatActivity {
 
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
-
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    fthome2.replace(R.id.containerView, emergencyListFragment);
+                    fthome2.replace(R.id.containerView, noticeCaseListFragment);
                     fthome2.addToBackStack(null);
                     fthome2.commit();
-
-
                 }
                 if (menuItem.getItemId() == R.id.nav_item_receivingcase) {
-
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
                     fthome2.replace(R.id.containerView, emergencyListFragment);
                     fthome2.addToBackStack(null);
                     fthome2.commit();
-
-
                 }
-
                 if (menuItem.getItemId() == R.id.nav_item_draft) {
                     FragmentTransaction ftdraft = mFragmentManager.beginTransaction();
                     ftdraft.replace(R.id.containerView, acceptListFragment);
                     ftdraft.addToBackStack(null);
                     ftdraft.commit();
-
                 }
                 if (menuItem.getItemId() == R.id.nav_item_full) {
                     FragmentTransaction ftfull = mFragmentManager.beginTransaction();
@@ -211,7 +204,6 @@ public class InqMainActivity extends AppCompatActivity {
                     ftfull.addToBackStack(null);
                     ftfull.commit();
                 }
-
                 if (menuItem.getItemId() == R.id.nav_item_police) {
                     FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
                     ftpolice.replace(R.id.containerView, policeListFragment);
@@ -316,8 +308,6 @@ public class InqMainActivity extends AppCompatActivity {
     }
 
 
-
-
     class OfficialDataTask extends AsyncTask<String, Void, String[]> {
 
         @Override
@@ -330,9 +320,9 @@ public class InqMainActivity extends AppCompatActivity {
             // Show Data
             String[] arrData = {""};
             arrData = mDbHelper.SelectDataOfficial(params[0]);
-            if(arrData != null) {
-                Log.i("Recieve login", arrData[6]+" "+arrData[7]);
-            }else{
+            if (arrData != null) {
+                Log.i("Recieve login", arrData[6] + " " + arrData[7]);
+            } else {
                 Log.i("Recieve login", "not have");
             }
             return arrData;
@@ -342,10 +332,11 @@ public class InqMainActivity extends AppCompatActivity {
             // Dismiss ProgressBar
             //Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
             /*** Default Value ***/
-            OfficialName.setText(arrData[4] +" "+ arrData[6]+" "+arrData[7]);
+            OfficialName.setText(arrData[4] + " " + arrData[6] + " " + arrData[7]);
 
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -365,7 +356,7 @@ public class InqMainActivity extends AppCompatActivity {
             // register new push message receiver
             // by doing this, the activity will be notified each time a new message arrives
             LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                   new IntentFilter(GcmRegisterService.PUSH_NOTIFICATION));
+                    new IntentFilter(GcmRegisterService.PUSH_NOTIFICATION));
             isReceiverRegistered = true;
 
         }
@@ -393,7 +384,7 @@ public class InqMainActivity extends AppCompatActivity {
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }else {
+            } else {
                 Log.i(TAG, "This device is not supported.");
                 finish();
             }
@@ -401,6 +392,7 @@ public class InqMainActivity extends AppCompatActivity {
         }
         return true;
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -410,13 +402,15 @@ public class InqMainActivity extends AppCompatActivity {
             Log.i("networkConnec inqmain", "connect!! ");
 
             if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
-                registerReceiver(); Log.i("GCM", "connect!! ");
+                registerReceiver();
+                Log.i("GCM", "connect!! ");
             }
 
         } else {
             Log.i("networkConnec inqmain", "no connect!! ");
         }
     }
+
     @Override
     protected void onPause() {
 
@@ -425,8 +419,9 @@ public class InqMainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
                 unregisterReceiver();
             }
-        }else {
+        } else {
             Log.i("networkConnect inqmain", "no connect!! ");
-        } super.onPause();
+        }
+        super.onPause();
     }
 }

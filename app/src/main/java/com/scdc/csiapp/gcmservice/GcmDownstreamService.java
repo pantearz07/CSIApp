@@ -139,7 +139,7 @@ public class GcmDownstreamService extends GcmListenerService {
     private void sendNotification(String Title,String message, String bigmessage,String nameintent,String namefragment) {
         Intent intent = null;
         try {
-            intent = new Intent(this, Class.forName("com.example.pantearz07.main."+nameintent));
+            intent = new Intent(this, Class.forName("com.scdc.csiapp.main."+nameintent));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

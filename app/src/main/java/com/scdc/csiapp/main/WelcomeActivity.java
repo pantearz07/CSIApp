@@ -1,23 +1,28 @@
 package com.scdc.csiapp.main;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.gcmservice.GcmRegisterService;
 
 /**
  * Created by Pantearz07 on 24/9/2558.
@@ -28,7 +33,8 @@ public class WelcomeActivity extends AppCompatActivity {
           */
     public static ApiConnect api = new ApiConnect();
     public static ApiLoginRequest login;
-
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean isReceiverRegistered;
     //Context for other activity
     public static Context mContext;
 
@@ -83,14 +89,14 @@ public class WelcomeActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(),
                             "สวัสดีค่ะ คุณ " + nameOfficial,
                             Toast.LENGTH_SHORT).show();
-
-                    if (networkConnectivity) {
+                    cd = new ConnectionDetector(getApplicationContext());
+                    if (cd.isNetworkAvailable()) {
                         Log.d("internet status", "connected");
-                       /* registerReceiver();
+                        registerReceiver();
 
                         if (checkPlayServices()) {
                             registerGcm();
-                        }*/
+                        }
                     } else {
                         Log.d("internet status", "no Internet Access");
                     }
@@ -98,43 +104,24 @@ public class WelcomeActivity extends AppCompatActivity {
                             "คุณได้มีการล๊อคอินแล้ว",
                             Toast.LENGTH_SHORT).show();
                     if (accestype.equals("investigator")) {
-                        switchPageToMain();
+                        finish();
+                        startActivity(new Intent(mContext, MainActivity.class));
                     } else if (accestype.equals("inquiryofficial")) {
-                        switchPageToMainInq();
-
+                        finish();
+                        startActivity(new Intent(mContext, InqMainActivity.class));
                     }
 
 
                 } else {
-                    switchPageLogin();
+                    finish();
+                    startActivity(new Intent(mContext, LoginActivity.class));
                 }
 
             }
         }, 2000);
     }
 
-    protected void switchPageToMain() {
-        Intent gotoMainActivity = new Intent(mContext, MainActivity.class);
 
-        startActivity(gotoMainActivity);
-        finish();
-    }
-
-    protected void switchPageToMainInq() {
-        Intent gotoInqMainActivity = new Intent(mContext, InqMainActivity.class);
-
-        startActivity(gotoInqMainActivity);
-        finish();
-    }
-
-    protected void switchPageLogin() {
-
-
-        Intent gotoLoginPage = new Intent(this, LoginActivity.class);
-
-        startActivity(gotoLoginPage);
-        finish();
-    }
 
     protected void onStart() {
         super.onStart();
@@ -176,14 +163,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (networkConnectivity) {
-            Log.i("networkConnectivity", "connect!! ");
-            // unregisterReceiver();
-        } else {
-            Log.i("networkConnectivity", "no connect!! ");
-        }
+
     }
-/*
+
     private void registerGcm() {
         Intent intent = new Intent(this, GcmRegisterService.class);
         startService(intent);
@@ -223,5 +205,5 @@ public class WelcomeActivity extends AppCompatActivity {
             return false;
         }
         return true;
-    }*/
+    }
 }

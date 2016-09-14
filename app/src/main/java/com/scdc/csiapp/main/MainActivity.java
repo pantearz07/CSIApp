@@ -1,22 +1,17 @@
 package com.scdc.csiapp.main;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -33,8 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ApiConnect;
@@ -42,7 +35,7 @@ import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.gcmservice.GcmRegisterService;
+import com.scdc.csiapp.invmain.CaseSceneListFragment;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -53,15 +46,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private boolean isReceiverRegistered;
+
     private static final String TAG = "MainActivity";
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
 
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
+
     long isConnectingToInternet = 0;
 
     DrawerLayout mDrawerLayout;
@@ -77,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     //--อันเก่าา--//
 
     //รายการคดี
-    // CaseSceneListFragment caseSceneListFragment;
+    CaseSceneListFragment caseSceneListFragment;
 
     //เมนูอื่นๆ
     PoliceListFragment policeListFragment;
@@ -93,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
-    String officialID, username;
+    String officialID, username,password,nameofficial;
     TextView OfficialName, txtusername;
     ImageView avatar;
     GetDateTime getDateTime;
@@ -117,8 +109,10 @@ public class MainActivity extends AppCompatActivity {
         // PreferenceData member id
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-        cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.isNetworkAvailable();
+        password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
+        nameofficial = mManager.getPreferenceData(mManager.KEY_NAME);
+
+
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
@@ -129,12 +123,14 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff);
         View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
+
         OfficialName = (TextView) headerView.findViewById((R.id.officialName));
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
-        //OfficialName.setText(officialID);
+        OfficialName.setText(nameofficial);
         txtusername.setText(username);
-        Log.i("login", officialID);
+
+        Log.i("officialID", officialID);
         //new OfficialDataTask().execute(officialID);
 
         mNavigationView.addHeaderView(headerView);
@@ -149,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         draftListFragment = new DraftListFragment();
         fullListFragment = new FullListFragment();
 
-        // caseSceneListFragment  = new CaseSceneListFragment();
+        caseSceneListFragment  = new CaseSceneListFragment();
 
         policeListFragment = new PoliceListFragment();
         scheduleInvestigatorsFragment = new ScheduleInvestigatorsFragment();
@@ -159,20 +155,6 @@ public class MainActivity extends AppCompatActivity {
         scheduleInvestigationFragment = new ScheduleInvestigationFragment();
         notiFragment = new NotiFragment();
         mFragmentManager = getSupportFragmentManager();
-        if (networkConnectivity) {
-
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                registerReceiver();
-
-                if (checkPlayServices()) {
-                    registerGcm();
-                }
-
-            }
-            Log.i("networkConnect main", "connect!! ");
-        } else {
-            Log.i("networkConnect main", "no connect!! ");
-        }
 
         FragmentTransaction fthome = mFragmentManager.beginTransaction();
         fthome.replace(R.id.containerView, receivingCaseListFragment2);
@@ -219,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    fthome2.replace(R.id.containerView, receivingCaseListFragment2);
+                    fthome2.replace(R.id.containerView, caseSceneListFragment);
                     fthome2.addToBackStack(null);
                     fthome2.commit();
                 }
@@ -336,31 +318,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("onResume mainactivity", "");
 
-        if (networkConnectivity) {
-            Log.i("networkConnect main", "connect!! ");
-            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
-                //  registerReceiver(); Log.i("GCM", "connect!! ");
-            }
-        } else {
-            Log.i("networkConnect main", "no connect!! ");
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("onPause mainactivity", "");
-        if (networkConnectivity) {
-            Log.i("networkConnect main", "connect!! ");
-            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
-                //  unregisterReceiver();
-                Log.i("GCM", "connect!! ");
-            }
-        } else {
-            Log.i("networkConnect main", "no connect!! ");
-        }
+
     }
 
     @Override
@@ -370,17 +334,9 @@ public class MainActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
 
-        Log.d("onStart mainactivity", "");
-        if (networkConnectivity) {
-            Log.i("networkConnect main", "connect!! vvv");
-
-        } else {
-            Log.i("networkConnect main", "no connect!! ");
-        }
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-//     /   Action viewAction = Action.newAction(
+//        Action viewAction = Action.newAction(
 //                Action.TYPE_VIEW, // TODO: choose an action type.
 //                "Main Page", // TODO: Define a title for the content shown.
 //                // TODO: If you have web page content that matches this app activity's content,
@@ -409,16 +365,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            /*FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-            ftsetting.replace(R.id.containerView, settingFragment);
-            ftsetting.addToBackStack(null);
-            ftsetting.commit();*/
-//            Intent gotoIPSettingActivity = new Intent(this, IPSettingActivity.class);
-//
-//            startActivity(gotoIPSettingActivity);
-//            this.finish();
-//            return true;
-            if (networkConnectivity) {
+            cd = new ConnectionDetector(getApplicationContext());
+            if (cd.isNetworkAvailable()) {
                 Log.d("internet status", "connected to wifi");
 
                 AlertDialog.Builder builder =
@@ -577,53 +525,4 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void registerGcm() {
-        Intent intent = new Intent(this, GcmRegisterService.class);
-        startService(intent);
-    }
-
-    private void registerReceiver() {
-        if (!isReceiverRegistered) {
-            Log.i("registerReceiver", "registerReceiver");
-            // register GCM registration complete receiver
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(GcmRegisterService.REGISTRATION_COMPLETE));
-            // register new push message receiver
-            // by doing this, the activity will be notified each time a new message arrives
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(GcmRegisterService.PUSH_NOTIFICATION));
-            isReceiverRegistered = true;
-
-        }
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-
-        isReceiverRegistered = false;
-
-    }
-
-    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean sentToken = sharedPreferences.getBoolean(GcmRegisterService.SENT_TOKEN_TO_SERVER, false);
-            // TODO Do something here
-        }
-    };
-
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
 }
