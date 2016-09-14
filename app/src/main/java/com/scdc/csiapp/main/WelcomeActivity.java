@@ -31,7 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
     /*
          * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
           */
-    public static ApiConnect api = new ApiConnect();
+    public static ApiConnect api;
     public static ApiLoginRequest login;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
@@ -63,9 +63,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 "ค่า ip ล่าสุด" + ipvalue,
                 Toast.LENGTH_SHORT).show();
 
-        //--- ตรวจสอบ Internet ในกรณีที่ไม่เคย Login เพราะต้องใช้ในการส่งค่าตรวจสอบสิทธิ์ ---//
-        //ถ้าไม่ต่อจะเตะออกแอพก่อน เพื่อให้ไปต่อก่อนถึงเข้าได้
-        //แต่ถ้าเคย Login อยู่แล้ว ไม่ต่อก็ยังเข้าใช้ได้ไม่เตะออก
+        //*** สร้าง ApiConnect ***//
+        api = new ApiConnect(mContext);
+
+        //*** ตรวจสอบ Internet ในกรณีที่ไม่เคย Login เพราะต้องใช้ในการส่งค่าตรวจสอบสิทธิ์ ***//
+        // ถ้าไม่ต่อจะเตะออกแอพก่อน เพื่อให้ไปต่อก่อนถึงเข้าได้
+        // แต่ถ้าเคย Login อยู่แล้ว ไม่ต่อก็ยังเข้าใช้ได้ไม่เตะออก
         cd = new ConnectionDetector(getApplicationContext());
         if (userlogin == false) {
             if (cd.isNetworkAvailable() == false) {
@@ -77,7 +80,6 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }
 
-        ApiConnect.updateIP();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -120,7 +122,6 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }, 2000);
     }
-
 
 
     protected void onStart() {
@@ -198,7 +199,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }else {
+            } else {
                 Log.i(TAG, "This device is not supported.");
                 finish();
             }
