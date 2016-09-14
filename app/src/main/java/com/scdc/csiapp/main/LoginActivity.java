@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
@@ -41,7 +42,7 @@ import java.util.Date;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    Button loginButton,settingip_btn;
+    Button loginButton, settingip_btn;
     private EditText mUsername;
     private EditText mPassword;
     private Context mContext;
@@ -50,8 +51,8 @@ public class LoginActivity extends AppCompatActivity {
     Boolean networkConnectivity = false;
     String username;
     String password;
-    String txt_username="";
-    String ipvalue="";
+    String txt_username = "";
+
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     GetDateTime getDateTime;
     TextView txt_ipvalue;
     private static NotificationManager mNotificationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +80,13 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = (Button) findViewById(R.id.loginButton);
         settingip_btn = (Button) findViewById(R.id.settingip_btn);
-        txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
 
+        //เเสดงค่า IP ล่าสุด
+        txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
+        SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, MODE_PRIVATE);
+        String IP = sp.getString(PreferenceData.KEY_IP, "192.168.0.89");
+        txt_ipvalue.setText("ค่า IP ล่าสุด: " + IP);
+        ApiConnect.updateIP();
         mUsername = (EditText) findViewById(R.id.usernameEdt);
         mPassword = (EditText) findViewById(R.id.passwordEdt);
         mUsername.setText(txt_username);
@@ -87,23 +94,13 @@ public class LoginActivity extends AppCompatActivity {
 
         password = mPassword.getText().toString().trim();
 
-
-        /*Boolean pret_IP_status = mManager.getPreferenceDataBoolean(mManager.PREF_IP);
-
-        if (pret_IP_status) {
-            ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
-            Log.d("ipvalue", ipvalue);
-        }*/
-
-        //final ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        // final NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (networkConnectivity) {
                     Log.d("internet status", "connected to wifi");
                     login();
-                    //  loginnoconnect();
+
                 } else {
                     Log.d("internet status", "no Internet Access");
                     if (mManager.checkLoginValidate(username, password)) {
@@ -114,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                         switchPageToMain();
 
                     } else {
-                        loginnoconnect();
+                        // loginnoconnect();
 
 
                     }
@@ -145,14 +142,14 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "กรุณาป้อนข้อมูล",
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                String ipvalue =ipvalueEdt.getText().toString();
+                                String ipvalue = ipvalueEdt.getText().toString();
                                 SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sp.edit();
                                 editor.putString(PreferenceData.KEY_IP, ipvalue);
                                 editor.commit();
-                                Log.d("ipvalue",ipvalue);
-
-                                Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย "+ipvalue,
+                                Log.d("ipvalue connect", ipvalue);
+                                ApiConnect.updateIP();
+                                Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย " + ipvalue,
                                         Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
@@ -170,11 +167,9 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     Log.d("internet status", "no Internet Access");
 
-                        Toast.makeText(getBaseContext(),
-                                "กรุณาเชื่อมต่ออินเตอร์เน็ต",
-                                Toast.LENGTH_SHORT).show();
-
-
+                    Toast.makeText(getBaseContext(),
+                            "กรุณาเชื่อมต่ออินเตอร์เน็ต",
+                            Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -182,23 +177,19 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-//    protected void switchPageToSettingIP() {
-//        Intent gotoIPSettingActivity = new Intent(mContext, IPSettingActivity.class);
-//        finish();
-//        startActivity(gotoIPSettingActivity);
-//
-//    }
     protected void switchPageToMain() {
         Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
         finish();
         startActivity(gotoWelcomeActivity);
 
     }
+
     private void loginnoconnect() {
         username = mUsername.getText().toString().trim().toLowerCase();
         password = mPassword.getText().toString().trim();
-        //new checklogin().execute(username, password, selectedaccesstype[0]);
+        //new checklogin().execute(username, password);
     }
+
     public void login() {
         if (!validate()) {
             onLoginFailed();
@@ -207,16 +198,15 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setEnabled(false);
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
-//        editor.putString(KEY_USERNAME, username);
-//        editor.putString(KEY_PASSWORD, password);
-//        editor.commit();
 
-        ApiLoginRequest login = new ApiLoginRequest(username,password);
+        ApiLoginRequest login = new ApiLoginRequest(username, password);
         Connect connect = new Connect();
         connect.execute(login);
     }
+
     class Connect extends AsyncTask<ApiLoginRequest, Void, ApiLoginStatus> {
         ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -230,6 +220,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.setMessage("Authenticating...");
             progressDialog.show();
         }
+
         @Override
         protected ApiLoginStatus doInBackground(ApiLoginRequest... params) {
             return WelcomeActivity.api.login(params[0]);
@@ -246,7 +237,11 @@ public class LoginActivity extends AppCompatActivity {
                 boolean isSuccess = mManager.registerUser(apiLoginStatus.getData().getResult().getUsers().getId_users(),
                         apiLoginStatus.getData().getResult().getUsers().getPass(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getOfficialID(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getAccessType());
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getAccessType(),
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getAlias()+" "+
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getFirstName()+" "+
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getLastName(),
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getSCDCAgencyCode());
                 if (isSuccess) {
                     onLoginSuccess();
                 } else {
@@ -267,14 +262,14 @@ public class LoginActivity extends AppCompatActivity {
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
 
-        if(username.isEmpty()){
+        if (username.isEmpty()) {
             mUsername.setError("enter a valid email address");
             valid = false;
-        }else{
+        } else {
             mUsername.setError(null);
         }
 
-        if(password.isEmpty()|| password.length() < 4 || password.length() > 10){
+        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             mPassword.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
@@ -282,30 +277,37 @@ public class LoginActivity extends AppCompatActivity {
         }
         return valid;
     }
+
     public void onLoginSuccess() {
         loginButton.setEnabled(true);
-        boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.PREF_USER_LOGGEDIN_STATUS, true);
+        Log.d("Login status", "Login Success");
+        boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
         if (isLoginstatus) {
-           // new SaveOfficialDataToSQLiteTask().execute(strOfficialID);
+            // new SaveOfficialDataToSQLiteTask().execute(strOfficialID);
             //switchPageToMain();
-            Toast.makeText(getBaseContext(), "Login Success", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getBaseContext(), "Login Success", Toast.LENGTH_LONG).show();
+            finish();
+            startActivity(new Intent(this, WelcomeActivity.class));
         }
-        finish();
-        startActivity(new Intent(this, WelcomeActivity.class));
-    }
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-        loginButton.setEnabled(true);
-        boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.PREF_USER_LOGGEDIN_STATUS, false);
+
     }
 
+    public void onLoginFailed() {
+        Log.d("Login status", "Login failed");
+
+        loginButton.setEnabled(true);
+        boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, false);
+        if(isLoginstatus){
+            Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        }
+    }
 
 
     //อันเก่า
     private void _Login() {
         username = mUsername.getText().toString().trim();
         password = mPassword.getText().toString().trim();
-       // Toast.makeText(mContext, "Username: " + username + " Password: " + password + " \nสถานะ: " + selectedaccesstype[0], Toast.LENGTH_SHORT).show();
+        // Toast.makeText(mContext, "Username: " + username + " Password: " + password + " \nสถานะ: " + selectedaccesstype[0], Toast.LENGTH_SHORT).show();
         //new SimpleTask().execute(username, password, selectedaccesstype[0]);
 
 
@@ -319,14 +321,14 @@ public class LoginActivity extends AppCompatActivity {
             if (checkUser != null) {
 
                 Log.i("checkuser", params[0] + params[1] + params[2]);
-                boolean isSuccess = mManager.registerUser(params[0], params[1], checkUser[0], params[2]);
-                if (isSuccess) {
-                    boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.PREF_USER_LOGGEDIN_STATUS, true);
-                    if (isLoginstatus) {
-
-                        status = "have";
-                    }
-                }
+//                boolean isSuccess = mManager.registerUser(params[0], params[1], checkUser[0], params[2]);
+//                if (isSuccess) {
+//                    boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
+//                    if (isLoginstatus) {
+//
+//                        status = "have";
+//                    }
+//                }
             } else {
                 status = "no";
                 Log.i("checkuser ", status + " " + params[0] + params[1] + params[2]);
@@ -369,24 +371,21 @@ public class LoginActivity extends AppCompatActivity {
             mNotificationManager =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mNotificationManager.notify(1000, notification);
-        }else{
+        } else {
 
             Notification notification =
-                new NotificationCompat.Builder(this) // this is context
-                        .setSmallIcon(R.drawable.logo_csi)
-                        .setContentTitle("CSI Report ยินดีต้อนรับ")
-                        .setContentText("คุณได้ทำการเข้าสู่ระบบ CSI Report เรียบร้อยแล้ว")
-                        .setAutoCancel(true)
-                        .build();
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(1000, notification);
+                    new NotificationCompat.Builder(this) // this is context
+                            .setSmallIcon(R.drawable.logo_csi)
+                            .setContentTitle("CSI Report ยินดีต้อนรับ")
+                            .setContentText("คุณได้ทำการเข้าสู่ระบบ CSI Report เรียบร้อยแล้ว")
+                            .setAutoCancel(true)
+                            .build();
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(1000, notification);
 
         }
     }
-
-
-
 
 
 }

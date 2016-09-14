@@ -33,7 +33,7 @@ public class GcmDownstreamService extends GcmListenerService {
         context = getApplicationContext();
         mManager = new PreferenceData(context);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        accesstype = mManager.getPreferenceData(mManager.PREF_ACCESSTYPE);
+        accesstype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
         Log.i("GcmDownstreamService", officialID+" " +accesstype);
     }
 

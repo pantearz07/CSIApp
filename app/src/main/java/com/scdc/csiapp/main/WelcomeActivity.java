@@ -3,6 +3,7 @@ package com.scdc.csiapp.main;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -45,12 +46,12 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.welcome_layout);
         mManager = new PreferenceData(this);
         mContext = this;
-        accestype = mManager.getPreferenceData(mManager.PREF_ACCESSTYPE);
+        accestype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
 
         cd = new ConnectionDetector(getApplicationContext());
         networkConnectivity = cd.networkConnectivity();
         isConnectingToInternet = cd.isConnectingToInternet();
-        userlogin = mManager.getPreferenceDataBoolean(mManager.PREF_USER_LOGGEDIN_STATUS);
+        userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
 
 
@@ -64,9 +65,18 @@ public class WelcomeActivity extends AppCompatActivity {
                 } else {
                     Log.d("internet status", "no Internet Access");
                 }*/
-
+                Toast.makeText(getBaseContext(),
+                        "ค่า ip ล่าสุด"+ipvalue,
+                        Toast.LENGTH_SHORT).show();
 
                 if (userlogin) {
+                    SharedPreferences sp = getSharedPreferences(PreferenceData.KEY_PREFS,MODE_PRIVATE);
+
+                    String nameOfficial = sp.getString(PreferenceData.KEY_NAME,"");
+                    Toast.makeText(getBaseContext(),
+                            "สวัสดีค่ะ คุณ "+nameOfficial,
+                            Toast.LENGTH_SHORT).show();
+
                     if (networkConnectivity) {
                         Log.d("internet status", "connected");
                        /* registerReceiver();

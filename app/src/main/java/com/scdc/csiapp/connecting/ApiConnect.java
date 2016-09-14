@@ -39,7 +39,7 @@ public class ApiConnect {
         String IP = sp.getString(PreferenceData.KEY_IP,"192.168.0.89");
         urlMobileIP = "http://"+IP+"/mCSI/C_mobile/";
 
-        Log.d("urlMobileIP", urlMobileIP);
+        Log.d("urlMobileIP connect", urlMobileIP);
 
     }
     public ApiLoginStatus login(ApiLoginRequest dataLogin) {

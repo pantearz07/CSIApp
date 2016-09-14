@@ -36,12 +36,12 @@ public class WelcomeActivity2 extends AppCompatActivity {
         setContentView(R.layout.welcome_layout);
         mManager = new PreferenceData(this);
         mContext = this;
-        accestype = mManager.getPreferenceData(mManager.PREF_ACCESSTYPE);
+        accestype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
 
         cd = new ConnectionDetector(getApplicationContext());
         networkConnectivity = cd.networkConnectivity();
         isConnectingToInternet = cd.isConnectingToInternet();
-        userlogin = mManager.getPreferenceDataBoolean(mManager.PREF_USER_LOGGEDIN_STATUS);
+        userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
 
 
         Handler handler = new Handler();

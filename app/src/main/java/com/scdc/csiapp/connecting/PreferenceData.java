@@ -12,10 +12,12 @@ public class PreferenceData {
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_OFFICIALID = "officialid";
-    public static final String PREF_ACCESSTYPE = "accesstype";
+    public static final String KEY_ACCESSTYPE = "accesstype";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_SCDCAGENCYCODE = "scdcagencycode";
 
    // public static final String PREF_SCDCCENTER = "center";
-    public static final String PREF_USER_LOGGEDIN_STATUS = "logged_in_status";
+    public static final String KEY_USER_LOGGEDIN_STATUS = "logged_in_status";
     public static final String PREF_REPORTID = "reportid";
     public static final String PREF_CASEID = "caseid";
     public static final String PREF_LASTLOGIN = "lastlogin";
@@ -54,7 +56,7 @@ public class PreferenceData {
         return false;
     }
 
-    public boolean registerUser(String username, String password, String officialID, String accessType) {
+    public boolean registerUser(String username, String password, String officialID, String accessType, String name, String scdcagencycode) {
 
         if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
             return false;
@@ -63,8 +65,10 @@ public class PreferenceData {
         mEditor.putString(KEY_USERNAME, username);
         mEditor.putString(KEY_PASSWORD, password);
         mEditor.putString(KEY_OFFICIALID, officialID);
-        mEditor.putString(PREF_ACCESSTYPE, accessType);
-        mEditor.putString(PREF_USER_LOGGEDIN_STATUS, "true");
+        mEditor.putString(KEY_ACCESSTYPE, accessType);
+        mEditor.putString(KEY_USER_LOGGEDIN_STATUS, "true");
+        mEditor.putString(KEY_NAME, name);
+        mEditor.putString(KEY_SCDCAGENCYCODE, scdcagencycode);
 
         return mEditor.commit();
     }
@@ -86,8 +90,8 @@ public class PreferenceData {
         mEditor.remove(KEY_OFFICIALID);
         mEditor.remove(KEY_USERNAME);
         mEditor.remove(KEY_PASSWORD);
-        mEditor.remove(PREF_ACCESSTYPE);
-        mEditor.remove(PREF_USER_LOGGEDIN_STATUS);
+        mEditor.remove(KEY_ACCESSTYPE);
+        mEditor.remove(KEY_USER_LOGGEDIN_STATUS);
         mEditor.commit();
         return null;
     }
