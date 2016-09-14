@@ -24,9 +24,10 @@ import java.util.Date;
 public class GcmDownstreamService extends GcmListenerService {
     private static final String TAG = "DcmDownstreamService";
     private PreferenceData mManager;
-    String officialID,accesstype="";
+    String officialID, accesstype = "";
     private static NotificationManager mNotificationManager;
     Context context;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,14 +35,14 @@ public class GcmDownstreamService extends GcmListenerService {
         mManager = new PreferenceData(context);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         accesstype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
-        Log.i("GcmDownstreamService", officialID+" " +accesstype);
+        Log.i("GcmDownstreamService", officialID + " " + accesstype);
     }
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
         // TODO Do something here
         Log.e(TAG, "Message Incoming");
-        if(accesstype.equals("investigator")) {
+        if (accesstype.equals("investigator")) {
             String Title = data.getString("gcm.notification.Title");
             Log.e(TAG, "Title : " + Title);
             String InvestigatorOfficialID = data.getString("gcm.notification.InvestigatorOfficialID");
@@ -75,17 +76,17 @@ public class GcmDownstreamService extends GcmListenerService {
 
                     String nameintent = "MainActivity";
 
-                        String scheduleDate = data.getString("gcm.notification.scheduleDate");
+                    String scheduleDate = data.getString("gcm.notification.scheduleDate");
 
 
-                        Log.e(TAG, "scheduleDate : " + scheduleDate);
-                        String message = "ตารางเวรวันที่ " + scheduleDate;
-                        String bigmessage = "ตารางเวรตรวนสถานที่เกิดเหตุใหม่" + "\n" + "วันที่ " + scheduleDate;
-                        sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "receivingCaseListFragment2");
+                    Log.e(TAG, "scheduleDate : " + scheduleDate);
+                    String message = "ตารางเวรวันที่ " + scheduleDate;
+                    String bigmessage = "ตารางเวรตรวนสถานที่เกิดเหตุใหม่" + "\n" + "วันที่ " + scheduleDate;
+                    sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "receivingCaseListFragment2");
 
                 }
             }
-        }else if(accesstype.equals("inquiryofficial")) {
+        } else if (accesstype.equals("inquiryofficial")) {
             String Title = data.getString("gcm.notification.Title");
             String InquiryOfficialID = data.getString("gcm.notification.InquiryOfficialID");
             if (officialID.equals(InquiryOfficialID)) {
@@ -136,10 +137,10 @@ public class GcmDownstreamService extends GcmListenerService {
 
     }
 
-    private void sendNotification(String Title,String message, String bigmessage,String nameintent,String namefragment) {
+    private void sendNotification(String Title, String message, String bigmessage, String nameintent, String namefragment) {
         Intent intent = null;
         try {
-            intent = new Intent(this, Class.forName("com.scdc.csiapp.main."+nameintent));
+            intent = new Intent(this, Class.forName("com.scdc.csiapp.main." + nameintent));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -179,7 +180,7 @@ public class GcmDownstreamService extends GcmListenerService {
             mNotificationManager =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mNotificationManager.notify(1001, notification);
-        }else {
+        } else {
 
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this)

@@ -61,7 +61,7 @@ public class CaseSceneListFragment extends Fragment {
         rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayoutHome);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
 
-        isConnectingToInternet = cd.isConnectingToInternet();
+        //isConnectingToInternet = cd.isConnectingToInternet();
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();

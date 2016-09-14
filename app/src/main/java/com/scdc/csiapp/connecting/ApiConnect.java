@@ -5,11 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.scdc.csiapp.apimodel.ApiLoginRequest;
-import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.scdc.csiapp.main.WelcomeActivity;
+import com.scdc.csiapp.apimodel.ApiGCMRequest;
+import com.scdc.csiapp.apimodel.ApiLoginRequest;
+import com.scdc.csiapp.apimodel.ApiLoginStatus;
+import com.scdc.csiapp.apimodel.ApiStatus;
 
 import java.io.IOException;
 
@@ -90,6 +91,34 @@ public class ApiConnect {
                 return gson.fromJson(response.body().string(), ApiLoginStatus.class);
             } else {
                 Log.d(TAG, "Not Success - code in login : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in login : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiStatus saveGCM(ApiGCMRequest data) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("Username", data.getUsername())
+                .add("Password", data.getPassword())
+                .add("Registration_id", data.getRegistration_id())
+                .add("RegisOfficialID", data.getRegisOfficialID())
+                .build();
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "getRegistrationGCM")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
                 return null;
             }
         } catch (IOException e) {

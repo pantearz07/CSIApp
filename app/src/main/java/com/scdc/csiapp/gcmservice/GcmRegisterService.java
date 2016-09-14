@@ -3,6 +3,7 @@ package com.scdc.csiapp.gcmservice;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -11,17 +12,12 @@ import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.connecting.ConnectServer;
+import com.scdc.csiapp.apimodel.ApiGCMRequest;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.PreferenceData;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.scdc.csiapp.main.WelcomeActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Pantearz07 on 22/5/2559.
@@ -81,7 +77,7 @@ public class GcmRegisterService extends IntentService {
 
     /**
      * Persist registration to third-party servers.
-     * <p/>
+     * <p>
      * Modify this method to associate the user's GCM registration token with any server-side account
      * maintained by your application.
      *
@@ -92,46 +88,41 @@ public class GcmRegisterService extends IntentService {
         mManager = new PreferenceData(this);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         Log.e(TAG, "Token : " + token + " officialID : " + officialID);
-        //Registration_id,RegisOfficialID
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("Registration_id", token));
-        params.add(new BasicNameValuePair("RegisOfficialID", officialID));
+        String username = mManager.getPreferenceData(mManager.KEY_USERNAME);
+        String password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
+        ApiGCMRequest gcmRequest = new ApiGCMRequest();
+        gcmRequest.setUsername(username);
+        gcmRequest.setPassword(password);
+        gcmRequest.setRegisOfficialID(officialID);
+        gcmRequest.setRegistration_id(token);
+        //gcmRequest.setApiLogin(WelcomeActivity.login);
+        Connect connect = new Connect();
+        connect.execute(gcmRequest);
+    }
 
-        String resultServer = ConnectServer.getJsonPostGet(params,
-                "saveRegistrationGCM");
-        if(resultServer=="error"){
-            Log.i("saveRegistrationGCM", "error");
-          //  switchPageToSettingIP();
-        }else {
-            /*** Default Value ***/
-            String strStatusID = "0";
-            String strError = "Unknow Status!";
-            JSONObject c;
-            if (resultServer == "error") {
-              //  switchPageToSettingIP();
+    class Connect extends AsyncTask<ApiGCMRequest, Void, ApiStatus> {
 
-            } else {
-                try {
-                    c = new JSONObject(resultServer.replace("\uFEFF", ""));
-                    strStatusID = c.getString("StatusID");
-                    strError = c.getString("Error");
-                } catch (JSONException e) {
-                    // TODO: handle exception
-                    e.printStackTrace();
-                }
-            }
-            // Prepare Save Data
-            if (strStatusID.equals("0")) {
-                Log.i("saveRegistrationGCM", strError);
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-
-            } else {
-                Log.i("saveRegistrationGCM", strError + " " + officialID);
-
-            }
         }
 
+        @Override
+        protected ApiStatus doInBackground(ApiGCMRequest... params) {
+            return WelcomeActivity.api.saveGCM(params[0]);
+        }
 
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getData().getReason());
+              //  Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+            } else {
+                 //       Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 //    protected void switchPageToSettingIP() {
 //        Intent gotoIPSettingActivity = new Intent(getBaseContext(), IPSettingActivity.class);
@@ -139,6 +130,7 @@ public class GcmRegisterService extends IntentService {
 //        getApplication().startActivity(gotoIPSettingActivity);
 //
 //    }
+
     /**
      * Subscribe to any GCM topics of interest, as defined by the TOPICS constant.
      *
