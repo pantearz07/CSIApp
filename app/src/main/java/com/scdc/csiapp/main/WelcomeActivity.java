@@ -9,10 +9,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -73,7 +75,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (userlogin == false) {
             if (cd.isNetworkAvailable() == false) {
                 Toast.makeText(getBaseContext(),
-                        getString(R.string.toast_network_unavailable),
+                        getString(R.string.network_unavailable),
                         Toast.LENGTH_LONG).show();
                 finish();
                 return;

@@ -4,7 +4,14 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="toast_network_unavailable">กรุณาเชื่อมต่ออินเตอร์เน็ตก่อนใช้งาน</string>
+    <string name="network_unavailable">กรุณาเชื่อมต่ออินเตอร์เน็ตก่อนใช้งาน</string>
+    <string name="cannot_connect_server">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองเปลี่ยน IP</string>
+    <string name="please_input_data">กรุณาป้อนข้อมูล</string>
+    <string name="save">บันทึก</string>
+    <string name="save_complete">บันทึกเรียบร้อย</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="ok">ตกลง</string>
+
     <string name="txt_yo_yo">CSI Report</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">เปลี่ยนค่า IP</string>
@@ -37,7 +44,6 @@
     <string name="start_new">New</string>
     <string name="brush">Brush</string>
     <string name="erase">Erase</string>
-    <string name="save">Save</string>
     <string name="paint">Paint</string>
     <string name="sml">Small</string>
     <string name="med">Medium</string>
