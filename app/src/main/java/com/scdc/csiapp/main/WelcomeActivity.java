@@ -34,12 +34,13 @@ public class WelcomeActivity extends AppCompatActivity {
     ConnectionDetector cd;
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
-    String accestype="";
+    String accestype = "";
     boolean userlogin = false;
     String ipvalue;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-   // private boolean isReceiverRegistered;
+    // private boolean isReceiverRegistered;
     private static final String TAG = "WelcomeActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,9 +91,9 @@ public class WelcomeActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(),
                             "คุณได้มีการล๊อคอินแล้ว",
                             Toast.LENGTH_SHORT).show();
-                    if(accestype.equals("investigator")) {
+                    if (accestype.equals("investigator")) {
                         switchPageToMain();
-                    }else if(accestype.equals("inquiryofficial")) {
+                    } else if (accestype.equals("inquiryofficial")) {
                         switchPageToMainInq();
 
                     }
@@ -112,12 +113,14 @@ public class WelcomeActivity extends AppCompatActivity {
         startActivity(gotoMainActivity);
         finish();
     }
+
     protected void switchPageToMainInq() {
         Intent gotoInqMainActivity = new Intent(mContext, InqMainActivity.class);
 
         startActivity(gotoInqMainActivity);
         finish();
     }
+
     protected void switchPageLogin() {
 
 
@@ -133,7 +136,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     }
-
 
 
     public void onBackPressed() {
@@ -170,8 +172,8 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onPause();
         if (networkConnectivity) {
             Log.i("networkConnectivity", "connect!! ");
-           // unregisterReceiver();
-        }else {
+            // unregisterReceiver();
+        } else {
             Log.i("networkConnectivity", "no connect!! ");
         }
     }
