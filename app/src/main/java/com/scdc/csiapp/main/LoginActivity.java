@@ -86,7 +86,9 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, MODE_PRIVATE);
         String IP = sp.getString(PreferenceData.KEY_IP, "192.168.0.89");
         txt_ipvalue.setText("ค่า IP ล่าสุด: " + IP);
+        //อัพเดท URL ip
         ApiConnect.updateIP();
+
         mUsername = (EditText) findViewById(R.id.usernameEdt);
         mPassword = (EditText) findViewById(R.id.passwordEdt);
         mUsername.setText(txt_username);
@@ -238,7 +240,7 @@ public class LoginActivity extends AppCompatActivity {
                         apiLoginStatus.getData().getResult().getUsers().getPass(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getOfficialID(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getAccessType(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getAlias()+" "+
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getRank()+" "+
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getFirstName()+" "+
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getLastName(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getSCDCAgencyCode());
@@ -284,10 +286,8 @@ public class LoginActivity extends AppCompatActivity {
         boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
         if (isLoginstatus) {
             // new SaveOfficialDataToSQLiteTask().execute(strOfficialID);
-            //switchPageToMain();
-            //Toast.makeText(getBaseContext(), "Login Success", Toast.LENGTH_LONG).show();
-            finish();
-            startActivity(new Intent(this, WelcomeActivity.class));
+            switchPageToMain();
+
         }
 
     }

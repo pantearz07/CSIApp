@@ -3,9 +3,9 @@
 
 
 
-  <!--  <item android:title="@string/home"
-        android:id="@+id/nav_item_home"
-        android:icon="@drawable/ic_home"/>-->
+    <item android:title="รายการคดี"
+        android:id="@+id/nav_item_casescene"
+        android:icon="@drawable/ic_home"/>
     <item android:title="@string/receivingcase"
         android:id="@+id/nav_item_receivingcase"
         android:icon="@drawable/ic_home"/>

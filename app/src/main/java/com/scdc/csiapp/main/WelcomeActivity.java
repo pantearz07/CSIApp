@@ -53,8 +53,11 @@ public class WelcomeActivity extends AppCompatActivity {
         isConnectingToInternet = cd.isConnectingToInternet();
         userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
+        Toast.makeText(getBaseContext(),
+                "ค่า ip ล่าสุด"+ipvalue,
+                Toast.LENGTH_SHORT).show();
 
-
+        ApiConnect.updateIP();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -65,9 +68,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 } else {
                     Log.d("internet status", "no Internet Access");
                 }*/
-                Toast.makeText(getBaseContext(),
-                        "ค่า ip ล่าสุด"+ipvalue,
-                        Toast.LENGTH_SHORT).show();
 
                 if (userlogin) {
                     SharedPreferences sp = getSharedPreferences(PreferenceData.KEY_PREFS,MODE_PRIVATE);

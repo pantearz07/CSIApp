@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -66,17 +68,27 @@ public class MainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
 
+    //อันเก่า
     HomeFragment homeFragment;
     ReceivingCaseListFragment receivingCaseListFragment;
     ReceivingCaseListFragment2 receivingCaseListFragment2;
     DraftListFragment draftListFragment;
     FullListFragment fullListFragment;
+    //--อันเก่าา--//
+
+    //รายการคดี
+    // CaseSceneListFragment caseSceneListFragment;
+
+    //เมนูอื่นๆ
     PoliceListFragment policeListFragment;
-    ScheduleInvestigationFragment scheduleInvestigationFragment;
     ScheduleInvestigatorsFragment scheduleInvestigatorsFragment;
-    NotiFragment notiFragment;
     SettingFragment settingFragment;
     ProfileFragment profileFragment;
+
+    //ไม่ได้ใช้
+    NotiFragment notiFragment;
+    ScheduleInvestigationFragment scheduleInvestigationFragment;
+
     Toolbar toolbar;
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
@@ -130,21 +142,24 @@ public class MainActivity extends AppCompatActivity {
          * Lets inflate the very first fragment
          * Here , we are inflating the CSIDataTabFragment as the first Fragment
          */
+       //อันเก่า//
         homeFragment = new HomeFragment();
         receivingCaseListFragment = new ReceivingCaseListFragment();
         receivingCaseListFragment2 = new ReceivingCaseListFragment2();
         draftListFragment = new DraftListFragment();
         fullListFragment = new FullListFragment();
+
+       // caseSceneListFragment  = new CaseSceneListFragment();
+
         policeListFragment = new PoliceListFragment();
-        scheduleInvestigationFragment = new ScheduleInvestigationFragment();
         scheduleInvestigatorsFragment = new ScheduleInvestigatorsFragment();
-        notiFragment = new NotiFragment();
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
+
+        scheduleInvestigationFragment = new ScheduleInvestigationFragment();
+        notiFragment = new NotiFragment();
         mFragmentManager = getSupportFragmentManager();
-
-
-        if (networkConnectivity) {
+                if (networkConnectivity) {
 
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 registerReceiver();
@@ -400,6 +415,58 @@ public class MainActivity extends AppCompatActivity {
 //            startActivity(gotoIPSettingActivity);
 //            this.finish();
 //            return true;
+            if (networkConnectivity) {
+                Log.d("internet status", "connected to wifi");
+
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(this);
+                LayoutInflater inflater = getLayoutInflater();
+
+                View view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                builder.setView(view);
+
+                final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+
+
+                builder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if (ipvalueEdt.getText().equals("")) {
+                            Toast.makeText(getApplicationContext(), "กรุณาป้อนข้อมูล",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            String ipvalue = ipvalueEdt.getText().toString();
+                            SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.putString(PreferenceData.KEY_IP, ipvalue);
+                            editor.commit();
+                            Log.d("ipvalue connect", ipvalue);
+                            ApiConnect.updateIP();
+                            Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย " + ipvalue,
+                                    Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                builder.show();
+
+            } else {
+                Log.d("internet status", "no Internet Access");
+
+                Toast.makeText(getBaseContext(),
+                        "กรุณาเชื่อมต่ออินเตอร์เน็ต",
+                        Toast.LENGTH_SHORT).show();
+
+
+            }
         }
 
         return super.onOptionsItemSelected(item);
