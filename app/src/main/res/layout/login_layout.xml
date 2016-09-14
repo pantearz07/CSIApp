@@ -14,12 +14,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:layout_below="@+id/toolbar"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_gravity="center_vertical">
+            android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/usernameEdtLayout"
@@ -44,8 +44,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:inputType="textPassword"
-                     />
+                    android:inputType="textPassword" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
@@ -56,6 +55,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
                 android:text="Login" />
+
             <Button
                 android:id="@+id/settingip_btn"
                 android:layout_width="wrap_content"
@@ -64,11 +64,12 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:text="@string/setip" />
+
             <TextView
                 android:id="@+id/txt_ipvalue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/ssmall_text"/>
+                android:textSize="@dimen/ssmall_text" />
         </LinearLayout>
 
         <android.support.v7.widget.Toolbar
@@ -76,9 +77,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:title="@string/login"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title="@string/login" />
 
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -45,15 +45,16 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "checkConnect success");
+                return true;
             } else {
-                Toast.makeText(mContext, "Fail " + response.code(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "checkConnect fail");
+                return false;
             }
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
         }
-
         return false;
     }
 

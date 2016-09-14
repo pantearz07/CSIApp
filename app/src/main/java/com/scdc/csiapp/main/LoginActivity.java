@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
@@ -53,6 +55,11 @@ public class LoginActivity extends AppCompatActivity {
     String password;
     String txt_username = "";
 
+    // กำหนดค่าเวลา และตัว Handler สำหรับตรวจการเชื่อมกับเซิร์ฟเวอร์ทุก 10 วินาที
+    private final static int INTERVAL = 1000 * 10; //10 second
+    Handler mHandler = new Handler();
+    Snackbar snackbar;
+
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
@@ -77,9 +84,10 @@ public class LoginActivity extends AppCompatActivity {
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
 
-
         loginButton = (Button) findViewById(R.id.loginButton);
         settingip_btn = (Button) findViewById(R.id.settingip_btn);
+
+        mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์
 
         //เเสดงค่า IP ล่าสุด
         txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
@@ -97,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (networkConnectivity) {
+                if (cd.isNetworkAvailable()) {
                     Log.d("internet status", "connected to wifi");
                     login();
 
@@ -118,40 +126,49 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //*** ส่วนการทำงานปุ่มตั้งค่า IP ***ฝฝ
+        // คำสั่งทั้งหมดในการทำงานของปุ่มตั่งค่า ทั้ง แสดง Dialog
+        // บันทึกการเปลี่ยนแปลงผ่าน updateIP จาก ApiConnect
+        // ปิดการแจ้งเตือนเก่า สั่งส่วนตรวจสอบให้ตรวจใหม่อีกครั้ง
         settingip_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (networkConnectivity) {
-                    Log.d("internet status", "connected to wifi");
-
+                if (cd.isNetworkAvailable()) {
                     AlertDialog.Builder builder =
                             new AlertDialog.Builder(LoginActivity.this);
                     LayoutInflater inflater = getLayoutInflater();
 
                     View view = inflater.inflate(R.layout.ipsetting_dialog, null);
                     builder.setView(view);
-
                     final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
 
-
-                    builder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                             if (ipvalueEdt.getText().equals("")) {
-                                Toast.makeText(getApplicationContext(), "กรุณาป้อนข้อมูล",
+                                Toast.makeText(getApplicationContext(),
+                                        getString(R.string.please_input_data),
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 String ipvalue = ipvalueEdt.getText().toString();
-                                Log.d("ipvalue connect", ipvalue);
                                 WelcomeActivity.api.updateIP(ipvalue);
-                                Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย " + ipvalue,
+
+                                if (snackbar != null) {
+                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                }
+                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
+                                Toast.makeText(getApplicationContext(),
+                                        getString(R.string.save_complete),
                                         Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                         }
                     });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -161,10 +178,8 @@ public class LoginActivity extends AppCompatActivity {
                     builder.show();
 
                 } else {
-                    Log.d("internet status", "no Internet Access");
-
                     Toast.makeText(getBaseContext(),
-                            "กรุณาเชื่อมต่ออินเตอร์เน็ต",
+                            getString(R.string.network_unavailable),
                             Toast.LENGTH_SHORT).show();
 
 
@@ -378,6 +393,44 @@ public class LoginActivity extends AppCompatActivity {
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(1000, notification);
 
+        }
+    }
+
+    //*** การทำงานในส่วนตรวจการเชื่อมกับเซิร์ฟเวอร์ ***//
+    // mHandlerTaskcheckConnect เป็น Runnable คำสั่งต่างๆ ให้ Handler ไว้ควบคุม
+    // ConnectApiCheckConnect คลาส AsyncTask ที่เอาไว้เชื่อมกับ ApiConnect
+    Runnable mHandlerTaskcheckConnect = new Runnable() {
+        @Override
+        public void run() {
+            ConnectApiCheckConnect connectApi = new ConnectApiCheckConnect();
+            connectApi.execute();
+            mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
+        }
+    };
+
+    class ConnectApiCheckConnect extends AsyncTask<Boolean, Boolean, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Boolean... booleen) {
+            return WelcomeActivity.api.checkConnect();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (aBoolean) {
+                mHandler.removeCallbacks(mHandlerTaskcheckConnect);
+            } else {
+                View rootView = findViewById(R.id.drawerLayoutLogin);
+                snackbar = Snackbar.make(rootView, getString(R.string.cannot_connect_server), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
+                        });
+                snackbar.show();
+            }
         }
     }
 
