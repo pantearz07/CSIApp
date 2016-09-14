@@ -24,24 +24,31 @@ import okhttp3.Response;
 public class ApiConnect {
 
 
-    public static String urlMobileIP ="http://192.168.0.89/mCSI/C_mobile/";
-   // private String URL = "http://192.168.0.89/mCSI/C_mobile/";
+    public static String urlMobileIP = "http://192.168.0.89/mCSI/C_mobile/";
+    // private String URL = "http://192.168.0.89/mCSI/C_mobile/";
     private String TAG = "DEBUG";
     private OkHttpClient okHttpClient = new OkHttpClient();
+
     public ApiConnect() {
 
 
     }
-    public static void updateIP(){
-        Context context = WelcomeActivity.mContext;
-        SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_IP,context.MODE_PRIVATE);
 
-        String IP = sp.getString(PreferenceData.KEY_IP,"192.168.0.89");
-        urlMobileIP = "http://"+IP+"/mCSI/C_mobile/";
+    public boolean checkConnect(){
+        return false;
+    }
+
+    public static void updateIP() {
+        Context context = WelcomeActivity.mContext;
+        SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_IP, context.MODE_PRIVATE);
+
+        String IP = sp.getString(PreferenceData.KEY_IP, "192.168.0.89");
+        urlMobileIP = "http://" + IP + "/mCSI/C_mobile/";
 
         Log.d("urlMobileIP connect", urlMobileIP);
 
     }
+
     public ApiLoginStatus login(ApiLoginRequest dataLogin) {
         RequestBody formBody = new FormBody.Builder()
                 .add("Username", dataLogin.getUsername())

@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment {
         rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayoutHome);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
 getDateTime = new GetDateTime();
 

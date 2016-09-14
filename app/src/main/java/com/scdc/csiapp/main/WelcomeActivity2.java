@@ -39,7 +39,7 @@ public class WelcomeActivity2 extends AppCompatActivity {
         accestype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
 
         cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
         userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
 

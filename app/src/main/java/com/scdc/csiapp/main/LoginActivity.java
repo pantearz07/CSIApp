@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         txt_username = mManager.getPreferenceData(mManager.KEY_USERNAME);
 
         cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
 
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();

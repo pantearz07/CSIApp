@@ -73,7 +73,7 @@ public class SubInvestigatorListTabFragment extends Fragment {
         rootLayoutIns = (CoordinatorLayout) viewinspector.findViewById(R.id.rootLayoutInv);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.policelist);
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         mManager = new PreferenceData(getActivity());
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
 

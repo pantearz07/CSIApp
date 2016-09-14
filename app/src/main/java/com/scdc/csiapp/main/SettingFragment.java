@@ -73,7 +73,7 @@ public class SettingFragment extends Fragment {
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
         listMenuSetting = (ListView) view.findViewById(R.id.listSetting);
         listMenuSetting.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, MenuSetting));

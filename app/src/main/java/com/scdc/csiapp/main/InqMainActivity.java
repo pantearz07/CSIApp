@@ -83,7 +83,7 @@ public class InqMainActivity extends AppCompatActivity {
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         /**
          *Setup the DrawerLayout and NavigationView
          */

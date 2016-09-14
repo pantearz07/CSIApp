@@ -81,7 +81,7 @@ public class DraftListFragment extends Fragment {
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         Log.i("officialID", officialID);
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
         getDateTime = new GetDateTime();
         txtUpdateDate = (TextView) viewdraft

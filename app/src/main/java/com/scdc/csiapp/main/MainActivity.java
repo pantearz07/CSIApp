@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         username = mManager.getPreferenceData(mManager.KEY_USERNAME);
         cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();

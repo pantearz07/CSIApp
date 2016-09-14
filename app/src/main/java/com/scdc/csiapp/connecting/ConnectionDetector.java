@@ -21,40 +21,14 @@ public class ConnectionDetector {
         this._context = context;
     }
 
-    /*
-        public boolean isConnectingToInternet() {
-            if (networkConnectivity()) {
-                try {
-                    HttpURLConnection urlc = (HttpURLConnection) (new URL(
-                            "http://www.google.com").openConnection());
-                    urlc.setRequestProperty("User-Agent", "Test");
-                    urlc.setRequestProperty("Connection", "close");
-                    urlc.setConnectTimeout(3000);
-                    urlc.setReadTimeout(4000);
-                    urlc.connect();
-                    // networkcode2 = urlc.getResponseCode();
-                    return (urlc.getResponseCode() == 200);
-                } catch (IOException e) {
-                    return (false);
-                }
-            } else
-                return false;
-
-        }
-    */
-    public boolean networkConnectivity() {
-        ConnectivityManager cm = (ConnectivityManager) _context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        return false;
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public long isConnectingToInternet() {
-
-
         ConnectivityManager cm = (ConnectivityManager) _context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
@@ -72,4 +46,5 @@ public class ConnectionDetector {
         }
         return 0;
     }
+
 }

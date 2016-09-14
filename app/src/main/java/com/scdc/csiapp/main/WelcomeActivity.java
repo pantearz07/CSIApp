@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -49,14 +51,25 @@ public class WelcomeActivity extends AppCompatActivity {
         mContext = this;
         accestype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
 
-        cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.networkConnectivity();
-        isConnectingToInternet = cd.isConnectingToInternet();
         userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
         Toast.makeText(getBaseContext(),
-                "ค่า ip ล่าสุด"+ipvalue,
+                "ค่า ip ล่าสุด" + ipvalue,
                 Toast.LENGTH_SHORT).show();
+
+        //--- ตรวจสอบ Internet ในกรณีที่ไม่เคย Login เพราะต้องใช้ในการส่งค่าตรวจสอบสิทธิ์ ---//
+        //ถ้าไม่ต่อจะเตะออกแอพก่อน เพื่อให้ไปต่อก่อนถึงเข้าได้
+        //แต่ถ้าเคย Login อยู่แล้ว ไม่ต่อก็ยังเข้าใช้ได้ไม่เตะออก
+        cd = new ConnectionDetector(getApplicationContext());
+        if (userlogin == false) {
+            if (cd.isNetworkAvailable() == false) {
+                Toast.makeText(getBaseContext(),
+                        getString(R.string.toast_network_unavailable),
+                        Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+        }
 
         ApiConnect.updateIP();
         Handler handler = new Handler();
@@ -71,11 +84,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 }*/
 
                 if (userlogin) {
-                    SharedPreferences sp = getSharedPreferences(PreferenceData.KEY_PREFS,MODE_PRIVATE);
+                    SharedPreferences sp = getSharedPreferences(PreferenceData.KEY_PREFS, MODE_PRIVATE);
 
-                    String nameOfficial = sp.getString(PreferenceData.KEY_NAME,"");
+                    String nameOfficial = sp.getString(PreferenceData.KEY_NAME, "");
                     Toast.makeText(getBaseContext(),
-                            "สวัสดีค่ะ คุณ "+nameOfficial,
+                            "สวัสดีค่ะ คุณ " + nameOfficial,
                             Toast.LENGTH_SHORT).show();
 
                     if (networkConnectivity) {

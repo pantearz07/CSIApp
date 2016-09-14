@@ -135,7 +135,7 @@ public class ReceiveTabFragment extends Fragment {
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
         updateDT = getDateTime.updateDataDateTime();
         Log.i("viewReceiveCSI", reportID);

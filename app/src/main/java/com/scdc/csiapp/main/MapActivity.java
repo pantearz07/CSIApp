@@ -84,7 +84,7 @@ public class MapActivity extends FragmentActivity {
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
         cd = new ConnectionDetector(this);
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         sReportID = getIntent().getExtras().getString("reportid");

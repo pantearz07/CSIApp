@@ -70,7 +70,7 @@ public class InvestigatorListTabFragment extends Fragment {
 
         View viewinvestigator = inflater.inflate(R.layout.investigator_list_tab_layout, null);
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         mManager = new PreferenceData(getActivity());
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
 

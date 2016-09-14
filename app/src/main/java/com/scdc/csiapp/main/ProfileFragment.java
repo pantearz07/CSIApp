@@ -62,7 +62,7 @@ public class ProfileFragment extends Fragment {
         mContext = getContext();
         mManager = new PreferenceData(getActivity());
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
 
         mDbHelper = new SQLiteDBHelper(getActivity());

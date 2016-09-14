@@ -76,7 +76,7 @@ public class ScheduleInvestigationFragment extends Fragment {
         mFragmentManager = getActivity().getSupportFragmentManager();
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.networkConnectivity();
+        networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
         getDateTime = new GetDateTime();
         txtUpdateDate = (TextView) viewdraft

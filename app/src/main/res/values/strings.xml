@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-
+    <string name="toast_network_unavailable">กรุณาเชื่อมต่ออินเตอร์เน็ตก่อนใช้งาน</string>
     <string name="txt_yo_yo">CSI Report</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">เปลี่ยนค่า IP</string>
