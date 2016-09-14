@@ -142,14 +142,14 @@ public class MainActivity extends AppCompatActivity {
          * Lets inflate the very first fragment
          * Here , we are inflating the CSIDataTabFragment as the first Fragment
          */
-       //อันเก่า//
+        //อันเก่า//
         homeFragment = new HomeFragment();
         receivingCaseListFragment = new ReceivingCaseListFragment();
         receivingCaseListFragment2 = new ReceivingCaseListFragment2();
         draftListFragment = new DraftListFragment();
         fullListFragment = new FullListFragment();
 
-       // caseSceneListFragment  = new CaseSceneListFragment();
+        // caseSceneListFragment  = new CaseSceneListFragment();
 
         policeListFragment = new PoliceListFragment();
         scheduleInvestigatorsFragment = new ScheduleInvestigatorsFragment();
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         scheduleInvestigationFragment = new ScheduleInvestigationFragment();
         notiFragment = new NotiFragment();
         mFragmentManager = getSupportFragmentManager();
-                if (networkConnectivity) {
+        if (networkConnectivity) {
 
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 registerReceiver();
@@ -217,14 +217,17 @@ public class MainActivity extends AppCompatActivity {
                 else menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
 
-                if (menuItem.getItemId() == R.id.nav_item_receivingcase) {
-
+                if (menuItem.getItemId() == R.id.nav_item_casescene) {
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
                     fthome2.replace(R.id.containerView, receivingCaseListFragment2);
                     fthome2.addToBackStack(null);
                     fthome2.commit();
-
-
+                }
+                if (menuItem.getItemId() == R.id.nav_item_receivingcase) {
+                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
+                    fthome2.replace(R.id.containerView, receivingCaseListFragment2);
+                    fthome2.addToBackStack(null);
+                    fthome2.commit();
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_draft) {

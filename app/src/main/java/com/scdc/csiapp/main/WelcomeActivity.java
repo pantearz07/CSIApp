@@ -75,13 +75,6 @@ public class WelcomeActivity extends AppCompatActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                /*if (isConnectingToInternet == 1) {
-                    Log.d("internet status", "connected to wifi");
-                } else if (isConnectingToInternet == 2) {
-                    Log.d("internet status", "data plan");
-                } else {
-                    Log.d("internet status", "no Internet Access");
-                }*/
 
                 if (userlogin) {
                     SharedPreferences sp = getSharedPreferences(PreferenceData.KEY_PREFS, MODE_PRIVATE);
