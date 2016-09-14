@@ -86,8 +86,6 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, MODE_PRIVATE);
         String IP = sp.getString(PreferenceData.KEY_IP, "192.168.0.89");
         txt_ipvalue.setText("ค่า IP ล่าสุด: " + IP);
-        //อัพเดท URL ip
-        ApiConnect.updateIP();
 
         mUsername = (EditText) findViewById(R.id.usernameEdt);
         mPassword = (EditText) findViewById(R.id.passwordEdt);
@@ -145,12 +143,8 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 String ipvalue = ipvalueEdt.getText().toString();
-                                SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sp.edit();
-                                editor.putString(PreferenceData.KEY_IP, ipvalue);
-                                editor.commit();
                                 Log.d("ipvalue connect", ipvalue);
-                                ApiConnect.updateIP();
+                                WelcomeActivity.api.updateIP(ipvalue);
                                 Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย " + ipvalue,
                                         Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
@@ -240,9 +234,9 @@ public class LoginActivity extends AppCompatActivity {
                         apiLoginStatus.getData().getResult().getUsers().getPass(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getOfficialID(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getAccessType(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getRank()+" "+
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getFirstName()+" "+
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getLastName(),
+                        apiLoginStatus.getData().getResult().getOfficial().get(0).getRank() + " " +
+                                apiLoginStatus.getData().getResult().getOfficial().get(0).getFirstName() + " " +
+                                apiLoginStatus.getData().getResult().getOfficial().get(0).getLastName(),
                         apiLoginStatus.getData().getResult().getOfficial().get(0).getSCDCAgencyCode());
                 if (isSuccess) {
                     onLoginSuccess();
@@ -297,7 +291,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setEnabled(true);
         boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, false);
-        if(isLoginstatus){
+        if (isLoginstatus) {
             Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
         }
     }

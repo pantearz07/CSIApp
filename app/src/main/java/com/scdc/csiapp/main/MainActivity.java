@@ -393,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
                             editor.putString(PreferenceData.KEY_IP, ipvalue);
                             editor.commit();
                             Log.d("ipvalue connect", ipvalue);
-                            ApiConnect.updateIP();
                             Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย " + ipvalue,
                                     Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
