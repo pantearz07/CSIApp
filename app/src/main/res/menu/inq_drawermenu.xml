@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+    <item android:title="รายการคดี"
+        android:id="@+id/nav_item_casescene"
+        android:icon="@drawable/ic_home"/>
     <item android:title="@string/noticase"
         android:id="@+id/nav_item_receivingcase"
         android:icon="@drawable/ic_home"/>

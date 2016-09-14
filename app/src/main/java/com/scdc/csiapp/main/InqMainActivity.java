@@ -178,6 +178,16 @@ public class InqMainActivity extends AppCompatActivity {
                 else menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
 
+
+                if (menuItem.getItemId() == R.id.nav_item_casescene) {
+
+                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
+                    fthome2.replace(R.id.containerView, emergencyListFragment);
+                    fthome2.addToBackStack(null);
+                    fthome2.commit();
+
+
+                }
                 if (menuItem.getItemId() == R.id.nav_item_receivingcase) {
 
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
