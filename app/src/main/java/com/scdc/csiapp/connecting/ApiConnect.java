@@ -36,25 +36,26 @@ public class ApiConnect {
         updateApiConnect();
     }
 
-    public boolean checkConnect() {
+    public ApiStatus checkConnect() {
         Request.Builder builder = new Request.Builder();
         Request request = builder
-                .url(urlMobileIP + "login")
+                .url(urlMobileIP + "checkConnect")
                 .build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 Log.d(TAG, "checkConnect success");
-                return true;
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
             } else {
                 Log.d(TAG, "checkConnect fail");
-                return false;
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
+            Log.d(TAG, "ERROR in checkConnect : " + e.getMessage());
         }
-        return false;
+        return null;
     }
 
     private void updateApiConnect() {
