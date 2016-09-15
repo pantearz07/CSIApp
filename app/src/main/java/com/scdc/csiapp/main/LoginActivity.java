@@ -423,17 +423,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    class ConnectApiCheckConnect extends AsyncTask<Boolean, Boolean, Boolean> {
+    class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
 
         @Override
-        protected Boolean doInBackground(Boolean... booleen) {
+        protected ApiStatus doInBackground(ApiStatus... apiStatuses) {
             return WelcomeActivity.api.checkConnect();
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            if (aBoolean) {
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
             } else {
                 View rootView = findViewById(R.id.drawerLayoutLogin);
