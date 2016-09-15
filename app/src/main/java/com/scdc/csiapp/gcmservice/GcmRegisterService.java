@@ -1,9 +1,9 @@
 package com.scdc.csiapp.gcmservice;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -12,10 +12,6 @@ import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.apimodel.ApiGCMRequest;
-import com.scdc.csiapp.apimodel.ApiStatus;
-import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.main.WelcomeActivity;
 
 import java.io.IOException;
 
@@ -28,9 +24,7 @@ public class GcmRegisterService extends IntentService {
     public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
     public static final String PUSH_NOTIFICATION = "pushNotification";
-    private PreferenceData mManager;
-    String officialID = "";
-
+    public static final String PREFS_TOKEN = "token_prefs";
     public GcmRegisterService() {
         super(TAG);
     }
@@ -77,7 +71,7 @@ public class GcmRegisterService extends IntentService {
 
     /**
      * Persist registration to third-party servers.
-     * <p>
+     * <p/>
      * Modify this method to associate the user's GCM registration token with any server-side account
      * maintained by your application.
      *
@@ -85,51 +79,15 @@ public class GcmRegisterService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
-        mManager = new PreferenceData(this);
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        Log.e(TAG, "Token : " + token + " officialID : " + officialID);
-        String username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-        String password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
-        ApiGCMRequest gcmRequest = new ApiGCMRequest();
-        gcmRequest.setUsername(username);
-        gcmRequest.setPassword(password);
-        gcmRequest.setRegisOfficialID(officialID);
-        gcmRequest.setRegistration_id(token);
-        //gcmRequest.setApiLogin(WelcomeActivity.login);
-        Connect connect = new Connect();
-        connect.execute(gcmRequest);
+        SharedPreferences shared = getApplicationContext().getSharedPreferences(PREFS_TOKEN,
+                Context.MODE_PRIVATE);
+        // Save SharedPreferences
+        SharedPreferences.Editor editor = shared.edit();
+        editor.putString("tokenKey", token);
+        editor.commit();
+
     }
 
-    class Connect extends AsyncTask<ApiGCMRequest, Void, ApiStatus> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected ApiStatus doInBackground(ApiGCMRequest... params) {
-            return WelcomeActivity.api.saveGCM(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(ApiStatus apiStatus) {
-            super.onPostExecute(apiStatus);
-            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                Log.d(TAG, apiStatus.getData().getReason());
-              //  Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
-            } else {
-                 //       Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-//    protected void switchPageToSettingIP() {
-//        Intent gotoIPSettingActivity = new Intent(getBaseContext(), IPSettingActivity.class);
-//
-//        getApplication().startActivity(gotoIPSettingActivity);
-//
-//    }
 
     /**
      * Subscribe to any GCM topics of interest, as defined by the TOPICS constant.
