@@ -3,7 +3,6 @@ package com.scdc.csiapp.connecting;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -125,6 +124,7 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
+
             return null;
         }
     }

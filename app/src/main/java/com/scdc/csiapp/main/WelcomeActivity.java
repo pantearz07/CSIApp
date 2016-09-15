@@ -6,21 +6,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -44,7 +45,7 @@ public class WelcomeActivity extends AppCompatActivity {
     ConnectionDetector cd;
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
-    String accestype = "";
+    String officialID,username,password,accestype = "";
     boolean userlogin = false;
     String ipvalue;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -58,12 +59,11 @@ public class WelcomeActivity extends AppCompatActivity {
         mManager = new PreferenceData(this);
         mContext = this;
         accestype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
-
+        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+        username = mManager.getPreferenceData(mManager.KEY_USERNAME);
+        password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
         userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
-        Toast.makeText(getBaseContext(),
-                "ค่า ip ล่าสุด" + ipvalue,
-                Toast.LENGTH_SHORT).show();
 
         //*** สร้าง ApiConnect ***//
         api = new ApiConnect(mContext);
@@ -96,11 +96,11 @@ public class WelcomeActivity extends AppCompatActivity {
                     cd = new ConnectionDetector(getApplicationContext());
                     if (cd.isNetworkAvailable()) {
                         Log.d("internet status", "connected");
-                        registerReceiver();
-
-                        if (checkPlayServices()) {
-                            registerGcm();
-                        }
+//                        registerReceiver();
+//
+//                        if (checkPlayServices()) {
+//                            registerGcm();
+//                        }
                     } else {
                         Log.d("internet status", "no Internet Access");
                     }
@@ -139,7 +139,7 @@ public class WelcomeActivity extends AppCompatActivity {
         dialog.setTitle("Exit");
         dialog.setIcon(R.drawable.ic_noti);
         dialog.setCancelable(true);
-        dialog.setMessage("Do you want to exit?");
+        dialog.setMessage(R.string.ad_message);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
@@ -160,7 +160,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //registerReceiver();
+       // registerReceiver();
     }
 
     @Override
@@ -192,9 +192,45 @@ public class WelcomeActivity extends AppCompatActivity {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean sentToken = sharedPreferences.getBoolean(GcmRegisterService.SENT_TOKEN_TO_SERVER, false);
             // TODO Do something here
+            if (sentToken) {
+                SharedPreferences shared = getApplicationContext().getSharedPreferences(GcmRegisterService.PREFS_TOKEN,
+                        Context.MODE_PRIVATE);
+                String tokenvalue = shared.getString("tokenKey", "not found!");
+                Log.i(TAG, "Token value: " + tokenvalue);
+                ApiGCMRequest gcmRequest = new ApiGCMRequest();
+                gcmRequest.setUsername(username);
+                gcmRequest.setPassword(password);
+                gcmRequest.setRegisOfficialID(officialID);
+                gcmRequest.setRegistration_id(tokenvalue);
+                Connect connect = new Connect();
+                connect.execute(gcmRequest);
+            }
         }
     };
+    class Connect extends AsyncTask<ApiGCMRequest, Void, ApiStatus> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected ApiStatus doInBackground(ApiGCMRequest... params) {
+            return WelcomeActivity.api.saveGCM(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getData().getReason());
+                //  Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+            } else {
+                //       Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);

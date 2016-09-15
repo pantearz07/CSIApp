@@ -5,7 +5,8 @@ package com.scdc.csiapp.apimodel;
  */
 public class ApiLoginRequest {
     private String Username = "";
-    private String Password ="";
+    private String Password = "";
+
 
     public ApiLoginRequest(String Username, String Password) {
         this.Username = Username;

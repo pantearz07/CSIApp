@@ -3,9 +3,11 @@ package com.scdc.csiapp.main;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.RingtoneManager;
@@ -14,7 +16,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
@@ -26,13 +30,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
-import com.scdc.csiapp.connecting.ApiConnect;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.gcmservice.GcmRegisterService;
 
 import java.util.Date;
 
@@ -53,13 +61,13 @@ public class LoginActivity extends AppCompatActivity {
     Boolean networkConnectivity = false;
     String username;
     String password;
-    String txt_username = "";
-
+    String txt_username,txt_password = "";
+    String officialid;
     // กำหนดค่าเวลา และตัว Handler สำหรับตรวจการเชื่อมกับเซิร์ฟเวอร์ทุก 10 วินาที
     private final static int INTERVAL = 1000 * 10; //10 second
     Handler mHandler = new Handler();
     Snackbar snackbar;
-
+    private static final String TAG = "DEBUG-LoginActivity";
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
@@ -67,7 +75,8 @@ public class LoginActivity extends AppCompatActivity {
     GetDateTime getDateTime;
     TextView txt_ipvalue;
     private static NotificationManager mNotificationManager;
-
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean isReceiverRegistered;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +85,8 @@ public class LoginActivity extends AppCompatActivity {
         mManager = new PreferenceData(this);
 
         txt_username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-
+        //txt_password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
+       // officialid = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(getApplicationContext());
         networkConnectivity = cd.isNetworkAvailable();
 
@@ -107,8 +117,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (cd.isNetworkAvailable()) {
                     Log.d("internet status", "connected to wifi");
-                    login();
 
+                    login();
                 } else {
                     Log.d("internet status", "no Internet Access");
                     if (mManager.checkLoginValidate(username, password)) {
@@ -266,6 +276,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+
     }
 
     public boolean validate() {
@@ -295,8 +306,23 @@ public class LoginActivity extends AppCompatActivity {
         boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
         if (isLoginstatus) {
             // new SaveOfficialDataToSQLiteTask().execute(strOfficialID);
-            switchPageToMain();
-
+            //switchPageToMain();
+            registerReceiver();
+            if (checkPlayServices()) {
+                registerGcm();
+            }
+//            SharedPreferences shared = getApplicationContext().getSharedPreferences(GcmRegisterService.PREFS_TOKEN,
+//                    Context.MODE_PRIVATE);
+//            String tokenvalue = shared.getString("tokenKey", "not found!");
+//            Log.i(TAG, "Token value: " + tokenvalue);
+//            String officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+//            ApiGCMRequest gcmRequest = new ApiGCMRequest();
+//            gcmRequest.setUsername(username);
+//            gcmRequest.setPassword(password);
+//            gcmRequest.setRegisOfficialID(officialID);
+//            gcmRequest.setRegistration_id(tokenvalue);
+//            GCM gcm = new GCM();
+//            gcm.execute(gcmRequest);
         }
 
     }
@@ -434,5 +460,98 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void registerGcm() {
+        Intent intent = new Intent(this, GcmRegisterService.class);
+        startService(intent);
+    }
 
+    private void registerReceiver() {
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(GcmRegisterService.REGISTRATION_COMPLETE));
+            isReceiverRegistered = true;
+        }
+    }
+
+    private void unregisterReceiver() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        isReceiverRegistered = false;
+    }
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean sentToken = sharedPreferences.getBoolean(GcmRegisterService.SENT_TOKEN_TO_SERVER, false);
+            // TODO Do something here
+            if (sentToken) {
+                SharedPreferences shared = getApplicationContext().getSharedPreferences(GcmRegisterService.PREFS_TOKEN,
+                        Context.MODE_PRIVATE);
+                String tokenvalue = shared.getString("tokenKey", "not found!");
+                Log.i(TAG, "Token value: " + tokenvalue);
+
+                String username = mManager.getPreferenceData(mManager.KEY_USERNAME);
+                String password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
+                String officialid = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+
+                ApiGCMRequest gcmRequest = new ApiGCMRequest();
+                gcmRequest.setUsername(username);
+                gcmRequest.setPassword(password);
+                gcmRequest.setRegisOfficialID(officialid);
+                gcmRequest.setRegistration_id(tokenvalue);
+                LoginActivity.GCM gcmconnect = new GCM();
+                gcmconnect.execute(gcmRequest);
+            }
+        }
+    };
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+    class GCM extends AsyncTask<ApiGCMRequest, Void, ApiStatus> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
+            */
+            progressDialog = new ProgressDialog(LoginActivity.this,
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Authenticating...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected ApiStatus doInBackground(ApiGCMRequest... params) {
+            return WelcomeActivity.api.saveGCM(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            progressDialog.dismiss();
+            Log.d(TAG, apiStatus.getStatus());
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getData().getReason());
+                switchPageToMain();
+                //  Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+            } else {
+                //       Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }

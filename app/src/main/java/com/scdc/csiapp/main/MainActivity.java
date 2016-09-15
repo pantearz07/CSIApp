@@ -30,7 +30,6 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
-    String officialID, username,password,nameofficial;
+    String officialID, username, password, nameofficial;
     TextView OfficialName, txtusername;
     ImageView avatar;
     GetDateTime getDateTime;
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         draftListFragment = new DraftListFragment();
         fullListFragment = new FullListFragment();
 
-        caseSceneListFragment  = new CaseSceneListFragment();
+        caseSceneListFragment = new CaseSceneListFragment();
 
         policeListFragment = new PoliceListFragment();
         scheduleInvestigatorsFragment = new ScheduleInvestigatorsFragment();
