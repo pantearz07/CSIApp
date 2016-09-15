@@ -56,6 +56,7 @@ public class WelcomeActivity extends AppCompatActivity {
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
 
         //*** สร้าง ApiConnect ***//
+
         api = new ApiConnect(mContext);
 
         //*** ตรวจสอบ Internet ในกรณีที่ไม่เคย Login เพราะต้องใช้ในการส่งค่าตรวจสอบสิทธิ์ ***//

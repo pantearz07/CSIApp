@@ -25,7 +25,7 @@ public class GcmRegisterService extends IntentService {
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
     public static final String PUSH_NOTIFICATION = "pushNotification";
     public static final String PREFS_TOKEN = "token_prefs";
-    
+
     public GcmRegisterService() {
         super(TAG);
     }
