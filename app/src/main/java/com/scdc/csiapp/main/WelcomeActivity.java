@@ -1,31 +1,21 @@
 package com.scdc.csiapp.main;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
-import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.gcmservice.GcmRegisterService;
 
 /**
  * Created by Pantearz07 on 24/9/2558.
@@ -96,11 +86,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     cd = new ConnectionDetector(getApplicationContext());
                     if (cd.isNetworkAvailable()) {
                         Log.d("internet status", "connected");
-//                        registerReceiver();
-//
-//                        if (checkPlayServices()) {
-//                            registerGcm();
-//                        }
+
                     } else {
                         Log.d("internet status", "no Internet Access");
                     }
@@ -129,11 +115,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.i("Check", "onStartWelcome");
-
-
     }
-
-
     public void onBackPressed() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Exit");
@@ -160,7 +142,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-       // registerReceiver();
+
     }
 
     @Override
@@ -169,80 +151,4 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
-    private void registerGcm() {
-        Intent intent = new Intent(this, GcmRegisterService.class);
-        startService(intent);
-    }
-
-    private void registerReceiver() {
-        if (!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(GcmRegisterService.REGISTRATION_COMPLETE));
-            isReceiverRegistered = true;
-        }
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        isReceiverRegistered = false;
-    }
-
-    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean sentToken = sharedPreferences.getBoolean(GcmRegisterService.SENT_TOKEN_TO_SERVER, false);
-            // TODO Do something here
-            if (sentToken) {
-                SharedPreferences shared = getApplicationContext().getSharedPreferences(GcmRegisterService.PREFS_TOKEN,
-                        Context.MODE_PRIVATE);
-                String tokenvalue = shared.getString("tokenKey", "not found!");
-                Log.i(TAG, "Token value: " + tokenvalue);
-                ApiGCMRequest gcmRequest = new ApiGCMRequest();
-                gcmRequest.setUsername(username);
-                gcmRequest.setPassword(password);
-                gcmRequest.setRegisOfficialID(officialID);
-                gcmRequest.setRegistration_id(tokenvalue);
-                Connect connect = new Connect();
-                connect.execute(gcmRequest);
-            }
-        }
-    };
-    class Connect extends AsyncTask<ApiGCMRequest, Void, ApiStatus> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected ApiStatus doInBackground(ApiGCMRequest... params) {
-            return WelcomeActivity.api.saveGCM(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(ApiStatus apiStatus) {
-            super.onPostExecute(apiStatus);
-            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                Log.d(TAG, apiStatus.getData().getReason());
-                //  Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
-            } else {
-                //       Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
 }
