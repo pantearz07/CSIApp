@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -408,17 +409,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    class ConnectApiCheckConnect extends AsyncTask<Boolean, Boolean, Boolean> {
+    class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
 
         @Override
-        protected Boolean doInBackground(Boolean... booleen) {
+        protected ApiStatus doInBackground(ApiStatus... booleen) {
             return WelcomeActivity.api.checkConnect();
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            if (aBoolean) {
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
             } else {
                 View rootView = findViewById(R.id.drawerLayoutLogin);
