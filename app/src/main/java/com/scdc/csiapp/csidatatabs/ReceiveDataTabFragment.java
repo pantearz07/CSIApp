@@ -42,11 +42,7 @@ import com.scdc.csiapp.main.MapActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
-
-import th.or.nectec.thai.widget.BuildConfig;
-import th.or.nectec.thai.widget.date.DateView;
 
 public class ReceiveDataTabFragment extends Fragment {
     FloatingActionButton fabBtnRec;
@@ -124,18 +120,6 @@ public class ReceiveDataTabFragment extends Fragment {
     ArrayAdapter<String>  adapterSelectDataInspector, adapterPoliceStation;
     protected static String selectScheduleID = null;
 
-    private final DateView.DatePickerCallback datePickerCallback = new DateView.DatePickerCallback() {
-        @Override
-        public void onPicked(DateView view, Calendar calendar) {
-            //Button button = (Button) findViewById(R.id.button);
-            //button.setText(DatePrinter.print(calendar));
-        }
-
-        @Override
-        public void onCancel() {
-            if (BuildConfig.DEBUG) Toast.makeText(getActivity(), "onCancle", Toast.LENGTH_SHORT).show();
-        }
-    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -50,5 +50,4 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:9.0.1'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.squareup:otto:1.3.6'
-    compile 'th.or.nectec.android:thai-widget:0.4.6'
 }

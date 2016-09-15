@@ -155,9 +155,8 @@ public class InqMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Consume input from header view. This disables the ripple effect
-                //Toast.makeText(getApplicationContext(),"Send Selected", Toast.LENGTH_SHORT).show();
+
                 mDrawerLayout.closeDrawers();
-                //mFragmentTransaction.replace(R.id.containerView, profileFragment).commit();
                 FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
                 ftprofile.replace(R.id.containerView, profileFragment);
                 ftprofile.addToBackStack(null);

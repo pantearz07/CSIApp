@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     Boolean networkConnectivity = false;
     String username;
     String password;
-    String txt_username,txt_password = "";
+    String txt_username, txt_password = "";
     String officialid;
     // กำหนดค่าเวลา และตัว Handler สำหรับตรวจการเชื่อมกับเซิร์ฟเวอร์ทุก 10 วินาที
     private final static int INTERVAL = 1000 * 10; //10 second
@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
     private static NotificationManager mNotificationManager;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         mManager = new PreferenceData(this);
 
         txt_username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-        //txt_password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
-       // officialid = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+
         cd = new ConnectionDetector(getApplicationContext());
         networkConnectivity = cd.isNetworkAvailable();
 
@@ -311,18 +311,7 @@ public class LoginActivity extends AppCompatActivity {
             if (checkPlayServices()) {
                 registerGcm();
             }
-//            SharedPreferences shared = getApplicationContext().getSharedPreferences(GcmRegisterService.PREFS_TOKEN,
-//                    Context.MODE_PRIVATE);
-//            String tokenvalue = shared.getString("tokenKey", "not found!");
-//            Log.i(TAG, "Token value: " + tokenvalue);
-//            String officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-//            ApiGCMRequest gcmRequest = new ApiGCMRequest();
-//            gcmRequest.setUsername(username);
-//            gcmRequest.setPassword(password);
-//            gcmRequest.setRegisOfficialID(officialID);
-//            gcmRequest.setRegistration_id(tokenvalue);
-//            GCM gcm = new GCM();
-//            gcm.execute(gcmRequest);
+
         }
 
     }
@@ -518,6 +507,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         return true;
     }
+
     class GCM extends AsyncTask<ApiGCMRequest, Void, ApiStatus> {
         ProgressDialog progressDialog;
 
@@ -531,7 +521,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog = new ProgressDialog(LoginActivity.this,
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Authenticating...");
+            progressDialog.setMessage("Update Token...");
             progressDialog.show();
         }
 
@@ -548,9 +538,9 @@ public class LoginActivity extends AppCompatActivity {
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
                 switchPageToMain();
-                //  Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+
             } else {
-                //       Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
             }
         }
     }
