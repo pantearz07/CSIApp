@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.csidatatabs.CSINoteList;
 import com.scdc.csiapp.main.GetDateTime;
 
 import java.util.ArrayList;
