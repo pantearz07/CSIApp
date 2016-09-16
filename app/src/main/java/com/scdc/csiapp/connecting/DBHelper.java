@@ -113,20 +113,89 @@ public class DBHelper extends SQLiteAssetHelper {
     public static final String COL_Rank = "Rank";
     public static final String COL_Position = "Position";
     public static final String COL_SubPossition = "SubPossition";
-
     public static final String COL_StationName = "StationName";
     public static final String COL_AgencyName = "AgencyName";
     public static final String COL_CenterName = "CenterName";
-
-    public static final String COL_AreaCodeTel = "AreaCodeTel";
     public static final String COL_PhoneNumber = "PhoneNumber";
     public static final String COL_OfficialEmail = "OfficialEmail";
     public static final String COL_OfficialDisplayPic = "OfficialDisplayPic";
-    public static final String COL_Username = "Username";
-    public static final String COL_Password = "Password";
+    public static final String COL_id_users = "id_users"; //username
     public static final String COL_IMEI = "IMEI";
-    public static final String COL_LastLogin = "LastLogin";
     public static final String COL_AccessType = "AccessType";
+    public static final String COL_LastLogin = "LastLogin";
+    //Users
+    //public static final String COL_id_users = "id_users"; //username
+    public static final String COL_pass = "pass";
+    public static final String COL_id_permission = "id_permission";
+    public static final String COL_id_system = "id_system";
+    public static final String COL_title = "title";
+    public static final String COL_surname = "surname";
+    public static final String COL_name = "name";
+    public static final String COL_position = "position";
+    public static final String COL_picture = "picture";
+    public static final String COL_last_login = "last_login";
+    // TABLE_casescene /
+    public static final String TABLE_CASESCENE = "casescene";
+    public static final String COL_CaseReportID = "CaseReportID";
+    //public static final String COL_NoticeCaseID = "NoticeCaseID";
+    public static final String COL_Mobile_CaseID = "Mobile_CaseID";
+    //public static final String COL_SCDCAgencyCode = "SCDCAgencyCode";
+    //public static final String COL_InvestigatorOfficialID = "InvestigatorOfficialID";
+    //public static final String COL_CaseTypeID = "CaseTypeID";
+    //public static final String COL_SubCaseTypeID = "SubCaseTypeID";
+    public static final String COL_ReportNo = "ReportNo";
+    public static final String COL_Year = "Year";
+    public static final String COL_ReportStatus = "ReportStatus";
+    public static final String COL_PoliceStation = "PoliceStation"; //PoliceStationID
+    public static final String COL_CaseTel = "CaseTel";
+
+    public static final String COL_PersonInvolvedDetail = "PersonInvolvedDetail";
+    public static final String COL_FullEvidencePerformed = "FullEvidencePerformed";
+    public static final String COL_CircumstanceOfCaseDetail = "CircumstanceOfCaseDetail";
+    public static final String COL_Annotation = "Annotation";
+    public static final String COL_MaleCriminalNum = "MaleCriminalNum";
+    public static final String COL_FemaleCriminalNum = "FemaleCriminalNum";
+    public static final String COL_CriminalUsedWeapon = "CriminalUsedWeapon";
+    public static final String COL_ToSCDCcenter = "ToSCDCcenter";
+    public static final String COL_ToSCDCagency = "ToSCDCagency";
+    public static final String COL_LastDateUpdateData = "LastDateUpdateData";
+    public static final String COL_LastTimeUpdateData = "LastTimeUpdateData";
+    public static final String COL_ConfineSufferer = "ConfineSufferer";
+    public static final String COL_VehicleInfo = "VehicleInfo";
+
+    // datetime /
+    public static final String COL_ReceivingCaseDate = "ReceivingCaseDate";
+    public static final String COL_ReceivingCaseTime = "ReceivingCaseTime";
+    public static final String COL_HappenCaseDate = "HappenCaseDate";
+    public static final String COL_HappenCaseTime = "HappenCaseTime";
+    public static final String COL_KnowCaseDate = "KnowCaseDate";
+    public static final String COL_KnowCaseTime = "KnowCaseTime";
+    public static final String COL_CompleteSceneDate = "CompleteSceneDate";
+    public static final String COL_CompleteSceneTime = "CompleteSceneTime";
+    // sceneinvestigation /
+    // public static final String TABLE_sceneinvestigation =
+    // "sceneinvestigation";
+    public static final String COL_SceneInvestDate = "SceneInvestDate";
+    public static final String COL_SceneInvestTime = "SceneInvestTime";
+
+    // address /
+    public static final String COL_LocaleName = "LocaleName";
+    public static final String COL_HouseNo = "HouseNo";
+    public static final String COL_VillageNo = "VillageNo";
+    public static final String COL_VillageName = "VillageName";
+    public static final String COL_LaneName = "LaneName";
+    public static final String COL_RoadName = "RoadName";
+    public static final String COL_District = "District";
+    public static final String COL_Amphur = "Amphur";
+    public static final String COL_Province = "Province";
+    public static final String COL_PostalCode = "PostalCode";
+
+    // locale
+    public static final String COL_Latitude = "Latitude";
+    public static final String COL_Longitude = "Longitude";
+    public static final String COL_FeatureInsideDetail = "FeatureInsideDetail";
+
+
     public DBHelper(Context context) {
         //super(context, DB_NAME, null, DB_VERSION);
         super(context, DB_NAME, context.getExternalFilesDir(null).getAbsolutePath(), null, DB_VERSION);
