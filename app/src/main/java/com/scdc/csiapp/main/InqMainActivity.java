@@ -56,14 +56,16 @@ public class InqMainActivity extends AppCompatActivity {
     DoneListFragment doneListFragment;
     //-อันเก่า
 
-    //รายการคดี
+    //รายการคดี อยู่ใน package/inqmain
     NoticeCaseListFragment noticeCaseListFragment;
 
-    //ใช้
+    //ใช้ อยู่ใน package/main
+    //รายชื่อเจ้าหน้าที่ตำรวจ
     PoliceListFragment policeListFragment;
     SettingFragment settingFragment;
+    //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
-    //ไม่ใช้
+    //ยังไม่ใช้
     NotiFragment notiFragment;
 
     Toolbar toolbar;

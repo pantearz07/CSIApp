@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
 
-    //อันเก่า
+    //อันเก่า จะไม่ใช้แล้ว
     HomeFragment homeFragment;
     ReceivingCaseListFragment receivingCaseListFragment;
     ReceivingCaseListFragment2 receivingCaseListFragment2;
@@ -67,18 +67,20 @@ public class MainActivity extends AppCompatActivity {
     FullListFragment fullListFragment;
     //--อันเก่าา--//
 
-    //รายการคดี
+    //รายการคดี ทั้งหมด อันให่ม่  อยู่ใน package/invmain
     CaseSceneListFragment caseSceneListFragment;
 
-    //เมนูอื่นๆ
+    //เมนูอื่นๆ อยู่ใน package/main
+    //รายชื่อเจ้าหน้าที่ตำรวจ
     PoliceListFragment policeListFragment;
+    //รายการตารางเวร
     ScheduleInvestigatorsFragment scheduleInvestigatorsFragment;
     SettingFragment settingFragment;
+    //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
 
     //ไม่ได้ใช้
     NotiFragment notiFragment;
-    ScheduleInvestigationFragment scheduleInvestigationFragment;
 
     Toolbar toolbar;
     FloatingActionButton fabBtn;
@@ -151,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
 
-        scheduleInvestigationFragment = new ScheduleInvestigationFragment();
         notiFragment = new NotiFragment();
         mFragmentManager = getSupportFragmentManager();
 

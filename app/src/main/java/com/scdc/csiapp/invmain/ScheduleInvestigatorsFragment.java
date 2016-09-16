@@ -1,4 +1,4 @@
-package com.scdc.csiapp.main;
+package com.scdc.csiapp.invmain;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -26,6 +26,7 @@ import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.main.GetDateTime;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by Pantearz07 on 23/9/2558.
  */
-public class ScheduleInvestigationFragment extends Fragment {
+public class ScheduleInvestigatorsFragment extends Fragment {
     CoordinatorLayout rootLayoutDraft;
     FloatingActionButton fabBtnDraft;
     RecyclerView rvSchedule;
@@ -200,7 +201,7 @@ public class ScheduleInvestigationFragment extends Fragment {
                 "ดาวน์โหลดข้อมูลเรียบร้อยแล้ว", Toast.LENGTH_SHORT).show();
 
     }
-
+/*
     public boolean SaveScheduleInvestigateToSQLite() {
         // TODO Auto-generated method stub
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -262,17 +263,123 @@ public class ScheduleInvestigationFragment extends Fragment {
         }
         return true;
     }
+*/
+public boolean SaveScheduleInvestigatesToSQLite() {
+    // TODO Auto-generated method stub
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add(new BasicNameValuePair("sTableName", "scheduleinvestigates"));
+
+    try {
+        final JSONArray data = new JSONArray(
+                ConnectServer
+                        .getJsonPostGet(params, "getData"));
+
+        for (int i = 0; i < data.length(); i++) {
+            JSONObject c = data.getJSONObject(i);
+            String ScheduleInvestigateID = c.getString("ScheduleInvestigateID");
+            String sScheduleDate = c.getString("ScheduleDate");
+            String sScheduleMonth = c.getString("ScheduleMonth");
+            String 	SCDCAgencyCode = c.getString("SCDCAgencyCode");
+
+
+            long saveStatus = mDbHelper. Savescheduleinvestigates(ScheduleInvestigateID, sScheduleDate, sScheduleMonth, SCDCAgencyCode);
+            if (saveStatus <= 0) {
+                Log.i("Recieve", "Error!! ");
+            }
+            Log.i("scheduleinvestigates" + i, ScheduleInvestigateID  + " " +  sScheduleDate );
+        }
+    } catch (JSONException e) {
+        // TODO: handle exception
+        e.printStackTrace();
+        Log.e("log_tag", "Error parsing data " + e.toString());
+    }
+    return true;
+}
+    public boolean SavescheduleinvingroupToSQLite() {
+        // TODO Auto-generated method stub
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("sTableName", "scheduleinvingroup"));
+
+        try {
+            final JSONArray data = new JSONArray(
+                    ConnectServer
+                            .getJsonPostGet(params, "getData"));
+
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject c = data.getJSONObject(i);
+                String sScheduleGroupID = c.getString("ScheduleGroupID");
+                String sInvOfficialID = c.getString("InvOfficialID");
+
+
+                long saveStatus = mDbHelper. Savescheduleinvingroup(sScheduleGroupID, sInvOfficialID);
+                if (saveStatus <= 0) {
+                    Log.i("Recieve", "Error!! ");
+                }
+                Log.i("scheduleinvingroup" + i, sScheduleGroupID  + " " +  sInvOfficialID );
+            }
+
+        } catch (JSONException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            Log.e("log_tag", "Error parsing data " + e.toString());
+        }
+
+        return true;
+
+    }
+    public boolean SaveschedulegroupToSQLite() {
+        // TODO Auto-generated method stub
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("sTableName", "schedulegroup"));
+
+        try {
+            final JSONArray data = new JSONArray(
+                    ConnectServer
+                            .getJsonPostGet(params, "getData"));
+
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject c = data.getJSONObject(i);
+                String sScheduleGroupID = c.getString("ScheduleGroupID");
+                String sScheduleInvestigateID = c.getString("ScheduleInvestigateID");
+
+
+                long saveStatus = mDbHelper. Saveschedulegroup(sScheduleGroupID, sScheduleInvestigateID);
+                if (saveStatus <= 0) {
+                    Log.i("Recieve", "Error!! ");
+                }
+                Log.i("Saveschedulegroup" + i, sScheduleGroupID  + " " +  sScheduleInvestigateID );
+            }
+
+        } catch (JSONException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            Log.e("log_tag", "Error parsing data " + e.toString());
+        }
+
+        return true;
+
+    }
 
     private void initializeData() {
         mDb = mDbHelper.getReadableDatabase();
-        mCursor = mDb.rawQuery("SELECT scheduleinvestigate.ScheduleID," +
+        mCursor = mDb.rawQuery("SELECT scheduleinvestigates.ScheduleInvestigateID," +
+                "scheduleinvestigates.ScheduleDate,scheduleinvestigates.ScheduleMonth," +
+                "schedulegroup.ScheduleGroupID  FROM "
+                + SQLiteDBHelper.TABLE_schedulegroup + ","
+                + SQLiteDBHelper.TABLE_scheduleinvingroup + ","
+                + SQLiteDBHelper.TABLE_scheduleinvestigates
+                + " WHERE scheduleinvestigates.ScheduleInvestigateID = schedulegroup.ScheduleInvestigateID AND " +
+                "scheduleinvingroup.ScheduleGroupID = schedulegroup.ScheduleGroupID AND " +
+                "scheduleinvingroup.InvOfficialID = '" + officialID + "' " +
+                "ORDER BY scheduleinvestigates.ScheduleDate ASC", null);
+       /* mCursor1 = mDb.rawQuery("SELECT scheduleinvestigate.ScheduleID," +
                 "scheduleinvestigate.Schedule_Date,scheduleinvestigate.Schedule_Month," +
                 "scheduleinvestigate.SCDCCenterID  FROM "
                 + SQLiteDBHelper.TABLE_scheduleofofficial + ","
                 + SQLiteDBHelper.TABLE_scheduleinvestigate
                 + " WHERE scheduleinvestigate.ScheduleID = scheduleofofficial.ScheduleID AND " +
                 "scheduleofofficial.OfficialID = '" + officialID + "' " +
-                "ORDER BY scheduleinvestigate.Schedule_Date ASC", null);
+                "ORDER BY scheduleinvestigate.Schedule_Date DESC", null);*/
 //SELECT * FROM `scheduleofofficial`,scheduleinvestigate
 // WHERE scheduleinvestigate.ScheduleID = scheduleofofficial.ScheduleID AND
 // scheduleofofficial.OfficialID = 'INV_SCDCC04_2'
@@ -280,7 +387,7 @@ public class ScheduleInvestigationFragment extends Fragment {
         scheduleLists.clear();
         mCursor.moveToFirst();
         while (!mCursor.isAfterLast()) {
-            scheduleLists.add(new ScheduleList(
+           /* scheduleLists.add(new ScheduleList(
                     mCursor.getString(mCursor
                             .getColumnIndex(SQLiteDBHelper.COL_ScheduleID)),
                     mCursor.getString(mCursor
@@ -289,8 +396,17 @@ public class ScheduleInvestigationFragment extends Fragment {
                             .getColumnIndex(SQLiteDBHelper.COL_Schedule_Month)),
                     mCursor.getString(mCursor
                             .getColumnIndex(SQLiteDBHelper.COL_SCDCCenterID))
+            ));*/
+            scheduleLists.add(new ScheduleList(
+                    mCursor.getString(mCursor
+                            .getColumnIndex(SQLiteDBHelper.COL_ScheduleInvestigateID)),
+                    mCursor.getString(mCursor
+                            .getColumnIndex(SQLiteDBHelper.COL_ScheduleDate)),
+                    mCursor.getString(mCursor
+                            .getColumnIndex(SQLiteDBHelper.COL_ScheduleMonth)),
+                    mCursor.getString(mCursor
+                            .getColumnIndex(SQLiteDBHelper.COL_ScheduleGroupID))
             ));
-
             mCursor.moveToNext();
         }
         mCursor.close();
@@ -371,8 +487,11 @@ public class ScheduleInvestigationFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-            SaveScheduleInvestigateToSQLite();
-            SaveScheduleOfOfficialToSQLite();
+            //SaveScheduleInvestigateToSQLite();
+            //SaveScheduleOfOfficialToSQLite();
+            SaveScheduleInvestigatesToSQLite();
+            SavescheduleinvingroupToSQLite();
+            SaveschedulegroupToSQLite();
             String status = "1";
             return status;
         }
