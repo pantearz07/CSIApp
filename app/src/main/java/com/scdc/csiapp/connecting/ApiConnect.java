@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class ApiConnect {
         updateApiConnect();
     }
 
+    // ตรวจสอบการเชื่อมต่อกับระบบผ่าน function checkConnect
     public ApiStatus checkConnect() {
         Request.Builder builder = new Request.Builder();
         Request request = builder
@@ -58,6 +60,7 @@ public class ApiConnect {
         return null;
     }
 
+    // ส่วนการทำงาน Update ผ่านในคลาส เพื่อดึงค่า IP ล่าสุด และอัพเดทลิงค์การเชื่อม
     private void updateApiConnect() {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
@@ -65,6 +68,7 @@ public class ApiConnect {
         Log.d(TAG, "update Api Connect " + urlMobileIP);
     }
 
+    // ใช้ในการสั่งเปลี่ยน IP และจะบันทึกลง Preferences ให้เอง
     public boolean updateIP(String ip) {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -75,6 +79,7 @@ public class ApiConnect {
         return true;
     }
 
+    // ตรวจสอบการ Login และข้อมูลผู้ใช้งาน User , Official ผ่าน function login
     public ApiLoginStatus login(ApiLoginRequest dataLogin) {
         RequestBody formBody = new FormBody.Builder()
                 .add("Username", dataLogin.getUsername())
@@ -99,6 +104,14 @@ public class ApiConnect {
             Log.d(TAG, "ERROR in login : " + e.getMessage());
             return null;
         }
+    }
+
+    //** ใช้อัปเดทข้อมูล User , Official ผ่าน function editProfile
+    // ส่งข้อมูลด้วย
+    // ApiProfile
+    // Username,Password ดึงเอาจาก User ของ ApiProfile
+    public boolean editProfile(ApiProfile profile){
+        return false;
     }
 
     public ApiStatus saveGCM(ApiGCMRequest data) {

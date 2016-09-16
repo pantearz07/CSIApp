@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -22,10 +23,14 @@ import com.scdc.csiapp.connecting.PreferenceData;
  */
 public class WelcomeActivity extends AppCompatActivity {
     /*
-         * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
-          */
+     * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
+    */
     public static ApiConnect api;
     public static ApiLoginRequest login;
+
+    //ข้อมูลของผู้ใช้งานที่ Login ไว้
+    public static ApiProfile profile;
+
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
     //Context for other activity
@@ -35,7 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
     ConnectionDetector cd;
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
-    String officialID,username,password,accestype = "";
+    String officialID, username, password, accestype = "";
     boolean userlogin = false;
     String ipvalue;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -117,6 +122,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         Log.i("Check", "onStartWelcome");
     }
+
     public void onBackPressed() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Exit");

@@ -436,15 +436,17 @@ public class LoginActivity extends AppCompatActivity {
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
             } else {
-                View rootView = findViewById(R.id.drawerLayoutLogin);
-                snackbar = Snackbar.make(rootView, getString(R.string.cannot_connect_server), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    View rootView = findViewById(R.id.drawerLayoutLogin);
+                    snackbar = Snackbar.make(rootView, getString(R.string.cannot_connect_server), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
 
-                            }
-                        });
-                snackbar.show();
+                                }
+                            });
+                    snackbar.show();
+                }
             }
         }
     }
