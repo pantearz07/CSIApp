@@ -4,6 +4,8 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbPropertyLoss {
+    public static final String TB_PropertyLoss = "propertyloss";
+
     // From Table propertyloss field name PropertyLossID
     public static final String COL_PropertyLossID = "PropertyLossID";
     public String PropertyLossID = "";

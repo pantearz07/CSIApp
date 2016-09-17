@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbAmphur {
+    public static final String TB_Amphur = "amphur";
     // From Table amphur field name AMPHUR_ID
     public static final String COL_AMPHUR_ID = "AMPHUR_ID";
     public String AMPHUR_ID = "";

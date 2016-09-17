@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbSCDCcenter {
+    public static final String TB_SCDCcenter = "scdccenter";
     // From Table scdccenter field name SCDCCenterID
     public static final String COL_SCDCCenterID = "SCDCCenterID";
     public String SCDCCenterID = "";

@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbCaseSceneType {
+    public static final String TB_CaseSceneType = "casescenetype";
     // From Table casescenetype field name CaseTypeID
     public static final String COL_CaseTypeID = "CaseTypeID";
     public String CaseTypeID = "";

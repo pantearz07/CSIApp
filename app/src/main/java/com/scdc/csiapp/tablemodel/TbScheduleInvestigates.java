@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbScheduleInvestigates {
+    public static final String TB_ScheduleInvestigates = "scheduleinvestigates";
     // From Table scheduleinvestigates field name ScheduleInvestigateID
     public static final String COL_ScheduleInvestigateID = "ScheduleInvestigateID";
     public String ScheduleInvestigateID = "";

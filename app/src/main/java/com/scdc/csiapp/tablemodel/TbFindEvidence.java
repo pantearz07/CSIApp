@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbFindEvidence {
+    public static final String TB_FindEvidence = "findevidence";
     // From Table findevidence field name FindEvidenceID
     public static final String COL_FindEvidenceID = "FindEvidenceID";
     public String FindEvidenceID = "";
