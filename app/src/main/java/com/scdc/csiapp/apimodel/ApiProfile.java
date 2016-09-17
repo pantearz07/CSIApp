@@ -15,20 +15,58 @@ import java.util.List;
  * Created by cbnuke on 9/16/16.
  */
 public class ApiProfile {
-    TbOfficial tbOfficial;
+    // ตารางหลัก
+    private TbOfficial tbOfficial;
 
     // ใช้ใน tbOfficial กรณี AccessType = investigator
-    TbSCDCagency tbSCDCagency;
-    TbSCDCcenter tbSCDCcenter;
+    private String SCDCAgencyCode;
 
     // ใช้ใน tbOfficial กรณี AccessType = inquiryofficial
-    TbPoliceStation tbPoliceStation;
-    TbPoliceAgency tbPoliceAgency;
-    TbPoliceCenter tbPoliceCenter;
+    private String PoliceStationID;
 
     // ข้อมูล Username, Password(MD5)
-    TbUsers tbUsers;
+    private TbUsers tbUsers;
 
-    // Token ของ User ตามอุปกรณ์แต่ละชิ้น
-    List<TbRegistrationGCM> tbRegistrationGCMList;
+    // Token ของ User ตามอุปกรณ์แต่ละชิ้น (ยังไม่ได้ใช้งานหรอก)
+    private List<TbRegistrationGCM> tbRegistrationGCMList;
+
+    public TbOfficial getTbOfficial() {
+        return tbOfficial;
+    }
+
+    public void setTbOfficial(TbOfficial tbOfficial) {
+        this.tbOfficial = tbOfficial;
+    }
+
+    public String getSCDCAgencyCode() {
+        return SCDCAgencyCode;
+    }
+
+    public void setSCDCAgencyCode(String SCDCAgencyCode) {
+        this.SCDCAgencyCode = SCDCAgencyCode;
+    }
+
+    public String getPoliceStationID() {
+        return PoliceStationID;
+    }
+
+    public void setPoliceStationID(String policeStationID) {
+        PoliceStationID = policeStationID;
+    }
+
+    public TbUsers getTbUsers() {
+        return tbUsers;
+    }
+
+    public void setTbUsers(TbUsers tbUsers) {
+        this.tbUsers = tbUsers;
+    }
+
+    public List<TbRegistrationGCM> getTbRegistrationGCMList() {
+        return tbRegistrationGCMList;
+    }
+
+    public void setTbRegistrationGCMList(List<TbRegistrationGCM> tbRegistrationGCMList) {
+        this.tbRegistrationGCMList = tbRegistrationGCMList;
+    }
 }

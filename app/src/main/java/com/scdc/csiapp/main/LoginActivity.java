@@ -36,11 +36,14 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.gcmservice.GcmRegisterService;
+import com.scdc.csiapp.tablemodel.TbOfficial;
+import com.scdc.csiapp.tablemodel.TbUsers;
 
 import java.util.Date;
 
@@ -253,16 +256,50 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(apiLoginStatus);
             progressDialog.dismiss();
             if (apiLoginStatus.getStatus().equalsIgnoreCase("success")) {
+                //*** การทำงานทั้งหมดเพื่อสร้าง ApiProfile ***//
+                // นำค่าที่ได้รับมาสร้างเป็น ApiProfile ไว้ที่ WelcomeActivity ให้หน้าอื่นเรียกใช้ได้ง่ายๆ
+                if (WelcomeActivity.profile == null) {
+                    WelcomeActivity.profile = new ApiProfile();
+                }
+                // สร้าง TbUsers จาก ApiLoginStatus
+                TbUsers users = new TbUsers();
+                users.id_users = apiLoginStatus.getData().getResult().getUsers().getId_users();
+                users.id_permission = apiLoginStatus.getData().getResult().getUsers().getId_permission();
+                users.pass = apiLoginStatus.getData().getResult().getUsers().getPass();
+                users.id_system = apiLoginStatus.getData().getResult().getUsers().getId_system();
+                users.title = apiLoginStatus.getData().getResult().getUsers().getTitle();
+                users.name = apiLoginStatus.getData().getResult().getUsers().getName();
+                users.surname = apiLoginStatus.getData().getResult().getUsers().getSurname();
+                users.position = apiLoginStatus.getData().getResult().getUsers().getPosition();
+                users.picture = apiLoginStatus.getData().getResult().getUsers().getPicture();
+                users.last_login = apiLoginStatus.getData().getResult().getUsers().getLast_login();
+                // สร้าง TbOfficial จาก ApiLoginStatus
+                TbOfficial official = new TbOfficial();
+                official.OfficialID = apiLoginStatus.getData().getResult().getOfficial().getOfficialID();
+                official.FirstName = apiLoginStatus.getData().getResult().getOfficial().getFirstName();
+                official.LastName = apiLoginStatus.getData().getResult().getOfficial().getLastName();
+                official.Alias = apiLoginStatus.getData().getResult().getOfficial().getAlias();
+                official.Rank = apiLoginStatus.getData().getResult().getOfficial().getRank();
+                official.Position = apiLoginStatus.getData().getResult().getOfficial().getPosition();
+                official.SubPossition = apiLoginStatus.getData().getResult().getOfficial().getSubPossition();
+                official.PhoneNumber = apiLoginStatus.getData().getResult().getOfficial().getPhoneNumber();
+                official.OfficialEmail = apiLoginStatus.getData().getResult().getOfficial().getOfficialEmail();
+                official.OfficialDisplayPic = apiLoginStatus.getData().getResult().getOfficial().getOfficialDisplayPic();
+                official.AccessType = apiLoginStatus.getData().getResult().getOfficial().getAccessType();
+                official.SCDCAgencyCode = apiLoginStatus.getData().getResult().getOfficial().getSCDCAgencyCode();
+                official.PoliceStationID = apiLoginStatus.getData().getResult().getOfficial().getPoliceStationID();
+                official.id_users = apiLoginStatus.getData().getResult().getOfficial().getId_users();
+                // นำค่าที่สร้างไปใช้ในการสร้าง ApiProfile ต่อ
+                WelcomeActivity.profile.setTbOfficial(official);
+                if (official.AccessType.equalsIgnoreCase("inquiryofficial")) {
+                    WelcomeActivity.profile.setPoliceStationID(apiLoginStatus.getData().getResult().getOfficial().getPoliceStationID());
+                } else if (official.AccessType.equalsIgnoreCase("investigator")) {
+                    WelcomeActivity.profile.setSCDCAgencyCode(apiLoginStatus.getData().getResult().getOfficial().getSCDCAgencyCode());
+                }
+                WelcomeActivity.profile.setTbUsers(users);
 
                 Toast.makeText(getApplicationContext(), apiLoginStatus.getData().getReason(), Toast.LENGTH_LONG).show();
-                boolean isSuccess = mManager.registerUser(apiLoginStatus.getData().getResult().getUsers().getId_users(),
-                        apiLoginStatus.getData().getResult().getUsers().getPass(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getOfficialID(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getAccessType(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getRank() + " " +
-                                apiLoginStatus.getData().getResult().getOfficial().get(0).getFirstName() + " " +
-                                apiLoginStatus.getData().getResult().getOfficial().get(0).getLastName(),
-                        apiLoginStatus.getData().getResult().getOfficial().get(0).getSCDCAgencyCode());
+                boolean isSuccess = mManager.registerUser(users, official);
                 if (isSuccess) {
                     onLoginSuccess();
                 } else {
@@ -480,9 +517,9 @@ public class LoginActivity extends AppCompatActivity {
                 String tokenvalue = shared.getString("tokenKey", "not found!");
                 Log.i(TAG, "Token value: " + tokenvalue);
 
-                String username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-                String password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
-                String officialid = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+                String username = WelcomeActivity.profile.getTbUsers().id_users;
+                String password = WelcomeActivity.profile.getTbUsers().pass;
+                String officialid =WelcomeActivity.profile.getTbOfficial().OfficialID;
 
                 ApiGCMRequest gcmRequest = new ApiGCMRequest();
                 gcmRequest.setUsername(username);

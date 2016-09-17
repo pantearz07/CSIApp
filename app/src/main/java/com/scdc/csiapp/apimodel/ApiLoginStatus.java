@@ -1,24 +1,23 @@
 package com.scdc.csiapp.apimodel;
 
-import java.util.List;
-
 /**
  * Created by Pantearz07 on 12/9/2559.
  */
 public class ApiLoginStatus {
+
     /**
      * status : success
-     * data : {"action":"login","reason":"เข้าระบบสำเร็จ","result":{"users":{"id_users":"inv2","id_permission":"5","pass":"81dc9bdb52d04dc20036dbd8313ed055","id_system":"31","title":"พ.ต.ท.","name":"วรากุล","surname":"กาญจนกัญโห","position":"นวท. (สบ3)","picture":null,"last_login":null},"official":[{"OfficialID":"INV_SCDCC04_2","FirstName":"วรากุล","LastName":"กาญจนกัญโห","Alias":"44","Rank":"พ.ต.ท.","Position":"นวท. (สบ3)","SubPossition":"","PhoneNumber":"811454536","OfficialEmail":"crimescene004@gmail.com","OfficialDisplayPic":"","AccessType":"investigator","SCDCAgencyCode":"SCDCA401","PoliceStationID":null,"id_users":"inv2"}]}}
+     * data : {"action":"login","reason":"เข้าระบบสำเร็จ","result":{"users":{"id_users":"inq1","id_permission":"4","pass":"81dc9bdb52d04dc20036dbd8313ed055","id_system":"25","title":"พ.ต.ท.","name":"ภูมี","surname":"อีคะละ","position":"พงส.","picture":"","last_login":""},"official":{"OfficialID":"INQ_PC04_1","FirstName":"ภูมี","LastName":"อีคะละ","Alias":"","Rank":"พ.ต.ท.","Position":"พงส.","SubPossition":"","PhoneNumber":"","OfficialEmail":"","OfficialDisplayPic":"","AccessType":"inquiryofficial","SCDCAgencyCode":"","PoliceStationID":"40001","id_users":"inq1"}}}
      */
 
     private String status;
     /**
      * action : login
      * reason : เข้าระบบสำเร็จ
-     * result : {"users":{"id_users":"inv2","id_permission":"5","pass":"81dc9bdb52d04dc20036dbd8313ed055","id_system":"31","title":"พ.ต.ท.","name":"วรากุล","surname":"กาญจนกัญโห","position":"นวท. (สบ3)","picture":null,"last_login":null},"official":[{"OfficialID":"INV_SCDCC04_2","FirstName":"วรากุล","LastName":"กาญจนกัญโห","Alias":"44","Rank":"พ.ต.ท.","Position":"นวท. (สบ3)","SubPossition":"","PhoneNumber":"811454536","OfficialEmail":"crimescene004@gmail.com","OfficialDisplayPic":"","AccessType":"investigator","SCDCAgencyCode":"SCDCA401","PoliceStationID":null,"id_users":"inv2"}]}
+     * result : {"users":{"id_users":"inq1","id_permission":"4","pass":"81dc9bdb52d04dc20036dbd8313ed055","id_system":"25","title":"พ.ต.ท.","name":"ภูมี","surname":"อีคะละ","position":"พงส.","picture":"","last_login":""},"official":{"OfficialID":"INQ_PC04_1","FirstName":"ภูมี","LastName":"อีคะละ","Alias":"","Rank":"พ.ต.ท.","Position":"พงส.","SubPossition":"","PhoneNumber":"","OfficialEmail":"","OfficialDisplayPic":"","AccessType":"inquiryofficial","SCDCAgencyCode":"","PoliceStationID":"40001","id_users":"inq1"}}
      */
 
-    private DataBean data;
+    private DataEntity data;
 
     public String getStatus() {
         return status;
@@ -28,23 +27,23 @@ public class ApiLoginStatus {
         this.status = status;
     }
 
-    public DataBean getData() {
+    public DataEntity getData() {
         return data;
     }
 
-    public void setData(DataBean data) {
+    public void setData(DataEntity data) {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataEntity {
         private String action;
         private String reason;
         /**
-         * users : {"id_users":"inv2","id_permission":"5","pass":"81dc9bdb52d04dc20036dbd8313ed055","id_system":"31","title":"พ.ต.ท.","name":"วรากุล","surname":"กาญจนกัญโห","position":"นวท. (สบ3)","picture":null,"last_login":null}
-         * official : [{"OfficialID":"INV_SCDCC04_2","FirstName":"วรากุล","LastName":"กาญจนกัญโห","Alias":"44","Rank":"พ.ต.ท.","Position":"นวท. (สบ3)","SubPossition":"","PhoneNumber":"811454536","OfficialEmail":"crimescene004@gmail.com","OfficialDisplayPic":"","AccessType":"investigator","SCDCAgencyCode":"SCDCA401","PoliceStationID":null,"id_users":"inv2"}]
+         * users : {"id_users":"inq1","id_permission":"4","pass":"81dc9bdb52d04dc20036dbd8313ed055","id_system":"25","title":"พ.ต.ท.","name":"ภูมี","surname":"อีคะละ","position":"พงส.","picture":"","last_login":""}
+         * official : {"OfficialID":"INQ_PC04_1","FirstName":"ภูมี","LastName":"อีคะละ","Alias":"","Rank":"พ.ต.ท.","Position":"พงส.","SubPossition":"","PhoneNumber":"","OfficialEmail":"","OfficialDisplayPic":"","AccessType":"inquiryofficial","SCDCAgencyCode":"","PoliceStationID":"40001","id_users":"inq1"}
          */
 
-        private ResultBean result;
+        private ResultEntity result;
 
         public String getAction() {
             return action;
@@ -62,65 +61,65 @@ public class ApiLoginStatus {
             this.reason = reason;
         }
 
-        public ResultBean getResult() {
+        public ResultEntity getResult() {
             return result;
         }
 
-        public void setResult(ResultBean result) {
+        public void setResult(ResultEntity result) {
             this.result = result;
         }
 
-        public static class ResultBean {
+        public static class ResultEntity {
             /**
-             * id_users : inv2
-             * id_permission : 5
+             * id_users : inq1
+             * id_permission : 4
              * pass : 81dc9bdb52d04dc20036dbd8313ed055
-             * id_system : 31
+             * id_system : 25
              * title : พ.ต.ท.
-             * name : วรากุล
-             * surname : กาญจนกัญโห
-             * position : นวท. (สบ3)
-             * picture : null
-             * last_login : null
+             * name : ภูมี
+             * surname : อีคะละ
+             * position : พงส.
+             * picture :
+             * last_login :
              */
 
-            private UsersBean users;
+            private UsersEntity users;
             /**
-             * OfficialID : INV_SCDCC04_2
-             * FirstName : วรากุล
-             * LastName : กาญจนกัญโห
-             * Alias : 44
+             * OfficialID : INQ_PC04_1
+             * FirstName : ภูมี
+             * LastName : อีคะละ
+             * Alias :
              * Rank : พ.ต.ท.
-             * Position : นวท. (สบ3)
+             * Position : พงส.
              * SubPossition :
-             * PhoneNumber : 811454536
-             * OfficialEmail : crimescene004@gmail.com
+             * PhoneNumber :
+             * OfficialEmail :
              * OfficialDisplayPic :
-             * AccessType : investigator
-             * SCDCAgencyCode : SCDCA401
-             * PoliceStationID : null
-             * id_users : inv2
+             * AccessType : inquiryofficial
+             * SCDCAgencyCode :
+             * PoliceStationID : 40001
+             * id_users : inq1
              */
 
-            private List<OfficialBean> official;
+            private OfficialEntity official;
 
-            public UsersBean getUsers() {
+            public UsersEntity getUsers() {
                 return users;
             }
 
-            public void setUsers(UsersBean users) {
+            public void setUsers(UsersEntity users) {
                 this.users = users;
             }
 
-            public List<OfficialBean> getOfficial() {
+            public OfficialEntity getOfficial() {
                 return official;
             }
 
-            public void setOfficial(List<OfficialBean> official) {
+            public void setOfficial(OfficialEntity official) {
                 this.official = official;
             }
 
-            public static class UsersBean {
+            public static class UsersEntity {
                 private String id_users;
                 private String id_permission;
                 private String pass;
@@ -129,8 +128,8 @@ public class ApiLoginStatus {
                 private String name;
                 private String surname;
                 private String position;
-                private Object picture;
-                private Object last_login;
+                private String picture;
+                private String last_login;
 
                 public String getId_users() {
                     return id_users;
@@ -196,24 +195,24 @@ public class ApiLoginStatus {
                     this.position = position;
                 }
 
-                public Object getPicture() {
+                public String getPicture() {
                     return picture;
                 }
 
-                public void setPicture(Object picture) {
+                public void setPicture(String picture) {
                     this.picture = picture;
                 }
 
-                public Object getLast_login() {
+                public String getLast_login() {
                     return last_login;
                 }
 
-                public void setLast_login(Object last_login) {
+                public void setLast_login(String last_login) {
                     this.last_login = last_login;
                 }
             }
 
-            public static class OfficialBean {
+            public static class OfficialEntity {
                 private String OfficialID;
                 private String FirstName;
                 private String LastName;
@@ -226,7 +225,7 @@ public class ApiLoginStatus {
                 private String OfficialDisplayPic;
                 private String AccessType;
                 private String SCDCAgencyCode;
-                private Object PoliceStationID;
+                private String PoliceStationID;
                 private String id_users;
 
                 public String getOfficialID() {
@@ -325,11 +324,11 @@ public class ApiLoginStatus {
                     this.SCDCAgencyCode = SCDCAgencyCode;
                 }
 
-                public Object getPoliceStationID() {
+                public String getPoliceStationID() {
                     return PoliceStationID;
                 }
 
-                public void setPoliceStationID(Object PoliceStationID) {
+                public void setPoliceStationID(String PoliceStationID) {
                     this.PoliceStationID = PoliceStationID;
                 }
 

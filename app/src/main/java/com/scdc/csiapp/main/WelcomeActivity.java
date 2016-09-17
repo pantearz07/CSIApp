@@ -17,6 +17,8 @@ import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.tablemodel.TbOfficial;
+import com.scdc.csiapp.tablemodel.TbUsers;
 
 /**
  * Created by Pantearz07 on 24/9/2558.
@@ -53,10 +55,6 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.welcome_layout);
         mManager = new PreferenceData(this);
         mContext = this;
-        accestype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-        password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
         userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
 
@@ -83,22 +81,19 @@ public class WelcomeActivity extends AppCompatActivity {
             public void run() {
 
                 if (userlogin) {
-                    SharedPreferences sp = getSharedPreferences(PreferenceData.KEY_PREFS, MODE_PRIVATE);
+                    // ถ้าเคย Login อยู่แล้วจะสร้าง ApiProfile จาก pref
+                    createApiProfile();
 
-                    String nameOfficial = sp.getString(PreferenceData.KEY_NAME, "");
+                    officialID = profile.getTbOfficial().OfficialID;
+                    username = profile.getTbUsers().id_users;
+                    password = profile.getTbUsers().pass;
+                    accestype = profile.getTbOfficial().AccessType;
+                    String nameOfficial = profile.getTbOfficial().Rank + profile.getTbOfficial().FirstName + " " + profile.getTbOfficial().LastName;
+
                     Toast.makeText(getBaseContext(),
                             "สวัสดีค่ะ คุณ " + nameOfficial,
                             Toast.LENGTH_SHORT).show();
-                    cd = new ConnectionDetector(getApplicationContext());
-                    if (cd.isNetworkAvailable()) {
-                        Log.d("internet status", "connected");
 
-                    } else {
-                        Log.d("internet status", "no Internet Access");
-                    }
-                    Toast.makeText(getBaseContext(),
-                            "คุณได้มีการล๊อคอินแล้ว",
-                            Toast.LENGTH_SHORT).show();
                     if (accestype.equals("investigator")) {
                         finish();
                         startActivity(new Intent(mContext, MainActivity.class));
@@ -106,8 +101,6 @@ public class WelcomeActivity extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(mContext, InqMainActivity.class));
                     }
-
-
                 } else {
                     finish();
                     startActivity(new Intent(mContext, LoginActivity.class));
@@ -115,6 +108,49 @@ public class WelcomeActivity extends AppCompatActivity {
 
             }
         }, 2000);
+    }
+
+    // ใช้สร้าง ApiProfile จาก pref
+    private void createApiProfile() {
+        if (profile == null) {
+            profile = new ApiProfile();
+        }
+        // สร้าง TbUsers จาก pref โดยชื่ออิงจาก TbUsers เอง
+        TbUsers users = new TbUsers();
+        users.id_users = mManager.getPreferenceData(TbUsers.COL_id_users);
+        users.id_permission = mManager.getPreferenceData(TbUsers.COL_id_permission);
+        users.pass = mManager.getPreferenceData(TbUsers.COL_pass);
+        users.id_system = mManager.getPreferenceData(TbUsers.COL_id_system);
+        users.title = mManager.getPreferenceData(TbUsers.COL_title);
+        users.name = mManager.getPreferenceData(TbUsers.COL_name);
+        users.surname = mManager.getPreferenceData(TbUsers.COL_surname);
+        users.position = mManager.getPreferenceData(TbUsers.COL_position);
+        users.picture = mManager.getPreferenceData(TbUsers.COL_picture);
+        users.last_login = mManager.getPreferenceData(TbUsers.COL_last_login);
+        // สร้าง TbOfficial จาก pref โดยชื่ออิงจาก TbOfficial เอง
+        TbOfficial official = new TbOfficial();
+        official.OfficialID = mManager.getPreferenceData(TbOfficial.COL_OfficialID);
+        official.FirstName = mManager.getPreferenceData(TbOfficial.COL_FirstName);
+        official.LastName = mManager.getPreferenceData(TbOfficial.COL_LastName);
+        official.Alias = mManager.getPreferenceData(TbOfficial.COL_Alias);
+        official.Rank = mManager.getPreferenceData(TbOfficial.COL_Rank);
+        official.Position = mManager.getPreferenceData(TbOfficial.COL_Position);
+        official.SubPossition = mManager.getPreferenceData(TbOfficial.COL_SubPossition);
+        official.PhoneNumber = mManager.getPreferenceData(TbOfficial.COL_PhoneNumber);
+        official.OfficialEmail = mManager.getPreferenceData(TbOfficial.COL_OfficialEmail);
+        official.OfficialDisplayPic = mManager.getPreferenceData(TbOfficial.COL_OfficialDisplayPic);
+        official.AccessType = mManager.getPreferenceData(TbOfficial.COL_AccessType);
+        official.SCDCAgencyCode = mManager.getPreferenceData(TbOfficial.COL_SCDCAgencyCode);
+        official.PoliceStationID = mManager.getPreferenceData(TbOfficial.COL_PoliceStationID);
+        official.id_users = mManager.getPreferenceData(TbOfficial.COL_id_users);
+        // นำค่าที่สร้างไปใช้ในการสร้าง ApiProfile ต่อ
+        profile.setTbOfficial(official);
+        if (official.AccessType.equalsIgnoreCase("inquiryofficial")) {
+            profile.setPoliceStationID(mManager.getPreferenceData(TbOfficial.COL_PoliceStationID));
+        } else if (official.AccessType.equalsIgnoreCase("investigator")) {
+            profile.setSCDCAgencyCode(mManager.getPreferenceData(TbOfficial.COL_SCDCAgencyCode));
+        }
+        profile.setTbUsers(users);
     }
 
 

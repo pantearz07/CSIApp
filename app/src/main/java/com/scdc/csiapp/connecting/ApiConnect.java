@@ -121,6 +121,10 @@ public class ApiConnect {
                 .add("Registration_id", data.getRegistration_id())
                 .add("RegisOfficialID", data.getRegisOfficialID())
                 .build();
+        Log.d(TAG, "Not User " + data.getUsername());
+        Log.d(TAG, "Not Pass " + data.getPassword());
+        Log.d(TAG, "Not Token " + data.getRegistration_id());
+        Log.d(TAG, "Not OffID " + data.getRegisOfficialID());
         Request.Builder builder = new Request.Builder();
         Request request = builder
                 .url(urlMobileIP + "getRegistrationGCM")
