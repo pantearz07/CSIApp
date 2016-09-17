@@ -20,13 +20,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.main.CSIDataTabFragment;
+import com.scdc.csiapp.invmain.CSIDataTabFragment;
 import com.scdc.csiapp.main.GetDateTime;
 
 /**
@@ -43,31 +42,32 @@ public class NoticeCaseListFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-
-    long isConnectingToInternet = 0;
+    Boolean networkConnectivity = false;
     GetDateTime getDateTime;
     String officialID;
+
+    private static final String TAG = "DEBUG-NoticeCaseListFragment";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View x = inflater.inflate(R.layout.home_layout, null);
+        View x = inflater.inflate(R.layout.casescene_fragment_layout, null);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.home);
         mDbHelper = new SQLiteDBHelper(getActivity());
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         context = x.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
-        rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayoutHome);
+        rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayout);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
 
-        isConnectingToInternet = cd.isConnectingToInternet();
+        networkConnectivity = cd.isNetworkAvailable();
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();
 
-        fabBtn = (FloatingActionButton) x.findViewById(R.id.fabBtnHome);
+        fabBtn = (FloatingActionButton) x.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,6 +80,7 @@ public class NoticeCaseListFragment extends Fragment {
 
                 final EditText edtReportNo = (EditText) view1.findViewById(R.id.edtReportNo);
                 final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
+                //ดึงค่าจาก TbCaseSceneType
                 final String[] CaseType = getResources().getStringArray(R.array.casetype);
                 ArrayAdapter<String> adapterCaseType = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, CaseType);
@@ -97,7 +98,7 @@ public class NoticeCaseListFragment extends Fragment {
                         selectedCaseType[0] = CaseType[0];
                     }
                 });
-                /*final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
+                 /*final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
                 if (mCaseTypeArray != null) {
                     String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
                     for (int i = 0; i < mCaseTypeArray.length; i++) {
@@ -112,7 +113,8 @@ public class NoticeCaseListFragment extends Fragment {
                     Log.i("show mCaseTypeArray", "null");
                 }*/
                 final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
-                //final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();
+                //ดึงค่าจาก TbSubCaseSceneType
+                               //final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();
                 final String[] SubCaseType = getResources().getStringArray(R.array.subcasetypeproperties);
                 ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, SubCaseType);
@@ -127,24 +129,20 @@ public class NoticeCaseListFragment extends Fragment {
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
-                        selectedSubCaseType[0] =SubCaseType[0];
+                        selectedSubCaseType[0] = SubCaseType[0];
                     }
                 });
 
-                final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
+
                 dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
                 dialog.setIcon(R.drawable.ic_noti);
                 dialog.setCancelable(true);
-// Current Date
-               /* Calendar calendar = Calendar.getInstance();
-                int mHour = calendar.get(Calendar.HOUR);
-                int mMinute = calendar.get(Calendar.MINUTE);
-                int mYear = calendar.get(Calendar.YEAR);*/
+                // Current Date
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                final String reportYear = dateTimeCurrent[0];
-                final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0]+"_"+dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
 
-                edtYear.setText(" / "+reportYear);
+                final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0] + "_" + dateTimeCurrent[3] + dateTimeCurrent[4];
+
+
                 dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -155,17 +153,17 @@ public class NoticeCaseListFragment extends Fragment {
                             reportNo = edtReportNo.getText().toString();
                         }
 
-                        String reportID = "RC_" + saveDataTime ;
+                        String reportID = "MC_" + saveDataTime;
 
                         // save new Report
                         long saveStatus1 = mDbHelper.saveReportID(
-                                reportID, reportNo, officialID, reportYear,selectedCaseType[0],selectedSubCaseType[0], "investigating");
+                                reportID, reportNo, officialID, "", selectedCaseType[0], selectedSubCaseType[0], "receive");
 
                         if (saveStatus1 <= 0) {
                             Log.i("save report", "Error!! ");
                         } else {
                             Log.i("save report", reportID + " " + reportNo
-                                    + " " + officialID + " " + reportYear);
+                                    + " " + officialID);
                         }
                         //save preference reportID
                         mManager.setPreferenceData(mManager.PREF_REPORTID, reportID);

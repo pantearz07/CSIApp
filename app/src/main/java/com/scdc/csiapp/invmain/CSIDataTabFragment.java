@@ -13,14 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.csidatatabs.DetailsTabFragment;
-import com.scdc.csiapp.csidatatabs.DiagramTabFragment;
-import com.scdc.csiapp.csidatatabs.PhotoTabFragment;
-import com.scdc.csiapp.csidatatabs.ReceiveDataTabFragment;
-import com.scdc.csiapp.csidatatabs.ResultTabFragment;
-import com.scdc.csiapp.csidatatabs.SummaryCSITabFragment;
-import com.scdc.csiapp.csidatatabs.VideoTabFragment;
-import com.scdc.csiapp.csidatatabs.VoiceTabFragment;
 
 
 public class CSIDataTabFragment extends Fragment {

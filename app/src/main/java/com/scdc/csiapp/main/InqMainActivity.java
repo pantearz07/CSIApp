@@ -1,22 +1,16 @@
 package com.scdc.csiapp.main;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -31,13 +25,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.gcmservice.GcmRegisterService;
 import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 
 public class InqMainActivity extends AppCompatActivity {
@@ -77,10 +68,11 @@ public class InqMainActivity extends AppCompatActivity {
     ImageView avatar;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
-    private static final String TAG = "InqMainActivity";
+    private static final String TAG = "DEBUG-InqMainActivity";
     ConnectionDetector cd;
     Boolean networkConnectivity = false;
 
+    @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,11 +92,13 @@ public class InqMainActivity extends AppCompatActivity {
         rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff);
+
         View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
         OfficialName = (TextView) headerView.findViewById((R.id.officialName));
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
-        //OfficialName.setText(officialID);
+        //โชว์ชื่อ นามสกุล
+        //OfficialName.setText("");
         txtusername.setText(username);
         Log.i("login", officialID);
         new OfficialDataTask().execute(officialID);
@@ -126,22 +120,6 @@ public class InqMainActivity extends AppCompatActivity {
         notiFragment = new NotiFragment();
 
         mFragmentManager = getSupportFragmentManager();
-        if (networkConnectivity) {
-            Log.i("networkConnect inqmain", "connect!! ");
-
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                registerReceiver();
-                Log.i("GCM", "connect!! ");
-                if (checkPlayServices()) {
-                    registerGcm();
-                }
-
-            }
-
-        } else {
-            Log.i("networkConnect inqmain", "no connect!! ");
-        }
-
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
@@ -157,7 +135,6 @@ public class InqMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Consume input from header view. This disables the ripple effect
-
                 mDrawerLayout.closeDrawers();
                 FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
                 ftprofile.replace(R.id.containerView, profileFragment);
@@ -308,7 +285,7 @@ public class InqMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    //ชื่อ นามสกุล มาเเสดง ใน OfficialName
     class OfficialDataTask extends AsyncTask<String, Void, String[]> {
 
         @Override
@@ -345,84 +322,16 @@ public class InqMainActivity extends AppCompatActivity {
                 new ActivityResultEvent(requestCode, resultCode, data));
     }
 
-    private void registerGcm() {
-        Intent intent = new Intent(this, GcmRegisterService.class);
-        startService(intent);
-    }
-
-    private void registerReceiver() {
-        if (!isReceiverRegistered) {
-            // register GCM registration complete receiver
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(GcmRegisterService.REGISTRATION_COMPLETE));
-            // register new push message receiver
-            // by doing this, the activity will be notified each time a new message arrives
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(GcmRegisterService.PUSH_NOTIFICATION));
-            isReceiverRegistered = true;
-
-        }
-    }
-
-    private void unregisterReceiver() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-
-        isReceiverRegistered = false;
-
-    }
-
-    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean sentToken = sharedPreferences.getBoolean(GcmRegisterService.SENT_TOKEN_TO_SERVER, false);
-            // TODO Do something here
-        }
-    };
-
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("onResume inqmain", "");
 
-        if (networkConnectivity) {
-            Log.i("networkConnec inqmain", "connect!! ");
-
-            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
-                registerReceiver();
-                Log.i("GCM", "connect!! ");
-            }
-
-        } else {
-            Log.i("networkConnec inqmain", "no connect!! ");
-        }
     }
 
     @Override
     protected void onPause() {
 
-        if (networkConnectivity) {
-            Log.i("networkConnec inqmain", "connect!! ");
-            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.KITKAT) {
-                unregisterReceiver();
-            }
-        } else {
-            Log.i("networkConnect inqmain", "no connect!! ");
-        }
         super.onPause();
     }
 }

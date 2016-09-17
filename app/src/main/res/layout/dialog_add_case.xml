@@ -11,7 +11,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="horizontal">
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="รายงานที่ "
+            android:textSize="@dimen/small_text"/>
         <android.support.design.widget.TextInputLayout
             android:id="@+id/edtReportNoLayout"
             android:layout_width="@dimen/width_edtReportNo"
@@ -21,16 +25,9 @@
                 android:id="@+id/edtReportNo"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="รายงานที่"
+                android:hint="เลขที่ / พ.ศ."
                 android:textSize="@dimen/small_text" />
         </android.support.design.widget.TextInputLayout>
-
-        <TextView
-            android:id="@+id/edtYear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/ 2558"
-            android:textSize="@dimen/small_text" />
 
     </LinearLayout>
 
