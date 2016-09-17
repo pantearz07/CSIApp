@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -63,7 +62,7 @@ public class InqMainActivity extends AppCompatActivity {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
-    String officialID, username;
+    String officialID, username, password,accestype;
     TextView OfficialName, txtusername;
     ImageView avatar;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -79,8 +78,11 @@ public class InqMainActivity extends AppCompatActivity {
         setContentView(R.layout.inq_activity_main);
         mManager = new PreferenceData(this);
         // PreferenceData member id
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        username = mManager.getPreferenceData(mManager.KEY_USERNAME);
+        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+        username = WelcomeActivity.profile.getTbUsers().id_users;
+        password = WelcomeActivity.profile.getTbUsers().pass;
+        accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+
 
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
@@ -98,10 +100,10 @@ public class InqMainActivity extends AppCompatActivity {
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
         //โชว์ชื่อ นามสกุล
-        //OfficialName.setText("");
+        String nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank + WelcomeActivity.profile.getTbOfficial().FirstName + " " + WelcomeActivity.profile.getTbOfficial().LastName;
+        OfficialName.setText(nameOfficial);
         txtusername.setText(username);
         Log.i("login", officialID);
-        new OfficialDataTask().execute(officialID);
 
         mNavigationView.addHeaderView(headerView);
         /**
@@ -275,45 +277,12 @@ public class InqMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-//            Intent gotoIPSettingActivity = new Intent(this, IPSettingActivity.class);
-//
-//            startActivity(gotoIPSettingActivity);
-//            this.finish();
-//            return true;
+
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    //ชื่อ นามสกุล มาเเสดง ใน OfficialName
-    class OfficialDataTask extends AsyncTask<String, Void, String[]> {
-
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        protected String[] doInBackground(String... params) {
-            //
-            // Show Data
-            String[] arrData = {""};
-            arrData = mDbHelper.SelectDataOfficial(params[0]);
-            if (arrData != null) {
-                Log.i("Recieve login", arrData[6] + " " + arrData[7]);
-            } else {
-                Log.i("Recieve login", "not have");
-            }
-            return arrData;
-        }
-
-        protected void onPostExecute(String[] arrData) {
-            // Dismiss ProgressBar
-            //Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
-            /*** Default Value ***/
-            OfficialName.setText(arrData[4] + " " + arrData[6] + " " + arrData[7]);
-
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

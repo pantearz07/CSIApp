@@ -35,7 +35,7 @@ public class CaseSceneListFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
+
     GetDateTime getDateTime;
     String officialID;
     private static final String TAG = "DEBUG-CaseSceneListFragment";
@@ -52,7 +52,8 @@ public class CaseSceneListFragment extends Fragment {
         mFragmentManager = getActivity().getSupportFragmentManager();
         rootLayout = (CoordinatorLayout) viewlayout.findViewById(R.id.rootLayout);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        networkConnectivity = cd.isNetworkAvailable();
+        cd = new ConnectionDetector(context);
+        //cd.isNetworkAvailable()
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();

@@ -114,10 +114,7 @@ public class EmergencyListFragment extends Fragment {
         if (networkConnectivity) {
             Log.i("networkConnectivity", "connect!! ");
 
-            new getNoti().execute();
-
-
-            //showNotification();
+            new getNoti().execute();            //showNotification();
         } else {
             Log.i("networkConnectivity", "no connect!! ");
         }

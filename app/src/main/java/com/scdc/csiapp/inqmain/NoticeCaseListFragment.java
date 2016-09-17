@@ -42,7 +42,6 @@ public class NoticeCaseListFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
     GetDateTime getDateTime;
     String officialID;
 
@@ -62,7 +61,7 @@ public class NoticeCaseListFragment extends Fragment {
         rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayout);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
 
-        networkConnectivity = cd.isNetworkAvailable();
+        cd = new ConnectionDetector(context);
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();
@@ -98,7 +97,7 @@ public class NoticeCaseListFragment extends Fragment {
                         selectedCaseType[0] = CaseType[0];
                     }
                 });
-                 /*final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
+                  final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
                 if (mCaseTypeArray != null) {
                     String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
                     for (int i = 0; i < mCaseTypeArray.length; i++) {
@@ -111,7 +110,7 @@ public class NoticeCaseListFragment extends Fragment {
                     spnCaseType.setAdapter(adapterTypeCase);
                 }else{
                     Log.i("show mCaseTypeArray", "null");
-                }*/
+                }
                 final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
                 //ดึงค่าจาก TbSubCaseSceneType
                                //final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();

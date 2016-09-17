@@ -1,11 +1,8 @@
 package com.scdc.csiapp.main;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -22,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,23 +26,14 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "DEBUG-MainActivity";
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
@@ -86,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
-    String officialID, username, password, nameofficial;
+    String officialID, username, password,accestype;
     TextView OfficialName, txtusername;
     ImageView avatar;
     GetDateTime getDateTime;
@@ -108,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mManager = new PreferenceData(this);
         // PreferenceData member id
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-        password = mManager.getPreferenceData(mManager.KEY_PASSWORD);
-        nameofficial = mManager.getPreferenceData(mManager.KEY_NAME);
+        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+        username = WelcomeActivity.profile.getTbUsers().id_users;
+        password = WelcomeActivity.profile.getTbUsers().pass;
+        accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
 
 
         mDbHelper = new SQLiteDBHelper(this);
@@ -123,16 +110,16 @@ public class MainActivity extends AppCompatActivity {
         rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff);
-        View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
 
+        View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
         OfficialName = (TextView) headerView.findViewById((R.id.officialName));
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
-        OfficialName.setText(nameofficial);
+        String nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank + WelcomeActivity.profile.getTbOfficial().FirstName + " " + WelcomeActivity.profile.getTbOfficial().LastName;
+        OfficialName.setText(nameOfficial);
         txtusername.setText(username);
 
         Log.i("officialID", officialID);
-        //new OfficialDataTask().execute(officialID);
 
         mNavigationView.addHeaderView(headerView);
         /**
@@ -365,58 +352,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            cd = new ConnectionDetector(getApplicationContext());
-            if (cd.isNetworkAvailable()) {
-                Log.d("internet status", "connected to wifi");
 
-                AlertDialog.Builder builder =
-                        new AlertDialog.Builder(this);
-                LayoutInflater inflater = getLayoutInflater();
-
-                View view = inflater.inflate(R.layout.ipsetting_dialog, null);
-                builder.setView(view);
-
-                final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
-
-
-                builder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        if (ipvalueEdt.getText().equals("")) {
-                            Toast.makeText(getApplicationContext(), "กรุณาป้อนข้อมูล",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            String ipvalue = ipvalueEdt.getText().toString();
-                            SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sp.edit();
-                            editor.putString(PreferenceData.KEY_IP, ipvalue);
-                            editor.commit();
-                            Log.d("ipvalue connect", ipvalue);
-                            Toast.makeText(getApplicationContext(), "บันทึกเรียบร้อย " + ipvalue,
-                                    Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                builder.show();
-
-            } else {
-                Log.d("internet status", "no Internet Access");
-
-                Toast.makeText(getBaseContext(),
-                        "กรุณาเชื่อมต่ออินเตอร์เน็ต",
-                        Toast.LENGTH_SHORT).show();
-
-
-            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -442,36 +378,6 @@ public class MainActivity extends AppCompatActivity {
 //        client.disconnect();
     }
 
-
-    class OfficialDataTask extends AsyncTask<String, Void, String[]> {
-
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        protected String[] doInBackground(String... params) {
-            //
-            // Show Data
-            String[] arrData = {""};
-            arrData = mDbHelper.SelectDataOfficial(params[0]);
-            if (arrData != null) {
-                Log.i("Recieve login", arrData[6] + " " + arrData[7]);
-            } else {
-                Log.i("Recieve login", "not have");
-            }
-            return arrData;
-        }
-
-        protected void onPostExecute(String[] arrData) {
-            // Dismiss ProgressBar
-            //Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
-            /*** Default Value ***/
-            OfficialName.setText(arrData[4] + " " + arrData[6] + " " + arrData[7]);
-
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -480,48 +386,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public boolean logout(String sOfficialID) {
-       /* long status = mDbHelper.updatelogoutofficial(officialID,"investigated");
-        if (status > 0) {
-            Log.i("updateReportStatus", "OK");
-        }else{
 
-            Log.i("updateReportStatus", "error");
-        }*/
-        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-        final String Mo_LogoutTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("OfficialID", sOfficialID));
-        // params.add(new BasicNameValuePair("Mo_LoginTime", Mo_LoginTime));
-        params.add(new BasicNameValuePair("Mo_LogoutTime", Mo_LogoutTime));
-        String resultServer = ConnectServer.getJsonPostGet(params,
-                "logtemp");
-        /*** Default Value ***/
-        String strStatusID = "0";
-        String strError = "Unknow Status!";
-        JSONObject c;
-
-        try {
-            c = new JSONObject(resultServer);
-            strStatusID = c.getString("StatusID");
-            strError = c.getString("Error");
-        } catch (JSONException e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
-
-        // Prepare Save Data
-        if (strStatusID.equals("0")) {
-            Log.i("logout", strError);
-
-        } else {
-            Log.i("logout", strError + " " + sOfficialID);
-
-        }
-
-        return true;
-    }
 
 }
