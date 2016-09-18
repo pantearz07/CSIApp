@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Pantearz07 on 18/9/2559.
  */
-public class SyncSCDCAgency {
+public class SyncSCDCagency {
     private String status;
 
     private List<TbSCDCagency> data;

@@ -27,8 +27,8 @@ import com.scdc.csiapp.syncmodel.SyncPolicePosition;
 import com.scdc.csiapp.syncmodel.SyncPoliceRank;
 import com.scdc.csiapp.syncmodel.SyncPoliceStation;
 import com.scdc.csiapp.syncmodel.SyncProvince;
-import com.scdc.csiapp.syncmodel.SyncSCDCAgency;
-import com.scdc.csiapp.syncmodel.SyncSCDCCenter;
+import com.scdc.csiapp.syncmodel.SyncSCDCagency;
+import com.scdc.csiapp.syncmodel.SyncSCDCcenter;
 import com.scdc.csiapp.syncmodel.SyncSubCaseSceneType;
 import com.scdc.csiapp.tablemodel.SyncResultSceneType;
 
@@ -55,6 +55,11 @@ public class ApiConnect {
     public ApiConnect(Context context) {
         mContext = context;
         updateApiConnect();
+    }
+
+    // ใช้ดึงค่า IP ปัจจุบันที่เชื่อมต่ออยู่ตอนนั้น
+    public String getDefaultIP() {
+        return defaultIP;
     }
 
     // ตรวจสอบการเชื่อมต่อกับระบบผ่าน function checkConnect
@@ -155,79 +160,117 @@ public class ApiConnect {
                 switch (table_name) {
                     case "amphur":
                         SyncAmphur data_amphur = gson.fromJson(response.body().string(), SyncAmphur.class);
-                        dbHelper.syncAmphur(data_amphur.getData());
+                        if (data_amphur != null) {
+                            dbHelper.syncAmphur(data_amphur.getData());
+                        }
                         break;
                     case "casescenetype":
                         SyncCaseSceneType data_casescenetype = gson.fromJson(response.body().string(), SyncCaseSceneType.class);
-                        dbHelper.syncCaseSceneType(data_casescenetype.getData());
+                        if (data_casescenetype != null) {
+                            dbHelper.syncCaseSceneType(data_casescenetype.getData());
+                        }
                         break;
                     case "composition":
                         SyncComPosition data_composition = gson.fromJson(response.body().string(), SyncComPosition.class);
-                        dbHelper.syncComPosition(data_composition.getData());
+                        if (data_composition != null) {
+                            dbHelper.syncComPosition(data_composition.getData());
+                        }
                         break;
                     case "district":
                         SyncDistrict data_district = gson.fromJson(response.body().string(), SyncDistrict.class);
-                        dbHelper.syncDistrict(data_district.getData());
+                        if (data_district != null) {
+                            dbHelper.syncDistrict(data_district.getData());
+                        }
                         break;
                     case "geography":
                         SyncGeography data_geography = gson.fromJson(response.body().string(), SyncGeography.class);
-                        dbHelper.syncGeography(data_geography.getData());
+                        if (data_geography != null) {
+                            dbHelper.syncGeography(data_geography.getData());
+                        }
                         break;
                     case "inqposition":
                         SyncInqPosition data_inqposition = gson.fromJson(response.body().string(), SyncInqPosition.class);
-                        dbHelper.syncInqPosition(data_inqposition.getData());
+                        if (data_inqposition != null) {
+                            dbHelper.syncInqPosition(data_inqposition.getData());
+                        }
                         break;
                     case "invposition":
                         SyncInvPosition data_invposition = gson.fromJson(response.body().string(), SyncInvPosition.class);
-                        dbHelper.syncInvPosition(data_invposition.getData());
+                        if (data_invposition != null) {
+                            dbHelper.syncInvPosition(data_invposition.getData());
+                        }
                         break;
                     case "official":
                         SyncOfficial data_official = gson.fromJson(response.body().string(), SyncOfficial.class);
-                        dbHelper.syncOfficial(data_official.getData());
+                        if (data_official != null) {
+                            dbHelper.syncOfficial(data_official.getData());
+                        }
                         break;
                     case "permission":
                         SyncPermission data_permission = gson.fromJson(response.body().string(), SyncPermission.class);
-                        dbHelper.syncPermission(data_permission.getData());
+                        if (data_permission != null) {
+                            dbHelper.syncPermission(data_permission.getData());
+                        }
                         break;
                     case "policeagency":
                         SyncPoliceAgency data_policeagency = gson.fromJson(response.body().string(), SyncPoliceAgency.class);
-                        dbHelper.syncPoliceAgency(data_policeagency.getData());
+                        if (data_policeagency != null) {
+                            dbHelper.syncPoliceAgency(data_policeagency.getData());
+                        }
                         break;
                     case "policecenter":
                         SyncPoliceCenter data_policecenter = gson.fromJson(response.body().string(), SyncPoliceCenter.class);
-                        dbHelper.syncPoliceCenter(data_policecenter.getData());
+                        if (data_policecenter != null) {
+                            dbHelper.syncPoliceCenter(data_policecenter.getData());
+                        }
                         break;
                     case "policeposition":
                         SyncPolicePosition data_policeposition = gson.fromJson(response.body().string(), SyncPolicePosition.class);
-                        dbHelper.syncPolicePosition(data_policeposition.getData());
+                        if (data_policeposition != null) {
+                            dbHelper.syncPolicePosition(data_policeposition.getData());
+                        }
                         break;
                     case "policerank":
                         SyncPoliceRank data_policerank = gson.fromJson(response.body().string(), SyncPoliceRank.class);
-                        dbHelper.syncPoliceRank(data_policerank.getData());
+                        if (data_policerank != null) {
+                            dbHelper.syncPoliceRank(data_policerank.getData());
+                        }
                         break;
                     case "policestation":
                         SyncPoliceStation data_policestation = gson.fromJson(response.body().string(), SyncPoliceStation.class);
-                        dbHelper.syncPoliceStation(data_policestation.getData());
+                        if (data_policestation != null) {
+                            dbHelper.syncPoliceStation(data_policestation.getData());
+                        }
                         break;
                     case "province":
                         SyncProvince data_province = gson.fromJson(response.body().string(), SyncProvince.class);
-                        dbHelper.syncProvince(data_province.getData());
+                        if (data_province != null) {
+                            dbHelper.syncProvince(data_province.getData());
+                        }
                         break;
                     case "resultscenetype":
                         SyncResultSceneType data_resultscenetype = gson.fromJson(response.body().string(), SyncResultSceneType.class);
-                        dbHelper.syncResultSceneType(data_resultscenetype.getData());
+                        if (data_resultscenetype != null) {
+                            dbHelper.syncResultSceneType(data_resultscenetype.getData());
+                        }
                         break;
                     case "scdcagency":
-                        SyncSCDCAgency data_scdcagency = gson.fromJson(response.body().string(), SyncSCDCAgency.class);
-                        dbHelper.syncSCDCAgency(data_scdcagency.getData());
+                        SyncSCDCagency data_scdcagency = gson.fromJson(response.body().string(), SyncSCDCagency.class);
+                        if (data_scdcagency != null) {
+                            dbHelper.syncSCDCAgency(data_scdcagency.getData());
+                        }
                         break;
                     case "scdccenter":
-                        SyncSCDCCenter data_scdccenter = gson.fromJson(response.body().string(), SyncSCDCCenter.class);
-                        dbHelper.syncSCDCCenter(data_scdccenter.getData());
+                        SyncSCDCcenter data_scdccenter = gson.fromJson(response.body().string(), SyncSCDCcenter.class);
+                        if (data_scdccenter != null) {
+                            dbHelper.syncSCDCCenter(data_scdccenter.getData());
+                        }
                         break;
                     case "subcasescenetype":
                         SyncSubCaseSceneType data_subcasescenetype = gson.fromJson(response.body().string(), SyncSubCaseSceneType.class);
-                        dbHelper.syncSubCaseSceneType(data_subcasescenetype.getData());
+                        if (data_subcasescenetype != null) {
+                            dbHelper.syncSubCaseSceneType(data_subcasescenetype.getData());
+                        }
                         break;
                 }
                 return true;

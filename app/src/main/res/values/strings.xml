@@ -11,6 +11,12 @@
     <string name="save_complete">บันทึกเรียบร้อย</string>
     <string name="cancel">ยกเลิก</string>
     <string name="ok">ตกลง</string>
+    <string name="current_ip_server">IP Server ปัจจุบัน:</string>
+    <string name="please_input_username">กรุณากรอก Username</string>
+    <string name="please_input_password">กรุณากรอก Password</string>
+    <string name="authenticating">ตรวจสอบสิทธิ์...</string>
+    <string name="send_token">เตรียมระบบแจ้งเตือน...</string>
+    <string name="update_database">อัพเดทฐานข้อมูล...</string>
 
     <string name="txt_yo_yo">CSI Report</string>
     <string name="hello_world">Hello world!</string>

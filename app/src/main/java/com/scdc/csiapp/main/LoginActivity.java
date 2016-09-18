@@ -41,14 +41,12 @@ import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.gcmservice.GcmRegisterService;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
 import java.util.Date;
-
-//import org.apache.http.NameValuePair;
-//import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Created by Pantearz07 on 24/9/2558.
@@ -104,38 +102,21 @@ public class LoginActivity extends AppCompatActivity {
 
         //เเสดงค่า IP ล่าสุด
         txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
-        SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, MODE_PRIVATE);
-        String IP = sp.getString(PreferenceData.KEY_IP, "192.168.0.89");
-        txt_ipvalue.setText("ค่า IP ล่าสุด: " + IP);
+        txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
 
         mUsername = (EditText) findViewById(R.id.usernameEdt);
         mPassword = (EditText) findViewById(R.id.passwordEdt);
         mUsername.setText(txt_username);
         username = mUsername.getText().toString().trim().toLowerCase();
-
         password = mPassword.getText().toString().trim();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (cd.isNetworkAvailable()) {
-                    Log.d("internet status", "connected to wifi");
-
                     login();
                 } else {
-                    Log.d("internet status", "no Internet Access");
-                    if (mManager.checkLoginValidate(username, password)) {
-                        Toast.makeText(getBaseContext(),
-                                "คุณได้มีการล๊อคอินแล้ว\nแต่ไม่ได้เชื่อมต่ออินเตอร์เน็ต",
-                                Toast.LENGTH_SHORT).show();
-                        //showNotification();
-                        switchPageToMain();
-
-                    } else {
-                        // loginnoconnect();
-
-
-                    }
+                    switchPageToMain();
                 }
             }
         });
@@ -172,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
                                 mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+                                txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
 
                                 Toast.makeText(getApplicationContext(),
                                         getString(R.string.save_complete),
@@ -194,8 +176,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(),
                             getString(R.string.network_unavailable),
                             Toast.LENGTH_SHORT).show();
-
-
                 }
             }
         });
@@ -208,17 +188,13 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void loginnoconnect() {
-        username = mUsername.getText().toString().trim().toLowerCase();
-        password = mPassword.getText().toString().trim();
-        //new checklogin().execute(username, password);
-    }
-
     public void login() {
         if (!validate()) {
-            onLoginFailed();
+            loginButton.setEnabled(true);
+            mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, false);
             return;
         }
+
         loginButton.setEnabled(false);
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
@@ -236,12 +212,12 @@ public class LoginActivity extends AppCompatActivity {
             super.onPreExecute();
 
             /*
-            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
             */
             progressDialog = new ProgressDialog(LoginActivity.this,
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Authenticating...");
+            progressDialog.setMessage(getString(R.string.authenticating));
             progressDialog.show();
         }
 
@@ -254,7 +230,6 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ApiLoginStatus apiLoginStatus) {
             super.onPostExecute(apiLoginStatus);
-            progressDialog.dismiss();
             if (apiLoginStatus.getStatus().equalsIgnoreCase("success")) {
                 //*** การทำงานทั้งหมดเพื่อสร้าง ApiProfile ***//
                 // นำค่าที่ได้รับมาสร้างเป็น ApiProfile ไว้ที่ WelcomeActivity ให้หน้าอื่นเรียกใช้ได้ง่ายๆ
@@ -306,14 +281,15 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
                 }
 
-
+                // ดึงข้อมูลอัพเดทจากเซิร์ฟเวอร์
+                SyncData syncData = new SyncData();
+                syncData.execute();
             } else {
                 loginButton.setEnabled(true);
                 Toast.makeText(getApplicationContext(), "ผิดพลาด", Toast.LENGTH_LONG).show();
             }
+            progressDialog.dismiss();
         }
-
-
     }
 
     public boolean validate() {
@@ -322,14 +298,14 @@ public class LoginActivity extends AppCompatActivity {
         String password = mPassword.getText().toString();
 
         if (username.isEmpty()) {
-            mUsername.setError("enter a valid email address");
+            mUsername.setError(getString(R.string.please_input_username));
             valid = false;
         } else {
             mUsername.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            mPassword.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty()) {
+            mPassword.setError(getString(R.string.please_input_password));
             valid = false;
         } else {
             mPassword.setError(null);
@@ -339,7 +315,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         loginButton.setEnabled(true);
-        Log.d("Login status", "Login Success");
         boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
         if (isLoginstatus) {
             // new SaveOfficialDataToSQLiteTask().execute(strOfficialID);
@@ -353,17 +328,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void onLoginFailed() {
-        Log.d("Login status", "Login failed");
-
-        loginButton.setEnabled(true);
-        boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, false);
-        if (isLoginstatus) {
-            Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-        }
-    }
-
-
     //อันเก่า
     private void _Login() {
         username = mUsername.getText().toString().trim();
@@ -372,44 +336,6 @@ public class LoginActivity extends AppCompatActivity {
         //new SimpleTask().execute(username, password, selectedaccesstype[0]);
 
 
-    }
-
-    private class checklogin extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String[] checkUser = mDbHelper.checkUser(params[0], params[1], params[2]);
-            String status = null;
-            if (checkUser != null) {
-
-                Log.i("checkuser", params[0] + params[1] + params[2]);
-//                boolean isSuccess = mManager.registerUser(params[0], params[1], checkUser[0], params[2]);
-//                if (isSuccess) {
-//                    boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
-//                    if (isLoginstatus) {
-//
-//                        status = "have";
-//                    }
-//                }
-            } else {
-                status = "no";
-                Log.i("checkuser ", status + " " + params[0] + params[1] + params[2]);
-            }
-            return status;
-        }
-
-        @Override
-        protected void onPostExecute(String status) {
-            if (status == "have") {
-
-                Toast.makeText(getBaseContext(),
-                        "คุณได้มีการล๊อคอินแล้ว\nแต่ไม่ได้เชื่อมต่ออินเตอร์เน็ต",
-                        Toast.LENGTH_SHORT).show();
-                showNotification();
-                switchPageToMain();
-            } else if (status == "no") {
-                Toast.makeText(getBaseContext(), "กรุณาเชื่อมต่ออินเทอร์เน็ต", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     public void showNotification() {
@@ -519,7 +445,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String username = WelcomeActivity.profile.getTbUsers().id_users;
                 String password = WelcomeActivity.profile.getTbUsers().pass;
-                String officialid =WelcomeActivity.profile.getTbOfficial().OfficialID;
+                String officialid = WelcomeActivity.profile.getTbOfficial().OfficialID;
 
                 ApiGCMRequest gcmRequest = new ApiGCMRequest();
                 gcmRequest.setUsername(username);
@@ -560,7 +486,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog = new ProgressDialog(LoginActivity.this,
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Update Token...");
+            progressDialog.setMessage(getString(R.string.send_token));
             progressDialog.show();
         }
 

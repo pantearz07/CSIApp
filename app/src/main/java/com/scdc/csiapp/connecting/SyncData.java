@@ -1,19 +1,22 @@
 package com.scdc.csiapp.connecting;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.speech.tts.Voice;
 import android.util.Log;
 
+import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.main.WelcomeActivity;
 
 /**
  * Created by Amnart on 18/9/2559.
  */
-public class SyncData extends AsyncTask<Void, Void, Voice> {
+public class SyncData extends AsyncTask<Void, Void, Void> {
 
     @Override
-    protected Voice doInBackground(Void... voids) {
+    protected Void doInBackground(Void... voids) {
         if (WelcomeActivity.api != null) {
             ApiStatus apiStatus = WelcomeActivity.api.checkConnect();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
@@ -45,7 +48,7 @@ public class SyncData extends AsyncTask<Void, Void, Voice> {
     }
 
     @Override
-    protected void onPostExecute(Voice voice) {
+    protected void onPostExecute(Void voice) {
         super.onPostExecute(voice);
         Log.d("TEST", "END");
     }
