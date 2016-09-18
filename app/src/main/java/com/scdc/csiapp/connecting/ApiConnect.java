@@ -16,6 +16,7 @@ import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
 import com.scdc.csiapp.syncmodel.SyncAmphur;
 import com.scdc.csiapp.syncmodel.SyncDistrict;
 import com.scdc.csiapp.syncmodel.SyncGeography;
+import com.scdc.csiapp.syncmodel.SyncInqPosition;
 import com.scdc.csiapp.syncmodel.SyncOfficial;
 import com.scdc.csiapp.syncmodel.SyncPoliceAgency;
 import com.scdc.csiapp.syncmodel.SyncPoliceCenter;
@@ -161,7 +162,8 @@ public class ApiConnect {
                         dbHelper.syncGeography(data_geography.getData());
                         break;
                     case "inqposition":
-                        // ไม่มี Tb
+                        SyncInqPosition data_inqposition = gson.fromJson(response.body().string(), SyncInqPosition.class);
+                        dbHelper.syncInqPosition(data_inqposition.getData());
                         break;
                     case "invposition":
                         // ไม่มี Tb

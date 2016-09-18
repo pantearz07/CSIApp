@@ -13,6 +13,7 @@ import com.scdc.csiapp.tablemodel.TbAmphur;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbGeography;
+import com.scdc.csiapp.tablemodel.TbInqPosition;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
 import com.scdc.csiapp.tablemodel.TbPoliceCenter;
@@ -221,9 +222,46 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    private boolean syncInqPosition() {
-        // ไม่มี Tb
-        return false;
+    public boolean syncInqPosition(List<TbInqPosition> tbInqPositions) {
+        if (tbInqPositions.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbInqPositions.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbInqPositions.get(i).InqPosID;
+                strSQL = "SELECT * FROM inqposition WHERE "
+                        + "InqPosID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbInqPosition.COL_InqPosID, tbInqPositions.get(i).InqPosID);
+                Val.put(TbInqPosition.COL_InqPosName, tbInqPositions.get(i).InqPosName);
+                Val.put(TbInqPosition.COL_InqPosAbbr, tbInqPositions.get(i).InqPosAbbr);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("inqposition", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("inqposition", Val, " InqPosID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table inqposition: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncInqPosition " + e.getMessage().toString());
+            return false;
+        }
     }
 
     private boolean syncInvPosition() {

@@ -1,6 +1,6 @@
 package com.scdc.csiapp.syncmodel;
 
-import com.scdc.csiapp.tablemodel.TbGeography;
+import com.scdc.csiapp.tablemodel.TbInqPosition;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class SyncInqPosition {
     private String status;
 
-    private List<TbGeography> data;
+    private List<TbInqPosition> data;
 
     public String getStatus() {
         return status;
@@ -20,11 +20,12 @@ public class SyncInqPosition {
         this.status = status;
     }
 
-    public List<TbGeography> getData() {
+    public List<TbInqPosition> getData() {
         return data;
     }
 
-    public void setData(List<TbGeography> data) {
+    public void setData(List<TbInqPosition> data) {
         this.data = data;
     }
+
 }

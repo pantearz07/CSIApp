@@ -7,7 +7,7 @@ public class TbInqPosition {
     public static final String TB_InqPosition = "inqposition";
     // From Table policecenter field name InvPosID
     public static final String COL_InqPosID = "InqPosID";
-    public String InvPosID = "";
+    public String InqPosID = "";
 
     // From Table policecenter field name InvPosName
     public static final String COL_InqPosName= "InqPosName";

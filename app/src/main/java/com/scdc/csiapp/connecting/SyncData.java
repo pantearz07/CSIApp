@@ -21,6 +21,7 @@ public class SyncData extends AsyncTask<Void, Void, Voice> {
                 WelcomeActivity.api.syncDataFromServer("casescenetype");
                 WelcomeActivity.api.syncDataFromServer("district");
                 WelcomeActivity.api.syncDataFromServer("geography");
+                WelcomeActivity.api.syncDataFromServer("inqposition");
                 WelcomeActivity.api.syncDataFromServer("official");
                 WelcomeActivity.api.syncDataFromServer("policeagency");
                 WelcomeActivity.api.syncDataFromServer("policecenter");
