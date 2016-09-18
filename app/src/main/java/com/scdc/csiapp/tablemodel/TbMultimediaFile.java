@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbMultimediaFile {
+    public static final String TB_MultimediaFile = "multimediafile";
     // From Table multimediafile field name FileID
     public static final String COL_FileID = "FileID";
     public String FileID = "";

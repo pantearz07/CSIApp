@@ -4,6 +4,9 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbOfficial {
+
+    public static final String TB_Official = "official";
+
     // From Table official field name OfficialID
     public static final String COL_OfficialID = "OfficialID";
     public String OfficialID = "";

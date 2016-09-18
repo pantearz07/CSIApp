@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbProvince {
+    public static final String TB_Province = "province";
     // From Table province field name PROVINCE_ID
     public static final String COL_PROVINCE_ID = "PROVINCE_ID";
     public String PROVINCE_ID = "";

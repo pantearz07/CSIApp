@@ -4,6 +4,9 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbSceneInvestigation {
+
+    public static final String TB_SceneInvestigation = "sceneinvestigation";
+
     // From Table sceneinvestigation field name SceneInvestID
     public static final String COL_SceneInvestID = "SceneInvestID";
     public String SceneInvestID = "";

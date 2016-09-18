@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbPoliceAgency {
+    public static final String TB_PoliceAgency = "policeagency";
     // From Table policeagency field name PoliceAgencyID
     public static final String COL_PoliceAgencyID = "PoliceAgencyID";
     public String PoliceAgencyID = "";

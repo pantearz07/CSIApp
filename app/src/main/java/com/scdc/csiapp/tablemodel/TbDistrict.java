@@ -4,6 +4,7 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbDistrict {
+    public static final String TB_District = "district";
     // From Table district field name DISTRICT_ID
     public static final String COL_DISTRICT_ID = "DISTRICT_ID";
     public String DISTRICT_ID = "";

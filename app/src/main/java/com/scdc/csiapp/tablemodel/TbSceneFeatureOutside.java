@@ -4,6 +4,8 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbSceneFeatureOutside {
+
+    public static final String TB_SceneFeatureOutside = "scenefeatureoutside";
     // From Table scenefeatureoutside field name CaseReportID
     public static final String COL_CaseReportID = "CaseReportID";
     public String CaseReportID = "";
