@@ -12,14 +12,25 @@ import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.main.WelcomeActivity;
-import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
 import com.scdc.csiapp.syncmodel.SyncAmphur;
+import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
+import com.scdc.csiapp.syncmodel.SyncComPosition;
 import com.scdc.csiapp.syncmodel.SyncDistrict;
 import com.scdc.csiapp.syncmodel.SyncGeography;
 import com.scdc.csiapp.syncmodel.SyncInqPosition;
+import com.scdc.csiapp.syncmodel.SyncInvPosition;
 import com.scdc.csiapp.syncmodel.SyncOfficial;
+import com.scdc.csiapp.syncmodel.SyncPermission;
 import com.scdc.csiapp.syncmodel.SyncPoliceAgency;
 import com.scdc.csiapp.syncmodel.SyncPoliceCenter;
+import com.scdc.csiapp.syncmodel.SyncPolicePosition;
+import com.scdc.csiapp.syncmodel.SyncPoliceRank;
+import com.scdc.csiapp.syncmodel.SyncPoliceStation;
+import com.scdc.csiapp.syncmodel.SyncProvince;
+import com.scdc.csiapp.syncmodel.SyncSCDCAgency;
+import com.scdc.csiapp.syncmodel.SyncSCDCCenter;
+import com.scdc.csiapp.syncmodel.SyncSubCaseSceneType;
+import com.scdc.csiapp.tablemodel.SyncResultSceneType;
 
 import java.io.IOException;
 
@@ -151,7 +162,8 @@ public class ApiConnect {
                         dbHelper.syncCaseSceneType(data_casescenetype.getData());
                         break;
                     case "composition":
-                        // ไม่มี Tb
+                        SyncComPosition data_composition = gson.fromJson(response.body().string(), SyncComPosition.class);
+                        dbHelper.syncComPosition(data_composition.getData());
                         break;
                     case "district":
                         SyncDistrict data_district = gson.fromJson(response.body().string(), SyncDistrict.class);
@@ -166,14 +178,16 @@ public class ApiConnect {
                         dbHelper.syncInqPosition(data_inqposition.getData());
                         break;
                     case "invposition":
-                        // ไม่มี Tb
+                        SyncInvPosition data_invposition = gson.fromJson(response.body().string(), SyncInvPosition.class);
+                        dbHelper.syncInvPosition(data_invposition.getData());
                         break;
                     case "official":
                         SyncOfficial data_official = gson.fromJson(response.body().string(), SyncOfficial.class);
                         dbHelper.syncOfficial(data_official.getData());
                         break;
                     case "permission":
-                        // ไม่มี Tb
+                        SyncPermission data_permission = gson.fromJson(response.body().string(), SyncPermission.class);
+                        dbHelper.syncPermission(data_permission.getData());
                         break;
                     case "policeagency":
                         SyncPoliceAgency data_policeagency = gson.fromJson(response.body().string(), SyncPoliceAgency.class);
@@ -182,6 +196,38 @@ public class ApiConnect {
                     case "policecenter":
                         SyncPoliceCenter data_policecenter = gson.fromJson(response.body().string(), SyncPoliceCenter.class);
                         dbHelper.syncPoliceCenter(data_policecenter.getData());
+                        break;
+                    case "policeposition":
+                        SyncPolicePosition data_policeposition = gson.fromJson(response.body().string(), SyncPolicePosition.class);
+                        dbHelper.syncPolicePosition(data_policeposition.getData());
+                        break;
+                    case "policerank":
+                        SyncPoliceRank data_policerank = gson.fromJson(response.body().string(), SyncPoliceRank.class);
+                        dbHelper.syncPoliceRank(data_policerank.getData());
+                        break;
+                    case "policestation":
+                        SyncPoliceStation data_policestation = gson.fromJson(response.body().string(), SyncPoliceStation.class);
+                        dbHelper.syncPoliceStation(data_policestation.getData());
+                        break;
+                    case "province":
+                        SyncProvince data_province = gson.fromJson(response.body().string(), SyncProvince.class);
+                        dbHelper.syncProvince(data_province.getData());
+                        break;
+                    case "resultscenetype":
+                        SyncResultSceneType data_resultscenetype = gson.fromJson(response.body().string(), SyncResultSceneType.class);
+                        dbHelper.syncResultSceneType(data_resultscenetype.getData());
+                        break;
+                    case "scdcagency":
+                        SyncSCDCAgency data_scdcagency = gson.fromJson(response.body().string(), SyncSCDCAgency.class);
+                        dbHelper.syncSCDCAgency(data_scdcagency.getData());
+                        break;
+                    case "scdccenter":
+                        SyncSCDCCenter data_scdccenter = gson.fromJson(response.body().string(), SyncSCDCCenter.class);
+                        dbHelper.syncSCDCCenter(data_scdccenter.getData());
+                        break;
+                    case "subcasescenetype":
+                        SyncSubCaseSceneType data_subcasescenetype = gson.fromJson(response.body().string(), SyncSubCaseSceneType.class);
+                        dbHelper.syncSubCaseSceneType(data_subcasescenetype.getData());
                         break;
                 }
                 return true;

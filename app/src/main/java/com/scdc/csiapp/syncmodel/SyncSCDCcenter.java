@@ -1,16 +1,16 @@
 package com.scdc.csiapp.syncmodel;
 
-import com.scdc.csiapp.tablemodel.TbInvPosition;
+import com.scdc.csiapp.tablemodel.TbSCDCcenter;
 
 import java.util.List;
 
 /**
- * Created by Amnart on 18/9/2559.
+ * Created by Pantearz07 on 18/9/2559.
  */
-public class SyncInvPosition {
+public class SyncSCDCCenter {
     private String status;
 
-    private List<TbInvPosition> data;
+    private List<TbSCDCcenter> data;
 
     public String getStatus() {
         return status;
@@ -20,11 +20,11 @@ public class SyncInvPosition {
         this.status = status;
     }
 
-    public List<TbInvPosition> getData() {
+    public List<TbSCDCcenter> getData() {
         return data;
     }
 
-    public void setData(List<TbInvPosition> data) {
+    public void setData(List<TbSCDCcenter> data) {
         this.data = data;
     }
 }

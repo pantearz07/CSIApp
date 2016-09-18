@@ -1,6 +1,6 @@
 package com.scdc.csiapp.syncmodel;
 
-import com.scdc.csiapp.tablemodel.TbOfficial;
+import com.scdc.csiapp.tablemodel.TbPermission;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class SyncPermission {
     private String status;
 
-    private List<TbOfficial> data;
+    private List<TbPermission> data;
 
     public String getStatus() {
         return status;
@@ -20,11 +20,11 @@ public class SyncPermission {
         this.status = status;
     }
 
-    public List<TbOfficial> getData() {
+    public List<TbPermission> getData() {
         return data;
     }
 
-    public void setData(List<TbOfficial> data) {
+    public void setData(List<TbPermission> data) {
         this.data = data;
     }
 }

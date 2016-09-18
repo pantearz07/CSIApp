@@ -1,16 +1,16 @@
 package com.scdc.csiapp.syncmodel;
 
-import com.scdc.csiapp.tablemodel.TbInvPosition;
+import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 
 import java.util.List;
 
 /**
- * Created by Amnart on 18/9/2559.
+ * Created by Pantearz07 on 18/9/2559.
  */
-public class SyncInvPosition {
+public class SyncSubCaseSceneType {
     private String status;
 
-    private List<TbInvPosition> data;
+    private List<TbSubcaseSceneType> data;
 
     public String getStatus() {
         return status;
@@ -20,11 +20,11 @@ public class SyncInvPosition {
         this.status = status;
     }
 
-    public List<TbInvPosition> getData() {
+    public List<TbSubcaseSceneType> getData() {
         return data;
     }
 
-    public void setData(List<TbInvPosition> data) {
+    public void setData(List<TbSubcaseSceneType> data) {
         this.data = data;
     }
 }

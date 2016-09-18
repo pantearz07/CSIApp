@@ -8,15 +8,25 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
-import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbAmphur;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
+import com.scdc.csiapp.tablemodel.TbComPosition;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbGeography;
 import com.scdc.csiapp.tablemodel.TbInqPosition;
+import com.scdc.csiapp.tablemodel.TbInvPosition;
 import com.scdc.csiapp.tablemodel.TbOfficial;
+import com.scdc.csiapp.tablemodel.TbPermission;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
 import com.scdc.csiapp.tablemodel.TbPoliceCenter;
+import com.scdc.csiapp.tablemodel.TbPolicePosition;
+import com.scdc.csiapp.tablemodel.TbPoliceRank;
+import com.scdc.csiapp.tablemodel.TbPoliceStation;
+import com.scdc.csiapp.tablemodel.TbProvince;
+import com.scdc.csiapp.tablemodel.TbResultSceneType;
+import com.scdc.csiapp.tablemodel.TbSCDCagency;
+import com.scdc.csiapp.tablemodel.TbSCDCcenter;
+import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 
 import java.util.List;
 
@@ -133,9 +143,46 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    private boolean syncComPosition() {
-        // ไม่มี Tb
-        return false;
+    public boolean syncComPosition(List<TbComPosition> tbComPositions) {
+        if (tbComPositions.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbComPositions.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbComPositions.get(i).ComPosID;
+                strSQL = "SELECT * FROM composition WHERE "
+                        + "ComPosID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbComPosition.COL_ComPosID, tbComPositions.get(i).ComPosID);
+                Val.put(TbComPosition.COL_ComPosName, tbComPositions.get(i).ComPosName);
+                Val.put(TbComPosition.COL_ComPosAbbr, tbComPositions.get(i).ComPosAbbr);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("composition", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("composition", Val, " ComPosID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table composition: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncComPosition " + e.getMessage().toString());
+            return false;
+        }
     }
 
     public boolean syncDistrict(List<TbDistrict> tbDistricts) {
@@ -264,9 +311,46 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    private boolean syncInvPosition() {
-        // ไม่มี Tb
-        return false;
+    public boolean syncInvPosition(List<TbInvPosition> tbInvPositions) {
+        if (tbInvPositions.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbInvPositions.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbInvPositions.get(i).InvPosID;
+                strSQL = "SELECT * FROM invposition WHERE "
+                        + "InvPosID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbInvPosition.COL_InvPosID, tbInvPositions.get(i).InvPosID);
+                Val.put(TbInvPosition.COL_InvPosName, tbInvPositions.get(i).InvPosName);
+                Val.put(TbInvPosition.COL_InvPosAbbr, tbInvPositions.get(i).InvPosAbbr);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("invposition", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("invposition", Val, " InvPosID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table invposition: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncInvPosition " + e.getMessage().toString());
+            return false;
+        }
     }
 
     // ต้อง sync เพราะต้องใช้ในการอ้างอิงกับแต่คดี
@@ -323,10 +407,48 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    private boolean syncPermission() {
-        // ไม่มี Tb
-        return false;
+    public boolean syncPermission(List<TbPermission> tbPermissions) {
+        if (tbPermissions.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbPermissions.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbPermissions.get(i).id_permission;
+                strSQL = "SELECT * FROM permission WHERE "
+                        + "id_permission = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbPermission.COL_id_permission, tbPermissions.get(i).id_permission);
+                Val.put(TbPermission.COL_per_name, tbPermissions.get(i).per_name);
+                Val.put(TbPermission.COL_per_value, tbPermissions.get(i).per_value);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("permission", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("permission", Val, " id_permission = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table permission: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncPermission " + e.getMessage().toString());
+            return false;
+        }
     }
+
 
     public boolean syncPoliceAgency(List<TbPoliceAgency> tbPoliceAgencies) {
         if (tbPoliceAgencies.size() == 0) {
@@ -411,32 +533,340 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    private boolean syncPolicePosition() {
-        return false;
+    public boolean syncPolicePosition(List<TbPolicePosition> tbPolicePositions) {
+        if (tbPolicePositions.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbPolicePositions.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbPolicePositions.get(i).PolicePosID;
+                strSQL = "SELECT * FROM policeposition WHERE "
+                        + "PolicePosID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbPolicePosition.COL_PolicePosID, tbPolicePositions.get(i).PolicePosID);
+                Val.put(TbPolicePosition.COL_PoliceName, tbPolicePositions.get(i).PoliceName);
+                Val.put(TbPolicePosition.COL_PoliceAbbr, tbPolicePositions.get(i).PoliceAbbr);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("policeposition", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("policeposition", Val, " PolicePosID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table policeposition: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncPolicePosition " + e.getMessage().toString());
+            return false;
+        }
     }
 
-    private boolean syncPoliceRank() {
-        return false;
+    public boolean syncPoliceRank(List<TbPoliceRank> tbPoliceRanks) {
+        if (tbPoliceRanks.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbPoliceRanks.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbPoliceRanks.get(i).RankID;
+                strSQL = "SELECT * FROM policerank WHERE "
+                        + "RankID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbPoliceRank.COL_RankID, tbPoliceRanks.get(i).RankID);
+                Val.put(TbPoliceRank.COL_RankName, tbPoliceRanks.get(i).RankName);
+                Val.put(TbPoliceRank.COL_RankAbbr, tbPoliceRanks.get(i).RankAbbr);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("policerank", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("policerank", Val, " RankID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table policerank: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncPoliceRank " + e.getMessage().toString());
+            return false;
+        }
     }
 
-    private boolean syncPoliceStation() {
-        return false;
+    public boolean syncPoliceStation(List<TbPoliceStation> tbPoliceStations) {
+        if (tbPoliceStations.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbPoliceStations.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbPoliceStations.get(i).PoliceStationID;
+                strSQL = "SELECT * FROM policestation WHERE "
+                        + "PoliceStationID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbPoliceStation.COL_PoliceStationID, tbPoliceStations.get(i).PoliceStationID);
+                Val.put(TbPoliceStation.COL_PoliceAgencyID, tbPoliceStations.get(i).PoliceAgencyID);
+                Val.put(TbPoliceStation.COL_PoliceStationName, tbPoliceStations.get(i).PoliceStationName);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("policestation", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("policestation", Val, " PoliceStationID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table policestation: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncPoliceStation " + e.getMessage().toString());
+            return false;
+        }
     }
 
-    private boolean syncProvince() {
-        return false;
+    public boolean syncProvince(List<TbProvince> tbProvinces) {
+        if (tbProvinces.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbProvinces.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbProvinces.get(i).PROVINCE_ID;
+                strSQL = "SELECT * FROM province WHERE "
+                        + "PROVINCE_ID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbProvince.COL_PROVINCE_ID, tbProvinces.get(i).PROVINCE_ID);
+                Val.put(TbProvince.COL_PROVINCE_CODE, tbProvinces.get(i).PROVINCE_CODE);
+                Val.put(TbProvince.COL_PROVINCE_NAME, tbProvinces.get(i).PROVINCE_NAME);
+                Val.put(TbProvince.COL_GEO_ID, tbProvinces.get(i).GEO_ID);
+                Val.put(TbProvince.COL_province_status, tbProvinces.get(i).province_status);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("province", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("province", Val, " PROVINCE_ID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table province: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncProvince " + e.getMessage().toString());
+            return false;
+        }
     }
 
-    private boolean syncSCDCAgency() {
-        return false;
+    public boolean syncResultSceneType(List<TbResultSceneType> tbResultSceneTypes) {
+        if (tbResultSceneTypes.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbResultSceneTypes.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbResultSceneTypes.get(i).RSTypeID;
+                strSQL = "SELECT * FROM resultscenetype WHERE "
+                        + "RSTypeID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbResultSceneType.COL_RSTypeID, tbResultSceneTypes.get(i).RSTypeID);
+                Val.put(TbResultSceneType.COL_RSTypeName, tbResultSceneTypes.get(i).RSTypeName);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("resultscenetype", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("resultscenetype", Val, " RSTypeID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table resultscenetype: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncResultSceneType " + e.getMessage().toString());
+            return false;
+        }
+
     }
 
-    private boolean syncSCDCCenter() {
-        return false;
+    public boolean syncSCDCAgency(List<TbSCDCagency> tbSCDCagencies) {
+        if (tbSCDCagencies.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbSCDCagencies.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbSCDCagencies.get(i).SCDCAgencyCode;
+                strSQL = "SELECT * FROM scdcagency WHERE "
+                        + "SCDCAgencyCode = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbSCDCagency.COL_SCDCAgencyCode, tbSCDCagencies.get(i).SCDCAgencyCode);
+                Val.put(TbSCDCagency.COL_SCDCCenterID, tbSCDCagencies.get(i).SCDCCenterID);
+                Val.put(TbSCDCagency.COL_SCDCAgencyName, tbSCDCagencies.get(i).SCDCAgencyName);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("scdcagency", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("scdcagency", Val, " SCDCAgencyCode = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table scdcagency: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncSCDCAgency " + e.getMessage().toString());
+            return false;
+        }
+
     }
 
-    private boolean syncSubCaseSceneType() {
-        return false;
+    public boolean syncSCDCCenter(List<TbSCDCcenter> tbSCDCcenters) {
+        if (tbSCDCcenters.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbSCDCcenters.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbSCDCcenters.get(i).SCDCCenterID;
+                strSQL = "SELECT * FROM scdccenter WHERE "
+                        + "SCDCCenterID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbSCDCcenter.COL_SCDCCenterID, tbSCDCcenters.get(i).SCDCCenterID);
+                Val.put(TbSCDCcenter.COL_SCDCCenterName, tbSCDCcenters.get(i).SCDCCenterName);
+                Val.put(TbSCDCcenter.COL_SCDCCenterProvince, tbSCDCcenters.get(i).SCDCCenterProvince);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("scdccenter", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("scdccenter", Val, " SCDCCenterID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table scdccenter: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncSCDCCenter " + e.getMessage().toString());
+            return false;
+        }
+
+    }
+
+    public boolean syncSubCaseSceneType(List<TbSubcaseSceneType> tbSubcaseSceneTypes) {
+        if (tbSubcaseSceneTypes.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbSubcaseSceneTypes.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbSubcaseSceneTypes.get(i).SubCaseTypeID;
+                strSQL = "SELECT * FROM subcasescenetype WHERE "
+                        + "SubCaseTypeID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbSubcaseSceneType.COL_SubCaseTypeID, tbSubcaseSceneTypes.get(i).SubCaseTypeID);
+                Val.put(TbSubcaseSceneType.COL_CaseTypeID, tbSubcaseSceneTypes.get(i).CaseTypeID);
+                Val.put(TbSubcaseSceneType.COL_SubCaseTypeName, tbSubcaseSceneTypes.get(i).SubCaseTypeName);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("subcasescenetype", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("subcasescenetype", Val, " SubCaseTypeID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            Log.d(TAG, "Sync Table subcasescenetype: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncSubCaseSceneType " + e.getMessage().toString());
+            return false;
+        }
     }
 
     public String[][] SelectSubCaseType() {

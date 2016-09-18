@@ -5,15 +5,15 @@ package com.scdc.csiapp.tablemodel;
  */
 public class TbInvPosition {
     public static final String TB_InvPosition = "invposition";
-    // From Table policecenter field name InvPosID
+    // From Table invposition field name InvPosID
     public static final String COL_InvPosID = "InvPosID";
     public String InvPosID = "";
 
-    // From Table policecenter field name InvPosName
+    // From Table invposition field name InvPosName
     public static final String COL_InvPosName= "InvPosName";
     public String InvPosName = "";
 
-    // From Table policecenter field name InvPosAbbr
+    // From Table invposition field name InvPosAbbr
     public static final String COL_InvPosAbbr = "InvPosAbbr";
     public String InvPosAbbr = "";
 }

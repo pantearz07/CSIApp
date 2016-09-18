@@ -1,6 +1,6 @@
 package com.scdc.csiapp.syncmodel;
 
-import com.scdc.csiapp.tablemodel.TbCaseSceneType;
+import com.scdc.csiapp.tablemodel.TbComPosition;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class SyncComPosition {
     private String status;
 
-    private List<TbCaseSceneType> data;
+    private List<TbComPosition> data;
 
     public String getStatus() {
         return status;
@@ -20,11 +20,11 @@ public class SyncComPosition {
         this.status = status;
     }
 
-    public List<TbCaseSceneType> getData() {
+    public List<TbComPosition> getData() {
         return data;
     }
 
-    public void setData(List<TbCaseSceneType> data) {
+    public void setData(List<TbComPosition> data) {
         this.data = data;
     }
 }
