@@ -29,6 +29,7 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -299,6 +300,10 @@ public class MainActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        Log.d("TEST","START");
+        SyncData syncData = new SyncData();
+        syncData.execute();
     }
 
 

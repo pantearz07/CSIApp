@@ -11,6 +11,14 @@ import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.main.WelcomeActivity;
+import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
+import com.scdc.csiapp.syncmodel.SyncAmphur;
+import com.scdc.csiapp.syncmodel.SyncDistrict;
+import com.scdc.csiapp.syncmodel.SyncGeography;
+import com.scdc.csiapp.syncmodel.SyncOfficial;
+import com.scdc.csiapp.syncmodel.SyncPoliceAgency;
+import com.scdc.csiapp.syncmodel.SyncPoliceCenter;
 
 import java.io.IOException;
 
@@ -110,8 +118,81 @@ public class ApiConnect {
     // ส่งข้อมูลด้วย
     // ApiProfile
     // Username,Password ดึงเอาจาก User ของ ApiProfile
-    public boolean editProfile(ApiProfile profile){
+    public boolean editProfile(ApiProfile profile) {
         return false;
+    }
+
+    // ใช้การสำหรับ sync ข้อมูลจากเซิร์ฟเวอร์ และทำการร่วมกับ DBHelper
+    public boolean syncDataFromServer(String table_name) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
+                .add("Password", WelcomeActivity.profile.getTbUsers().pass)
+                .add("Table", table_name)
+                .build();
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "syncData")
+                .post(formBody)
+                .build();
+
+        DBHelper dbHelper = new DBHelper(mContext);
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                switch (table_name) {
+                    case "amphur":
+                        SyncAmphur data_amphur = gson.fromJson(response.body().string(), SyncAmphur.class);
+                        dbHelper.syncAmphur(data_amphur.getData());
+                        break;
+                    case "casescenetype":
+                        SyncCaseSceneType data_casescenetype = gson.fromJson(response.body().string(), SyncCaseSceneType.class);
+                        dbHelper.syncCaseSceneType(data_casescenetype.getData());
+                        break;
+                    case "composition":
+                        // ไม่มี Tb
+                        break;
+                    case "district":
+                        SyncDistrict data_district = gson.fromJson(response.body().string(), SyncDistrict.class);
+                        dbHelper.syncDistrict(data_district.getData());
+                        break;
+                    case "geography":
+                        SyncGeography data_geography = gson.fromJson(response.body().string(), SyncGeography.class);
+                        dbHelper.syncGeography(data_geography.getData());
+                        break;
+                    case "inqposition":
+                        // ไม่มี Tb
+                        break;
+                    case "invposition":
+                        // ไม่มี Tb
+                        break;
+                    case "official":
+                        SyncOfficial data_official = gson.fromJson(response.body().string(), SyncOfficial.class);
+                        dbHelper.syncOfficial(data_official.getData());
+                        break;
+                    case "permission":
+                        // ไม่มี Tb
+                        break;
+                    case "policeagency":
+                        SyncPoliceAgency data_policeagency = gson.fromJson(response.body().string(), SyncPoliceAgency.class);
+                        dbHelper.syncPoliceAgency(data_policeagency.getData());
+                        break;
+                    case "policecenter":
+                        SyncPoliceCenter data_policecenter = gson.fromJson(response.body().string(), SyncPoliceCenter.class);
+                        dbHelper.syncPoliceCenter(data_policecenter.getData());
+                        break;
+                }
+                return true;
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in syncDataFromServer : " + e.getMessage());
+
+            return false;
+        }
     }
 
     public ApiStatus saveGCM(ApiGCMRequest data) {

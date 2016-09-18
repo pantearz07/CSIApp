@@ -19,6 +19,7 @@ import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
@@ -64,7 +65,6 @@ public class WelcomeActivity extends AppCompatActivity {
         dbHelper.SelectSubCaseType();
 
         //*** สร้าง ApiConnect ***//
-
         api = new ApiConnect(mContext);
 
         //*** ตรวจสอบ Internet ในกรณีที่ไม่เคย Login เพราะต้องใช้ในการส่งค่าตรวจสอบสิทธิ์ ***//
