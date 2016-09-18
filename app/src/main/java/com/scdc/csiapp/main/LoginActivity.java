@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
+
     String username;
     String password;
     String txt_username, txt_password = "";
@@ -89,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
         txt_username = mManager.getPreferenceData(mManager.KEY_USERNAME);
 
         cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.isNetworkAvailable();
 
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();

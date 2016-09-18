@@ -30,4 +30,5 @@ public class ApiSchedule {
             List<ApiProfile> apiProfiles;
         }
     }
+
 }

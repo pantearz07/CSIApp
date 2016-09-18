@@ -62,14 +62,13 @@ public class InqMainActivity extends AppCompatActivity {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
-    String officialID, username, password,accestype;
+    String officialID, username, password, accestype;
     TextView OfficialName, txtusername;
     ImageView avatar;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
     private static final String TAG = "DEBUG-InqMainActivity";
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
 
     @SuppressLint("LongLogTag")
     @Override
@@ -87,7 +86,7 @@ public class InqMainActivity extends AppCompatActivity {
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         cd = new ConnectionDetector(getApplicationContext());
-        networkConnectivity = cd.isNetworkAvailable();
+
         /**
          *Setup the DrawerLayout and NavigationView
          */
@@ -277,7 +276,10 @@ public class InqMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-
+            FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
+            ftsetting.replace(R.id.containerView, settingFragment);
+            ftsetting.addToBackStack(null);
+            ftsetting.commit();
         }
 
         return super.onOptionsItemSelected(item);

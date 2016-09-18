@@ -10,20 +10,17 @@ import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.main.WelcomeActivity;
 
 /**
- * Created by Amnart on 18/9/2559.
+ * Created by Pantearz07 on 18/9/2559.
  */
-public class SyncData extends AsyncTask<Void, Void, Void> {
+public class SyncDataPolice extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
         if (WelcomeActivity.api != null) {
             ApiStatus apiStatus = WelcomeActivity.api.checkConnect();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                WelcomeActivity.api.syncDataFromServer("amphur");
                 WelcomeActivity.api.syncDataFromServer("casescenetype");
                 WelcomeActivity.api.syncDataFromServer("composition");
-                WelcomeActivity.api.syncDataFromServer("district");
-                WelcomeActivity.api.syncDataFromServer("geography");
                 WelcomeActivity.api.syncDataFromServer("inqposition");
                 WelcomeActivity.api.syncDataFromServer("invposition");
                 WelcomeActivity.api.syncDataFromServer("official");
@@ -33,7 +30,6 @@ public class SyncData extends AsyncTask<Void, Void, Void> {
                 WelcomeActivity.api.syncDataFromServer("policeposition");
                 WelcomeActivity.api.syncDataFromServer("policerank");
                 WelcomeActivity.api.syncDataFromServer("policestation");
-                WelcomeActivity.api.syncDataFromServer("province");
                 WelcomeActivity.api.syncDataFromServer("resultscenetype");
                 WelcomeActivity.api.syncDataFromServer("scdcagency");
                 WelcomeActivity.api.syncDataFromServer("scdccenter");
@@ -50,7 +46,6 @@ public class SyncData extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void voice) {
         super.onPostExecute(voice);
         Log.d("TEST", "END");
-        // ถ้าส่งมาจากหน้า loginactivity จะ error
         Toast.makeText(MainActivity.mContext, R.string.save_complete,
                 Toast.LENGTH_LONG).show();
     }

@@ -1,5 +1,6 @@
 package com.scdc.csiapp.main;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -29,7 +30,6 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     ConnectionDetector cd;
 
     long isConnectingToInternet = 0;
-
+    public static Context mContext;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
@@ -95,13 +95,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mManager = new PreferenceData(this);
+        mContext = getApplicationContext();
         // PreferenceData member id
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
         username = WelcomeActivity.profile.getTbUsers().id_users;
         password = WelcomeActivity.profile.getTbUsers().pass;
         accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
 
-
+        cd = new ConnectionDetector(getApplicationContext());
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
@@ -353,7 +354,10 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-
+            FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
+            ftsetting.replace(R.id.containerView, settingFragment);
+            ftsetting.addToBackStack(null);
+            ftsetting.commit();
         }
 
         return super.onOptionsItemSelected(item);
