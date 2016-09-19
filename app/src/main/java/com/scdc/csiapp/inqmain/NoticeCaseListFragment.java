@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
@@ -47,7 +47,8 @@ public class NoticeCaseListFragment extends Fragment {
     String officialID;
     EmergencyTabFragment emergencyTabFragment;
     private static final String TAG = "DEBUG-NoticeCaseListFragment";
-
+    private static final String Bundle_Key= "noticecase";
+    Snackbar snackbar;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -141,35 +142,6 @@ public class NoticeCaseListFragment extends Fragment {
                         //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
                     }
                 });
-//                //ดึงค่าจาก TbSubCaseSceneType
-//                final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();
-//                if (mSubCaseTypeArray != null) {
-//                    String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-//                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-//                        mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-//                        Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
-//                    }
-//                    ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-//                            android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-//                    spnSubCaseType.setAdapter(adapterSubCaseType);
-//                } else {
-//                    Log.i(TAG + " show mSubCaseTypeArray", "null");
-//                }
-//                final String[] selectedSubCaseType = new String[1];
-//                spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//
-//                    @Override
-//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                        selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
-//                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-//                    }
-//
-//                    public void onNothingSelected(AdapterView<?> parent) {
-//                        selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
-//                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-//                    }
-//                });
-
 
                 dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
                 dialog.setIcon(R.drawable.ic_noti);
@@ -200,28 +172,19 @@ public class NoticeCaseListFragment extends Fragment {
                         tbNoticeCase.PROVINCE_ID = null;
                         tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                         tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                        // save new Report
-//                        long saveStatus1 = mDbHelper.saveReportID(
-//                                reportID, reportNo, officialID, "", selectedCaseType[0], selectedSubCaseType[0], "receive");
-//
-//                        if (saveStatus1 <= 0) {
-//                            Log.i("save report", "Error!! ");
-//                        } else {
-//                            Log.i("save report", reportID + " " + reportNo
-//                                    + " " + officialID);
-//                        }
+
                         if (tbNoticeCase != null) {
-                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
-                            if (isSuccess) {
+//                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
+//                            if (isSuccess) {
                                 Bundle i = new Bundle();
-                                i.putString("NoticeCaseID", NoticeCaseID);
+                                i.putSerializable(Bundle_Key, tbNoticeCase);
                                 FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                                 emergencyTabFragment.setArguments(i);
                                 fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
 
-                            } else {
-                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
-                            }
+//                            } else {
+//                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
+//                            }
                         }
 
 
