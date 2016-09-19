@@ -29,6 +29,7 @@ import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.AcceptListFragment;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 
 public class SummaryEmerTabFragment extends Fragment {
@@ -68,10 +69,10 @@ public class SummaryEmerTabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewSummaryCSI = inflater.inflate(R.layout.summarycsi_tab_layout, null);
 // Permission StrictMode
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+//        if (android.os.Build.VERSION.SDK_INT > 9) {
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//        }
 
         final Context context = viewSummaryCSI.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
@@ -81,6 +82,8 @@ public class SummaryEmerTabFragment extends Fragment {
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
+
+        dbHelper = new DBHelper(getContext());
 
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
 
@@ -210,7 +213,7 @@ public class SummaryEmerTabFragment extends Fragment {
         return viewSummaryCSI;
     }
 
-    class showData extends AsyncTask<String, Void, String[]> {
+    class showData extends AsyncTask<String, Void, TbNoticeCase> {
         @Override
         protected void onPreExecute() {
             // Create Show ProgressBar
@@ -218,55 +221,54 @@ public class SummaryEmerTabFragment extends Fragment {
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
-            String[] arrData = {""};
-            arrData = dbHelper.selectNoticeScene(params[0]);
-            return arrData;
+        protected TbNoticeCase doInBackground(String... params) {
+            TbNoticeCase ans = dbHelper.selectNoticeScene(params[0]);
+            return ans;
         }
 
-        protected void onPostExecute(String[] arrData) {
-            if (arrData != null) {
-                Log.i("edtStatus", arrData[7]);
+        protected void onPostExecute(TbNoticeCase data) {
+            if (data != null) {
+                Log.i("edtStatus", data.CaseStatus);
 
-                if (arrData[7].equals("investigating")) {
+                if (data.CaseStatus.equals("investigating")) {
                     edtStatus.setText("กำลังดำเนินการตรวจ");
-                }  else if (arrData[7].equals("notice")) {
+                }  else if (data.CaseStatus.equals("notice")) {
                     edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
                     mViewBtnSaveServer.setVisibility(View.GONE);
-                } else if (arrData[7].equals("receive")) {
+                } else if (data.CaseStatus.equals("receive")) {
                     edtStatus.setText("ยังไม่ส่งแจ้งเหตุ");
                     mViewBtnSaveServer.setVisibility(View.GONE);
-                } else if (arrData[7].equals("investigated")) {
+                } else if (data.CaseStatus.equals("investigated")) {
                     edtStatus.setText("ตรวจเสร็จแล้ว");
                 }
-                if (arrData[10] != null) {
-
-                    edtInvestDateTime.setText(getDateTime.changeDateFormatToCalendar(arrData[10]) + " เวลาประมาณ " + arrData[11] +" น.");
-
-                } else {
-                    edtInvestDateTime.setText("-");
-                }
-                if (arrData[12] != null) {
-                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(arrData[12]) + " เวลาประมาณ " + arrData[13]+" น.");
-                } else {
-                    edtUpdateDateTime.setText("-");
-                }
-                if (arrData[5] != null) {
-                    for (int i = 0; i < mTypeCenterArray.length; i++) {
-                        if (arrData[5].trim().equals(mTypeCenterArray[i][0].toString())) {
-                            spnCaseType.setSelection(i);
-                            break;
-                        }
-                    }
-                }
-                if (arrData[6] != null) {
-                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                        if (arrData[6].trim().equals(mSubCaseTypeArray[i][0].toString())) {
-                            spnSubCaseType.setSelection(i);
-                            break;
-                        }
-                    }
-                }
+//                if (arrData[10] != null) {
+//
+//                    edtInvestDateTime.setText(getDateTime.changeDateFormatToCalendar(arrData[10]) + " เวลาประมาณ " + arrData[11] +" น.");
+//
+//                } else {
+//                    edtInvestDateTime.setText("-");
+//                }
+//                if (arrData[12] != null) {
+//                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(arrData[12]) + " เวลาประมาณ " + arrData[13]+" น.");
+//                } else {
+//                    edtUpdateDateTime.setText("-");
+//                }
+//                if (arrData[5] != null) {
+//                    for (int i = 0; i < mTypeCenterArray.length; i++) {
+//                        if (arrData[5].trim().equals(mTypeCenterArray[i][0].toString())) {
+//                            spnCaseType.setSelection(i);
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (arrData[6] != null) {
+//                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+//                        if (arrData[6].trim().equals(mSubCaseTypeArray[i][0].toString())) {
+//                            spnSubCaseType.setSelection(i);
+//                            break;
+//                        }
+//                    }
+//                }
 
             }
         }

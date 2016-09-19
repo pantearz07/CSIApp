@@ -1121,8 +1121,9 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
-    public String[] selectNoticeScene(String noticeCaseID) {
+    public TbNoticeCase selectNoticeScene(String noticeCaseID) {
         // TODO Auto-generated method stub
+        TbNoticeCase TbNotice = new TbNoticeCase();
         Log.i(TAG, "selectNoticeScene "+ noticeCaseID);
         try {
             String arrData[] = null;
@@ -1139,12 +1140,21 @@ public class DBHelper extends SQLiteAssetHelper {
                     for (int i = 0; i < cursor.getColumnCount(); i++) {
                         arrData[i] = cursor.getString(i);
                     }
+                    // เชื่อมข้อมูลที่ดึงได้เข้ากับ Tb ของตารางนั้นๆ
+                    TbNotice.NoticeCaseID = arrData[0];
+                    TbNotice.Mobile_CaseID = arrData[1];
+                    TbNotice.InquiryOfficialID = arrData[2];
+                    TbNotice.InvestigatorOfficialID = arrData[3];
+                    TbNotice.SCDCAgencyCode = arrData[4];
+                    TbNotice.CaseTypeID = arrData[5];
+                    TbNotice.SubCaseTypeID = arrData[6];
+                    TbNotice.CaseStatus = arrData[7];
                     Log.i(TAG, "selectNoticeScene "+ arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
                 }
             }
             cursor.close();
             db.close();
-            return arrData;
+            return TbNotice;
 
         } catch (Exception e) {
             Log.d(TAG, "Error in selectNoticeScene " + e.getMessage().toString());
