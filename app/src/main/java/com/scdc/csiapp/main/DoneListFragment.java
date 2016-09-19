@@ -133,8 +133,8 @@ public class DoneListFragment extends Fragment {
                     }
                 });
 
-                final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
-                edtYear.setVisibility(View.GONE);
+               // final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
+               // edtYear.setVisibility(View.GONE);
                 dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
                 dialog.setIcon(R.drawable.ic_noti);
                 dialog.setCancelable(true);

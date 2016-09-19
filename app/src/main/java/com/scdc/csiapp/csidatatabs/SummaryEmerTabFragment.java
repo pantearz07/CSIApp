@@ -106,8 +106,8 @@ public class SummaryEmerTabFragment extends Fragment {
         Log.i("reportID", reportID);
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
 
-        edtYear = (TextView) viewSummaryCSI.findViewById(R.id.edtYear);
-        edtYear.setVisibility(View.GONE);
+      //  edtYear = (TextView) viewSummaryCSI.findViewById(R.id.edtYear);
+      //  edtYear.setVisibility(View.GONE);
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
         edtReportNo.setVisibility(View.GONE);
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);

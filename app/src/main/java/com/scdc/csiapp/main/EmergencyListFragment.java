@@ -171,8 +171,7 @@ public class EmergencyListFragment extends Fragment {
                     }
                 });
 
-                final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
-                edtYear.setVisibility(View.GONE);
+
                 dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
                 dialog.setIcon(R.drawable.ic_noti);
                 dialog.setCancelable(true);
@@ -188,7 +187,7 @@ public class EmergencyListFragment extends Fragment {
                         dialog.dismiss();
                         String reportNo = "";
 
-                        String reportID = "RC_" + saveDataTime;
+                        String reportID = "MC" + saveDataTime;
 
                         // save new Report
                         long saveStatus1 = mDbHelper.saveReportID(

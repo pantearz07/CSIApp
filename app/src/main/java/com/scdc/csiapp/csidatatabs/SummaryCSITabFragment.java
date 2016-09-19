@@ -64,7 +64,7 @@ public class SummaryCSITabFragment extends Fragment {
     ArrayAdapter<String> adapterCaseType, adapterSubCaseType;
     EditText edtReportNo;
     Spinner spnCaseType, spnSubCaseType ;
-    TextView edtYear,edtStatus, edtInvestDateTime, edtUpdateDateTime,
+    TextView edtStatus, edtInvestDateTime, edtUpdateDateTime,
             txtButtonCount1, txtButtonCount2, txtButtonCount3, txtButtonCount4, txtButtonCount5;
     String[] updateDT, selectedCaseType, selectedSubCaseType;
     String message = "";
@@ -97,7 +97,7 @@ public class SummaryCSITabFragment extends Fragment {
         Log.i("reportID", reportID);
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
 
-        edtYear = (TextView) viewSummaryCSI.findViewById(R.id.edtYear);
+
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
@@ -195,7 +195,7 @@ public class SummaryCSITabFragment extends Fragment {
         protected void onPostExecute(String[] arrData) {
             if (arrData != null) {
                 Log.i("year", arrData[29]);
-                edtYear.setText("/ "+arrData[29]);
+               // edtYear.setText("/ "+arrData[29]);
                 edtReportNo.setText(arrData[28]);
                 if (arrData[30].equals("investigating")) {
                     edtStatus.setText("กำลังดำเนินการตรวจ");

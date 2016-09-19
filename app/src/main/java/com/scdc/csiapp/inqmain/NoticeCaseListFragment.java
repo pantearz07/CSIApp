@@ -79,8 +79,8 @@ public class NoticeCaseListFragment extends Fragment {
                 dialog.setView(view1);
 
                 final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
+                final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
                 //ดึงค่าจาก TbCaseSceneType
-
                 final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
                 if (mCaseTypeArray != null) {
                     String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
@@ -96,7 +96,6 @@ public class NoticeCaseListFragment extends Fragment {
                     Log.i(TAG + " show mCaseTypeArray", "null");
                 }
                 final String[] selectedCaseType = new String[1];
-
                 spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override
@@ -112,7 +111,6 @@ public class NoticeCaseListFragment extends Fragment {
                         //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
                     }
                 });
-                final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
                 //ดึงค่าจาก TbSubCaseSceneType
                 final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();
                 if (mSubCaseTypeArray != null) {

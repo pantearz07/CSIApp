@@ -1121,5 +1121,36 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+    public String[] selectNoticeScene(String noticeCaseID) {
+        // TODO Auto-generated method stub
+        Log.i(TAG, "selectNoticeScene "+ noticeCaseID);
+        try {
+            String arrData[] = null;
+
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM noticecase "
+                    + " WHERE NoticeCaseID = '" + noticeCaseID + "'";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getColumnCount()];
+                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+                        arrData[i] = cursor.getString(i);
+                    }
+                    Log.i(TAG, "selectNoticeScene "+ arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in selectNoticeScene " + e.getMessage().toString());
+            return null;
+        }
+
+    }
 
 }

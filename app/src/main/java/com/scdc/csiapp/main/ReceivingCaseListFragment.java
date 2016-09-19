@@ -172,7 +172,7 @@ public class ReceivingCaseListFragment extends Fragment {
                     }
                 });
 
-                final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
+                //final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
                 dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
                 dialog.setIcon(R.drawable.ic_noti);
                 dialog.setCancelable(true);
@@ -181,7 +181,7 @@ public class ReceivingCaseListFragment extends Fragment {
                 final String reportYear = dateTimeCurrent[0];
                 final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0]+"_"+dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
 //RC_07042016_034747
-                edtYear.setText(" / " + reportYear);
+                ///edtYear.setText(" / " + reportYear);
                 dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

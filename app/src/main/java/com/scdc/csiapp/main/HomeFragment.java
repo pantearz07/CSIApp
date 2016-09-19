@@ -20,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
@@ -130,7 +129,7 @@ getDateTime = new GetDateTime();
                     }
                 });
 
-                final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
+               // final TextView edtYear = (TextView) view1.findViewById(R.id.edtYear);
                 dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
                 dialog.setIcon(R.drawable.ic_noti);
                 dialog.setCancelable(true);
@@ -143,7 +142,7 @@ getDateTime = new GetDateTime();
                 final String reportYear = dateTimeCurrent[0];
                 final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0]+"_"+dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
 
-                edtYear.setText(" / "+reportYear);
+               // edtYear.setText(" / "+reportYear);
                 dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
