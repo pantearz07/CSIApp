@@ -3,6 +3,7 @@ package com.scdc.csiapp.inqmain;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -22,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -240,6 +242,8 @@ public class NoticeCaseListFragment extends Fragment {
             }
         });
 
+        new ConnectlistNoticecase().execute();
+
         return x;
     }
 
@@ -264,5 +268,22 @@ public class NoticeCaseListFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
+
+        @Override
+        protected ApiListNoticeCase doInBackground(Void... voids) {
+            return WelcomeActivity.api.listNoticecase();
+        }
+
+        @Override
+        protected void onPostExecute(ApiListNoticeCase apiListNoticeCase) {
+            super.onPostExecute(apiListNoticeCase);
+            if (apiListNoticeCase != null) {
+                Log.d(TAG, apiListNoticeCase.getStatus());
+                Log.d(TAG, String.valueOf(apiListNoticeCase.getData().getResult().size()));
+            }
+        }
     }
 }

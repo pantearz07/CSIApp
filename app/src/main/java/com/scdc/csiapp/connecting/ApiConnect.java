@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.scdc.csiapp.apimodel.ApiGCMRequest;
+import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiProfile;
@@ -283,6 +284,35 @@ public class ApiConnect {
             Log.d(TAG, "ERROR in syncDataFromServer : " + e.getMessage());
 
             return false;
+        }
+    }
+
+    public ApiListNoticeCase listNoticecase() {
+        RequestBody formBody = new FormBody.Builder()
+                .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
+                .add("Password", WelcomeActivity.profile.getTbUsers().pass)
+                .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
+                .build();
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "listNoticecase")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiListNoticeCase.class);
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in listNoticecase : " + e.getMessage());
+
+            return null;
         }
     }
 

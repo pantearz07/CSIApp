@@ -96,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = (Button) findViewById(R.id.loginButton);
         settingip_btn = (Button) findViewById(R.id.settingip_btn);
+        loginButton.setEnabled(false);// ปิดการทำงานไว้จนกว่าจะตรวจว่าเชื่อมเซิร์ฟเวอร์ได้จริง
 
         mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์
 
@@ -397,7 +398,9 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
+                loginButton.setEnabled(true);
             } else {
+                loginButton.setEnabled(false);
                 if (snackbar == null || !snackbar.isShown()) {
                     View rootView = findViewById(R.id.drawerLayoutLogin);
                     snackbar = Snackbar.make(rootView, getString(R.string.cannot_connect_server), Snackbar.LENGTH_INDEFINITE)
