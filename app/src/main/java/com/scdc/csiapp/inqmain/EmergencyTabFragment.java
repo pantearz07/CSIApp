@@ -8,13 +8,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.csidatatabs.EmergencyDetailTabFragment;
-import com.scdc.csiapp.csidatatabs.SummaryEmerTabFragment;
 
 public class EmergencyTabFragment extends Fragment {
     //หน้าโชว์ข้อมูลคดีทั้งหมด โดยเเบ่งเป็นเเท็บ 2 แท็บ
@@ -25,7 +24,8 @@ public class EmergencyTabFragment extends Fragment {
     public static TabLayout tabLayoutCSI;
     public static ViewPager viewpagerCSI;
     public static int int_items = 2 ;
-
+    public static String NoticeCaseID;
+    private static final String TAG = "DEBUG-EmergencyTabFragment";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +56,9 @@ public class EmergencyTabFragment extends Fragment {
                 tabLayoutCSI.setupWithViewPager(viewpagerCSI);
             }
         });
-
+        Bundle bundle = getArguments();
+        NoticeCaseID = bundle.getString("NoticeCaseID", "");
+        Log.i(TAG, " NoticeCaseID "+NoticeCaseID);
         return x;
 
     }
@@ -74,6 +76,7 @@ public class EmergencyTabFragment extends Fragment {
         @Override
         public Fragment getItem(int position)
         {
+
             switch (position){
                 case 0 : return new SummaryEmerTabFragment();
                 case 1 : return new EmergencyDetailTabFragment();

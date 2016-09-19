@@ -173,5 +173,339 @@ public class TbCaseScene {
     public static final String COL_LastUpdateTime = "LastUpdateTime";
     public String LastUpdateTime = "";
 
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
 
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getNoticeCaseID() {
+        return NoticeCaseID;
+    }
+
+    public void setNoticeCaseID(String noticeCaseID) {
+        NoticeCaseID = noticeCaseID;
+    }
+
+    public String getMobile_CaseID() {
+        return Mobile_CaseID;
+    }
+
+    public void setMobile_CaseID(String mobile_CaseID) {
+        Mobile_CaseID = mobile_CaseID;
+    }
+
+    public String getSCDCAgencyCode() {
+        return SCDCAgencyCode;
+    }
+
+    public void setSCDCAgencyCode(String SCDCAgencyCode) {
+        this.SCDCAgencyCode = SCDCAgencyCode;
+    }
+
+    public String getInvestigatorOfficialID() {
+        return InvestigatorOfficialID;
+    }
+
+    public void setInvestigatorOfficialID(String investigatorOfficialID) {
+        InvestigatorOfficialID = investigatorOfficialID;
+    }
+
+    public String getCaseTypeID() {
+        return CaseTypeID;
+    }
+
+    public void setCaseTypeID(String caseTypeID) {
+        CaseTypeID = caseTypeID;
+    }
+
+    public String getSubCaseTypeID() {
+        return SubCaseTypeID;
+    }
+
+    public void setSubCaseTypeID(String subCaseTypeID) {
+        SubCaseTypeID = subCaseTypeID;
+    }
+
+    public String getReportNo() {
+        return ReportNo;
+    }
+
+    public void setReportNo(String reportNo) {
+        ReportNo = reportNo;
+    }
+
+    public String getReportStatus() {
+        return ReportStatus;
+    }
+
+    public void setReportStatus(String reportStatus) {
+        ReportStatus = reportStatus;
+    }
+
+    public String getPoliceStationID() {
+        return PoliceStationID;
+    }
+
+    public void setPoliceStationID(String policeStationID) {
+        PoliceStationID = policeStationID;
+    }
+
+    public String getCaseTel() {
+        return CaseTel;
+    }
+
+    public void setCaseTel(String caseTel) {
+        CaseTel = caseTel;
+    }
+
+    public String getAssignmentDate() {
+        return AssignmentDate;
+    }
+
+    public void setAssignmentDate(String assignmentDate) {
+        AssignmentDate = assignmentDate;
+    }
+
+    public String getAssignmentTime() {
+        return AssignmentTime;
+    }
+
+    public void setAssignmentTime(String assignmentTime) {
+        AssignmentTime = assignmentTime;
+    }
+
+    public String getReceivingCaseDate() {
+        return ReceivingCaseDate;
+    }
+
+    public void setReceivingCaseDate(String receivingCaseDate) {
+        ReceivingCaseDate = receivingCaseDate;
+    }
+
+    public String getReceivingCaseTime() {
+        return ReceivingCaseTime;
+    }
+
+    public void setReceivingCaseTime(String receivingCaseTime) {
+        ReceivingCaseTime = receivingCaseTime;
+    }
+
+    public String getHappenCaseDate() {
+        return HappenCaseDate;
+    }
+
+    public void setHappenCaseDate(String happenCaseDate) {
+        HappenCaseDate = happenCaseDate;
+    }
+
+    public String getHappenCaseTime() {
+        return HappenCaseTime;
+    }
+
+    public void setHappenCaseTime(String happenCaseTime) {
+        HappenCaseTime = happenCaseTime;
+    }
+
+    public String getKnowCaseDate() {
+        return KnowCaseDate;
+    }
+
+    public void setKnowCaseDate(String knowCaseDate) {
+        KnowCaseDate = knowCaseDate;
+    }
+
+    public String getKnowCaseTime() {
+        return KnowCaseTime;
+    }
+
+    public void setKnowCaseTime(String knowCaseTime) {
+        KnowCaseTime = knowCaseTime;
+    }
+
+    public String getCompleteSceneDate() {
+        return CompleteSceneDate;
+    }
+
+    public void setCompleteSceneDate(String completeSceneDate) {
+        CompleteSceneDate = completeSceneDate;
+    }
+
+    public String getCompleteSceneTime() {
+        return CompleteSceneTime;
+    }
+
+    public void setCompleteSceneTime(String completeSceneTime) {
+        CompleteSceneTime = completeSceneTime;
+    }
+
+    public String getLocaleName() {
+        return LocaleName;
+    }
+
+    public void setLocaleName(String localeName) {
+        LocaleName = localeName;
+    }
+
+    public String getDISTRICT_ID() {
+        return DISTRICT_ID;
+    }
+
+    public void setDISTRICT_ID(String DISTRICT_ID) {
+        this.DISTRICT_ID = DISTRICT_ID;
+    }
+
+    public String getAMPHUR_ID() {
+        return AMPHUR_ID;
+    }
+
+    public void setAMPHUR_ID(String AMPHUR_ID) {
+        this.AMPHUR_ID = AMPHUR_ID;
+    }
+
+    public String getPROVINCE_ID() {
+        return PROVINCE_ID;
+    }
+
+    public void setPROVINCE_ID(String PROVINCE_ID) {
+        this.PROVINCE_ID = PROVINCE_ID;
+    }
+
+    public String getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        Latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        Longitude = longitude;
+    }
+
+    public String getFeatureInsideDetail() {
+        return FeatureInsideDetail;
+    }
+
+    public void setFeatureInsideDetail(String featureInsideDetail) {
+        FeatureInsideDetail = featureInsideDetail;
+    }
+
+    public String getCircumstanceOfCaseDetail() {
+        return CircumstanceOfCaseDetail;
+    }
+
+    public void setCircumstanceOfCaseDetail(String circumstanceOfCaseDetail) {
+        CircumstanceOfCaseDetail = circumstanceOfCaseDetail;
+    }
+
+    public String getFullEvidencePerformed() {
+        return FullEvidencePerformed;
+    }
+
+    public void setFullEvidencePerformed(String fullEvidencePerformed) {
+        FullEvidencePerformed = fullEvidencePerformed;
+    }
+
+    public String getAnnotation() {
+        return Annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        Annotation = annotation;
+    }
+
+    public String getMaleCriminalNum() {
+        return MaleCriminalNum;
+    }
+
+    public void setMaleCriminalNum(String maleCriminalNum) {
+        MaleCriminalNum = maleCriminalNum;
+    }
+
+    public String getFemaleCriminalNum() {
+        return FemaleCriminalNum;
+    }
+
+    public void setFemaleCriminalNum(String femaleCriminalNum) {
+        FemaleCriminalNum = femaleCriminalNum;
+    }
+
+    public String getConfineSufferer() {
+        return ConfineSufferer;
+    }
+
+    public void setConfineSufferer(String confineSufferer) {
+        ConfineSufferer = confineSufferer;
+    }
+
+    public String getSuffererPrename() {
+        return SuffererPrename;
+    }
+
+    public void setSuffererPrename(String suffererPrename) {
+        SuffererPrename = suffererPrename;
+    }
+
+    public String getSuffererName() {
+        return SuffererName;
+    }
+
+    public void setSuffererName(String suffererName) {
+        SuffererName = suffererName;
+    }
+
+    public String getSuffererStatus() {
+        return SuffererStatus;
+    }
+
+    public void setSuffererStatus(String suffererStatus) {
+        SuffererStatus = suffererStatus;
+    }
+
+    public String getSuffererPhoneNum() {
+        return SuffererPhoneNum;
+    }
+
+    public void setSuffererPhoneNum(String suffererPhoneNum) {
+        SuffererPhoneNum = suffererPhoneNum;
+    }
+
+    public String getCriminalUsedWeapon() {
+        return CriminalUsedWeapon;
+    }
+
+    public void setCriminalUsedWeapon(String criminalUsedWeapon) {
+        CriminalUsedWeapon = criminalUsedWeapon;
+    }
+
+    public String getVehicleInfo() {
+        return VehicleInfo;
+    }
+
+    public void setVehicleInfo(String vehicleInfo) {
+        VehicleInfo = vehicleInfo;
+    }
+
+    public String getLastUpdateDate() {
+        return LastUpdateDate;
+    }
+
+    public void setLastUpdateDate(String lastUpdateDate) {
+        LastUpdateDate = lastUpdateDate;
+    }
+
+    public String getLastUpdateTime() {
+        return LastUpdateTime;
+    }
+
+    public void setLastUpdateTime(String lastUpdateTime) {
+        LastUpdateTime = lastUpdateTime;
+    }
 }

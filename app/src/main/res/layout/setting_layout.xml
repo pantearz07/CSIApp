@@ -34,7 +34,7 @@
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
-        <android.support.design.widget.FloatingActionButton
+        <!--<android.support.design.widget.FloatingActionButton
             android:id="@+id/fabBtnSetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,8 +44,9 @@
             android:src="@drawable/ic_plus"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
-            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />
+            -->
 
     </android.support.design.widget.CoordinatorLayout>
 

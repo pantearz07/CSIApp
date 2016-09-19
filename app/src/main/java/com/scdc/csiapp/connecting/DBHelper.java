@@ -15,6 +15,7 @@ import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbGeography;
 import com.scdc.csiapp.tablemodel.TbInqPosition;
 import com.scdc.csiapp.tablemodel.TbInvPosition;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbPermission;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
@@ -945,11 +946,13 @@ public class DBHelper extends SQLiteAssetHelper {
 
                     int i = 0;
                     do {
-                        arrData[i][0] = cursor.getString(0);
-                        arrData[i][1] = cursor.getString(1);
-                        arrData[i][2] = cursor.getString(2);
+                        for (int j = 0; j < cursor.getColumnCount(); j++) {
+                            arrData[i][j] = cursor.getString(j);
 
-                        Log.i("show SelectSubCaseType", arrData[i][0]);
+
+                        }
+
+
                         i++;
                     } while (cursor.moveToNext());
 
@@ -966,4 +969,157 @@ public class DBHelper extends SQLiteAssetHelper {
             return null;
         }
     }
+
+    public String[][] SelectSubCaseTypeByCaseType(String CaseTypeID) {
+        // TODO Auto-generated method stub
+        Log.i("show", "SelectSubCaseType");
+        try {
+            String arrData[][] = null;
+
+            mDb = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM subcasescenetype WHERE " + TbSubcaseSceneType.COL_CaseTypeID + " = '" + CaseTypeID + "'";
+            Log.i("show", strSQL);
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        for (int j = 0; j < cursor.getColumnCount(); j++) {
+                            arrData[i][j] = cursor.getString(j);
+
+
+                        }
+
+
+                        i++;
+                    } while (cursor.moveToNext());
+
+                }
+
+            }
+
+            cursor.close();
+            mDb.close();
+            return arrData;
+
+        } catch (Exception e) {
+            Log.i("show", e.getMessage().toString());
+            return null;
+        }
+    }
+
+    public String[][] SelectCaseType() {
+        // TODO Auto-generated method stub
+        try {
+            String arrData[][] = null;
+
+            mDb = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM " + TbCaseSceneType.TB_CaseSceneType;
+            Log.i("show", strSQL);
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        for (int j = 0; j < cursor.getColumnCount(); j++) {
+                            arrData[i][j] = cursor.getString(j);
+                        }
+                        i++;
+                    } while (cursor.moveToNext());
+
+                }
+
+            }
+
+            cursor.close();
+            mDb.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean saveNoticeCase(TbNoticeCase tbNoticeCases) {
+        if (tbNoticeCases == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+
+            PRIMARY_KEY = tbNoticeCases.NoticeCaseID;
+            strSQL = "SELECT * FROM noticecase WHERE "
+                    + "NoticeCaseID = '" + PRIMARY_KEY + "'";
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            ContentValues Val = new ContentValues();
+            Val.put(TbNoticeCase.COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
+            Val.put(TbNoticeCase.COL_Mobile_CaseID, tbNoticeCases.Mobile_CaseID);
+            Val.put(TbNoticeCase.COL_InquiryOfficialID, tbNoticeCases.InquiryOfficialID);
+            Val.put(TbNoticeCase.COL_InvestigatorOfficialID, tbNoticeCases.InvestigatorOfficialID);
+            Val.put(TbNoticeCase.COL_SCDCAgencyCode, tbNoticeCases.SCDCAgencyCode);
+            Val.put(TbNoticeCase.COL_CaseTypeID, tbNoticeCases.CaseTypeID);
+            Val.put(TbNoticeCase.COL_SubCaseTypeID, tbNoticeCases.SubCaseTypeID);
+            Val.put(TbNoticeCase.COL_CaseStatus, tbNoticeCases.CaseStatus);
+            Val.put(TbNoticeCase.COL_PoliceStationID, tbNoticeCases.PoliceStationID);
+            Val.put(TbNoticeCase.COL_CaseTel, tbNoticeCases.CaseTel);
+            Val.put(TbNoticeCase.COL_ReceivingCaseDate, tbNoticeCases.ReceivingCaseDate);
+            Val.put(TbNoticeCase.COL_ReceivingCaseTime, tbNoticeCases.ReceivingCaseTime);
+            Val.put(TbNoticeCase.COL_HappenCaseDate, tbNoticeCases.HappenCaseDate);
+            Val.put(TbNoticeCase.COL_HappenCaseTime, tbNoticeCases.HappenCaseTime);
+            Val.put(TbNoticeCase.COL_KnowCaseDate, tbNoticeCases.KnowCaseDate);
+            Val.put(TbNoticeCase.COL_KnowCaseTime, tbNoticeCases.KnowCaseTime);
+            Val.put(TbNoticeCase.COL_SceneNoticeDate, tbNoticeCases.SceneNoticeDate);
+            Val.put(TbNoticeCase.COL_SceneNoticeTime, tbNoticeCases.SceneNoticeTime);
+            Val.put(TbNoticeCase.COL_CompleteSceneDate, tbNoticeCases.CompleteSceneDate);
+            Val.put(TbNoticeCase.COL_CompleteSceneTime, tbNoticeCases.CompleteSceneTime);
+            Val.put(TbNoticeCase.COL_LocaleName, tbNoticeCases.LocaleName);
+            Val.put(TbNoticeCase.COL_DISTRICT_ID, tbNoticeCases.DISTRICT_ID);
+            Val.put(TbNoticeCase.COL_AMPHUR_ID, tbNoticeCases.AMPHUR_ID);
+            Val.put(TbNoticeCase.COL_PROVINCE_ID, tbNoticeCases.PROVINCE_ID);
+            Val.put(TbNoticeCase.COL_Latitude, tbNoticeCases.Latitude);
+            Val.put(TbNoticeCase.COL_Longitude, tbNoticeCases.Longitude);
+            Val.put(TbNoticeCase.COL_SuffererPrename, tbNoticeCases.SuffererPrename);
+            Val.put(TbNoticeCase.COL_SuffererName, tbNoticeCases.SuffererName);
+            Val.put(TbNoticeCase.COL_SuffererStatus, tbNoticeCases.SuffererStatus);
+            Val.put(TbNoticeCase.COL_SuffererPhoneNum, tbNoticeCases.SuffererPhoneNum);
+            Val.put(TbNoticeCase.COL_CircumstanceOfCaseDetail, tbNoticeCases.CircumstanceOfCaseDetail);
+            Val.put(TbNoticeCase.COL_LastUpdateDate, tbNoticeCases.LastUpdateDate);
+            Val.put(TbNoticeCase.COL_LastUpdateTime, tbNoticeCases.LastUpdateTime);
+
+            if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                db.insert("noticecase", null, Val);
+                insert++;
+            } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                db.update("noticecase", Val, " NoticeCaseID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                update++;
+            }
+            cursor.close();
+
+            Log.d(TAG, "Sync Table noticecase: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in saveNoticeCase " + e.getMessage().toString());
+            return false;
+        }
+    }
+
 }

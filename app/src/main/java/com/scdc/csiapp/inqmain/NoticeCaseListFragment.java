@@ -18,15 +18,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.invmain.CSIDataTabFragment;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.WelcomeActivity;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 /**
  * Created by Pantearz07 on 14/9/2559.
@@ -38,13 +39,13 @@ public class NoticeCaseListFragment extends Fragment {
     Context context;
     // connect sqlite
     SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
+    DBHelper mDbHelper;
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
     GetDateTime getDateTime;
     String officialID;
-
+    EmergencyTabFragment emergencyTabFragment;
     private static final String TAG = "DEBUG-NoticeCaseListFragment";
 
     @Nullable
@@ -53,18 +54,18 @@ public class NoticeCaseListFragment extends Fragment {
 
         View x = inflater.inflate(R.layout.casescene_fragment_layout, null);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.home);
-        mDbHelper = new SQLiteDBHelper(getActivity());
+        mDbHelper = new DBHelper(getActivity());
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         context = x.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
         rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayout);
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
 
         cd = new ConnectionDetector(context);
         getDateTime = new GetDateTime();
 
-        final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();
+        emergencyTabFragment = new EmergencyTabFragment();
 
         fabBtn = (FloatingActionButton) x.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new View.OnClickListener() {
@@ -77,58 +78,67 @@ public class NoticeCaseListFragment extends Fragment {
                 View view1 = inflater.inflate(R.layout.dialog_add_case, null);
                 dialog.setView(view1);
 
-                final EditText edtReportNo = (EditText) view1.findViewById(R.id.edtReportNo);
                 final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
                 //ดึงค่าจาก TbCaseSceneType
-                final String[] CaseType = getResources().getStringArray(R.array.casetype);
-                ArrayAdapter<String> adapterCaseType = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_dropdown_item_1line, CaseType);
-                spnCaseType.setAdapter(adapterCaseType);
-                final String[] selectedCaseType = new String[1];
-                spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedCaseType[0] = CaseType[position];
-
-                    }
-
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        selectedCaseType[0] = CaseType[0];
-                    }
-                });
-                  final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
+                final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
                 if (mCaseTypeArray != null) {
                     String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
                     for (int i = 0; i < mCaseTypeArray.length; i++) {
                         mCaseTypeArray2[i] = mCaseTypeArray[i][1];
-                        Log.i("show mCaseTypeArray", mCaseTypeArray2[i].toString());
+                        Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
                     }
                     ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
                             getActivity(), android.R.layout.simple_dropdown_item_1line,
                             mCaseTypeArray2);
                     spnCaseType.setAdapter(adapterTypeCase);
-                }else{
-                    Log.i("show mCaseTypeArray", "null");
+                } else {
+                    Log.i(TAG + " show mCaseTypeArray", "null");
                 }
+                final String[] selectedCaseType = new String[1];
+
+                spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        selectedCaseType[0] = mCaseTypeArray[position][0];
+                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+                        //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        selectedCaseType[0] = mCaseTypeArray[0][0];
+                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+                        //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                    }
+                });
                 final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
                 //ดึงค่าจาก TbSubCaseSceneType
-                               //final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();
-                final String[] SubCaseType = getResources().getStringArray(R.array.subcasetypeproperties);
-                ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_dropdown_item_1line, SubCaseType);
-                spnSubCaseType.setAdapter(adapterSubCaseType);
+                final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseType();
+                if (mSubCaseTypeArray != null) {
+                    String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                        mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                        Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                    }
+                    ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                    spnSubCaseType.setAdapter(adapterSubCaseType);
+                } else {
+                    Log.i(TAG + " show mSubCaseTypeArray", "null");
+                }
                 final String[] selectedSubCaseType = new String[1];
                 spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedSubCaseType[0] = SubCaseType[position];
-
+                        selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
+                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
-                        selectedSubCaseType[0] = SubCaseType[0];
+                        selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
+                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
                     }
                 });
 
@@ -138,38 +148,53 @@ public class NoticeCaseListFragment extends Fragment {
                 dialog.setCancelable(true);
                 // Current Date
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0] + "_" + dateTimeCurrent[3] + dateTimeCurrent[4];
+                final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4];
 
 
                 dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        String reportNo = null;
-                        if (edtReportNo.getText().toString().equals("")) {
-                            reportNo = "";
-                        } else {
-                            reportNo = edtReportNo.getText().toString();
-                        }
 
-                        String reportID = "MC_" + saveDataTime;
-
+                        String NoticeCaseID = "MC_" + saveDataTime;
+                        TbNoticeCase tbNoticeCase = new TbNoticeCase();
+                        tbNoticeCase.NoticeCaseID = NoticeCaseID;
+                        tbNoticeCase.Mobile_CaseID = null;
+                        tbNoticeCase.InquiryOfficialID = officialID;
+                        tbNoticeCase.InvestigatorOfficialID = null;
+                        tbNoticeCase.SCDCAgencyCode = null;
+                        tbNoticeCase.CaseTypeID = selectedCaseType[0];
+                        tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
+                        tbNoticeCase.CaseStatus = "receive";
+                        tbNoticeCase.ReceivingCaseDate = dateTimeCurrent[0] +"-"+ dateTimeCurrent[1] +"-"+ dateTimeCurrent[2];
+                        tbNoticeCase.ReceivingCaseTime = dateTimeCurrent[3] +":"+ dateTimeCurrent[4] +":"+ dateTimeCurrent[5];
+                        tbNoticeCase.DISTRICT_ID = null;
+                        tbNoticeCase.AMPHUR_ID = null;
+                        tbNoticeCase.PROVINCE_ID = null;
+                        tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] +"-"+ dateTimeCurrent[1] +"-"+ dateTimeCurrent[2];
+                        tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] +":"+ dateTimeCurrent[4] +":"+ dateTimeCurrent[5];
                         // save new Report
-                        long saveStatus1 = mDbHelper.saveReportID(
-                                reportID, reportNo, officialID, "", selectedCaseType[0], selectedSubCaseType[0], "receive");
+//                        long saveStatus1 = mDbHelper.saveReportID(
+//                                reportID, reportNo, officialID, "", selectedCaseType[0], selectedSubCaseType[0], "receive");
+//
+//                        if (saveStatus1 <= 0) {
+//                            Log.i("save report", "Error!! ");
+//                        } else {
+//                            Log.i("save report", reportID + " " + reportNo
+//                                    + " " + officialID);
+//                        }
+                        if (tbNoticeCase != null) {
+                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
+                            if (isSuccess) {
+                                Bundle i = new Bundle();
+                                i.putString("NoticeCaseID", NoticeCaseID);
+                                FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                emergencyTabFragment.setArguments(i);
+                                fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
 
-                        if (saveStatus1 <= 0) {
-                            Log.i("save report", "Error!! ");
-                        } else {
-                            Log.i("save report", reportID + " " + reportNo
-                                    + " " + officialID);
+                            } else {
+                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
+                            }
                         }
-                        //save preference reportID
-                        mManager.setPreferenceData(mManager.PREF_REPORTID, reportID);
-
-
-                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.containerView, fCSIDataTabFragment).addToBackStack(null).commit();
 
 
                     }

@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -129,8 +128,8 @@ public class EmergencyListFragment extends Fragment {
                 View view1 = inflater.inflate(R.layout.dialog_add_case, null);
                 dialog.setView(view1);
 
-                final EditText edtReportNo = (EditText) view1.findViewById(R.id.edtReportNo);
-                edtReportNo.setVisibility(View.GONE);
+              //  final EditText edtReportNo = (EditText) view1.findViewById(R.id.edtReportNo);
+               // edtReportNo.setVisibility(View.GONE);
                 final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
                 final String[] CaseType = getResources().getStringArray(R.array.casetype);
                 ArrayAdapter<String> adapterCaseType = new ArrayAdapter<String>(getActivity(),

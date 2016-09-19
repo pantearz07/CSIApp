@@ -78,7 +78,7 @@ public class GetDateTime {
         DateTime[3] = String.format("%02d", mHour);
         DateTime[4] = String.format("%02d", mMinute);
         DateTime[5] = String.format("%02d", mSecond);
-
+    //2016-08-06 DateTime[0]-DateTime[1]-DateTime[2]
         return DateTime;
 
     }

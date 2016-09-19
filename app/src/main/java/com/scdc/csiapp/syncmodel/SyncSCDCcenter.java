@@ -27,4 +27,5 @@ public class SyncSCDCcenter {
     public void setData(List<TbSCDCcenter> data) {
         this.data = data;
     }
+
 }

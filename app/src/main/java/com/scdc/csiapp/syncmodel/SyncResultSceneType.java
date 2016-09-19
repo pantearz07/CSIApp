@@ -1,4 +1,6 @@
-package com.scdc.csiapp.tablemodel;
+package com.scdc.csiapp.syncmodel;
+
+import com.scdc.csiapp.tablemodel.TbResultSceneType;
 
 import java.util.List;
 
