@@ -63,7 +63,7 @@
             android:src="@drawable/ic_plus"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
-            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />
 
     </android.support.design.widget.CoordinatorLayout>

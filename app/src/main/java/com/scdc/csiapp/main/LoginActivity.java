@@ -39,8 +39,8 @@ import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.gcmservice.GcmRegisterService;
 import com.scdc.csiapp.tablemodel.TbOfficial;
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "DEBUG-LoginActivity";
     // connect sqlite
     SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
+    DBHelper mDbHelper;
 
     GetDateTime getDateTime;
     TextView txt_ipvalue;
@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
         cd = new ConnectionDetector(getApplicationContext());
 
-        mDbHelper = new SQLiteDBHelper(this);
+        mDbHelper = new DBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
 

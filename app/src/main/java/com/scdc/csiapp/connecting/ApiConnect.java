@@ -30,7 +30,7 @@ import com.scdc.csiapp.syncmodel.SyncProvince;
 import com.scdc.csiapp.syncmodel.SyncSCDCagency;
 import com.scdc.csiapp.syncmodel.SyncSCDCcenter;
 import com.scdc.csiapp.syncmodel.SyncSubCaseSceneType;
-import com.scdc.csiapp.tablemodel.SyncResultSceneType;
+import com.scdc.csiapp.syncmodel.SyncResultSceneType;
 
 import java.io.IOException;
 

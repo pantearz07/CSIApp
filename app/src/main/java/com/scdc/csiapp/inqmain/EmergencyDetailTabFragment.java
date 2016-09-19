@@ -58,8 +58,7 @@ public class EmergencyDetailTabFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
-    long isConnectingToInternet = 0;
+
     GetDateTime getDateTime;
     String officialID, reportID;
     ArrayAdapter<String> adapterSubCaseType;
@@ -106,7 +105,7 @@ public class EmergencyDetailTabFragment extends Fragment {
     //String[] mSelectDataInspectorArray2, mSelectDataInspectorID;
     //String[] mSelectDataInspectorRank;
 
-
+    private static final String TAG = "DEBUG-EmergencyDetailTabFragment";
     String SelectedPoliceStationID= "";
     String mSelected;
     ArrayList<Integer> mMultiSelected;
@@ -138,16 +137,16 @@ public class EmergencyDetailTabFragment extends Fragment {
         mFragmentManager = getActivity().getSupportFragmentManager();
         getDateTime = new GetDateTime();
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
-         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.isNetworkAvailable();
-        isConnectingToInternet = cd.isConnectingToInternet();
+       // reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
+        cd = new ConnectionDetector(getActivity());
+
         updateDT = getDateTime.getDateTimeNow();
-        Log.i("viewReceiveCSI", reportID);
+      //  Log.i("viewReceiveCSI", reportID);
         //new showScheduleInvestOfCase().execute(reportID);
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
         //Form
-
+        String noticecaseid = EmergencyTabFragment.NoticeCaseID;
+        Log.i(TAG,  "noticecaseid " + noticecaseid);
 
 
 
@@ -564,7 +563,8 @@ public class EmergencyDetailTabFragment extends Fragment {
         linearLayoutAddSufferer.setVisibility(View.GONE);
 
         listViewSufferer.setOnTouchListener(new ListviewSetOnTouchListener());
-        ShowListSufferer(reportID);
+       //
+        // ShowListSufferer(reportID);
         btnAddSufferer = (Button) viewReceiveCSI.findViewById(R.id.btnAddSufferer);
         btnAddSufferer.setOnClickListener(new ReceiveOnClickListener());
 
@@ -687,7 +687,7 @@ public class EmergencyDetailTabFragment extends Fragment {
         SelectedPoliceStationID = String
                 .valueOf(spnLocatePolice
                         .getSelectedItem());
-        new SaveLocatePolice().execute(reportID, SelectedPoliceStationID);
+//        new SaveLocatePolice().execute(reportID, SelectedPoliceStationID);
         Log.i("SaveLocatePolice", SelectedPoliceStationID);
 
 
@@ -1375,7 +1375,7 @@ public class EmergencyDetailTabFragment extends Fragment {
         //editReceiveCaseDate.setText(curDateTime[2] + "/" + curDateTime[1] + "/" + curDateTime[0]);
         //editReceiveCaseTime.setText(curDateTime[3] + ":" + curDateTime[4]);
 
-        new showData().execute(reportID);
+       // new showData().execute(reportID);
         // new showScheduleInvestOfCase().execute(reportID);
 
     }

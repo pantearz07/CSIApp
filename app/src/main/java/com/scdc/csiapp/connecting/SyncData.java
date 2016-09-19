@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiStatus;
-import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.main.WelcomeActivity;
 
 /**
@@ -51,7 +50,7 @@ public class SyncData extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(voice);
         Log.d("TEST", "END");
         // ถ้าส่งมาจากหน้า loginactivity จะ error
-        Toast.makeText(MainActivity.mContext, R.string.save_complete,
+        Toast.makeText(WelcomeActivity.mContext, R.string.save_complete,
                 Toast.LENGTH_LONG).show();
     }
 }

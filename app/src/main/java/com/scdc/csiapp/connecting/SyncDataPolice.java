@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiStatus;
-import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.main.WelcomeActivity;
 
 /**
@@ -46,7 +45,7 @@ public class SyncDataPolice extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void voice) {
         super.onPostExecute(voice);
         Log.d("TEST", "END");
-        Toast.makeText(MainActivity.mContext, R.string.save_complete,
+        Toast.makeText(WelcomeActivity.mContext, R.string.save_complete,
                 Toast.LENGTH_LONG).show();
     }
 }

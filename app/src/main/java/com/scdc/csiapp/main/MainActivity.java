@@ -146,15 +146,15 @@ public class MainActivity extends AppCompatActivity {
         mFragmentManager = getSupportFragmentManager();
 
         FragmentTransaction fthome = mFragmentManager.beginTransaction();
-        fthome.replace(R.id.containerView, receivingCaseListFragment2);
+        fthome.replace(R.id.containerView, caseSceneListFragment);
         fthome.addToBackStack(null);
         fthome.commit();
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
-            if (menuFragment.equals("receivingCaseListFragment2")) {
+            if (menuFragment.equals("caseSceneListFragment")) {
                 FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                fthome2.replace(R.id.containerView, receivingCaseListFragment2);
+                fthome2.replace(R.id.containerView, caseSceneListFragment);
                 fthome2.addToBackStack(null);
                 fthome2.commit();
 

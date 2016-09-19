@@ -121,6 +121,10 @@ public class InqMainActivity extends AppCompatActivity {
         notiFragment = new NotiFragment();
 
         mFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fthome = mFragmentManager.beginTransaction();
+        fthome.replace(R.id.containerView, noticeCaseListFragment);
+        fthome.addToBackStack(null);
+        fthome.commit();
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
