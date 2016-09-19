@@ -145,8 +145,8 @@ public class EmergencyDetailTabFragment extends Fragment {
         //new showScheduleInvestOfCase().execute(reportID);
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
         //Form
-        String noticecaseid = EmergencyTabFragment.NoticeCaseID;
-        Log.i(TAG,  "noticecaseid " + noticecaseid);
+        String noticecaseid =EmergencyTabFragment.tbNoticeCase.getNoticeCaseID();
+        Log.i(TAG, " NoticeCaseID "+noticecaseid);
 
 
 

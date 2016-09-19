@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbNoticeCase {
+public class TbNoticeCase implements Serializable {
     public static final String TB_NoticeCase = "noticecase";
     // From Table NoticeCase field name NoticeCaseID
     public static final String COL_NoticeCaseID = "NoticeCaseID";

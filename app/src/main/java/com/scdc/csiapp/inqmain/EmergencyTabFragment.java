@@ -2,6 +2,7 @@ package com.scdc.csiapp.inqmain;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,20 +13,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 public class EmergencyTabFragment extends Fragment {
     //หน้าโชว์ข้อมูลคดีทั้งหมด โดยเเบ่งเป็นเเท็บ 2 แท็บ
     //SummaryEmerTabFragment
     //EmergencyDetailTabFragment
 
-    // CoordinatorLayout rootLayoutCSI;
+    public static LinearLayout linearLayoutLayoutCSI;
     public static TabLayout tabLayoutCSI;
     public static ViewPager viewpagerCSI;
     public static int int_items = 2 ;
-    public static String NoticeCaseID;
     private static final String TAG = "DEBUG-EmergencyTabFragment";
+    public static String Bundle_Key= "noticecase";
+    public static TbNoticeCase tbNoticeCase;
+    Snackbar snackbar;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,8 +38,8 @@ public class EmergencyTabFragment extends Fragment {
          *Inflate csi_data_tab_layout and setup Views.
          */
         View x =  inflater.inflate(R.layout.emer_data_tab_layout,null);
-        //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
-
+         //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
+        linearLayoutLayoutCSI = (LinearLayout) x.findViewById(R.id.linearLayoutLayoutCSI);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.inq_appname);
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
         viewpagerCSI = (ViewPager) x.findViewById(R.id.viewpagerCSI);
@@ -56,9 +61,10 @@ public class EmergencyTabFragment extends Fragment {
                 tabLayoutCSI.setupWithViewPager(viewpagerCSI);
             }
         });
-        Bundle bundle = getArguments();
-        NoticeCaseID = bundle.getString("NoticeCaseID", "");
-        Log.i(TAG, " NoticeCaseID "+NoticeCaseID);
+        Bundle args = getArguments();
+        tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
+        Log.i(TAG, " NoticeCaseID "+tbNoticeCase.getNoticeCaseID());
+
         return x;
 
     }

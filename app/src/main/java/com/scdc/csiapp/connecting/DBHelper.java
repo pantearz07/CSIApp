@@ -1063,7 +1063,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
-
+            db.beginTransaction();
             PRIMARY_KEY = tbNoticeCases.NoticeCaseID;
             strSQL = "SELECT * FROM noticecase WHERE "
                     + "NoticeCaseID = '" + PRIMARY_KEY + "'";
@@ -1112,7 +1112,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 update++;
             }
             cursor.close();
-
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table noticecase: Insert " + insert + ", Update " + update);
             db.close();
             return true;

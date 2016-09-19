@@ -3,12 +3,11 @@ package com.scdc.csiapp.inqmain;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -25,11 +24,9 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.AcceptListFragment;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
-import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 
 public class SummaryEmerTabFragment extends Fragment {
@@ -37,8 +34,7 @@ public class SummaryEmerTabFragment extends Fragment {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     // connect sqlite
-    SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
+
     DBHelper dbHelper;
     SQLiteDatabase db;
     private Context mContext;
@@ -57,12 +53,13 @@ public class SummaryEmerTabFragment extends Fragment {
             txtButtonCount1, txtButtonCount2, txtButtonCount3, txtButtonCount4, txtButtonCount5;
     String[] updateDT, selectedCaseType, selectedSubCaseType;
     String message = "";
-    String[][] mTypeAgencyArray, mTypeCenterArray ,mCaseTypeArray,mSubCaseTypeArray = null;
-    String[] mTypeAgencyArray2, mTypeCenterArray2, mAgencyID, mCenterID = null;
+    String[][] mTypeAgencyArray, mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray;
+    String[] mTypeAgencyArray2, mTypeCenterArray2, mAgencyID, mCenterID;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
     private String selectedAgency, SelectedAgencyID, selectedCenter, SelectedCenterID = null;
     private View mViewBtnSaveServer, mViewBtnFullReport, mViewBtnTransReport, layoutButton1, layoutButton2, layoutButton3, layoutButton4, layoutButton5;
     Spinner spnSCDCcenterType, spnSCDCagencyType;
+    Snackbar snackbar;
 
     @Nullable
     @Override
@@ -78,8 +75,7 @@ public class SummaryEmerTabFragment extends Fragment {
         mFragmentManager = getActivity().getSupportFragmentManager();
         acceptListFragment = new AcceptListFragment();
         rootLayout = (CoordinatorLayout) viewSummaryCSI.findViewById(R.id.rootLayout);
-        mDbHelper = new SQLiteDBHelper(getActivity());
-        mDb = mDbHelper.getWritableDatabase();
+
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
 
@@ -88,18 +84,24 @@ public class SummaryEmerTabFragment extends Fragment {
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
 
         cd = new ConnectionDetector(getActivity());
-
-        noticecaseid = EmergencyTabFragment.NoticeCaseID;
-        Log.i(TAG,  "noticecaseid " + noticecaseid);
-
+        String noticeCaseID = EmergencyTabFragment.tbNoticeCase.getNoticeCaseID();
+        Log.i(TAG, " NoticeCaseID " + noticeCaseID);
+        Log.i(TAG, " SubCaseTypeID " + EmergencyTabFragment.tbNoticeCase.getSubCaseTypeID());
+//        if (snackbar == null || !snackbar.isShown()) {
+//            snackbar = Snackbar.make(viewSummaryCSI, "เพิ่มรายการคดีใหม่ " + noticeCaseID, Snackbar.LENGTH_INDEFINITE)
+//                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//
+//                        }
+//                    });
+//            snackbar.show();
+//        }
         updateDT = getDateTime.getDateTimeNow();
 
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
 
-
-
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
-        edtReportNo.setVisibility(View.GONE);
 
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
@@ -111,9 +113,21 @@ public class SummaryEmerTabFragment extends Fragment {
         TextView txtInvestDateTimeTitle = (TextView) viewSummaryCSI.findViewById(R.id.txtInvestDateTimeTitle);
         txtInvestDateTimeTitle.setText("วันเวลาแจ้งเหตุ:");
 
+        //View linearLayoutDocfiles= viewSummaryCSI.findViewById(R.id.linearLayoutDocfiles);
+        //linearLayoutDocfiles.setVisibility(View.GONE);
+        mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
+        TextView txtButtonServer1 = (TextView) viewSummaryCSI.findViewById(R.id.txtButtonServer1);
+        txtButtonServer1.setText("แจ้งเหตุ");
+        mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
+        mViewBtnTransReport.setVisibility(View.GONE);
+        // mViewBtnSaveServer.setOnClickListener(new SummaryOnClickListener());
+        // mViewBtnTransReport.setOnClickListener(new SummaryOnClickListener());
+
         //โชว์dropdown casetype
         //ดึงค่าจาก TbCaseSceneType
-        mCaseTypeArray= mDbHelper.SelectCaseType();
+        final String[] selectedCaseType = new String[1];
+        final String[] selectedSubCaseType = new String[1];
+        mCaseTypeArray = dbHelper.SelectCaseType();
         if (mCaseTypeArray != null) {
             String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
             for (int i = 0; i < mCaseTypeArray.length; i++) {
@@ -127,14 +141,61 @@ public class SummaryEmerTabFragment extends Fragment {
         } else {
             Log.i(TAG + " show mCaseTypeArray", "null");
         }
-        final String[] selectedCaseType = new String[1];
+        if (EmergencyTabFragment.tbNoticeCase.CaseTypeID != null) {
+            for (int i = 0; i < mCaseTypeArray.length; i++) {
+                if (EmergencyTabFragment.tbNoticeCase.CaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
+                    spnCaseType.setSelection(i);
+                    break;
+                }
+            }
+        }
+
         spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedCaseType[0] = mCaseTypeArray[position][0];
                 Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
-                //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+
+                //ดึงค่าจาก TbSubCaseSceneType
+                mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                if (mSubCaseTypeArray != null) {
+                    String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                        mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                        Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                    }
+                    ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                    spnSubCaseType.setAdapter(adapterSubCaseType);
+                } else {
+                    spnSubCaseType.setAdapter(null);
+                    selectedSubCaseType[0] = null;
+                    Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
+                }
+                if (EmergencyTabFragment.tbNoticeCase.SubCaseTypeID != null) {
+                    mSubCaseTypeArray = dbHelper.SelectSubCaseType();
+                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                        if (EmergencyTabFragment.tbNoticeCase.SubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+                            spnSubCaseType.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+
+                spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
+                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
+                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                    }
+                });
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -143,44 +204,34 @@ public class SummaryEmerTabFragment extends Fragment {
                 //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
             }
         });
-        //ดึงค่าจาก TbSubCaseSceneType
-         mSubCaseTypeArray = mDbHelper.SelectSubCaseType();
-        if (mSubCaseTypeArray != null) {
-            String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
-            }
-            ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-            spnSubCaseType.setAdapter(adapterSubCaseType);
-        } else {
-            Log.i(TAG + " show mSubCaseTypeArray", "null");
+
+
+        if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigating")) {
+            edtStatus.setText("กำลังดำเนินการตรวจ");
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("notice")) {
+            edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
+            mViewBtnSaveServer.setVisibility(View.GONE);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("receive")) {
+            edtStatus.setText("ยังไม่ส่งแจ้งเหตุ");
+            mViewBtnSaveServer.setVisibility(View.GONE);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigated")) {
+            edtStatus.setText("ตรวจเสร็จแล้ว");
         }
-        final String[] selectedSubCaseType = new String[1];
-        spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
-                Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-            }
+        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate != null) {
 
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
-                Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-            }
-        });
+            edtInvestDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime + " น.");
 
-        //View linearLayoutDocfiles= viewSummaryCSI.findViewById(R.id.linearLayoutDocfiles);
-        //linearLayoutDocfiles.setVisibility(View.GONE);
-        mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
-        TextView txtButtonServer1 = (TextView) viewSummaryCSI.findViewById(R.id.txtButtonServer1);
-        txtButtonServer1.setText("แจ้งเหตุ");
-        mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
-        mViewBtnTransReport.setVisibility(View.GONE);
-       // mViewBtnSaveServer.setOnClickListener(new SummaryOnClickListener());
-       // mViewBtnTransReport.setOnClickListener(new SummaryOnClickListener());
+        } else {
+            edtInvestDateTime.setText("-");
+        }
+        if (EmergencyTabFragment.tbNoticeCase.LastUpdateDate != null) {
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime + " น.");
+        } else {
+            edtUpdateDateTime.setText("-");
+        }
+
+
 /*
         layoutButton1 = viewSummaryCSI.findViewById(R.id.layoutButton1);
         layoutButton2 = viewSummaryCSI.findViewById(R.id.layoutButton2);
@@ -209,77 +260,13 @@ public class SummaryEmerTabFragment extends Fragment {
             }
         });
 
-        new showData().execute(noticecaseid);
+
         return viewSummaryCSI;
     }
-
-    class showData extends AsyncTask<String, Void, TbNoticeCase> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-
-        }
-
-        @Override
-        protected TbNoticeCase doInBackground(String... params) {
-            TbNoticeCase ans = dbHelper.selectNoticeScene(params[0]);
-            return ans;
-        }
-
-        protected void onPostExecute(TbNoticeCase data) {
-            if (data != null) {
-                Log.i("edtStatus", data.CaseStatus);
-
-                if (data.CaseStatus.equals("investigating")) {
-                    edtStatus.setText("กำลังดำเนินการตรวจ");
-                }  else if (data.CaseStatus.equals("notice")) {
-                    edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
-                    mViewBtnSaveServer.setVisibility(View.GONE);
-                } else if (data.CaseStatus.equals("receive")) {
-                    edtStatus.setText("ยังไม่ส่งแจ้งเหตุ");
-                    mViewBtnSaveServer.setVisibility(View.GONE);
-                } else if (data.CaseStatus.equals("investigated")) {
-                    edtStatus.setText("ตรวจเสร็จแล้ว");
-                }
-//                if (arrData[10] != null) {
-//
-//                    edtInvestDateTime.setText(getDateTime.changeDateFormatToCalendar(arrData[10]) + " เวลาประมาณ " + arrData[11] +" น.");
-//
-//                } else {
-//                    edtInvestDateTime.setText("-");
-//                }
-//                if (arrData[12] != null) {
-//                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(arrData[12]) + " เวลาประมาณ " + arrData[13]+" น.");
-//                } else {
-//                    edtUpdateDateTime.setText("-");
-//                }
-//                if (arrData[5] != null) {
-//                    for (int i = 0; i < mTypeCenterArray.length; i++) {
-//                        if (arrData[5].trim().equals(mTypeCenterArray[i][0].toString())) {
-//                            spnCaseType.setSelection(i);
-//                            break;
-//                        }
-//                    }
-//                }
-//                if (arrData[6] != null) {
-//                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-//                        if (arrData[6].trim().equals(mSubCaseTypeArray[i][0].toString())) {
-//                            spnSubCaseType.setSelection(i);
-//                            break;
-//                        }
-//                    }
-//                }
-
-            }
-        }
-    }
-
 
     public void onStart() {
         super.onStart();
         Log.i("Check", "onStartSummary");
-        //   new showData().execute(reportID);
-
     }
 
     @Override
