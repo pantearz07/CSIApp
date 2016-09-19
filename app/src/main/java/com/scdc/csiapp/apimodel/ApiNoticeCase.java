@@ -19,7 +19,7 @@ public class ApiNoticeCase {
     //ตารางหลัก
     TbNoticeCase tbNoticeCase;
 
-    // InquiryOfficialID คือ OfficialID เพื่อบอกว่าใครรับผิดชอบคดี
+    // InvestigatorOfficialID คือ OfficialID เพื่อบอกว่าใครรับผิดชอบคดี
     TbOfficial tbOfficial;
 
     // ใช้ใน tbCaseScene เพื่อบอกประเภทคดี

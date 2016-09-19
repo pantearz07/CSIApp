@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.tablemodel.TbAmphur;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
 import com.scdc.csiapp.tablemodel.TbComPosition;
@@ -29,6 +30,7 @@ import com.scdc.csiapp.tablemodel.TbSCDCagency;
 import com.scdc.csiapp.tablemodel.TbSCDCcenter;
 import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -927,6 +929,82 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    public boolean syncNoticeCase(List<TbNoticeCase> tbNoticeCases) {
+        if (tbNoticeCases.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbNoticeCases.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            db.beginTransaction();
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbNoticeCases.get(i).NoticeCaseID;
+                strSQL = "SELECT * FROM noticecase WHERE "
+                        + "NoticeCaseID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(TbNoticeCase.COL_NoticeCaseID, tbNoticeCases.get(i).NoticeCaseID);
+                Val.put(TbNoticeCase.COL_Mobile_CaseID, tbNoticeCases.get(i).Mobile_CaseID);
+                Val.put(TbNoticeCase.COL_InquiryOfficialID, tbNoticeCases.get(i).InquiryOfficialID);
+                Val.put(TbNoticeCase.COL_InvestigatorOfficialID, tbNoticeCases.get(i).InvestigatorOfficialID);
+                Val.put(TbNoticeCase.COL_SCDCAgencyCode, tbNoticeCases.get(i).SCDCAgencyCode);
+                Val.put(TbNoticeCase.COL_CaseTypeID, tbNoticeCases.get(i).CaseTypeID);
+                Val.put(TbNoticeCase.COL_SubCaseTypeID, tbNoticeCases.get(i).SubCaseTypeID);
+                Val.put(TbNoticeCase.COL_CaseStatus, tbNoticeCases.get(i).CaseStatus);
+                Val.put(TbNoticeCase.COL_PoliceStationID, tbNoticeCases.get(i).PoliceStationID);
+                Val.put(TbNoticeCase.COL_CaseTel, tbNoticeCases.get(i).CaseTel);
+                Val.put(TbNoticeCase.COL_ReceivingCaseDate, tbNoticeCases.get(i).ReceivingCaseDate);
+                Val.put(TbNoticeCase.COL_ReceivingCaseTime, tbNoticeCases.get(i).ReceivingCaseTime);
+                Val.put(TbNoticeCase.COL_HappenCaseDate, tbNoticeCases.get(i).HappenCaseDate);
+                Val.put(TbNoticeCase.COL_HappenCaseTime, tbNoticeCases.get(i).HappenCaseTime);
+                Val.put(TbNoticeCase.COL_KnowCaseDate, tbNoticeCases.get(i).KnowCaseDate);
+                Val.put(TbNoticeCase.COL_KnowCaseTime, tbNoticeCases.get(i).KnowCaseTime);
+                Val.put(TbNoticeCase.COL_SceneNoticeDate, tbNoticeCases.get(i).SceneNoticeDate);
+                Val.put(TbNoticeCase.COL_SceneNoticeTime, tbNoticeCases.get(i).SceneNoticeTime);
+                Val.put(TbNoticeCase.COL_CompleteSceneDate, tbNoticeCases.get(i).CompleteSceneDate);
+                Val.put(TbNoticeCase.COL_CompleteSceneTime, tbNoticeCases.get(i).CompleteSceneTime);
+                Val.put(TbNoticeCase.COL_LocaleName, tbNoticeCases.get(i).LocaleName);
+                Val.put(TbNoticeCase.COL_DISTRICT_ID, tbNoticeCases.get(i).DISTRICT_ID);
+                Val.put(TbNoticeCase.COL_AMPHUR_ID, tbNoticeCases.get(i).AMPHUR_ID);
+                Val.put(TbNoticeCase.COL_PROVINCE_ID, tbNoticeCases.get(i).PROVINCE_ID);
+                Val.put(TbNoticeCase.COL_Latitude, tbNoticeCases.get(i).Latitude);
+                Val.put(TbNoticeCase.COL_Longitude, tbNoticeCases.get(i).Longitude);
+                Val.put(TbNoticeCase.COL_SuffererPrename, tbNoticeCases.get(i).SuffererPrename);
+                Val.put(TbNoticeCase.COL_SuffererName, tbNoticeCases.get(i).SuffererName);
+                Val.put(TbNoticeCase.COL_SuffererStatus, tbNoticeCases.get(i).SuffererStatus);
+                Val.put(TbNoticeCase.COL_SuffererPhoneNum, tbNoticeCases.get(i).SuffererPhoneNum);
+                Val.put(TbNoticeCase.COL_CircumstanceOfCaseDetail, tbNoticeCases.get(i).CircumstanceOfCaseDetail);
+                Val.put(TbNoticeCase.COL_LastUpdateDate, tbNoticeCases.get(i).LastUpdateDate);
+                Val.put(TbNoticeCase.COL_LastUpdateTime, tbNoticeCases.get(i).LastUpdateTime);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("noticecase", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    // ต้องตรวจสอบก่อนว่าข้อมูลที่ได้มานั้นใหม่กว่าที่อยู่ใน SQLite จริงๆ
+                    db.update("noticecase", Val, " NoticeCaseID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d(TAG, "Sync Table syncNoticeCase: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncNoticeCase " + e.getMessage().toString());
+            return false;
+        }
+    }
+
     public String[][] SelectSubCaseType() {
         // TODO Auto-generated method stub
         Log.i("show", "SelectSubCaseType");
@@ -1122,10 +1200,51 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+
+    public List<ApiNoticeCase> selectApiNoticeCase(String OfficeID) {
+        List<ApiNoticeCase> ans = new ArrayList<>();
+        TbNoticeCase TbNotice = new TbNoticeCase();
+        try {
+            String arrData[] = null;
+
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM noticecase "
+                    + " WHERE InquiryOfficialID = '" + OfficeID + "'";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getColumnCount()];
+                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+                        arrData[i] = cursor.getString(i);
+                    }
+                    // เชื่อมข้อมูลที่ดึงได้เข้ากับ Tb ของตารางนั้นๆ
+                    TbNotice.NoticeCaseID = arrData[0];
+                    TbNotice.Mobile_CaseID = arrData[1];
+                    TbNotice.InquiryOfficialID = arrData[2];
+                    TbNotice.InvestigatorOfficialID = arrData[3];
+                    TbNotice.SCDCAgencyCode = arrData[4];
+                    TbNotice.CaseTypeID = arrData[5];
+                    TbNotice.SubCaseTypeID = arrData[6];
+                    TbNotice.CaseStatus = arrData[7];
+                    Log.i(TAG, "selectNoticeScene " + arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
+                }
+            }
+            cursor.close();
+            db.close();
+            return ans;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in selectNoticeScene " + e.getMessage().toString());
+            return null;
+        }
+    }
+
     public TbNoticeCase selectNoticeScene(String noticeCaseID) {
         // TODO Auto-generated method stub
         TbNoticeCase TbNotice = new TbNoticeCase();
-        Log.i(TAG, "selectNoticeScene "+ noticeCaseID);
+        Log.i(TAG, "selectNoticeScene " + noticeCaseID);
         try {
             String arrData[] = null;
 
@@ -1150,7 +1269,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     TbNotice.CaseTypeID = arrData[5];
                     TbNotice.SubCaseTypeID = arrData[6];
                     TbNotice.CaseStatus = arrData[7];
-                    Log.i(TAG, "selectNoticeScene "+ arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
+                    Log.i(TAG, "selectNoticeScene " + arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
                 }
             }
             cursor.close();
