@@ -15,6 +15,7 @@ import android.util.Log;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.R;
 import com.google.android.gms.gcm.GcmListenerService;
+import com.scdc.csiapp.tablemodel.TbOfficial;
 
 import java.util.Date;
 
@@ -33,8 +34,8 @@ public class GcmDownstreamService extends GcmListenerService {
         super.onCreate();
         context = getApplicationContext();
         mManager = new PreferenceData(context);
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        accesstype = mManager.getPreferenceData(mManager.KEY_ACCESSTYPE);
+        officialID = mManager.getPreferenceData(TbOfficial.COL_OfficialID);
+        accesstype = mManager.getPreferenceData(TbOfficial.COL_AccessType);
         Log.i("GcmDownstreamService", officialID + " " + accesstype);
     }
 
