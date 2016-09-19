@@ -62,6 +62,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbAmphurList.get(i).AMPHUR_ID;
                 strSQL = "SELECT * FROM amphur WHERE "
@@ -86,6 +87,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table amphur: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -108,6 +111,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbCaseSceneTypes.get(i).CaseTypeID;
                 strSQL = "SELECT * FROM casescenetype WHERE "
@@ -134,6 +138,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table casescenetype: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -156,6 +162,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbComPositions.get(i).ComPosID;
                 strSQL = "SELECT * FROM composition WHERE "
@@ -176,6 +183,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table composition: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -198,6 +207,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbDistricts.get(i).DISTRICT_ID;
                 strSQL = "SELECT * FROM district WHERE "
@@ -219,6 +229,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table district: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -241,6 +253,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbGeographies.get(i).GEO_ID;
                 strSQL = "SELECT * FROM geography WHERE "
@@ -260,6 +273,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table geography: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -282,6 +297,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbInqPositions.get(i).InqPosID;
                 strSQL = "SELECT * FROM inqposition WHERE "
@@ -302,6 +318,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table inqposition: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -324,6 +342,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbInvPositions.get(i).InvPosID;
                 strSQL = "SELECT * FROM invposition WHERE "
@@ -344,6 +363,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table invposition: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -367,6 +388,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbOfficials.get(i).OfficialID;
                 strSQL = "SELECT * FROM official WHERE "
@@ -398,6 +420,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table official: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -420,6 +444,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbPermissions.get(i).id_permission;
                 strSQL = "SELECT * FROM permission WHERE "
@@ -440,6 +465,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table permission: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -463,6 +490,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbPoliceAgencies.get(i).PoliceAgencyID;
                 strSQL = "SELECT * FROM policeagency WHERE "
@@ -483,6 +511,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table policeagency: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -505,6 +535,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbPoliceCenters.get(i).PoliceCenterID;
                 strSQL = "SELECT * FROM policecenter WHERE "
@@ -524,6 +555,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table policecenter: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -546,6 +579,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbPolicePositions.get(i).PolicePosID;
                 strSQL = "SELECT * FROM policeposition WHERE "
@@ -566,6 +600,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table policeposition: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -588,6 +624,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbPoliceRanks.get(i).RankID;
                 strSQL = "SELECT * FROM policerank WHERE "
@@ -608,6 +645,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table policerank: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -630,6 +669,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbPoliceStations.get(i).PoliceStationID;
                 strSQL = "SELECT * FROM policestation WHERE "
@@ -650,6 +690,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table policestation: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -672,6 +714,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbProvinces.get(i).PROVINCE_ID;
                 strSQL = "SELECT * FROM province WHERE "
@@ -693,6 +736,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table province: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -715,6 +760,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbResultSceneTypes.get(i).RSTypeID;
                 strSQL = "SELECT * FROM resultscenetype WHERE "
@@ -733,6 +779,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table resultscenetype: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -756,6 +804,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbSCDCagencies.get(i).SCDCAgencyCode;
                 strSQL = "SELECT * FROM scdcagency WHERE "
@@ -775,6 +824,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table scdcagency: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -798,6 +849,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbSCDCcenters.get(i).SCDCCenterID;
                 strSQL = "SELECT * FROM scdccenter WHERE "
@@ -817,6 +869,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table scdccenter: Insert " + insert + ", Update " + update);
             db.close();
             return true;
@@ -840,6 +894,7 @@ public class DBHelper extends SQLiteAssetHelper {
             int update = 0;
             String PRIMARY_KEY;
             String strSQL;
+            db.beginTransaction();
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = tbSubcaseSceneTypes.get(i).SubCaseTypeID;
                 strSQL = "SELECT * FROM subcasescenetype WHERE "
@@ -860,6 +915,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
                 cursor.close();
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             Log.d(TAG, "Sync Table subcasescenetype: Insert " + insert + ", Update " + update);
             db.close();
             return true;
