@@ -50,7 +50,6 @@ import com.scdc.csiapp.tablemodel.TbUsers;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -234,9 +233,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbComPosition.COL_ComPosID, tbComPositions.get(i).ComPosID);
-                Val.put(TbComPosition.COL_ComPosName, tbComPositions.get(i).ComPosName);
-                Val.put(TbComPosition.COL_ComPosAbbr, tbComPositions.get(i).ComPosAbbr);
+                Val.put(oComPosition.COL_ComPosID, tbComPositions.get(i).ComPosID);
+                Val.put(oComPosition.COL_ComPosName, tbComPositions.get(i).ComPosName);
+                Val.put(oComPosition.COL_ComPosAbbr, tbComPositions.get(i).ComPosAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("composition", null, Val);
@@ -283,7 +282,7 @@ public class DBHelper extends SQLiteAssetHelper {
                 Val.put(temp.COL_DISTRICT_ID, tbDistricts.get(i).DISTRICT_ID);
                 Val.put(temp.COL_DISTRICT_CODE, tbDistricts.get(i).DISTRICT_CODE);
                 Val.put(temp.COL_DISTRICT_NAME, tbDistricts.get(i).DISTRICT_NAME);
-                Val.put(temp.COL_AMPHUR_ID, tbDistricts.get(i).COL_AMPHUR_ID);
+                Val.put(temp.COL_AMPHUR_ID, tbDistricts.get(i).AMPHUR_ID);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("district", null, Val);
@@ -326,8 +325,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbGeography.COL_GEO_ID, tbGeographies.get(i).GEO_ID);
-                Val.put(TbGeography.COL_GEO_NAME, tbGeographies.get(i).GEO_NAME);
+                Val.put(oGeography.COL_GEO_ID, tbGeographies.get(i).GEO_ID);
+                Val.put(oGeography.COL_GEO_NAME, tbGeographies.get(i).GEO_NAME);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("geography", null, Val);
@@ -370,9 +369,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbInqPosition.COL_InqPosID, tbInqPositions.get(i).InqPosID);
-                Val.put(TbInqPosition.COL_InqPosName, tbInqPositions.get(i).InqPosName);
-                Val.put(TbInqPosition.COL_InqPosAbbr, tbInqPositions.get(i).InqPosAbbr);
+                Val.put(oInqPosition.COL_InqPosID, tbInqPositions.get(i).InqPosID);
+                Val.put(oInqPosition.COL_InqPosName, tbInqPositions.get(i).InqPosName);
+                Val.put(oInqPosition.COL_InqPosAbbr, tbInqPositions.get(i).InqPosAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("inqposition", null, Val);
@@ -415,9 +414,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbInvPosition.COL_InvPosID, tbInvPositions.get(i).InvPosID);
-                Val.put(TbInvPosition.COL_InvPosName, tbInvPositions.get(i).InvPosName);
-                Val.put(TbInvPosition.COL_InvPosAbbr, tbInvPositions.get(i).InvPosAbbr);
+                Val.put(oInvPosition.COL_InvPosID, tbInvPositions.get(i).InvPosID);
+                Val.put(oInvPosition.COL_InvPosName, tbInvPositions.get(i).InvPosName);
+                Val.put(oInvPosition.COL_InvPosAbbr, tbInvPositions.get(i).InvPosAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("invposition", null, Val);
@@ -518,9 +517,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbPermission.COL_id_permission, tbPermissions.get(i).id_permission);
-                Val.put(TbPermission.COL_per_name, tbPermissions.get(i).per_name);
-                Val.put(TbPermission.COL_per_value, tbPermissions.get(i).per_value);
+                Val.put(oPermission.COL_id_permission, tbPermissions.get(i).id_permission);
+                Val.put(oPermission.COL_per_name, tbPermissions.get(i).per_name);
+                Val.put(oPermission.COL_per_value, tbPermissions.get(i).per_value);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("permission", null, Val);
@@ -610,8 +609,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbPoliceCenter.COL_PoliceCenterID, tbPoliceCenters.get(i).PoliceCenterID);
-                Val.put(TbPoliceCenter.COL_PoliceName, tbPoliceCenters.get(i).PoliceName);
+                Val.put(oPoliceCenter.COL_PoliceCenterID, tbPoliceCenters.get(i).PoliceCenterID);
+                Val.put(oPoliceCenter.COL_PoliceName, tbPoliceCenters.get(i).PoliceName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policecenter", null, Val);
@@ -654,9 +653,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbPolicePosition.COL_PolicePosID, tbPolicePositions.get(i).PolicePosID);
-                Val.put(TbPolicePosition.COL_PoliceName, tbPolicePositions.get(i).PoliceName);
-                Val.put(TbPolicePosition.COL_PoliceAbbr, tbPolicePositions.get(i).PoliceAbbr);
+                Val.put(oPolicePosition.COL_PolicePosID, tbPolicePositions.get(i).PolicePosID);
+                Val.put(oPolicePosition.COL_PoliceName, tbPolicePositions.get(i).PoliceName);
+                Val.put(oPolicePosition.COL_PoliceAbbr, tbPolicePositions.get(i).PoliceAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policeposition", null, Val);
@@ -699,9 +698,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbPoliceRank.COL_RankID, tbPoliceRanks.get(i).RankID);
-                Val.put(TbPoliceRank.COL_RankName, tbPoliceRanks.get(i).RankName);
-                Val.put(TbPoliceRank.COL_RankAbbr, tbPoliceRanks.get(i).RankAbbr);
+                Val.put(oPoliceRank.COL_RankID, tbPoliceRanks.get(i).RankID);
+                Val.put(oPoliceRank.COL_RankName, tbPoliceRanks.get(i).RankName);
+                Val.put(oPoliceRank.COL_RankAbbr, tbPoliceRanks.get(i).RankAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policerank", null, Val);
@@ -837,8 +836,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(TbResultSceneType.COL_RSTypeID, tbResultSceneTypes.get(i).RSTypeID);
-                Val.put(TbResultSceneType.COL_RSTypeName, tbResultSceneTypes.get(i).RSTypeName);
+                Val.put(oResultSceneType.COL_RSTypeID, tbResultSceneTypes.get(i).RSTypeID);
+                Val.put(oResultSceneType.COL_RSTypeName, tbResultSceneTypes.get(i).RSTypeName);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("resultscenetype", null, Val);
                     insert++;
