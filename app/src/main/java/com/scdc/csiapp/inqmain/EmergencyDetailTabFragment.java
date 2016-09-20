@@ -68,7 +68,7 @@ public class EmergencyDetailTabFragment extends Fragment {
 
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
 
-    private TextView editReceiveCaseDate, editReceiveCaseTime, editScheduleInvestDate;
+    private TextView editReceiveCaseDate, editReceiveCaseTime;
     private TextView editHappenCaseDate, editHappenCaseTime;
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
 
@@ -127,7 +127,9 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
-
+        if (EmergencyTabFragment.tbNoticeCase.LocaleName != "") {
+            editAddrDetail.setText(EmergencyTabFragment.tbNoticeCase.LocaleName);
+        }
         editAddrDetail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -147,7 +149,7 @@ public class EmergencyDetailTabFragment extends Fragment {
             }
         });
 
-// /layout 3 address
+// /show spinner
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
         spinnerAmphur = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAmphur);
         spinnerDistrict = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerDistrict);
@@ -167,6 +169,15 @@ public class EmergencyDetailTabFragment extends Fragment {
             spinnerProvince.setAdapter(adapterProvince);
         } else {
             Log.i(TAG + " show mProvinceArray", "null");
+        }
+        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+        if (EmergencyTabFragment.tbNoticeCase.PROVINCE_ID != null) {
+            for (int i = 0; i < mProvinceArray.length; i++) {
+                if (EmergencyTabFragment.tbNoticeCase.PROVINCE_ID.trim().equals(mProvinceArray[i][0].toString())) {
+                    spinnerProvince.setSelection(i);
+                    break;
+                }
+            }
         }
         spinnerProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -191,7 +202,15 @@ public class EmergencyDetailTabFragment extends Fragment {
                     selectedAmphur[0] = null;
                     Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur[0]));
                 }
-
+                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                if (EmergencyTabFragment.tbNoticeCase.AMPHUR_ID != null) {
+                    for (int i = 0; i < mProvinceArray.length; i++) {
+                        if (EmergencyTabFragment.tbNoticeCase.AMPHUR_ID.trim().equals(mAmphurArray[i][0].toString())) {
+                            spinnerAmphur.setSelection(i);
+                            break;
+                        }
+                    }
+                }
                 spinnerAmphur.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -230,8 +249,19 @@ public class EmergencyDetailTabFragment extends Fragment {
                                 Log.i(TAG + " show selectedDistrict", selectedDistrict[0]);
                                 EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict[0];
                             }
+
                         });
+                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                        if (EmergencyTabFragment.tbNoticeCase.DISTRICT_ID != null) {
+                            for (int i = 0; i < mDistrictArray.length; i++) {
+                                if (EmergencyTabFragment.tbNoticeCase.DISTRICT_ID.trim().equals(mDistrictArray[i][0].toString())) {
+                                    spinnerDistrict.setSelection(i);
+                                    break;
+                                }
+                            }
+                        }
                     }
+
 
                     public void onNothingSelected(AdapterView<?> parent) {
                         selectedAmphur[0] = mAmphurArray[0][0];
@@ -239,6 +269,7 @@ public class EmergencyDetailTabFragment extends Fragment {
                         EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
                     }
                 });
+
             }
 
             @Override
@@ -249,9 +280,13 @@ public class EmergencyDetailTabFragment extends Fragment {
 
             }
         });
+
         //datetime
         editReceiveCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseDate);
+        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate != "") {
+            editReceiveCaseDate.setText(EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate);
+        }
         editReceiveCaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -265,6 +300,9 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
         editReceiveCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseTime);
+        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime != "") {
+            editReceiveCaseTime.setText(EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime);
+        }
         editReceiveCaseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,6 +315,9 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
         editHappenCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseDate);
+        if (EmergencyTabFragment.tbNoticeCase.HappenCaseDate != "") {
+            editHappenCaseDate.setText(EmergencyTabFragment.tbNoticeCase.HappenCaseDate);
+        }
         editHappenCaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -290,6 +331,10 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
         editHappenCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseTime);
+
+        if (EmergencyTabFragment.tbNoticeCase.HappenCaseDate != "") {
+            editHappenCaseDate.setText(EmergencyTabFragment.tbNoticeCase.HappenCaseDate);
+        }
         editHappenCaseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -304,6 +349,10 @@ public class EmergencyDetailTabFragment extends Fragment {
 
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
+
+        if (EmergencyTabFragment.tbNoticeCase.KnowCaseDate != "") {
+            editKnowCaseDate.setText(EmergencyTabFragment.tbNoticeCase.KnowCaseDate);
+        }
         editKnowCaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -316,6 +365,9 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
         editKnowCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseTime);
+        if (EmergencyTabFragment.tbNoticeCase.KnowCaseTime != "") {
+            editKnowCaseTime.setText(EmergencyTabFragment.tbNoticeCase.KnowCaseTime);
+        }
         editKnowCaseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -364,6 +416,9 @@ public class EmergencyDetailTabFragment extends Fragment {
         EmergencyTabFragment.tbNoticeCase.Latitude = "0";
         EmergencyTabFragment.tbNoticeCase.Longitude = "0";
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
+        if (EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail != "") {
+            editCircumstanceOfCaseDetail.setText(EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
+        }
         editCircumstanceOfCaseDetail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -382,22 +437,39 @@ public class EmergencyDetailTabFragment extends Fragment {
             }
         });
         final Spinner spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
-        spinnerAmphur.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        final String[]  Antecedent = getResources().getStringArray(R.array.antecedent);
+        ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, Antecedent);
+        spinnerAntecedent.setAdapter(adapterEnglish);
+        spinnerAntecedent.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(spinnerAntecedent.getSelectedItem());
+                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[position]);
                 Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
 
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(spinnerAntecedent.getSelectedItem());
+                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[0]);
 
                 Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
             }
         });
+        if (EmergencyTabFragment.tbNoticeCase.SuffererPrename != null) {
+            for (int i = 0; i < Antecedent.length; i++) {
+                if (EmergencyTabFragment.tbNoticeCase.SuffererPrename.trim().equals(Antecedent[i].toString())) {
+                    spinnerAntecedent.setSelection(i);
+                    break;
+                }
+            }
+        }
+
         final EditText editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
+        if (EmergencyTabFragment.tbNoticeCase.SuffererName != "") {
+            editSuffererName.setText(EmergencyTabFragment.tbNoticeCase.SuffererName);
+        }
         editSuffererName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -417,8 +489,15 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
 
         AutoCompleteTextView autoCompleteSuffererStatus = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteSuffererStatus);
+        if (EmergencyTabFragment.tbNoticeCase.SuffererStatus != "") {
+            autoCompleteSuffererStatus.setText(EmergencyTabFragment.tbNoticeCase.SuffererStatus);
+        }
+        EmergencyTabFragment.tbNoticeCase.SuffererStatus = autoCompleteSuffererStatus.getText().toString();
 
         final EditText editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
+        if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
+            editTextSuffererPhone.setText(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
+        }
         editTextSuffererPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -30,6 +30,7 @@ import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.invmain.CSIDataTabFragment;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
@@ -59,6 +60,7 @@ public class NoticeCaseListFragment extends Fragment {
     GetDateTime getDateTime;
     String officialID;
     EmergencyTabFragment emergencyTabFragment;
+    CSIDataTabFragment csiDataTabFragment;
     private static final String TAG = "DEBUG-NoticeCaseListFragment";
     private static final String Bundle_Key = "noticecase";
     Snackbar snackbar;
@@ -81,7 +83,7 @@ public class NoticeCaseListFragment extends Fragment {
         getDateTime = new GetDateTime();
 
         emergencyTabFragment = new EmergencyTabFragment();
-
+        csiDataTabFragment = new CSIDataTabFragment();
         fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,8 +197,8 @@ public class NoticeCaseListFragment extends Fragment {
                             i.putString(emergencyTabFragment.Bundle_mode, "new");
                             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                             emergencyTabFragment.setArguments(i);
-                            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-
+                           fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                            //  fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
 //                            } else {
 //                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
 //                            }

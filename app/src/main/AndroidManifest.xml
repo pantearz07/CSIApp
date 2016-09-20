@@ -96,33 +96,31 @@
             android:name="com.scdc.csiapp.main.LoginActivity"
             android:label="@string/login"></activity>
 
-        <activity
-            android:name="com.scdc.csiapp.csidatatabs.AddSufferer"
-            android:label="@string/login"></activity>
+
         <activity
             android:name="com.scdc.csiapp.main.MapActivity"
             android:label="Map"></activity>
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.VideoPlayerActivity"
+            android:name="com.scdc.csiapp.invmain.VideoPlayerActivity"
             android:label="video"></activity>
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.NoteActivity"
+            android:name="com.scdc.csiapp.invmain.NoteActivity"
             android:label="note"
             android:theme="@style/AppThemeDarkActionBar" />
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.FeatureInsideActivity"
+            android:name="com.scdc.csiapp.invmain.FeatureInsideActivity"
             android:label="FeatureInside" />
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.GatewayCriminalActivity"
+            android:name="com.scdc.csiapp.invmain.GatewayCriminalActivity"
             android:label="GatewayCriminal" />
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.ClueShownActivity"
+            android:name="com.scdc.csiapp.invmain.ClueShownActivity"
             android:label="ClueShown" />
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.PropertyLossActivity"
+            android:name="com.scdc.csiapp.invmain.PropertyLossActivity"
             android:label="PropertyLoss" />
         <activity
-            android:name="com.scdc.csiapp.csidatatabs.EvidencesActivity"
+            android:name="com.scdc.csiapp.invmain.EvidencesActivity"
             android:label="Evidences" />
 
         <meta-data

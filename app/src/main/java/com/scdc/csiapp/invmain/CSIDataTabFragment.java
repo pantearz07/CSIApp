@@ -2,12 +2,14 @@ package com.scdc.csiapp.invmain;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,11 @@ public class CSIDataTabFragment extends Fragment {
     public static TabLayout tabLayoutCSI;
     public static ViewPager viewpagerCSI;
     public static int int_items = 8 ;
-
+    private static final String TAG = "DEBUG-CSIDataTabFragment";
+    public static String mode;
+    Snackbar snackbar;
+    public static String Bundle_Key = "casescene";
+    public static String Bundle_mode = "mode";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +67,10 @@ public class CSIDataTabFragment extends Fragment {
                 tabLayoutCSI.setupWithViewPager(viewpagerCSI);
             }
         });
-
+        Bundle args = getArguments();
+        //tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
+        //mode = args.getString(Bundle_mode);
+        Log.i(TAG, " casesceneID " );
         return x;
 
     }
@@ -88,7 +97,7 @@ public class CSIDataTabFragment extends Fragment {
                 case 5 : return new PhotoTabFragment();
                 case 6 : return new VideoTabFragment();
                 case 7 : return new VoiceTabFragment();
-                //case 8 : return new NoteTabFragment();
+               // case 8 : return new NoteTabFragment();
             }
             return null;
         }

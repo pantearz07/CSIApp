@@ -30,6 +30,7 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     //รายการคดี ทั้งหมด อันให่ม่  อยู่ใน package/invmain
     CaseSceneListFragment caseSceneListFragment;
-
+    NoticeCaseListFragment noticeCaseListFragment;
     //เมนูอื่นๆ อยู่ใน package/main
     //รายชื่อเจ้าหน้าที่ตำรวจ
     PoliceListFragment policeListFragment;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     private PreferenceData mManager;
-    String officialID, username, password,accestype;
+    String officialID, username, password, accestype;
     TextView OfficialName, txtusername;
     ImageView avatar;
     GetDateTime getDateTime;
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
          * Here , we are inflating the CSIDataTabFragment as the first Fragment
          */
 
-
+        noticeCaseListFragment = new NoticeCaseListFragment();
         caseSceneListFragment = new CaseSceneListFragment();
 
         policeListFragment = new PoliceListFragment();
@@ -174,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    fthome2.replace(R.id.containerView, caseSceneListFragment);
+                    //  fthome2.replace(R.id.containerView, caseSceneListFragment);
+                    fthome2.replace(R.id.containerView, noticeCaseListFragment);
                     fthome2.addToBackStack(null);
                     fthome2.commit();
                 }
@@ -348,8 +350,6 @@ public class MainActivity extends AppCompatActivity {
         ActivityResultBus.getInstance().postQueue(
                 new ActivityResultEvent(requestCode, resultCode, data));
     }
-
-
 
 
 }

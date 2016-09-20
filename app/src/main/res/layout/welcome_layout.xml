@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
 
         android:gravity="center_vertical|center_horizontal"
-        android:text="CSI\nReport"
+        android:text="CSI\nManagement\nSystem"
         android:textColor="@color/white"
         android:textSize="50sp"
         android:textStyle="bold"/>

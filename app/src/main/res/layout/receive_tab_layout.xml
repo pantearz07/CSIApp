@@ -38,76 +38,23 @@
 
                     android:textSize="@dimen/ssmall_text" />
 
-
-                <LinearLayout
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
-
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/txtInspector"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line"
-                        android:text="พนักงานสอบสวน"
-                        android:textSize="@dimen/small_text" />
-
-                    <View
-                        android:id="@+id/view2"
+                        android:id="@+id/txtHead"
                         android:layout_width="0dp"
-                        android:layout_height="@dimen/view_height"
-                        android:layout_gravity="bottom"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:background="@color/dark_brown" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/txtInspectorRank"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
-                    android:paddingLeft="@dimen/paddingLeftTxt"
-
-                    android:textSize="@dimen/small_text" />
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
-
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/txtLocatePolice"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_line"
                         android:layout_marginTop="@dimen/margin_line"
-                        android:text="สถานีตำรวจ"
-                        android:textSize="@dimen/small_text" />
-
-                    <View
-                        android:id="@+id/view1"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/view_height"
-                        android:layout_gravity="bottom"
-                        android:layout_marginLeft="5dp"
                         android:layout_weight="1"
-                        android:background="@color/dark_brown" />
-                </LinearLayout>
+                        android:background="@color/orange"
+                        android:padding="5dp"
+                        android:text="ข้อมูลแจ้งเหตุ"
+                        android:textAppearance="@style/SectionText" />
+                </TableRow>
 
-
-                <TextView
-                    android:id="@+id/spnLocatePolice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
-                    android:paddingLeft="@dimen/paddingLeftTxt"
-
-                    android:textSize="@dimen/small_text" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,25 +63,22 @@
 
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.design.widget.TextInputLayout
                         android:id="@+id/txtPhoneInspector"
-                        android:layout_width="90dp"
+
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/margin_line"
-                        android:text="โทรศัพท์"
-                        android:textSize="@dimen/small_text"
-                        android:textStyle="bold" />
+                        android:layout_weight="1">
 
 
-
-                    <TextView
-                        android:id="@+id/editTextPhone1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-
-                        android:textSize="@dimen/small_text" />
-
+                        <EditText
+                            android:id="@+id/editTextPhone"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="โทรศัพท์ติดต่อ"
+                            android:inputType="phone"
+                            android:textSize="@dimen/small_text" />
+                    </android.support.design.widget.TextInputLayout>
 
 
                 </LinearLayout>
@@ -325,238 +269,77 @@
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
-                        <Button
-                            android:id="@+id/btn_clear_txt_1"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                       >
 
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtHouseNoLayout"
+                        <TextView
+                            android:id="@+id/txtProvince"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:text="จังหวัด"
+                            android:textSize="@dimen/small_text" />
+
+                        <Spinner
+                            android:id="@+id/spinnerProvince"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <EditText
-                                android:id="@+id/edtHouseNo"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="บ้านเลขที่"
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="1" />
 
 
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_2"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtVillageNoLayout"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <EditText
-                                android:id="@+id/edtVillageNo"
-                                android:layout_width="match_parent"
-
-                                android:layout_height="wrap_content"
-                                android:hint="หมู่ที่"
-
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_3"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtVillageNameLayout"
+                        <TextView
+                            android:id="@+id/txtAmphur"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="0.5"
+                            android:text="อำเภอ"
+                            android:textSize="@dimen/small_text" />
 
-                            <EditText
-                                android:id="@+id/edtVillageName"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="หมู่บ้าน"
-
-
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_4"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtLaneLayout"
+                        <TextView
+                            android:id="@+id/txtDistrict"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="0.5"
+                            android:text="ตำบล"
+                            android:textSize="@dimen/small_text" />
 
-                            <EditText
-                                android:id="@+id/edtLane"
-                                android:layout_width="match_parent"
 
-                                android:layout_height="wrap_content"
-                                android:hint="ซอย"
-
-                                android:textSize="@dimen/small_text" />
-
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_5"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line"
+                        android:orientation="horizontal">
 
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtRoadLayout"
+                        <Spinner
+                            android:id="@+id/spinnerAmphur"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <EditText
-                                android:id="@+id/edtRoad"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="ถนน"
+                            android:layout_weight="0.5" />
 
 
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_6"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtProvinceAddrLayout"
+                        <Spinner
+                            android:id="@+id/spinnerDistrict"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_weight="0.5" />
 
-                            <AutoCompleteTextView
-                                android:id="@+id/edtProvinceAddr"
-                                android:layout_width="match_parent"
 
-                                android:layout_height="wrap_content"
-                                android:completionThreshold="1"
-                                android:ems="10"
-                                android:hint="จังหวัด"
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_7"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtAmphurLayout"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <AutoCompleteTextView
-                                android:id="@+id/edtAmphur"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:completionThreshold="1"
-
-                                android:ems="10"
-                                android:hint="อำเภอ"
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_8"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/edtDistrictLayout"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <AutoCompleteTextView
-                                android:id="@+id/edtDistrict"
-                                android:layout_width="match_parent"
-
-                                android:layout_height="wrap_content"
-                                android:completionThreshold="1"
-                                android:ems="10"
-                                android:hint="ตำบล"
-                                android:textSize="@dimen/small_text" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <Button
-                            android:id="@+id/btn_clear_txt_9"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
                     </TableRow>
                 </TableLayout>
 
@@ -571,24 +354,31 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btnButtonSearchMap"
+                        android:id="@+id/btnButtonSearchLatLong"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/selector_button"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="ค้นหาแผนที่"
+                        android:text="บันทึกพิกัดที่เกิดเหตุ"
                         android:textColor="@color/white"
                         android:textSize="@dimen/small_text" />
-                    <!-- <TextView
-                         android:id="@+id/txtButtonSearchMap"
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-                         android:gravity="center_horizontal"
-                         android:text="ค้นหาแผนที่"
-                         android:textSize="@dimen/small_text" />-->
+
+                    <Button
+                        android:id="@+id/btnButtonSearchMap"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_button"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="5dp"
+                        android:text="นำเส้นทาง"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/small_text" />
+
                 </LinearLayout>
 
                 <TableLayout
@@ -676,22 +466,35 @@
 
                     </TableRow>
 
+
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom">
 
-                        <Button
-                            android:id="@+id/btnAddSufferer"
+
+                        <Spinner
+                            android:id="@+id/spinnerAntecedent"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="1"
-                            android:textColor="@color/white"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:text="เพิ่มข้อมูลผู้เสียหาย"
-                            android:textSize="@dimen/small_text" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="0.3"
+                            android:entries="@array/antecedent" />
 
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtSuffererName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+
+                            <EditText
+                                android:id="@+id/editSuffererName"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ชื่อ-นามสกุล"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
 
                     </TableRow>
 
@@ -699,25 +502,42 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <LinearLayout
-                            android:id="@+id/linearLayoutAddSufferer"
-                            android:layout_width="wrap_content"
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtSuffererStatus"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/margin_line"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical">
+                            android:layout_weight="0.5">
 
-                            <ListView
-                                android:id="@+id/listViewSufferer"
-                                android:layout_width="match_parent"
-                                android:layout_height="250dp"
-                                android:divider="@color/orange"
-                                android:dividerHeight="@dimen/view_height"
 
+                            <AutoCompleteTextView
+                                android:id="@+id/autoCompleteSuffererStatus"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:completionThreshold="1"
+                                android:ems="10"
+                                android:hint="สถานะเป็น ตย. เจ้าของบ้าน"
                                 android:textSize="@dimen/small_text" />
 
-                        </LinearLayout>
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtSuffererPhone"
+
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5">
+
+
+                            <EditText
+                                android:id="@+id/editTextSuffererPhone"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="โทรศัพท์ติดต่อ"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
                     </TableRow>
+
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -758,160 +578,9 @@
                                 android:minLines="2" />
                         </android.support.design.widget.TextInputLayout>
 
-                        <Button
-                            android:id="@+id/btn_clear_txt_10"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
                     </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/txtInvestigatorScene"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="1"
-                            android:background="@color/orange"
-                            android:padding="5dp"
-                            android:text="รายชื่อผู้ตรวจสถานที่เกิดเหตุ"
-                            android:textAppearance="@style/SectionText" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_line"
-
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/txtTypeInvestigator1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/margin_line"
-                                android:text="รายชื่อผู้ตรวจสถานที่เกิดเหตุตามตารางเวร ประจำวันที่"
-                                android:textSize="@dimen/ssmall_text"
-                                android:visibility="gone"/>
-
-                            <View
-                                android:id="@+id/view4"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/view_height"
-                                android:layout_gravity="bottom"
-                                android:layout_marginLeft="5dp"
-                                android:visibility="gone"
-                                android:background="@color/dark_brown" />
-                        </LinearLayout>
-                    </TableRow>
-
-            <!--        <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Button
-                            android:id="@+id/btnAddInvestigator"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-
-                            android:text="เพิ่มผู้ออกตรวจสถานที่เกิดเหตุ"
-                            android:textSize="@dimen/small_text" />
-                    </TableRow>-->
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone">
-                        <TextView
-                            android:id="@+id/editScheduleInvestDate"
-                            style="@android:style/Widget.Holo.Light.Spinner"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_column="0"
-                            android:layout_weight="8"
-                            android:textSize="@dimen/small_text" />
-                        <Button
-                            android:id="@+id/btnShowInvestigator"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="2"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:textColor="@color/white"
-                            android:text="แก้ไข"
-                            android:layout_marginRight="5dp"
-                            android:textSize="@dimen/ssmall_text" />
-                        <Button
-                            android:id="@+id/btnSaveSchedule"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="2"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:textColor="@color/white"
-                            android:text="บันทึก"
-                            android:textSize="@dimen/ssmall_text" />
-
-                    </TableRow>
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:id="@+id/linearLayoutInvestigator"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:gravity="center_vertical"
-                            android:orientation="vertical">
-
-                            <ListView
-                                android:id="@+id/listViewInvestigator"
-                                android:layout_width="match_parent"
-                                android:layout_height="200dp"
-                                android:divider="@color/orange"
-                                android:dividerHeight="@dimen/view_height"
-
-                                android:textSize="@dimen/small_text" />
-
-                        </LinearLayout>
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Button
-                            android:id="@+id/btnEditInvestigator"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="1"
-                            android:textColor="@color/white"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:text="แก้ไขรายชื่อผู้ช่วยตรวจสถานที่เกิดเหตุ"
-                            android:textSize="@dimen/small_text" />
-
-
-                    </TableRow>
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -952,14 +621,7 @@
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
-                        <Button
-                            android:id="@+id/btn_clear_txt_11"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
+
                     </TableRow>
                 </TableLayout>
             </LinearLayout>
@@ -975,7 +637,7 @@
             android:src="@drawable/ic_saveas_wh"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
-            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />
     </android.support.design.widget.CoordinatorLayout>
 
