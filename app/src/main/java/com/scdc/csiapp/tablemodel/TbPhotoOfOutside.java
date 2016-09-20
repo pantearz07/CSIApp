@@ -5,13 +5,13 @@ package com.scdc.csiapp.tablemodel;
  */
 public class TbPhotoOfOutside {
 
-    public static final String TB_PhotoOfOutside = "photoofoutside";
+    public String TB_PhotoOfOutside = "photoofoutside";
     // From Table photoofoutside field name CaseReportID
-    public static final String COL_CaseReportID = "CaseReportID";
+    public String COL_CaseReportID = "CaseReportID";
     public String CaseReportID = "";
 
     // From Table photoofoutside field name FileID
-    public static final String COL_FileID = "FileID";
+    public String COL_FileID = "FileID";
     public String FileID = "";
 
 }

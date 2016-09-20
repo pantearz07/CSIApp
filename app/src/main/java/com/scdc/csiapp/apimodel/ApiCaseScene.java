@@ -6,6 +6,7 @@ import com.scdc.csiapp.tablemodel.TbCaseSceneType;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
 import com.scdc.csiapp.tablemodel.TbInvestigatorsInScene;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
 import com.scdc.csiapp.tablemodel.TbPoliceStation;
@@ -31,6 +32,9 @@ public class ApiCaseScene {
 
     // InvestigatorOfficialID คือ OfficialID เพื่อบอกว่าใครรับผิดชอบคดี
     TbOfficial tbOfficial;
+
+    // ใช้เชื่อม tbNoticeCase เพื่อจะได้ตรวจสอบ CaseStatus ได้
+    TbNoticeCase tbNoticeCase;
 
     // ใช้ใน tbCaseScene เพื่อบอกประเภทคดี
     TbCaseSceneType tbCaseSceneType;

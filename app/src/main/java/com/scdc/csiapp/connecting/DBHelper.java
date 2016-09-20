@@ -8,30 +8,51 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.tablemodel.TbAmphur;
+import com.scdc.csiapp.tablemodel.TbCaseScene;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
 import com.scdc.csiapp.tablemodel.TbComPosition;
 import com.scdc.csiapp.tablemodel.TbDistrict;
+import com.scdc.csiapp.tablemodel.TbFindEvidence;
 import com.scdc.csiapp.tablemodel.TbGeography;
 import com.scdc.csiapp.tablemodel.TbInqPosition;
 import com.scdc.csiapp.tablemodel.TbInvPosition;
+import com.scdc.csiapp.tablemodel.TbInvestigatorsInScene;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbPermission;
+import com.scdc.csiapp.tablemodel.TbPhotoOfEvidence;
+import com.scdc.csiapp.tablemodel.TbPhotoOfInside;
+import com.scdc.csiapp.tablemodel.TbPhotoOfOutside;
+import com.scdc.csiapp.tablemodel.TbPhotoOfResultscene;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
 import com.scdc.csiapp.tablemodel.TbPoliceCenter;
 import com.scdc.csiapp.tablemodel.TbPolicePosition;
 import com.scdc.csiapp.tablemodel.TbPoliceRank;
 import com.scdc.csiapp.tablemodel.TbPoliceStation;
+import com.scdc.csiapp.tablemodel.TbPropertyLoss;
 import com.scdc.csiapp.tablemodel.TbProvince;
+import com.scdc.csiapp.tablemodel.TbRegistrationGCM;
+import com.scdc.csiapp.tablemodel.TbResultScene;
 import com.scdc.csiapp.tablemodel.TbResultSceneType;
 import com.scdc.csiapp.tablemodel.TbSCDCagency;
 import com.scdc.csiapp.tablemodel.TbSCDCcenter;
+import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
+import com.scdc.csiapp.tablemodel.TbSceneFeatureOutside;
+import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
+import com.scdc.csiapp.tablemodel.TbScheduleGroup;
+import com.scdc.csiapp.tablemodel.TbScheduleInvestigates;
 import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
+import com.scdc.csiapp.tablemodel.TbUsers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Pantearz07 on 15/9/2559.
@@ -42,6 +63,44 @@ public class DBHelper extends SQLiteAssetHelper {
     private static final String DB_NAME = "mCSI.db";
     private static final int DB_VERSION = 1;
     private static final String TAG = "DEBUG-DBHelper";
+    // สร้าง object เปล่าไว้ใช้เรียกชื่อฟิว
+    TbAmphur oAmphur = new TbAmphur();
+    TbCaseScene oCaseScene = new TbCaseScene();
+    TbCaseSceneType oCaseSceneType = new TbCaseSceneType();
+    TbComPosition oComPosition = new TbComPosition();
+    TbDistrict oDistrict = new TbDistrict();
+    TbFindEvidence oFindEvidence = new TbFindEvidence();
+    TbGeography oGeography = new TbGeography();
+    TbInqPosition oInqPosition = new TbInqPosition();
+    TbInvestigatorsInScene oInvestigatorsInScene = new TbInvestigatorsInScene();
+    TbInvPosition oInvPosition = new TbInvPosition();
+    TbMultimediaFile oMultimediaFile = new TbMultimediaFile();
+    TbNoticeCase oNoticeCase = new TbNoticeCase();
+    TbOfficial oOfficial = new TbOfficial();
+    TbPermission oPermission = new TbPermission();
+    TbPhotoOfEvidence oPhotoOfEvidence = new TbPhotoOfEvidence();
+    TbPhotoOfInside oPhotoOfInside = new TbPhotoOfInside();
+    TbPhotoOfOutside oPhotoOfOutside = new TbPhotoOfOutside();
+    TbPhotoOfResultscene oPhotoOfResultscene = new TbPhotoOfResultscene();
+    TbPoliceAgency oPoliceAgency = new TbPoliceAgency();
+    TbPoliceCenter oPoliceCenter = new TbPoliceCenter();
+    TbPolicePosition oPolicePosition = new TbPolicePosition();
+    TbPoliceRank oPoliceRank = new TbPoliceRank();
+    TbPoliceStation oPoliceStation = new TbPoliceStation();
+    TbPropertyLoss oPropertyLoss = new TbPropertyLoss();
+    TbProvince oProvince = new TbProvince();
+    TbRegistrationGCM oRegistrationGCM = new TbRegistrationGCM();
+    TbResultScene oResultScene = new TbResultScene();
+    TbResultSceneType oResultSceneType = new TbResultSceneType();
+    TbSCDCagency oScdCagency = new TbSCDCagency();
+    TbSCDCcenter oScdCcenter = new TbSCDCcenter();
+    TbSceneFeatureInSide oSceneFeatureInSide = new TbSceneFeatureInSide();
+    TbSceneFeatureOutside oSceneFeatureOutside = new TbSceneFeatureOutside();
+    TbSceneInvestigation oSceneInvestigation = new TbSceneInvestigation();
+    TbScheduleGroup oScheduleGroup = new TbScheduleGroup();
+    TbScheduleInvestigates oScheduleInvestigates = new TbScheduleInvestigates();
+    TbSubcaseSceneType oSubcaseSceneType = new TbSubcaseSceneType();
+    TbUsers oUsers = new TbUsers();
 
     public DBHelper(Context context) {
         //super(context, DB_NAME, null, DB_VERSION);
@@ -72,14 +131,15 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "AMPHUR_ID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbAmphur temp = new TbAmphur();
                 ContentValues Val = new ContentValues();
-                Val.put(TbAmphur.COL_AMPHUR_ID, tbAmphurList.get(i).AMPHUR_ID);
-                Val.put(TbAmphur.COL_AMPHUR_CODE, tbAmphurList.get(i).AMPHUR_CODE);
-                Val.put(TbAmphur.COL_AMPHUR_NAME, tbAmphurList.get(i).AMPHUR_NAME);
-                Val.put(TbAmphur.COL_POSTCODE, tbAmphurList.get(i).POSTCODE);
-                Val.put(TbAmphur.COL_GEO_ID, tbAmphurList.get(i).GEO_ID);
-                Val.put(TbAmphur.COL_PROVINCE_ID, tbAmphurList.get(i).PROVINCE_ID);
-                Val.put(TbAmphur.COL_amphur_polygon, tbAmphurList.get(i).amphur_polygon);
+                Val.put(temp.COL_AMPHUR_ID, tbAmphurList.get(i).AMPHUR_ID);
+                Val.put(temp.COL_AMPHUR_CODE, tbAmphurList.get(i).AMPHUR_CODE);
+                Val.put(temp.COL_AMPHUR_NAME, tbAmphurList.get(i).AMPHUR_NAME);
+                Val.put(temp.COL_POSTCODE, tbAmphurList.get(i).POSTCODE);
+                Val.put(temp.COL_GEO_ID, tbAmphurList.get(i).GEO_ID);
+                Val.put(temp.COL_PROVINCE_ID, tbAmphurList.get(i).PROVINCE_ID);
+                Val.put(temp.COL_amphur_polygon, tbAmphurList.get(i).amphur_polygon);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("amphur", null, Val);
@@ -121,16 +181,17 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "CaseTypeID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbCaseSceneType temp = new TbCaseSceneType();
                 ContentValues Val = new ContentValues();
-                Val.put(TbCaseSceneType.COL_CaseTypeID, tbCaseSceneTypes.get(i).CaseTypeID);
-                Val.put(TbCaseSceneType.COL_CaseTypeName, tbCaseSceneTypes.get(i).CaseTypeName);
-                Val.put(TbCaseSceneType.COL_casetype_min, tbCaseSceneTypes.get(i).casetype_min);
-                Val.put(TbCaseSceneType.COL_casetype_max, tbCaseSceneTypes.get(i).casetype_max);
-                Val.put(TbCaseSceneType.COL_casetype_icon, tbCaseSceneTypes.get(i).casetype_icon);
-                Val.put(TbCaseSceneType.COL_casetype_colormin, tbCaseSceneTypes.get(i).casetype_colormin);
-                Val.put(TbCaseSceneType.COL_casetype_colormedium, tbCaseSceneTypes.get(i).casetype_colormedium);
-                Val.put(TbCaseSceneType.COL_casetype_colorhigh, tbCaseSceneTypes.get(i).casetype_colorhigh);
-                Val.put(TbCaseSceneType.COL_casetype_status, tbCaseSceneTypes.get(i).casetype_status);
+                Val.put(temp.COL_CaseTypeID, tbCaseSceneTypes.get(i).CaseTypeID);
+                Val.put(temp.COL_CaseTypeName, tbCaseSceneTypes.get(i).CaseTypeName);
+                Val.put(temp.COL_casetype_min, tbCaseSceneTypes.get(i).casetype_min);
+                Val.put(temp.COL_casetype_max, tbCaseSceneTypes.get(i).casetype_max);
+                Val.put(temp.COL_casetype_icon, tbCaseSceneTypes.get(i).casetype_icon);
+                Val.put(temp.COL_casetype_colormin, tbCaseSceneTypes.get(i).casetype_colormin);
+                Val.put(temp.COL_casetype_colormedium, tbCaseSceneTypes.get(i).casetype_colormedium);
+                Val.put(temp.COL_casetype_colorhigh, tbCaseSceneTypes.get(i).casetype_colorhigh);
+                Val.put(temp.COL_casetype_status, tbCaseSceneTypes.get(i).casetype_status);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("casescenetype", null, Val);
@@ -217,11 +278,12 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "DISTRICT_ID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbDistrict temp = new TbDistrict();
                 ContentValues Val = new ContentValues();
-                Val.put(TbDistrict.COL_DISTRICT_ID, tbDistricts.get(i).DISTRICT_ID);
-                Val.put(TbDistrict.COL_DISTRICT_CODE, tbDistricts.get(i).DISTRICT_CODE);
-                Val.put(TbDistrict.COL_DISTRICT_NAME, tbDistricts.get(i).DISTRICT_NAME);
-                Val.put(TbDistrict.COL_AMPHUR_ID, tbDistricts.get(i).COL_AMPHUR_ID);
+                Val.put(temp.COL_DISTRICT_ID, tbDistricts.get(i).DISTRICT_ID);
+                Val.put(temp.COL_DISTRICT_CODE, tbDistricts.get(i).DISTRICT_CODE);
+                Val.put(temp.COL_DISTRICT_NAME, tbDistricts.get(i).DISTRICT_NAME);
+                Val.put(temp.COL_AMPHUR_ID, tbDistricts.get(i).COL_AMPHUR_ID);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("district", null, Val);
@@ -398,21 +460,22 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "OfficialID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbOfficial temp = new TbOfficial();
                 ContentValues Val = new ContentValues();
-                Val.put(TbOfficial.COL_OfficialID, tbOfficials.get(i).OfficialID);
-                Val.put(TbOfficial.COL_FirstName, tbOfficials.get(i).FirstName);
-                Val.put(TbOfficial.COL_LastName, tbOfficials.get(i).LastName);
-                Val.put(TbOfficial.COL_Alias, tbOfficials.get(i).Alias);
-                Val.put(TbOfficial.COL_Rank, tbOfficials.get(i).Rank);
-                Val.put(TbOfficial.COL_Position, tbOfficials.get(i).Position);
-                Val.put(TbOfficial.COL_SubPossition, tbOfficials.get(i).SubPossition);
-                Val.put(TbOfficial.COL_PhoneNumber, tbOfficials.get(i).PhoneNumber);
-                Val.put(TbOfficial.COL_OfficialEmail, tbOfficials.get(i).OfficialEmail);
-                Val.put(TbOfficial.COL_OfficialDisplayPic, tbOfficials.get(i).OfficialDisplayPic);
-                Val.put(TbOfficial.COL_AccessType, tbOfficials.get(i).AccessType);
-                Val.put(TbOfficial.COL_SCDCAgencyCode, tbOfficials.get(i).SCDCAgencyCode);
-                Val.put(TbOfficial.COL_PoliceStationID, tbOfficials.get(i).PoliceStationID);
-                Val.put(TbOfficial.COL_id_users, tbOfficials.get(i).id_users);
+                Val.put(temp.COL_OfficialID, tbOfficials.get(i).OfficialID);
+                Val.put(temp.COL_FirstName, tbOfficials.get(i).FirstName);
+                Val.put(temp.COL_LastName, tbOfficials.get(i).LastName);
+                Val.put(temp.COL_Alias, tbOfficials.get(i).Alias);
+                Val.put(temp.COL_Rank, tbOfficials.get(i).Rank);
+                Val.put(temp.COL_Position, tbOfficials.get(i).Position);
+                Val.put(temp.COL_SubPossition, tbOfficials.get(i).SubPossition);
+                Val.put(temp.COL_PhoneNumber, tbOfficials.get(i).PhoneNumber);
+                Val.put(temp.COL_OfficialEmail, tbOfficials.get(i).OfficialEmail);
+                Val.put(temp.COL_OfficialDisplayPic, tbOfficials.get(i).OfficialDisplayPic);
+                Val.put(temp.COL_AccessType, tbOfficials.get(i).AccessType);
+                Val.put(temp.COL_SCDCAgencyCode, tbOfficials.get(i).SCDCAgencyCode);
+                Val.put(temp.COL_PoliceStationID, tbOfficials.get(i).PoliceStationID);
+                Val.put(temp.COL_id_users, tbOfficials.get(i).id_users);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("official", null, Val);
@@ -500,10 +563,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "PoliceAgencyID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbPoliceAgency temp = new TbPoliceAgency();
                 ContentValues Val = new ContentValues();
-                Val.put(TbPoliceAgency.COL_PoliceAgencyID, tbPoliceAgencies.get(i).PoliceAgencyID);
-                Val.put(TbPoliceAgency.COL_PoliceCenterID, tbPoliceAgencies.get(i).PoliceCenterID);
-                Val.put(TbPoliceAgency.COL_PoliceAgencyName, tbPoliceAgencies.get(i).PoliceAgencyName);
+                Val.put(temp.COL_PoliceAgencyID, tbPoliceAgencies.get(i).PoliceAgencyID);
+                Val.put(temp.COL_PoliceCenterID, tbPoliceAgencies.get(i).PoliceCenterID);
+                Val.put(temp.COL_PoliceAgencyName, tbPoliceAgencies.get(i).PoliceAgencyName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policeagency", null, Val);
@@ -679,10 +743,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "PoliceStationID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbPoliceStation temp = new TbPoliceStation();
                 ContentValues Val = new ContentValues();
-                Val.put(TbPoliceStation.COL_PoliceStationID, tbPoliceStations.get(i).PoliceStationID);
-                Val.put(TbPoliceStation.COL_PoliceAgencyID, tbPoliceStations.get(i).PoliceAgencyID);
-                Val.put(TbPoliceStation.COL_PoliceStationName, tbPoliceStations.get(i).PoliceStationName);
+                Val.put(temp.COL_PoliceStationID, tbPoliceStations.get(i).PoliceStationID);
+                Val.put(temp.COL_PoliceAgencyID, tbPoliceStations.get(i).PoliceAgencyID);
+                Val.put(temp.COL_PoliceStationName, tbPoliceStations.get(i).PoliceStationName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policestation", null, Val);
@@ -724,12 +789,13 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "PROVINCE_ID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbProvince temp = new TbProvince();
                 ContentValues Val = new ContentValues();
-                Val.put(TbProvince.COL_PROVINCE_ID, tbProvinces.get(i).PROVINCE_ID);
-                Val.put(TbProvince.COL_PROVINCE_CODE, tbProvinces.get(i).PROVINCE_CODE);
-                Val.put(TbProvince.COL_PROVINCE_NAME, tbProvinces.get(i).PROVINCE_NAME);
-                Val.put(TbProvince.COL_GEO_ID, tbProvinces.get(i).GEO_ID);
-                Val.put(TbProvince.COL_province_status, tbProvinces.get(i).province_status);
+                Val.put(temp.COL_PROVINCE_ID, tbProvinces.get(i).PROVINCE_ID);
+                Val.put(temp.COL_PROVINCE_CODE, tbProvinces.get(i).PROVINCE_CODE);
+                Val.put(temp.COL_PROVINCE_NAME, tbProvinces.get(i).PROVINCE_NAME);
+                Val.put(temp.COL_GEO_ID, tbProvinces.get(i).GEO_ID);
+                Val.put(temp.COL_province_status, tbProvinces.get(i).province_status);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("province", null, Val);
                     insert++;
@@ -814,10 +880,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "SCDCAgencyCode = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbSCDCagency temp = new TbSCDCagency();
                 ContentValues Val = new ContentValues();
-                Val.put(TbSCDCagency.COL_SCDCAgencyCode, tbSCDCagencies.get(i).SCDCAgencyCode);
-                Val.put(TbSCDCagency.COL_SCDCCenterID, tbSCDCagencies.get(i).SCDCCenterID);
-                Val.put(TbSCDCagency.COL_SCDCAgencyName, tbSCDCagencies.get(i).SCDCAgencyName);
+                Val.put(temp.COL_SCDCAgencyCode, tbSCDCagencies.get(i).SCDCAgencyCode);
+                Val.put(temp.COL_SCDCCenterID, tbSCDCagencies.get(i).SCDCCenterID);
+                Val.put(temp.COL_SCDCAgencyName, tbSCDCagencies.get(i).SCDCAgencyName);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("scdcagency", null, Val);
                     insert++;
@@ -859,10 +926,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "SCDCCenterID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbSCDCcenter temp = new TbSCDCcenter();
                 ContentValues Val = new ContentValues();
-                Val.put(TbSCDCcenter.COL_SCDCCenterID, tbSCDCcenters.get(i).SCDCCenterID);
-                Val.put(TbSCDCcenter.COL_SCDCCenterName, tbSCDCcenters.get(i).SCDCCenterName);
-                Val.put(TbSCDCcenter.COL_SCDCCenterProvince, tbSCDCcenters.get(i).SCDCCenterProvince);
+                Val.put(temp.COL_SCDCCenterID, tbSCDCcenters.get(i).SCDCCenterID);
+                Val.put(temp.COL_SCDCCenterName, tbSCDCcenters.get(i).SCDCCenterName);
+                Val.put(temp.COL_SCDCCenterProvince, tbSCDCcenters.get(i).SCDCCenterProvince);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("scdccenter", null, Val);
                     insert++;
@@ -904,10 +972,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "SubCaseTypeID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbSubcaseSceneType temp = new TbSubcaseSceneType();
                 ContentValues Val = new ContentValues();
-                Val.put(TbSubcaseSceneType.COL_SubCaseTypeID, tbSubcaseSceneTypes.get(i).SubCaseTypeID);
-                Val.put(TbSubcaseSceneType.COL_CaseTypeID, tbSubcaseSceneTypes.get(i).CaseTypeID);
-                Val.put(TbSubcaseSceneType.COL_SubCaseTypeName, tbSubcaseSceneTypes.get(i).SubCaseTypeName);
+                Val.put(temp.COL_SubCaseTypeID, tbSubcaseSceneTypes.get(i).SubCaseTypeID);
+                Val.put(temp.COL_CaseTypeID, tbSubcaseSceneTypes.get(i).CaseTypeID);
+                Val.put(temp.COL_SubCaseTypeName, tbSubcaseSceneTypes.get(i).SubCaseTypeName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("subcasescenetype", null, Val);
@@ -949,40 +1018,41 @@ public class DBHelper extends SQLiteAssetHelper {
                         + "NoticeCaseID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
+                TbNoticeCase temp = new TbNoticeCase();
                 ContentValues Val = new ContentValues();
-                Val.put(TbNoticeCase.COL_NoticeCaseID, tbNoticeCases.get(i).NoticeCaseID);
-                Val.put(TbNoticeCase.COL_Mobile_CaseID, tbNoticeCases.get(i).Mobile_CaseID);
-                Val.put(TbNoticeCase.COL_InquiryOfficialID, tbNoticeCases.get(i).InquiryOfficialID);
-                Val.put(TbNoticeCase.COL_InvestigatorOfficialID, tbNoticeCases.get(i).InvestigatorOfficialID);
-                Val.put(TbNoticeCase.COL_SCDCAgencyCode, tbNoticeCases.get(i).SCDCAgencyCode);
-                Val.put(TbNoticeCase.COL_CaseTypeID, tbNoticeCases.get(i).CaseTypeID);
-                Val.put(TbNoticeCase.COL_SubCaseTypeID, tbNoticeCases.get(i).SubCaseTypeID);
-                Val.put(TbNoticeCase.COL_CaseStatus, tbNoticeCases.get(i).CaseStatus);
-                Val.put(TbNoticeCase.COL_PoliceStationID, tbNoticeCases.get(i).PoliceStationID);
-                Val.put(TbNoticeCase.COL_CaseTel, tbNoticeCases.get(i).CaseTel);
-                Val.put(TbNoticeCase.COL_ReceivingCaseDate, tbNoticeCases.get(i).ReceivingCaseDate);
-                Val.put(TbNoticeCase.COL_ReceivingCaseTime, tbNoticeCases.get(i).ReceivingCaseTime);
-                Val.put(TbNoticeCase.COL_HappenCaseDate, tbNoticeCases.get(i).HappenCaseDate);
-                Val.put(TbNoticeCase.COL_HappenCaseTime, tbNoticeCases.get(i).HappenCaseTime);
-                Val.put(TbNoticeCase.COL_KnowCaseDate, tbNoticeCases.get(i).KnowCaseDate);
-                Val.put(TbNoticeCase.COL_KnowCaseTime, tbNoticeCases.get(i).KnowCaseTime);
-                Val.put(TbNoticeCase.COL_SceneNoticeDate, tbNoticeCases.get(i).SceneNoticeDate);
-                Val.put(TbNoticeCase.COL_SceneNoticeTime, tbNoticeCases.get(i).SceneNoticeTime);
-                Val.put(TbNoticeCase.COL_CompleteSceneDate, tbNoticeCases.get(i).CompleteSceneDate);
-                Val.put(TbNoticeCase.COL_CompleteSceneTime, tbNoticeCases.get(i).CompleteSceneTime);
-                Val.put(TbNoticeCase.COL_LocaleName, tbNoticeCases.get(i).LocaleName);
-                Val.put(TbNoticeCase.COL_DISTRICT_ID, tbNoticeCases.get(i).DISTRICT_ID);
-                Val.put(TbNoticeCase.COL_AMPHUR_ID, tbNoticeCases.get(i).AMPHUR_ID);
-                Val.put(TbNoticeCase.COL_PROVINCE_ID, tbNoticeCases.get(i).PROVINCE_ID);
-                Val.put(TbNoticeCase.COL_Latitude, tbNoticeCases.get(i).Latitude);
-                Val.put(TbNoticeCase.COL_Longitude, tbNoticeCases.get(i).Longitude);
-                Val.put(TbNoticeCase.COL_SuffererPrename, tbNoticeCases.get(i).SuffererPrename);
-                Val.put(TbNoticeCase.COL_SuffererName, tbNoticeCases.get(i).SuffererName);
-                Val.put(TbNoticeCase.COL_SuffererStatus, tbNoticeCases.get(i).SuffererStatus);
-                Val.put(TbNoticeCase.COL_SuffererPhoneNum, tbNoticeCases.get(i).SuffererPhoneNum);
-                Val.put(TbNoticeCase.COL_CircumstanceOfCaseDetail, tbNoticeCases.get(i).CircumstanceOfCaseDetail);
-                Val.put(TbNoticeCase.COL_LastUpdateDate, tbNoticeCases.get(i).LastUpdateDate);
-                Val.put(TbNoticeCase.COL_LastUpdateTime, tbNoticeCases.get(i).LastUpdateTime);
+                Val.put(temp.COL_NoticeCaseID, tbNoticeCases.get(i).NoticeCaseID);
+                Val.put(temp.COL_Mobile_CaseID, tbNoticeCases.get(i).Mobile_CaseID);
+                Val.put(temp.COL_InquiryOfficialID, tbNoticeCases.get(i).InquiryOfficialID);
+                Val.put(temp.COL_InvestigatorOfficialID, tbNoticeCases.get(i).InvestigatorOfficialID);
+                Val.put(temp.COL_SCDCAgencyCode, tbNoticeCases.get(i).SCDCAgencyCode);
+                Val.put(temp.COL_CaseTypeID, tbNoticeCases.get(i).CaseTypeID);
+                Val.put(temp.COL_SubCaseTypeID, tbNoticeCases.get(i).SubCaseTypeID);
+                Val.put(temp.COL_CaseStatus, tbNoticeCases.get(i).CaseStatus);
+                Val.put(temp.COL_PoliceStationID, tbNoticeCases.get(i).PoliceStationID);
+                Val.put(temp.COL_CaseTel, tbNoticeCases.get(i).CaseTel);
+                Val.put(temp.COL_ReceivingCaseDate, tbNoticeCases.get(i).ReceivingCaseDate);
+                Val.put(temp.COL_ReceivingCaseTime, tbNoticeCases.get(i).ReceivingCaseTime);
+                Val.put(temp.COL_HappenCaseDate, tbNoticeCases.get(i).HappenCaseDate);
+                Val.put(temp.COL_HappenCaseTime, tbNoticeCases.get(i).HappenCaseTime);
+                Val.put(temp.COL_KnowCaseDate, tbNoticeCases.get(i).KnowCaseDate);
+                Val.put(temp.COL_KnowCaseTime, tbNoticeCases.get(i).KnowCaseTime);
+                Val.put(temp.COL_SceneNoticeDate, tbNoticeCases.get(i).SceneNoticeDate);
+                Val.put(temp.COL_SceneNoticeTime, tbNoticeCases.get(i).SceneNoticeTime);
+                Val.put(temp.COL_CompleteSceneDate, tbNoticeCases.get(i).CompleteSceneDate);
+                Val.put(temp.COL_CompleteSceneTime, tbNoticeCases.get(i).CompleteSceneTime);
+                Val.put(temp.COL_LocaleName, tbNoticeCases.get(i).LocaleName);
+                Val.put(temp.COL_DISTRICT_ID, tbNoticeCases.get(i).DISTRICT_ID);
+                Val.put(temp.COL_AMPHUR_ID, tbNoticeCases.get(i).AMPHUR_ID);
+                Val.put(temp.COL_PROVINCE_ID, tbNoticeCases.get(i).PROVINCE_ID);
+                Val.put(temp.COL_Latitude, tbNoticeCases.get(i).Latitude);
+                Val.put(temp.COL_Longitude, tbNoticeCases.get(i).Longitude);
+                Val.put(temp.COL_SuffererPrename, tbNoticeCases.get(i).SuffererPrename);
+                Val.put(temp.COL_SuffererName, tbNoticeCases.get(i).SuffererName);
+                Val.put(temp.COL_SuffererStatus, tbNoticeCases.get(i).SuffererStatus);
+                Val.put(temp.COL_SuffererPhoneNum, tbNoticeCases.get(i).SuffererPhoneNum);
+                Val.put(temp.COL_CircumstanceOfCaseDetail, tbNoticeCases.get(i).CircumstanceOfCaseDetail);
+                Val.put(temp.COL_LastUpdateDate, tbNoticeCases.get(i).LastUpdateDate);
+                Val.put(temp.COL_LastUpdateTime, tbNoticeCases.get(i).LastUpdateTime);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("noticecase", null, Val);
@@ -1056,7 +1126,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
             mDb = this.getReadableDatabase(); // Read Data
 
-            String strSQL = "SELECT * FROM subcasescenetype WHERE " + TbSubcaseSceneType.COL_CaseTypeID + " = '" + CaseTypeID + "'";
+            TbSubcaseSceneType temp = new TbSubcaseSceneType();
+            String strSQL = "SELECT * FROM subcasescenetype WHERE " + temp.COL_CaseTypeID + " = '" + CaseTypeID + "'";
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
@@ -1098,7 +1169,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
             mDb = this.getReadableDatabase(); // Read Data
 
-            String strSQL = "SELECT * FROM " + TbCaseSceneType.TB_CaseSceneType;
+            TbCaseSceneType temp = new TbCaseSceneType();
+            String strSQL = "SELECT * FROM " + temp.TB_CaseSceneType;
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
@@ -1213,40 +1285,41 @@ public class DBHelper extends SQLiteAssetHelper {
                     + "NoticeCaseID = '" + PRIMARY_KEY + "'";
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
+            TbNoticeCase temp = new TbNoticeCase();
             ContentValues Val = new ContentValues();
-            Val.put(TbNoticeCase.COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
-            Val.put(TbNoticeCase.COL_Mobile_CaseID, tbNoticeCases.Mobile_CaseID);
-            Val.put(TbNoticeCase.COL_InquiryOfficialID, tbNoticeCases.InquiryOfficialID);
-            Val.put(TbNoticeCase.COL_InvestigatorOfficialID, tbNoticeCases.InvestigatorOfficialID);
-            Val.put(TbNoticeCase.COL_SCDCAgencyCode, tbNoticeCases.SCDCAgencyCode);
-            Val.put(TbNoticeCase.COL_CaseTypeID, tbNoticeCases.CaseTypeID);
-            Val.put(TbNoticeCase.COL_SubCaseTypeID, tbNoticeCases.SubCaseTypeID);
-            Val.put(TbNoticeCase.COL_CaseStatus, tbNoticeCases.CaseStatus);
-            Val.put(TbNoticeCase.COL_PoliceStationID, tbNoticeCases.PoliceStationID);
-            Val.put(TbNoticeCase.COL_CaseTel, tbNoticeCases.CaseTel);
-            Val.put(TbNoticeCase.COL_ReceivingCaseDate, tbNoticeCases.ReceivingCaseDate);
-            Val.put(TbNoticeCase.COL_ReceivingCaseTime, tbNoticeCases.ReceivingCaseTime);
-            Val.put(TbNoticeCase.COL_HappenCaseDate, tbNoticeCases.HappenCaseDate);
-            Val.put(TbNoticeCase.COL_HappenCaseTime, tbNoticeCases.HappenCaseTime);
-            Val.put(TbNoticeCase.COL_KnowCaseDate, tbNoticeCases.KnowCaseDate);
-            Val.put(TbNoticeCase.COL_KnowCaseTime, tbNoticeCases.KnowCaseTime);
-            Val.put(TbNoticeCase.COL_SceneNoticeDate, tbNoticeCases.SceneNoticeDate);
-            Val.put(TbNoticeCase.COL_SceneNoticeTime, tbNoticeCases.SceneNoticeTime);
-            Val.put(TbNoticeCase.COL_CompleteSceneDate, tbNoticeCases.CompleteSceneDate);
-            Val.put(TbNoticeCase.COL_CompleteSceneTime, tbNoticeCases.CompleteSceneTime);
-            Val.put(TbNoticeCase.COL_LocaleName, tbNoticeCases.LocaleName);
-            Val.put(TbNoticeCase.COL_DISTRICT_ID, tbNoticeCases.DISTRICT_ID);
-            Val.put(TbNoticeCase.COL_AMPHUR_ID, tbNoticeCases.AMPHUR_ID);
-            Val.put(TbNoticeCase.COL_PROVINCE_ID, tbNoticeCases.PROVINCE_ID);
-            Val.put(TbNoticeCase.COL_Latitude, tbNoticeCases.Latitude);
-            Val.put(TbNoticeCase.COL_Longitude, tbNoticeCases.Longitude);
-            Val.put(TbNoticeCase.COL_SuffererPrename, tbNoticeCases.SuffererPrename);
-            Val.put(TbNoticeCase.COL_SuffererName, tbNoticeCases.SuffererName);
-            Val.put(TbNoticeCase.COL_SuffererStatus, tbNoticeCases.SuffererStatus);
-            Val.put(TbNoticeCase.COL_SuffererPhoneNum, tbNoticeCases.SuffererPhoneNum);
-            Val.put(TbNoticeCase.COL_CircumstanceOfCaseDetail, tbNoticeCases.CircumstanceOfCaseDetail);
-            Val.put(TbNoticeCase.COL_LastUpdateDate, tbNoticeCases.LastUpdateDate);
-            Val.put(TbNoticeCase.COL_LastUpdateTime, tbNoticeCases.LastUpdateTime);
+            Val.put(temp.COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
+            Val.put(temp.COL_Mobile_CaseID, tbNoticeCases.Mobile_CaseID);
+            Val.put(temp.COL_InquiryOfficialID, tbNoticeCases.InquiryOfficialID);
+            Val.put(temp.COL_InvestigatorOfficialID, tbNoticeCases.InvestigatorOfficialID);
+            Val.put(temp.COL_SCDCAgencyCode, tbNoticeCases.SCDCAgencyCode);
+            Val.put(temp.COL_CaseTypeID, tbNoticeCases.CaseTypeID);
+            Val.put(temp.COL_SubCaseTypeID, tbNoticeCases.SubCaseTypeID);
+            Val.put(temp.COL_CaseStatus, tbNoticeCases.CaseStatus);
+            Val.put(temp.COL_PoliceStationID, tbNoticeCases.PoliceStationID);
+            Val.put(temp.COL_CaseTel, tbNoticeCases.CaseTel);
+            Val.put(temp.COL_ReceivingCaseDate, tbNoticeCases.ReceivingCaseDate);
+            Val.put(temp.COL_ReceivingCaseTime, tbNoticeCases.ReceivingCaseTime);
+            Val.put(temp.COL_HappenCaseDate, tbNoticeCases.HappenCaseDate);
+            Val.put(temp.COL_HappenCaseTime, tbNoticeCases.HappenCaseTime);
+            Val.put(temp.COL_KnowCaseDate, tbNoticeCases.KnowCaseDate);
+            Val.put(temp.COL_KnowCaseTime, tbNoticeCases.KnowCaseTime);
+            Val.put(temp.COL_SceneNoticeDate, tbNoticeCases.SceneNoticeDate);
+            Val.put(temp.COL_SceneNoticeTime, tbNoticeCases.SceneNoticeTime);
+            Val.put(temp.COL_CompleteSceneDate, tbNoticeCases.CompleteSceneDate);
+            Val.put(temp.COL_CompleteSceneTime, tbNoticeCases.CompleteSceneTime);
+            Val.put(temp.COL_LocaleName, tbNoticeCases.LocaleName);
+            Val.put(temp.COL_DISTRICT_ID, tbNoticeCases.DISTRICT_ID);
+            Val.put(temp.COL_AMPHUR_ID, tbNoticeCases.AMPHUR_ID);
+            Val.put(temp.COL_PROVINCE_ID, tbNoticeCases.PROVINCE_ID);
+            Val.put(temp.COL_Latitude, tbNoticeCases.Latitude);
+            Val.put(temp.COL_Longitude, tbNoticeCases.Longitude);
+            Val.put(temp.COL_SuffererPrename, tbNoticeCases.SuffererPrename);
+            Val.put(temp.COL_SuffererName, tbNoticeCases.SuffererName);
+            Val.put(temp.COL_SuffererStatus, tbNoticeCases.SuffererStatus);
+            Val.put(temp.COL_SuffererPhoneNum, tbNoticeCases.SuffererPhoneNum);
+            Val.put(temp.COL_CircumstanceOfCaseDetail, tbNoticeCases.CircumstanceOfCaseDetail);
+            Val.put(temp.COL_LastUpdateDate, tbNoticeCases.LastUpdateDate);
+            Val.put(temp.COL_LastUpdateTime, tbNoticeCases.LastUpdateTime);
 
             if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                 db.insert("noticecase", null, Val);
@@ -1267,42 +1340,262 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    public List<ApiNoticeCase> selectApiNoticeCase(String OfficeID) {
-        List<ApiNoticeCase> ans = new ArrayList<>();
-        TbNoticeCase TbNotice = new TbNoticeCase();
-        try {
-            String arrData[] = null;
+    public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
+        Log.d(TAG, "OfficeID:" + OfficeID);
+        ApiListNoticeCase apiListNoticeCase = new ApiListNoticeCase();
+        apiListNoticeCase.setStatus("success");
+        ApiListNoticeCase.DataEntity dataEntity = new ApiListNoticeCase.DataEntity();
+        dataEntity.setAction("SQLite selectApiNoticeCase");
+        dataEntity.setReason("โหลดรายการคดีสำเร็จ");
 
+//        List<ApiNoticeCase> apiNoticeCases = new LinkedList<>();
+
+        Set<ApiNoticeCase> apiNoticeCases = new HashSet<>();
+
+        TbNoticeCase tbNoticeCase = new TbNoticeCase();
+        TbOfficial tbOfficial = new TbOfficial();
+        TbCaseSceneType tbCaseSceneType = new TbCaseSceneType();
+        TbSubcaseSceneType tbSubcaseSceneType = new TbSubcaseSceneType();
+        TbPoliceStation tbPoliceStation = new TbPoliceStation();
+        TbPoliceAgency tbPoliceAgency = new TbPoliceAgency();
+        TbDistrict tbDistrict = new TbDistrict();
+        TbProvince tbProvince = new TbProvince();
+        TbAmphur tbAmphur = new TbAmphur();
+        TbSCDCagency tbSCDCagency = new TbSCDCagency();
+        TbSCDCcenter tbSCDCcenter = new TbSCDCcenter();
+        try {
             SQLiteDatabase db;
             db = this.getReadableDatabase(); // Read Data
+            String strSQL;
 
-            String strSQL = "SELECT * FROM noticecase "
+            strSQL = "SELECT * FROM noticecase "
                     + " WHERE InquiryOfficialID = '" + OfficeID + "'";
-            Cursor cursor = db.rawQuery(strSQL, null);
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    arrData = new String[cursor.getColumnCount()];
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        arrData[i] = cursor.getString(i);
+            try (Cursor cursor = db.rawQuery(strSQL, null)) {
+                cursor.moveToPosition(-1);
+//                apiNoticeCases = new ArrayList<>();
+                while (cursor.moveToNext()) {
+                    ApiNoticeCase apiNoticeCase = new ApiNoticeCase();
+
+                    TbNoticeCase temp = new TbNoticeCase();
+                    tbNoticeCase.NoticeCaseID = cursor.getString(cursor.getColumnIndex(temp.COL_NoticeCaseID));
+                    tbNoticeCase.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(temp.COL_Mobile_CaseID));
+                    tbNoticeCase.InquiryOfficialID = cursor.getString(cursor.getColumnIndex(temp.COL_InquiryOfficialID));
+                    tbNoticeCase.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(temp.COL_InvestigatorOfficialID));
+                    tbNoticeCase.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp.COL_SCDCAgencyCode));
+                    tbNoticeCase.CaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTypeID));
+                    tbNoticeCase.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_SubCaseTypeID));
+                    tbNoticeCase.CaseStatus = cursor.getString(cursor.getColumnIndex(temp.COL_CaseStatus));
+                    tbNoticeCase.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp.COL_PoliceStationID));
+                    tbNoticeCase.CaseTel = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTel));
+                    tbNoticeCase.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseDate));
+                    tbNoticeCase.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseTime));
+                    tbNoticeCase.HappenCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseDate));
+                    tbNoticeCase.HappenCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseTime));
+                    tbNoticeCase.KnowCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseDate));
+                    tbNoticeCase.KnowCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseTime));
+                    tbNoticeCase.SceneNoticeDate = cursor.getString(cursor.getColumnIndex(temp.COL_SceneNoticeDate));
+                    tbNoticeCase.SceneNoticeTime = cursor.getString(cursor.getColumnIndex(temp.COL_SceneNoticeTime));
+                    tbNoticeCase.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneDate));
+                    tbNoticeCase.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneTime));
+                    tbNoticeCase.LocaleName = cursor.getString(cursor.getColumnIndex(temp.COL_LocaleName));
+                    tbNoticeCase.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(temp.COL_DISTRICT_ID));
+                    tbNoticeCase.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(temp.COL_AMPHUR_ID));
+                    tbNoticeCase.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(temp.COL_PROVINCE_ID));
+                    tbNoticeCase.Latitude = cursor.getString(cursor.getColumnIndex(temp.COL_Latitude));
+                    tbNoticeCase.Longitude = cursor.getString(cursor.getColumnIndex(temp.COL_Longitude));
+                    tbNoticeCase.SuffererPrename = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPrename));
+                    tbNoticeCase.SuffererName = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererName));
+                    tbNoticeCase.SuffererStatus = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererStatus));
+                    tbNoticeCase.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPhoneNum));
+                    tbNoticeCase.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp.COL_CircumstanceOfCaseDetail));
+                    tbNoticeCase.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateDate));
+                    tbNoticeCase.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateTime));
+                    apiNoticeCase.setTbNoticeCase(tbNoticeCase);
+
+                    // Index tbOfficial ดึงจากตาราง official
+                    strSQL = "SELECT * FROM official "
+                            + " WHERE OfficialID = '" + tbNoticeCase.InvestigatorOfficialID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbOfficial temp2 = new TbOfficial();
+                            tbOfficial.OfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialID));
+                            tbOfficial.FirstName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_FirstName));
+                            tbOfficial.LastName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastName));
+                            tbOfficial.Alias = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Alias));
+                            tbOfficial.Rank = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Rank));
+                            tbOfficial.Position = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Position));
+                            tbOfficial.SubPossition = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SubPossition));
+                            tbOfficial.PhoneNumber = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PhoneNumber));
+                            tbOfficial.OfficialEmail = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialEmail));
+                            tbOfficial.OfficialDisplayPic = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialDisplayPic));
+                            tbOfficial.AccessType = cursor2.getString(cursor2.getColumnIndex(temp2.COL_AccessType));
+                            tbOfficial.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SCDCAgencyCode));
+                            tbOfficial.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PoliceStationID));
+                            tbOfficial.id_users = cursor2.getString(cursor2.getColumnIndex(temp2.COL_id_users));
+                        }
                     }
-                    // เชื่อมข้อมูลที่ดึงได้เข้ากับ Tb ของตารางนั้นๆ
-                    TbNotice.NoticeCaseID = arrData[0];
-                    TbNotice.Mobile_CaseID = arrData[1];
-                    TbNotice.InquiryOfficialID = arrData[2];
-                    TbNotice.InvestigatorOfficialID = arrData[3];
-                    TbNotice.SCDCAgencyCode = arrData[4];
-                    TbNotice.CaseTypeID = arrData[5];
-                    TbNotice.SubCaseTypeID = arrData[6];
-                    TbNotice.CaseStatus = arrData[7];
-                    Log.i(TAG, "selectNoticeScene " + arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
+                    apiNoticeCase.setTbOfficial(tbOfficial);
+
+                    // Index tbCaseSceneType ดึงจากตาราง casescenetype ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM casescenetype "
+                            + " WHERE CaseTypeID = '" + tbNoticeCase.CaseTypeID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+
+                            TbCaseSceneType temp3 = new TbCaseSceneType();
+                            tbCaseSceneType.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeID));
+                            tbCaseSceneType.CaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeName));
+                            tbCaseSceneType.casetype_min = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_min));
+                            tbCaseSceneType.casetype_max = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_max));
+                            tbCaseSceneType.casetype_icon = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_icon));
+                            tbCaseSceneType.casetype_colormin = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormin));
+                            tbCaseSceneType.casetype_colormedium = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormedium));
+                            tbCaseSceneType.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colorhigh));
+                            tbCaseSceneType.casetype_status = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_status));
+                        }
+                    }
+                    apiNoticeCase.setTbCaseSceneType(tbCaseSceneType);
+
+                    // Index tbSubcaseSceneType ดึงจากตาราง subcasescenetype ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM subcasescenetype "
+                            + " WHERE SubCaseTypeID = '" + tbNoticeCase.SubCaseTypeID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
+                            tbSubcaseSceneType.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeID));
+                            tbSubcaseSceneType.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_CaseTypeID));
+                            tbSubcaseSceneType.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeName));
+                        }
+                    }
+                    apiNoticeCase.setTbSubcaseSceneType(tbSubcaseSceneType);
+
+                    // Index tbPoliceStation ดึงจากตาราง policestation ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM policestation "
+                            + " WHERE PoliceStationID = '" + tbNoticeCase.PoliceStationID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbPoliceStation temp5 = new TbPoliceStation();
+                            tbPoliceStation.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationID));
+                            tbPoliceStation.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceAgencyID));
+                            tbPoliceStation.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationName));
+                        }
+                    }
+                    apiNoticeCase.setTbPoliceStation(tbPoliceStation);
+
+                    // Index tbPoliceAgency ดึงจากตาราง policeagency ใช้ค่าจาก Index tbPoliceStation
+                    strSQL = "SELECT * FROM policeagency "
+                            + " WHERE PoliceAgencyID = '" + tbPoliceStation.PoliceStationID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbPoliceAgency temp6 = new TbPoliceAgency();
+                            tbPoliceAgency.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyID));
+                            tbPoliceAgency.PoliceCenterID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceCenterID));
+                            tbPoliceAgency.PoliceAgencyName = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyName));
+                        }
+                    }
+                    apiNoticeCase.setTbPoliceAgency(tbPoliceAgency);
+
+                    // Index tbDistrict ดึงจากตาราง district ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM district "
+                            + " WHERE DISTRICT_ID = '" + tbNoticeCase.DISTRICT_ID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbDistrict temp7 = new TbDistrict();
+                            tbDistrict.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_ID));
+                            tbDistrict.DISTRICT_CODE = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_CODE));
+                            tbDistrict.DISTRICT_NAME = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_NAME));
+                            tbDistrict.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_AMPHUR_ID));
+                        }
+                    }
+                    apiNoticeCase.setTbDistrict(tbDistrict);
+
+                    // Index tbProvince ดึงจากตาราง province ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM province "
+                            + " WHERE PROVINCE_ID = '" + tbNoticeCase.PROVINCE_ID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbProvince temp8 = new TbProvince();
+                            tbProvince.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_ID));
+                            tbProvince.PROVINCE_CODE = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_CODE));
+                            tbProvince.PROVINCE_NAME = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_NAME));
+                            tbProvince.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_GEO_ID));
+                            tbProvince.province_status = cursor2.getString(cursor2.getColumnIndex(temp8.COL_province_status));
+                        }
+                    }
+                    apiNoticeCase.setTbProvince(tbProvince);
+
+                    // Index tbAmphur ดึงจากตาราง amphur ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM amphur "
+                            + " WHERE AMPHUR_ID = '" + tbNoticeCase.AMPHUR_ID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbAmphur temp9 = new TbAmphur();
+                            tbAmphur.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_ID));
+                            tbAmphur.AMPHUR_CODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_CODE));
+                            tbAmphur.AMPHUR_NAME = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_NAME));
+                            tbAmphur.POSTCODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_POSTCODE));
+                            tbAmphur.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_GEO_ID));
+                            tbAmphur.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_PROVINCE_ID));
+                            tbAmphur.amphur_polygon = cursor2.getString(cursor2.getColumnIndex(temp9.COL_amphur_polygon));
+                        }
+                    }
+                    apiNoticeCase.setTbAmphur(tbAmphur);
+
+                    // Index tbSCDCagency ดึงจากตาราง scdcagency ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM scdcagency "
+                            + " WHERE SCDCAgencyCode = '" + tbNoticeCase.SCDCAgencyCode + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbSCDCagency temp10 = new TbSCDCagency();
+                            tbSCDCagency.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyCode));
+                            tbSCDCagency.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCCenterID));
+                            tbSCDCagency.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyName));
+                        }
+                    }
+                    apiNoticeCase.setTbSCDCagency(tbSCDCagency);
+
+                    // Index tbSCDCcenter ดึงจากตาราง scdccenter ใช้ค่าจาก Index tbSCDCagency
+                    strSQL = "SELECT * FROM scdccenter "
+                            + " WHERE SCDCCenterID = '" + tbSCDCagency.SCDCCenterID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbSCDCcenter temp11 = new TbSCDCcenter();
+                            tbSCDCcenter.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterID));
+                            tbSCDCcenter.SCDCCenterName = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterName));
+                            tbSCDCcenter.SCDCCenterProvince = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterProvince));
+                        }
+                    }
+                    apiNoticeCase.setTbSCDCcenter(tbSCDCcenter);
+
+                    //ส่งค่าทั้งหมดเข้า apiNoticeCases
+                    apiNoticeCases.add(apiNoticeCase);
+                    Log.d("TEST", "--" + apiNoticeCase.getTbNoticeCase().NoticeCaseID);
                 }
             }
-            cursor.close();
             db.close();
-            return ans;
+//            Log.d("TEST", apiNoticeCases.get(0).getTbNoticeCase().NoticeCaseID + " " + apiNoticeCases.get(1).getTbNoticeCase().NoticeCaseID);
+            // รวมข้อมูลที่ได้ทั้งหมดลง apiListNoticeCase ก่อนส่งกลับไปใช้
+            Log.d(TAG, "apiNoticeCases:" + apiNoticeCases.size());
+            List<ApiNoticeCase> usrAll = new ArrayList<>(apiNoticeCases);
+            for (ApiNoticeCase s : apiNoticeCases) {
+                Log.d("TEST", "////" + s.getTbNoticeCase().NoticeCaseID);
+            }
 
+            dataEntity.setResult(usrAll);
+            apiListNoticeCase.setData(dataEntity);
+            return apiListNoticeCase;
         } catch (Exception e) {
-            Log.d(TAG, "Error in selectNoticeScene " + e.getMessage().toString());
+            Log.d(TAG, "Error in selectApiNoticeCase " + e.getMessage().toString());
             return null;
         }
     }

@@ -122,38 +122,38 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         // สร้าง TbUsers จาก pref โดยชื่ออิงจาก TbUsers เอง
         TbUsers users = new TbUsers();
-        users.id_users = mManager.getPreferenceData(TbUsers.COL_id_users);
-        users.id_permission = mManager.getPreferenceData(TbUsers.COL_id_permission);
-        users.pass = mManager.getPreferenceData(TbUsers.COL_pass);
-        users.id_system = mManager.getPreferenceData(TbUsers.COL_id_system);
-        users.title = mManager.getPreferenceData(TbUsers.COL_title);
-        users.name = mManager.getPreferenceData(TbUsers.COL_name);
-        users.surname = mManager.getPreferenceData(TbUsers.COL_surname);
-        users.position = mManager.getPreferenceData(TbUsers.COL_position);
-        users.picture = mManager.getPreferenceData(TbUsers.COL_picture);
-        users.last_login = mManager.getPreferenceData(TbUsers.COL_last_login);
+        users.id_users = mManager.getPreferenceData(users.COL_id_users);
+        users.id_permission = mManager.getPreferenceData(users.COL_id_permission);
+        users.pass = mManager.getPreferenceData(users.COL_pass);
+        users.id_system = mManager.getPreferenceData(users.COL_id_system);
+        users.title = mManager.getPreferenceData(users.COL_title);
+        users.name = mManager.getPreferenceData(users.COL_name);
+        users.surname = mManager.getPreferenceData(users.COL_surname);
+        users.position = mManager.getPreferenceData(users.COL_position);
+        users.picture = mManager.getPreferenceData(users.COL_picture);
+        users.last_login = mManager.getPreferenceData(users.COL_last_login);
         // สร้าง TbOfficial จาก pref โดยชื่ออิงจาก TbOfficial เอง
         TbOfficial official = new TbOfficial();
-        official.OfficialID = mManager.getPreferenceData(TbOfficial.COL_OfficialID);
-        official.FirstName = mManager.getPreferenceData(TbOfficial.COL_FirstName);
-        official.LastName = mManager.getPreferenceData(TbOfficial.COL_LastName);
-        official.Alias = mManager.getPreferenceData(TbOfficial.COL_Alias);
-        official.Rank = mManager.getPreferenceData(TbOfficial.COL_Rank);
-        official.Position = mManager.getPreferenceData(TbOfficial.COL_Position);
-        official.SubPossition = mManager.getPreferenceData(TbOfficial.COL_SubPossition);
-        official.PhoneNumber = mManager.getPreferenceData(TbOfficial.COL_PhoneNumber);
-        official.OfficialEmail = mManager.getPreferenceData(TbOfficial.COL_OfficialEmail);
-        official.OfficialDisplayPic = mManager.getPreferenceData(TbOfficial.COL_OfficialDisplayPic);
-        official.AccessType = mManager.getPreferenceData(TbOfficial.COL_AccessType);
-        official.SCDCAgencyCode = mManager.getPreferenceData(TbOfficial.COL_SCDCAgencyCode);
-        official.PoliceStationID = mManager.getPreferenceData(TbOfficial.COL_PoliceStationID);
-        official.id_users = mManager.getPreferenceData(TbOfficial.COL_id_users);
+        official.OfficialID = mManager.getPreferenceData(official.COL_OfficialID);
+        official.FirstName = mManager.getPreferenceData(official.COL_FirstName);
+        official.LastName = mManager.getPreferenceData(official.COL_LastName);
+        official.Alias = mManager.getPreferenceData(official.COL_Alias);
+        official.Rank = mManager.getPreferenceData(official.COL_Rank);
+        official.Position = mManager.getPreferenceData(official.COL_Position);
+        official.SubPossition = mManager.getPreferenceData(official.COL_SubPossition);
+        official.PhoneNumber = mManager.getPreferenceData(official.COL_PhoneNumber);
+        official.OfficialEmail = mManager.getPreferenceData(official.COL_OfficialEmail);
+        official.OfficialDisplayPic = mManager.getPreferenceData(official.COL_OfficialDisplayPic);
+        official.AccessType = mManager.getPreferenceData(official.COL_AccessType);
+        official.SCDCAgencyCode = mManager.getPreferenceData(official.COL_SCDCAgencyCode);
+        official.PoliceStationID = mManager.getPreferenceData(official.COL_PoliceStationID);
+        official.id_users = mManager.getPreferenceData(official.COL_id_users);
         // นำค่าที่สร้างไปใช้ในการสร้าง ApiProfile ต่อ
         profile.setTbOfficial(official);
         if (official.AccessType.equalsIgnoreCase("inquiryofficial")) {
-            profile.setPoliceStationID(mManager.getPreferenceData(TbOfficial.COL_PoliceStationID));
+            profile.setPoliceStationID(mManager.getPreferenceData(official.COL_PoliceStationID));
         } else if (official.AccessType.equalsIgnoreCase("investigator")) {
-            profile.setSCDCAgencyCode(mManager.getPreferenceData(TbOfficial.COL_SCDCAgencyCode));
+            profile.setSCDCAgencyCode(mManager.getPreferenceData(official.COL_SCDCAgencyCode));
         }
         profile.setTbUsers(users);
     }

@@ -28,14 +28,15 @@ public class GcmDownstreamService extends GcmListenerService {
     String officialID, accesstype = "";
     private static NotificationManager mNotificationManager;
     Context context;
+    TbOfficial tbOfficial = new TbOfficial();
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
         mManager = new PreferenceData(context);
-        officialID = mManager.getPreferenceData(TbOfficial.COL_OfficialID);
-        accesstype = mManager.getPreferenceData(TbOfficial.COL_AccessType);
+        officialID = mManager.getPreferenceData(tbOfficial.COL_OfficialID);
+        accesstype = mManager.getPreferenceData(tbOfficial.COL_AccessType);
         Log.i("GcmDownstreamService", officialID + " " + accesstype);
     }
 

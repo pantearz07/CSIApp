@@ -2,6 +2,10 @@ package com.scdc.csiapp.inqmain;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,6 +39,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
     }
 
     public class CSIDataViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        View rootView;
         CardView cvCSI;
         TextView positioncase;
         TextView policeStation;
@@ -42,10 +47,12 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         TextView inqInfo;
         TextView sufferrerInfo;
         TextView receiviedatetime;
+        TextView CaseStatus;
         ImageView ic_CaseType;
 
         public CSIDataViewHolder(View itemView) {
             super(itemView);
+            rootView = itemView;
             cvCSI = (CardView) itemView.findViewById(R.id.cvCSI);
             ic_CaseType = (ImageView) itemView.findViewById(R.id.ic_CaseType);
             typeCase = (TextView) itemView.findViewById(R.id.casetype_name);
@@ -54,6 +61,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
             inqInfo = (TextView) itemView.findViewById(R.id.inqInfo);
             sufferrerInfo = (TextView) itemView.findViewById(R.id.sufferrerInfo);
             receiviedatetime = (TextView) itemView.findViewById(R.id.receiviedatetime);
+            CaseStatus = (TextView) itemView.findViewById(R.id.txtCaseStatus);
 
             cvCSI.setOnClickListener(this);
 
@@ -79,13 +87,12 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
     public CSIDataViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.draft_cardview, viewGroup, false);
         CSIDataViewHolder csivh = new CSIDataViewHolder(v);
-        mDbHelper = new SQLiteDBHelper(viewGroup.getContext());
-        mDb = mDbHelper.getReadableDatabase();
         return csivh;
     }
 
     @Override
     public void onBindViewHolder(CSIDataViewHolder csidataholder, int position) {
+
         ApiNoticeCase apiNoticeCase = apiNoticeCases.get(position);
         csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
         String positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + apiNoticeCase.getTbDistrict().DISTRICT_NAME
@@ -114,6 +121,18 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         } else {
             csidataholder.sufferrerInfo.setText("ผู้เสียหาย" + apiNoticeCase.getTbNoticeCase().SuffererPrename + " "
                     + apiNoticeCase.getTbNoticeCase().SuffererName + " โทร: " + apiNoticeCase.getTbNoticeCase().SuffererPhoneNum);
+        }
+
+        // เปลี่ยนสีเส้นตาม CaseStatus ด้วยการเปลี่ยนรูปใหม่มาใส่แทนตัวเก่า
+        String CaseStatus = apiNoticeCase.getTbNoticeCase().CaseStatus;
+        if (CaseStatus.equalsIgnoreCase("receive")) {
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus1));
+        } else if (CaseStatus.equalsIgnoreCase("notice")) {
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus2));
+        } else if (CaseStatus.equalsIgnoreCase("investigating")) {
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus3));
+        } else if (CaseStatus.equalsIgnoreCase("investigated")) {
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus4));
         }
     }
 

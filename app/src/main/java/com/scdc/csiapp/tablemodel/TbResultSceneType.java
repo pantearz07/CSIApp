@@ -5,13 +5,13 @@ package com.scdc.csiapp.tablemodel;
  */
 public class TbResultSceneType {
 
-    public static final String TB_ResultSceneType = "resultscenetype";
+    public String TB_ResultSceneType = "resultscenetype";
     // From Table resultscenetype field name RSTypeID
-    public static final String COL_RSTypeID = "RSTypeID";
+    public String COL_RSTypeID = "RSTypeID";
     public String RSTypeID = "";
 
     // From Table resultscenetype field name RSTypeName
-    public static final String COL_RSTypeName = "RSTypeName";
+    public String COL_RSTypeName = "RSTypeName";
     public String RSTypeName = "";
 
 }
