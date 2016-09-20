@@ -56,8 +56,8 @@ public class SummaryEmerTabFragment extends Fragment {
     TextView edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation;
     String[] updateDT, selectedCaseType, selectedSubCaseType;
     String message = "";
-    String[][] mTypeAgencyArray, mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray;
-    String[] mTypeAgencyArray2, mTypeCenterArray2, mAgencyID, mCenterID;
+    String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray;
+    String[] mTypeCenterArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
     private String selectedAgency, SelectedAgencyID, selectedCenter, SelectedCenterID = null;
     Button btnNoticecase, btnDownloadfile;
