@@ -40,11 +40,6 @@ public class InqMainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
 
-    //อันเก่า
-    EmergencyListFragment emergencyListFragment;
-    AcceptListFragment acceptListFragment;
-    DoneListFragment doneListFragment;
-    //-อันเก่า
 
     //รายการคดี อยู่ใน package/inqmain
     NoticeCaseListFragment noticeCaseListFragment;
@@ -55,8 +50,6 @@ public class InqMainActivity extends AppCompatActivity {
     SettingFragment settingFragment;
     //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
-    //ยังไม่ใช้
-    NotiFragment notiFragment;
 
     Toolbar toolbar;
     FloatingActionButton fabBtn;
@@ -114,11 +107,8 @@ public class InqMainActivity extends AppCompatActivity {
         policeListFragment = new PoliceListFragment();
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
-        //อันเก่า//
-        emergencyListFragment = new EmergencyListFragment();
-        acceptListFragment = new AcceptListFragment();
-        doneListFragment = new DoneListFragment();
-        notiFragment = new NotiFragment();
+
+
 
         mFragmentManager = getSupportFragmentManager();
         FragmentTransaction fthome = mFragmentManager.beginTransaction();
@@ -169,37 +159,14 @@ public class InqMainActivity extends AppCompatActivity {
                     fthome2.addToBackStack(null);
                     fthome2.commit();
                 }
-                if (menuItem.getItemId() == R.id.nav_item_receivingcase) {
-                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    fthome2.replace(R.id.containerView, emergencyListFragment);
-                    fthome2.addToBackStack(null);
-                    fthome2.commit();
-                }
-                if (menuItem.getItemId() == R.id.nav_item_draft) {
-                    FragmentTransaction ftdraft = mFragmentManager.beginTransaction();
-                    ftdraft.replace(R.id.containerView, acceptListFragment);
-                    ftdraft.addToBackStack(null);
-                    ftdraft.commit();
-                }
-                if (menuItem.getItemId() == R.id.nav_item_full) {
-                    FragmentTransaction ftfull = mFragmentManager.beginTransaction();
-                    ftfull.replace(R.id.containerView, doneListFragment);
-                    ftfull.addToBackStack(null);
-                    ftfull.commit();
-                }
+
                 if (menuItem.getItemId() == R.id.nav_item_police) {
                     FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
                     ftpolice.replace(R.id.containerView, policeListFragment);
                     ftpolice.addToBackStack(null);
                     ftpolice.commit();
                 }
-                /*
-                if (menuItem.getItemId() == R.id.nav_item_noti) {
-                    FragmentTransaction ftnoti = mFragmentManager.beginTransaction();
-                    ftnoti.replace(R.id.containerView, notiFragment);
-                    ftnoti.addToBackStack(null);
-                    ftnoti.commit();
-                }*/
+
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
                     FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
                     ftsetting.replace(R.id.containerView, settingFragment);

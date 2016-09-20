@@ -28,7 +28,6 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.main.AcceptListFragment;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 
@@ -51,7 +50,7 @@ public class SummaryEmerTabFragment extends Fragment {
     ArrayAdapter<String> adapterCaseType, adapterSubCaseType;
     EditText edtReportNo;
     FragmentManager mFragmentManager;
-    AcceptListFragment acceptListFragment;
+
     Spinner spnCaseType, spnSubCaseType;
     TextView edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation;
     String[] updateDT, selectedCaseType, selectedSubCaseType;
@@ -74,7 +73,7 @@ public class SummaryEmerTabFragment extends Fragment {
 //โชว์ scenenoticedate & time
         final Context context = viewSummaryCSI.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
-        acceptListFragment = new AcceptListFragment();
+
         rootLayout = (CoordinatorLayout) viewSummaryCSI.findViewById(R.id.rootLayout);
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();

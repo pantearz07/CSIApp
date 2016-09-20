@@ -6,7 +6,7 @@
     <item android:title="@string/listcase"
         android:id="@+id/nav_item_casescene"
         android:icon="@drawable/ic_home"/>
-    <item android:title="@string/receivingcase"
+   <!-- <item android:title="@string/receivingcase"
         android:id="@+id/nav_item_receivingcase"
         android:icon="@drawable/ic_home"/>
     <item android:title="@string/draftcsidata"
@@ -15,7 +15,7 @@
 
     <item android:title="@string/fullcsidata"
         android:id="@+id/nav_item_full"
-        android:icon="@drawable/ic_full"/>
+        android:icon="@drawable/ic_full"/>-->
 
 
 

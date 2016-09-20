@@ -47,14 +47,6 @@ public class MainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
 
-    //อันเก่า จะไม่ใช้แล้ว
-    HomeFragment homeFragment;
-    ReceivingCaseListFragment receivingCaseListFragment;
-    ReceivingCaseListFragment2 receivingCaseListFragment2;
-    DraftListFragment draftListFragment;
-    FullListFragment fullListFragment;
-    //--อันเก่าา--//
-
     //รายการคดี ทั้งหมด อันให่ม่  อยู่ใน package/invmain
     CaseSceneListFragment caseSceneListFragment;
 
@@ -67,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
     //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
 
-    //ไม่ได้ใช้
-    NotiFragment notiFragment;
 
     Toolbar toolbar;
     FloatingActionButton fabBtn;
@@ -128,12 +118,7 @@ public class MainActivity extends AppCompatActivity {
          * Lets inflate the very first fragment
          * Here , we are inflating the CSIDataTabFragment as the first Fragment
          */
-        //อันเก่า//
-        homeFragment = new HomeFragment();
-        receivingCaseListFragment = new ReceivingCaseListFragment();
-        receivingCaseListFragment2 = new ReceivingCaseListFragment2();
-        draftListFragment = new DraftListFragment();
-        fullListFragment = new FullListFragment();
+
 
         caseSceneListFragment = new CaseSceneListFragment();
 
@@ -142,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
 
-        notiFragment = new NotiFragment();
         mFragmentManager = getSupportFragmentManager();
 
         FragmentTransaction fthome = mFragmentManager.beginTransaction();
@@ -194,26 +178,7 @@ public class MainActivity extends AppCompatActivity {
                     fthome2.addToBackStack(null);
                     fthome2.commit();
                 }
-                if (menuItem.getItemId() == R.id.nav_item_receivingcase) {
-                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    fthome2.replace(R.id.containerView, receivingCaseListFragment2);
-                    fthome2.addToBackStack(null);
-                    fthome2.commit();
-                }
 
-                if (menuItem.getItemId() == R.id.nav_item_draft) {
-                    FragmentTransaction ftdraft = mFragmentManager.beginTransaction();
-                    ftdraft.replace(R.id.containerView, draftListFragment);
-                    ftdraft.addToBackStack(null);
-                    ftdraft.commit();
-
-                }
-                if (menuItem.getItemId() == R.id.nav_item_full) {
-                    FragmentTransaction ftfull = mFragmentManager.beginTransaction();
-                    ftfull.replace(R.id.containerView, fullListFragment);
-                    ftfull.addToBackStack(null);
-                    ftfull.commit();
-                }
                 if (menuItem.getItemId() == R.id.nav_item_schedule) {
                     FragmentTransaction ftschedule = mFragmentManager.beginTransaction();
                     ftschedule.replace(R.id.containerView, scheduleInvestigatorsFragment);
@@ -226,13 +191,7 @@ public class MainActivity extends AppCompatActivity {
                     ftpolice.addToBackStack(null);
                     ftpolice.commit();
                 }
-                /*
-                if (menuItem.getItemId() == R.id.nav_item_noti) {
-                    FragmentTransaction ftnoti = mFragmentManager.beginTransaction();
-                    ftnoti.replace(R.id.containerView, notiFragment);
-                    ftnoti.addToBackStack(null);
-                    ftnoti.commit();
-                }*/
+
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
                     FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
                     ftsetting.replace(R.id.containerView, settingFragment);

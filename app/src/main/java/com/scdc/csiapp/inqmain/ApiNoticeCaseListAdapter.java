@@ -2,13 +2,9 @@ package com.scdc.csiapp.inqmain;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +14,6 @@ import android.widget.TextView;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.main.CSIDataList;
-import com.scdc.csiapp.main.CSIDataListAdapter;
-import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 import java.util.List;
 

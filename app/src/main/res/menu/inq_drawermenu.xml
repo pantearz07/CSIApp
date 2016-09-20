@@ -5,7 +5,7 @@
     <item android:title="@string/listcase"
         android:id="@+id/nav_item_casescene"
         android:icon="@drawable/ic_home"/>
-    <item android:title="@string/noticase"
+   <!-- <item android:title="@string/noticase"
         android:id="@+id/nav_item_receivingcase"
         android:icon="@drawable/ic_home"/>
     <item android:title="@string/accept"
@@ -14,7 +14,7 @@
 
     <item android:title="@string/done"
         android:id="@+id/nav_item_full"
-        android:icon="@drawable/ic_full"/>
+        android:icon="@drawable/ic_full"/>-->
 
 
 
