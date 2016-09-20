@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -52,8 +53,7 @@ public class SummaryEmerTabFragment extends Fragment {
     FragmentManager mFragmentManager;
     AcceptListFragment acceptListFragment;
     Spinner spnCaseType, spnSubCaseType;
-    TextView edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation,
-            txtButtonCount1, txtButtonCount2, txtButtonCount3, txtButtonCount4, txtButtonCount5;
+    TextView edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation;
     String[] updateDT, selectedCaseType, selectedSubCaseType;
     String message = "";
     String[][] mTypeAgencyArray, mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray;
@@ -61,9 +61,9 @@ public class SummaryEmerTabFragment extends Fragment {
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
     private String selectedAgency, SelectedAgencyID, selectedCenter, SelectedCenterID = null;
     Button btnNoticecase, btnDownloadfile;
-    String noticeCaseID,sSCDCAgencyCode;
+    String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
-    EmergencyTabFragment emergencyTabFragment;
+
     Spinner spnSCDCcenterType, spnSCDCagencyType;
 
     @Nullable
@@ -81,7 +81,7 @@ public class SummaryEmerTabFragment extends Fragment {
         dbHelper = new DBHelper(getContext());
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
         cd = new ConnectionDetector(getActivity());
-        emergencyTabFragment = new EmergencyTabFragment();
+
         noticeCaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
         Log.i(TAG, " NoticeCaseID " + noticeCaseID);
 
@@ -89,8 +89,10 @@ public class SummaryEmerTabFragment extends Fragment {
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
 
-
+        View linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
+        linearLayoutReportNo.setVisibility(View.GONE);
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
+        edtReportNo.setVisibility(View.GONE);
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
@@ -109,7 +111,7 @@ public class SummaryEmerTabFragment extends Fragment {
         TextView edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
         if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
-            emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+            EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
             sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
         }
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
@@ -268,13 +270,13 @@ public class SummaryEmerTabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
         }
 
-        if (emergencyTabFragment.mode == "view") {
+        if (EmergencyTabFragment.mode == "view") {
             fabBtn.setVisibility(View.GONE);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
             btnNoticecase.setEnabled(false);
-        } else if (emergencyTabFragment.mode == "edit") {
+        } else if (EmergencyTabFragment.mode == "edit") {
             btnDownloadfile.setEnabled(false);
         }
 
@@ -360,7 +362,7 @@ public class SummaryEmerTabFragment extends Fragment {
                     spnSCDCcenterType.setAdapter(adapterSCDCcenter);
                     if (sSCDCAgencyCode != null) {
                         String SelectSCDCCenterID[] = dbHelper.SelectSCDCCenterID(sSCDCAgencyCode);
-                        Log.i("SelectSCDCCenterID", sSCDCAgencyCode+" "+SelectSCDCCenterID[0]);
+                        Log.i("SelectSCDCCenterID", sSCDCAgencyCode + " " + SelectSCDCCenterID[0]);
                         if (SelectSCDCCenterID[0] != null) {
                             for (int i = 0; i < mTypeCenterArray.length; i++) {
                                 if (SelectSCDCCenterID[0].trim().equals(mTypeCenterArray[i][0].toString())) {
@@ -395,7 +397,7 @@ public class SummaryEmerTabFragment extends Fragment {
                         } else {
                             spnSCDCagencyType.setAdapter(null);
                             selectedAgencyCode[0] = null;
-                            emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
+                            EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
                             Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode[0]));
                         }
                         spnSCDCagencyType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -405,14 +407,14 @@ public class SummaryEmerTabFragment extends Fragment {
                                 //ค่า SCDCAgencyCode
                                 selectedAgencyCode[0] = mTypeAgencyArray[position][0];
                                 Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode[0]);
-                                emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
+                                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
                             }
 
                             @Override
                             public void onNothingSelected(AdapterView<?> adapterView) {
                                 selectedAgencyCode[0] = mTypeAgencyArray[0][0];
                                 Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode[0]);
-                                emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
+                                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
                             }
                         });
                     }
