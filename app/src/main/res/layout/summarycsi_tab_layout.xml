@@ -38,6 +38,7 @@
                     android:textSize="@dimen/ssmall_text" />
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutReportNo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical|center_horizontal"
@@ -47,7 +48,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="รายงานที่ "
-                        android:textSize="@dimen/small_text"/>
+                        android:textSize="@dimen/small_text" />
+
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/edtReportNoLayout"
                         android:layout_width="@dimen/width_edtReportNo"
@@ -99,6 +101,7 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="พนักงานสอบสวน: "
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/edtInqInfo"
                     android:layout_width="wrap_content"
@@ -107,6 +110,7 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text=""
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/txtInvInfo"
                     android:layout_width="wrap_content"
@@ -114,14 +118,16 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="ผู้ตรวจสถานที่เกิดเหตุ: "
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/edtInvInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/txtPoliceStation"
                     android:layout_width="wrap_content"
@@ -129,14 +135,16 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="สถานีตำรวจ: "
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/edtPoliceStation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text=""
-                    android:layout_gravity="center_horizontal"
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/txtStatusTitle"
                     android:layout_width="wrap_content"
@@ -170,6 +178,7 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/mmedium_text" />
+
                 <TextView
                     android:id="@+id/edtCompleteSceneDateTimeTitle"
                     android:layout_width="wrap_content"
@@ -186,6 +195,7 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/mmedium_text" />
+
                 <TextView
                     android:id="@+id/txtUpdateDateTimeTitle"
                     android:layout_width="wrap_content"
@@ -202,6 +212,7 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/mmedium_text" />
+
                 <LinearLayout
                     android:id="@+id/layoutButton"
                     android:layout_width="match_parent"
@@ -210,15 +221,16 @@
 
 
                     android:orientation="horizontal">
+
                     <Button
                         android:id="@+id/btnNoticecase"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/selector_button"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:layout_marginRight="5dp"
                         android:text="ส่งเรื่องแจ้งเหตุ"
                         android:textColor="@color/white"
                         android:textSize="@dimen/small_text" />
@@ -227,11 +239,11 @@
                         android:id="@+id/btnDownloadfile"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/selector_button"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:layout_marginLeft="5dp"
                         android:text="ออกเอกสารรายงานคดี"
                         android:textColor="@color/white"
                         android:textSize="@dimen/small_text" />

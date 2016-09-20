@@ -96,5 +96,155 @@ public class ApiCaseScene {
     // ทรัพย์สินที่สูญหาย
     List<TbPropertyLoss> tbPropertyLosses;
 
+    public TbCaseScene getTbCaseScene() {
+        return tbCaseScene;
+    }
 
+    public void setTbCaseScene(TbCaseScene tbCaseScene) {
+        this.tbCaseScene = tbCaseScene;
+    }
+
+    public TbOfficial getTbOfficial() {
+        return tbOfficial;
+    }
+
+    public void setTbOfficial(TbOfficial tbOfficial) {
+        this.tbOfficial = tbOfficial;
+    }
+
+    public TbNoticeCase getTbNoticeCase() {
+        return tbNoticeCase;
+    }
+
+    public void setTbNoticeCase(TbNoticeCase tbNoticeCase) {
+        this.tbNoticeCase = tbNoticeCase;
+    }
+
+    public TbCaseSceneType getTbCaseSceneType() {
+        return tbCaseSceneType;
+    }
+
+    public void setTbCaseSceneType(TbCaseSceneType tbCaseSceneType) {
+        this.tbCaseSceneType = tbCaseSceneType;
+    }
+
+    public TbSubcaseSceneType getTbSubcaseSceneType() {
+        return tbSubcaseSceneType;
+    }
+
+    public void setTbSubcaseSceneType(TbSubcaseSceneType tbSubcaseSceneType) {
+        this.tbSubcaseSceneType = tbSubcaseSceneType;
+    }
+
+    public TbPoliceStation getTbPoliceStation() {
+        return tbPoliceStation;
+    }
+
+    public void setTbPoliceStation(TbPoliceStation tbPoliceStation) {
+        this.tbPoliceStation = tbPoliceStation;
+    }
+
+    public TbPoliceAgency getTbPoliceAgency() {
+        return tbPoliceAgency;
+    }
+
+    public void setTbPoliceAgency(TbPoliceAgency tbPoliceAgency) {
+        this.tbPoliceAgency = tbPoliceAgency;
+    }
+
+    public TbDistrict getTbDistrict() {
+        return tbDistrict;
+    }
+
+    public void setTbDistrict(TbDistrict tbDistrict) {
+        this.tbDistrict = tbDistrict;
+    }
+
+    public TbProvince getTbProvince() {
+        return tbProvince;
+    }
+
+    public void setTbProvince(TbProvince tbProvince) {
+        this.tbProvince = tbProvince;
+    }
+
+    public TbAmphur getTbAmphur() {
+        return tbAmphur;
+    }
+
+    public void setTbAmphur(TbAmphur tbAmphur) {
+        this.tbAmphur = tbAmphur;
+    }
+
+    public TbSCDCagency getTbSCDCagency() {
+        return tbSCDCagency;
+    }
+
+    public void setTbSCDCagency(TbSCDCagency tbSCDCagency) {
+        this.tbSCDCagency = tbSCDCagency;
+    }
+
+    public TbSCDCcenter getTbSCDCcenter() {
+        return tbSCDCcenter;
+    }
+
+    public void setTbSCDCcenter(TbSCDCcenter tbSCDCcenter) {
+        this.tbSCDCcenter = tbSCDCcenter;
+    }
+
+    public List<Investigators> getInvestigatorsList() {
+        return investigatorsList;
+    }
+
+    public void setInvestigatorsList(List<Investigators> investigatorsList) {
+        this.investigatorsList = investigatorsList;
+    }
+
+    public List<TbSceneInvestigation> getTbSceneInvestigations() {
+        return tbSceneInvestigations;
+    }
+
+    public void setTbSceneInvestigations(List<TbSceneInvestigation> tbSceneInvestigations) {
+        this.tbSceneInvestigations = tbSceneInvestigations;
+    }
+
+    public TbSceneFeatureOutside getTbSceneFeatureOutside() {
+        return tbSceneFeatureOutside;
+    }
+
+    public void setTbSceneFeatureOutside(TbSceneFeatureOutside tbSceneFeatureOutside) {
+        this.tbSceneFeatureOutside = tbSceneFeatureOutside;
+    }
+
+    public List<SceneFeatureInSide> getSceneFeatureInSideList() {
+        return sceneFeatureInSideList;
+    }
+
+    public void setSceneFeatureInSideList(List<SceneFeatureInSide> sceneFeatureInSideList) {
+        this.sceneFeatureInSideList = sceneFeatureInSideList;
+    }
+
+    public List<ApiMultimedia> getApiMultimediasOutSide() {
+        return apiMultimediasOutSide;
+    }
+
+    public void setApiMultimediasOutSide(List<ApiMultimedia> apiMultimediasOutSide) {
+        this.apiMultimediasOutSide = apiMultimediasOutSide;
+    }
+
+    public List<FindEvidence> getFindEvidenceList() {
+        return findEvidenceList;
+    }
+
+    public void setFindEvidenceList(List<FindEvidence> findEvidenceList) {
+        this.findEvidenceList = findEvidenceList;
+    }
+
+    public List<TbPropertyLoss> getTbPropertyLosses() {
+        return tbPropertyLosses;
+    }
+
+    public void setTbPropertyLosses(List<TbPropertyLoss> tbPropertyLosses) {
+        this.tbPropertyLosses = tbPropertyLosses;
+    }
 }
