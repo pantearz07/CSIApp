@@ -323,17 +323,20 @@ public class NoticeCaseListFragment extends Fragment {
                     fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
                 }
             });
-            builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Bundle i = new Bundle();
-                    i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
-                    i.putString(emergencyTabFragment.Bundle_mode, "edit");
-                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                    emergencyTabFragment.setArguments(i);
-                    fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-                }
-            });
+
+            if(apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("receive")) {
+                builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Bundle i = new Bundle();
+                        i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+                        i.putString(emergencyTabFragment.Bundle_mode, "edit");
+                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        emergencyTabFragment.setArguments(i);
+                        fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                    }
+                });
+            }
 
             builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
                 @Override

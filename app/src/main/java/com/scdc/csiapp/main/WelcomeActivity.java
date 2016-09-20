@@ -5,13 +5,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiProfile;
@@ -23,10 +32,15 @@ import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
+import static com.google.android.gms.location.LocationServices.*;
+
 /**
  * Created by Pantearz07 on 24/9/2558.
  */
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    // Google play services
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
     /*
      * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
     */
@@ -50,7 +64,7 @@ public class WelcomeActivity extends AppCompatActivity {
     String ipvalue;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     // private boolean isReceiverRegistered;
-    private static final String TAG = "WelcomeActivity";
+    private static final String TAG = "DEBUG-WelcomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,16 @@ public class WelcomeActivity extends AppCompatActivity {
 
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         dbHelper.SelectSubCaseType();
+
+        // ทำการสร้างตัวเชื่อกับ Google services
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(API)
+                    .build();
+            Log.d(TAG, "Create Google services");
+        }
 
         //*** สร้าง ApiConnect ***//
         api = new ApiConnect(mContext);
@@ -161,7 +185,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        Log.i("Check", "onStartWelcome");
+        Log.i(TAG, "onStartWelcome");
     }
 
     public void onBackPressed() {
@@ -188,15 +212,62 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected");
+        Log.d(TAG, "Call Location Services");
+        LocationRequest request = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(10)//อ่านค่าใหม่ทุก 10 เมตร
+                .setFastestInterval(1000)//อ่านค่าแบบรวดเร็วภายใน 1 วินาที
+                .setInterval(10000);//อ่านค่าเป็นช่วงๆ ทุก 10 วินาที
+        FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this);
+
+        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Log.d(TAG, "get mLastLocation");
+
+
+//            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+//            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+        }
 
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "onConnectionSuspended");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+    }
 }
