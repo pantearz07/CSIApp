@@ -4,13 +4,13 @@ package com.scdc.csiapp.tablemodel;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbScheduleGroup {
-    public static final String TB_ScheduleGroup = "schedulegroup";
+    public String TB_ScheduleGroup = "schedulegroup";
     // From Table schedulegroup field name ScheduleGroupID
-    public static final String COL_ScheduleGroupID = "ScheduleGroupID";
+    public String COL_ScheduleGroupID = "ScheduleGroupID";
     public String ScheduleGroupID = "";
 
     // From Table schedulegroup field name ScheduleInvestigateID
-    public static final String COL_ScheduleInvestigateID = "ScheduleInvestigateID";
+    public String COL_ScheduleInvestigateID = "ScheduleInvestigateID";
     public String ScheduleInvestigateID = "";
 
 }

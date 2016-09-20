@@ -223,9 +223,16 @@ public class NoticeCaseListFragment extends Fragment {
             }
         });
 
-        new ConnectlistNoticecase().execute();
-
+        // เตรียมตัวแปรไว้รับค่าเพื่อใช้ใน RV
         caseList = new ArrayList<>();
+//        networkConnectivity = false;
+        // ถ้ามีเน็ตให้ดึงข้อมูลจากเซิร์ฟเวอร์
+        if (networkConnectivity) {
+            new ConnectlistNoticecase().execute();
+        } else {
+            selectApiNoticeCaseFromSQLite();
+        }
+
         rvDraft = (RecyclerView) view.findViewById(R.id.rvDraft);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rvDraft.setLayoutManager(llm);
@@ -245,11 +252,17 @@ public class NoticeCaseListFragment extends Fragment {
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    //initializeData();
+                    selectApiNoticeCaseFromSQLite();
 
-                    Log.i("log_show draft", "fail network");
-                    Snackbar.make(view, "กรุณาเชื่อมต่ออินเทอร์เน็ต", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    // เอาข้อมูลไปแสดงใน RV ค่ามาจาก caseList จะถูกเปลี่ยนจาก selectApiNoticeCaseFromSQLite
+                    apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
+                    rvDraft.setAdapter(apiNoticeCaseListAdapter);
+                    apiNoticeCaseListAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "Update apiNoticeCaseListAdapter from SQLite");
+
+                    if (swipeContainer.isRefreshing()) {
+                        swipeContainer.setRefreshing(false);
+                    }
                 }
 
             }
@@ -264,22 +277,23 @@ public class NoticeCaseListFragment extends Fragment {
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                Log.i("log_show draft", "Runnable");
-
                 if (networkConnectivity) {
-                    Log.i("log_show draft", "Refreshing!! ");
-
                     swipeContainer.setRefreshing(true);
                     new ConnectlistNoticecase().execute();
-                    //  initializeData();
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    //initializeData();
+                    selectApiNoticeCaseFromSQLite();
 
-                    Log.i("log_show draft", "fail network");
-                    Snackbar.make(view, "กรุณาเชื่อมต่ออินเทอร์เน็ต", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    // เอาข้อมูลไปแสดงใน RV ค่ามาจาก caseList จะถูกเปลี่ยนจาก selectApiNoticeCaseFromSQLite
+                    apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
+                    rvDraft.setAdapter(apiNoticeCaseListAdapter);
+                    apiNoticeCaseListAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "Update apiNoticeCaseListAdapter from SQLite");
+
+                    if (swipeContainer.isRefreshing()) {
+                        swipeContainer.setRefreshing(false);
+                    }
                 }
             }
         });
@@ -367,6 +381,23 @@ public class NoticeCaseListFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    private void selectApiNoticeCaseFromSQLite() {
+        snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
+        snackbar.show();
+
+        ApiListNoticeCase apiListNoticeCase;
+        apiListNoticeCase = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+        caseList = apiListNoticeCase.getData().getResult();
+//        Log.d("TEST",caseList.get(0).getTbNoticeCase().NoticeCaseID+" "+caseList.get(1).getTbNoticeCase().NoticeCaseID);
+        Log.d(TAG, "caseList : " + caseList.size());
     }
 
     class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
