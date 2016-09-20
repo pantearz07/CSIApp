@@ -29,7 +29,9 @@ public class EmergencyTabFragment extends Fragment {
     public static int int_items = 2 ;
     private static final String TAG = "DEBUG-EmergencyTabFragment";
     public static String Bundle_Key= "noticecase";
+    public static String Bundle_mode= "mode";
     public static TbNoticeCase tbNoticeCase;
+    public static String mode;
     Snackbar snackbar;
     @Nullable
     @Override
@@ -63,6 +65,7 @@ public class EmergencyTabFragment extends Fragment {
         });
         Bundle args = getArguments();
         tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
+        mode = args.getString(Bundle_mode);
         Log.i(TAG, " NoticeCaseID "+tbNoticeCase.getNoticeCaseID());
 
         return x;

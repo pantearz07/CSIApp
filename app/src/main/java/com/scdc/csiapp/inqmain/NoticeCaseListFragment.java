@@ -2,7 +2,6 @@ package com.scdc.csiapp.inqmain;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
@@ -32,8 +30,6 @@ import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.main.CSIDataList;
-import com.scdc.csiapp.main.CSIDataListAdapter;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
@@ -196,6 +192,7 @@ public class NoticeCaseListFragment extends Fragment {
 //                            if (isSuccess) {
                             Bundle i = new Bundle();
                             i.putSerializable(Bundle_Key, tbNoticeCase);
+                            i.putString(emergencyTabFragment.Bundle_mode, "new");
                             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                             emergencyTabFragment.setArguments(i);
                             fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
@@ -319,8 +316,8 @@ public class NoticeCaseListFragment extends Fragment {
             builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Bundle i = new Bundle();
-                    i.putSerializable("noticecase", apiNoticeCase.getTbNoticeCase());
-                    i.putString("mode", "view");
+                    i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+                    i.putString(emergencyTabFragment.Bundle_mode, "view");
                     FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                     emergencyTabFragment.setArguments(i);
                     fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
@@ -329,9 +326,9 @@ public class NoticeCaseListFragment extends Fragment {
             builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                  Bundle i = new Bundle();
-                    i.putSerializable("noticecase", apiNoticeCase.getTbNoticeCase());
-                    i.putString("mode", "edit");
+                    Bundle i = new Bundle();
+                    i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+                    i.putString(emergencyTabFragment.Bundle_mode, "edit");
                     FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                     emergencyTabFragment.setArguments(i);
                     fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();

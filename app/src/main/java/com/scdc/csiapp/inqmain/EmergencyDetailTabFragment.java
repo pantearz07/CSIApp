@@ -1,7 +1,6 @@
 package com.scdc.csiapp.inqmain;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,9 +33,6 @@ import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 
 public class EmergencyDetailTabFragment extends Fragment {
     FloatingActionButton fabBtnRec;
@@ -47,7 +41,7 @@ public class EmergencyDetailTabFragment extends Fragment {
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
-
+    EmergencyTabFragment emergencyTabFragment;
     DBHelper dbHelper;
     private Context mContext;
     private PreferenceData mManager;
@@ -68,44 +62,18 @@ public class EmergencyDetailTabFragment extends Fragment {
             sLongitude;
     private Spinner spinnerDistrict, spinnerAmphur, spinnerProvince;
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail;
-    private Button btnButtonSearchMap;
-    static String sInquiryOfficialID, sProvinceID, sAmphurID = "";
-    // layout Sufferer 3
-
-    private ListView listViewSufferer, listViewInvestigator;
-    private View linearLayoutAddSufferer, linearLayoutInvestigator;
+    private Button btnButtonSearchMap, btnButtonSearchLatLong;
 
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
-    private String sReceivingCaseDate, sReceivingCaseTime, sHappenCaseDate,
-            sHappenCaseTime, sKnowCaseDate, sKnowCaseTime,
-            sCircumstanceOfCaseDetail;
+
     private TextView editReceiveCaseDate, editReceiveCaseTime, editScheduleInvestDate;
     private TextView editHappenCaseDate, editHappenCaseTime;
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
-    // InvestDateTime ตรวจ
-    //private TextView editSceneInvestDate, editSceneInvestTime;
-    // ตรวจเสร็จ
-    //private TextView editCompleteSceneDate, editCompleteSceneTime;
-
-    //TextView edtInvestDateTime, edtUpdateDateTime;
-    //private String selectedInspector = null;
 
     private static final String TAG = "DEBUG-EmergencyDetailTabFragment";
-    String SelectedPoliceStationID = "";
-    String mSelected;
-    ArrayList<Integer> mMultiSelected;
-    ArrayList<Boolean> mMultiChecked;
-    String[][] mSelectDataInvestigatorArray = null;
-    private ArrayList<HashMap<String, String>> InvestigatorList;
-    protected static final int DIALOG_SelectDataInvestigator = 1; // Dialog 1 ID
-    protected static final int DIALOG_AddSufferer = 0; // Dialog 2 ID
-    ViewGroup viewByIdaddsufferer;
+
     View viewReceiveCSI;
     Context context;
-    Button btn_clear_txt_1, btn_clear_txt_2, btn_clear_txt_3, btn_clear_txt_4, btn_clear_txt_5,
-            btn_clear_txt_6, btn_clear_txt_7, btn_clear_txt_8, btn_clear_txt_9, btn_clear_txt_10, btn_clear_txt_11, btn_clear_txt_12;
-    ArrayAdapter<String> adapterSelectDataInspector, adapterPoliceStation;
-    protected static String selectScheduleID = null;
 
     @Nullable
     @Override
@@ -121,7 +89,7 @@ public class EmergencyDetailTabFragment extends Fragment {
         mManager = new PreferenceData(getActivity());
         mFragmentManager = getActivity().getSupportFragmentManager();
         getDateTime = new GetDateTime();
-
+        emergencyTabFragment = new EmergencyTabFragment();
         cd = new ConnectionDetector(getActivity());
 
         updateDT = getDateTime.getDateTimeNow();
@@ -130,8 +98,8 @@ public class EmergencyDetailTabFragment extends Fragment {
         //Show เวลาล่าสุดที่อัพเดต
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText("อัพเดทข้อมูลล่าสุดเมื่อวันที่ " +
-                getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.getLastUpdateDate())
-                + " เวลา " + EmergencyTabFragment.tbNoticeCase.getLastUpdateTime());
+                getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
+                + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
         //Show spinner สถานที่ตำรวจภูธร
 
 
@@ -285,10 +253,10 @@ public class EmergencyDetailTabFragment extends Fragment {
         editReceiveCaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ClickReceiveCaseDate", "null");
+
                 DateDialog dialogReceiveCaseDate = new DateDialog(view);
                 dialogReceiveCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = editReceiveCaseDate.getText().toString();
+
 
             }
 
@@ -298,10 +266,10 @@ public class EmergencyDetailTabFragment extends Fragment {
         editReceiveCaseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ClickReceiveCaseTime", "null");
+
                 TimeDialog dialogReceiveCaseTime = new TimeDialog(view);
                 dialogReceiveCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
+
             }
 
         });
@@ -310,10 +278,10 @@ public class EmergencyDetailTabFragment extends Fragment {
         editHappenCaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ClickHappenCaseDate", "null");
+
                 DateDialog dialogHappenCaseDate = new DateDialog(view);
                 dialogHappenCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-                EmergencyTabFragment.tbNoticeCase.HappenCaseDate = editHappenCaseDate.getText().toString();
+
 
             }
 
@@ -323,13 +291,15 @@ public class EmergencyDetailTabFragment extends Fragment {
         editHappenCaseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ClickHappenCaseTime", "null");
+
                 TimeDialog dialogHappenCaseTime = new TimeDialog(view);
                 dialogHappenCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
-                EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
+
             }
 
+
         });
+
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
         editKnowCaseDate.setOnClickListener(new View.OnClickListener() {
@@ -338,7 +308,7 @@ public class EmergencyDetailTabFragment extends Fragment {
                 Log.i("Click KnowCaseTime", editKnowCaseDate.getText().toString());
                 DateDialog dialogKnowCaseDate = new DateDialog(view);
                 dialogKnowCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-                EmergencyTabFragment.tbNoticeCase.KnowCaseDate = editKnowCaseDate.getText().toString();
+
             }
 
         });
@@ -350,30 +320,31 @@ public class EmergencyDetailTabFragment extends Fragment {
                 Log.i("ClickKnowCaseTime", editKnowCaseTime.getText().toString());
                 TimeDialog dialogKnowCaseTime = new TimeDialog(view);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
-                EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
+
+
             }
 
         });
 
 
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
+        btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
         // btnButtonSearchMap.setOnClickListener(new ReceiveOnClickListener());
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
-        EmergencyTabFragment.tbNoticeCase.Latitude = valueLat.toString();
-        EmergencyTabFragment.tbNoticeCase.Longitude = valueLong.toString();
+        EmergencyTabFragment.tbNoticeCase.Latitude = "0";
+        EmergencyTabFragment.tbNoticeCase.Longitude = "0";
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
         editCircumstanceOfCaseDetail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // btn_clear_txt_1.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-                //btn_clear_txt_1.setVisibility(View.VISIBLE);
-                //btn_clear_txt_1.setOnClickListener(new ReceiveOnClickListener());
+
             }
 
             @Override
@@ -381,21 +352,33 @@ public class EmergencyDetailTabFragment extends Fragment {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
             }
         });
-        Spinner spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
-        EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(spinnerAntecedent.getSelectedItem());
+        final Spinner spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
+        spinnerAmphur.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(spinnerAntecedent.getSelectedItem());
+                Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
 
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(spinnerAntecedent.getSelectedItem());
+
+                Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
+            }
+        });
         final EditText editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
         editSuffererName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // btn_clear_txt_1.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-                //btn_clear_txt_1.setVisibility(View.VISIBLE);
-                //btn_clear_txt_1.setOnClickListener(new ReceiveOnClickListener());
+
             }
 
             @Override
@@ -410,14 +393,13 @@ public class EmergencyDetailTabFragment extends Fragment {
         editTextSuffererPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // btn_clear_txt_1.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-                //btn_clear_txt_1.setVisibility(View.VISIBLE);
-                //btn_clear_txt_1.setOnClickListener(new ReceiveOnClickListener());
+
             }
 
             @Override
@@ -427,14 +409,40 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
+        if(emergencyTabFragment.mode =="view") {
+            fabBtnRec.setVisibility(View.GONE);
+            editTextPhone1.setEnabled(false);
+            editReceiveCaseDate.setEnabled(false);
+            editReceiveCaseTime.setEnabled(false);
+            editHappenCaseDate.setEnabled(false);
+            editHappenCaseTime.setEnabled(false);
+            editKnowCaseDate.setEnabled(false);
+            editKnowCaseTime.setEnabled(false);
+            editAddrDetail.setEnabled(false);
+            spinnerProvince.setEnabled(false);
+            spinnerAmphur.setEnabled(false);
+            spinnerDistrict.setEnabled(false);
+            btnButtonSearchLatLong.setEnabled(false);
+            spinnerProvince.setEnabled(false);
+            spinnerAntecedent.setEnabled(false);
+            editSuffererName.setEnabled(false);
+            autoCompleteSuffererStatus.setEnabled(false);
+            editTextSuffererPhone.setEnabled(false); 
+            editCircumstanceOfCaseDetail.setEnabled(false);
+        }
         fabBtnRec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
 
-                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = null;
-                EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
+                EmergencyTabFragment.tbNoticeCase.HappenCaseDate = editHappenCaseDate.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = editReceiveCaseDate.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.KnowCaseDate = editKnowCaseDate.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
+                Log.i(TAG, "spinnerKnowCaseTime" + EmergencyTabFragment.tbNoticeCase.KnowCaseTime);
                 EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
                 if (EmergencyTabFragment.tbNoticeCase != null) {
@@ -457,30 +465,6 @@ public class EmergencyDetailTabFragment extends Fragment {
 
 
         return viewReceiveCSI;
-    }
-
-
-    public class ListviewSetOnTouchListener implements ListView.OnTouchListener {
-        @SuppressLint("ClickableViewAccessibility")
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    // Disallow ScrollView to intercept touch events.
-                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                    break;
-
-                case MotionEvent.ACTION_UP:
-                    // Allow ScrollView to intercept touch events.
-                    v.getParent().requestDisallowInterceptTouchEvent(false);
-                    break;
-            }
-
-            // Handle ListView touch events.
-            v.onTouchEvent(event);
-            return true;
-        }
     }
 
     public void onStart() {

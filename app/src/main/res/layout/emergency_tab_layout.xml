@@ -76,7 +76,8 @@
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:hint="โทรศัพท์ติดต่อ"
-                            android:textSize="@dimen/small_text" />
+                            android:textSize="@dimen/small_text"
+                            android:inputType="phone"/>
                     </android.support.design.widget.TextInputLayout>
 
 
@@ -315,6 +316,18 @@
 
 
                     android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnButtonSearchLatLong"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_button"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="บันทึกพิกัดที่เกิดเหตุ"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/small_text" />
 
                     <Button
                         android:id="@+id/btnButtonSearchMap"
@@ -324,17 +337,11 @@
                         android:background="@drawable/selector_button"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="ค้นหาแผนที่"
+                        android:layout_marginLeft="5dp"
+                        android:text="นำเส้นทาง"
                         android:textColor="@color/white"
                         android:textSize="@dimen/small_text" />
-                    <!-- <TextView
-                         android:id="@+id/txtButtonSearchMap"
-                         android:layout_width="0dp"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-                         android:gravity="center_horizontal"
-                         android:text="ค้นหาแผนที่"
-                         android:textSize="@dimen/small_text" />-->
+
                 </LinearLayout>
 
                 <TableLayout
@@ -537,14 +544,6 @@
                                 android:minLines="2" />
                         </android.support.design.widget.TextInputLayout>
 
-                        <Button
-                            android:id="@+id/btn_clear_txt_10"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />
                     </TableRow>
                     <!--
                                         <TableRow

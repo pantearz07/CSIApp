@@ -72,7 +72,7 @@ public class GcmDownstreamService extends GcmListenerService {
                             + "\n" + "ที่อยู่ " + Address
                             + "\n" + "รับเเจ้งเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
 
-                    sendNotification("มีงานเข้าใหม่", message, bigmessage, nameintent, "receivingCaseListFragment2");
+                    sendNotification("มีงานเข้าใหม่", message, bigmessage, nameintent, "casescenelistfragment");
                 }
                 if (Title.equals("newschedule")) {
 
@@ -84,7 +84,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     Log.e(TAG, "scheduleDate : " + scheduleDate);
                     String message = "ตารางเวรวันที่ " + scheduleDate;
                     String bigmessage = "ตารางเวรตรวนสถานที่เกิดเหตุใหม่" + "\n" + "วันที่ " + scheduleDate;
-                    sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "receivingCaseListFragment2");
+                    sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "scheduleinvestigatorsfragment");
 
                 }
             }
@@ -109,7 +109,7 @@ public class GcmDownstreamService extends GcmListenerService {
                             + "\n" + Investigator
                             + "\n" + "รับตรวจเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
 
-                    sendNotification("รับเรื่องแล้ว", message, bigmessage, nameintent, "acceptListFragment");
+                    sendNotification("รับเรื่องแล้ว", message, bigmessage, nameintent, "noticecaselistfragment");
                 }
                 if (Title.equals("newreceivingcase")) {
                     String nameintent = "InqMainActivity";
@@ -132,7 +132,7 @@ public class GcmDownstreamService extends GcmListenerService {
                             + "\n" + "ที่อยู่ " + Address
                             + "\n" + "จ่ายงานเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
 
-                    sendNotification("จ่ายงานแล้ว", message, bigmessage, nameintent, "acceptListFragment");
+                    sendNotification("จ่ายงานแล้ว", message, bigmessage, nameintent, "noticecaselistfragment");
                 }
             }
         }

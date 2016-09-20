@@ -2,6 +2,7 @@ package com.scdc.csiapp.inqmain;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
@@ -58,42 +61,34 @@ public class SummaryEmerTabFragment extends Fragment {
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
     private String selectedAgency, SelectedAgencyID, selectedCenter, SelectedCenterID = null;
     private View mViewBtnSaveServer, mViewBtnFullReport, mViewBtnTransReport, layoutButton1, layoutButton2, layoutButton3, layoutButton4, layoutButton5;
-
+    String noticeCaseID;
     Snackbar snackbar;
-
+    EmergencyTabFragment emergencyTabFragment;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewSummaryCSI = inflater.inflate(R.layout.summarycsi_tab_layout, null);
-// Permission StrictMode
-//        if (android.os.Build.VERSION.SDK_INT > 9) {
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//            StrictMode.setThreadPolicy(policy);
-//        }
+
 //โชว์ scenenoticedate & time
         final Context context = viewSummaryCSI.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
         acceptListFragment = new AcceptListFragment();
         rootLayout = (CoordinatorLayout) viewSummaryCSI.findViewById(R.id.rootLayout);
-
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
-
         dbHelper = new DBHelper(getContext());
-
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-
         cd = new ConnectionDetector(getActivity());
-        String noticeCaseID = EmergencyTabFragment.tbNoticeCase.getNoticeCaseID();
+        emergencyTabFragment = new EmergencyTabFragment();
+        noticeCaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
         Log.i(TAG, " NoticeCaseID " + noticeCaseID);
-        Log.i(TAG, " SubCaseTypeID " + EmergencyTabFragment.tbNoticeCase.getSubCaseTypeID());
 
         updateDT = getDateTime.getDateTimeNow();
-
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
-        edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
 
+
+        edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
@@ -216,15 +211,17 @@ public class SummaryEmerTabFragment extends Fragment {
 
         if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID != null) {
             String InvestigatorOfficialID = EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID;
-            Log.i(TAG, InvestigatorOfficialID);
+            Log.i(TAG,"InvestigatorOfficialID : "+InvestigatorOfficialID );
 
             String mInvOfficialArray[] = dbHelper.SelectInvOfficial(EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID);
             if (mInvOfficialArray != null) {
-                edtPoliceStation.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
+                edtInvInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
                         + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") " +
                         mInvOfficialArray[7].toString());
+            }else{
+                 edtInvInfo.setText("");
             }
-            // edtInvInfo.setText();
+
         }
         edtInvInfo.setText("");
 
@@ -271,19 +268,13 @@ public class SummaryEmerTabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
         }
 
+        if(emergencyTabFragment.mode =="view") {
+            fabBtn.setVisibility(View.GONE);
+            spnCaseType.setEnabled(false);
+            spnSubCaseType.setEnabled(false);
+            edtReportNo.setEnabled(false);
 
-/*
-        layoutButton1 = viewSummaryCSI.findViewById(R.id.layoutButton1);
-        layoutButton2 = viewSummaryCSI.findViewById(R.id.layoutButton2);
-        layoutButton3 = viewSummaryCSI.findViewById(R.id.layoutButton3);
-        layoutButton4 = viewSummaryCSI.findViewById(R.id.layoutButton4);
-        layoutButton5 = viewSummaryCSI.findViewById(R.id.layoutButton5);
-        layoutButton1.setOnClickListener(new SummaryOnClickListener());
-        layoutButton2.setOnClickListener(new SummaryOnClickListener());
-        layoutButton3.setOnClickListener(new SummaryOnClickListener());
-        layoutButton4.setOnClickListener(new SummaryOnClickListener());
-        layoutButton5.setOnClickListener(new SummaryOnClickListener());
-*/
+        }
 
         fabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -312,7 +303,6 @@ public class SummaryEmerTabFragment extends Fragment {
             }
         });
 
-
         return viewSummaryCSI;
     }
 
@@ -327,5 +317,49 @@ public class SummaryEmerTabFragment extends Fragment {
         super.onPause();
         Log.i("onPause", "onPause sum");
 
+    }
+    private class SummaryOnClickListener implements View.OnClickListener {
+        public void onClick(View v) {
+            if (v == mViewBtnSaveServer) {
+
+                //new saveFullReport().execute(reportID);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setMessage("อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์");
+                dialog.setPositiveButton("บันทึกแบบร่าง", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //uploadDataToServer();
+                        Toast.makeText(getActivity(),
+                                "อัพโหลดข้อมูล บันทึกแบบร่าง เรียบร้อย", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialog.setCancelable(true);
+                dialog.setNeutralButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.setNegativeButton("บันทึกเเบบสมบูรณ์", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        //uploadDataToServer();
+                       // new saveFullReport().execute(reportID);
+                        Toast.makeText(getActivity(),
+                                "อัพโหลดข้อมูล บันทึกเเบบสมบูรณ์ เรียบร้อย", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialog.create();
+                dialog.show();
+
+            }
+            if (v == mViewBtnTransReport) {
+                Log.i("mViewBtnTransReport", "mViewBtnTransReport");
+               // new DownloadFileAsync().execute(reportID);
+               //
+            }
+
+        }
     }
 }
