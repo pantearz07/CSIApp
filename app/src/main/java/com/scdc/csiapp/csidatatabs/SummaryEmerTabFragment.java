@@ -152,10 +152,10 @@ public class SummaryEmerTabFragment extends Fragment {
         });
         //View linearLayoutDocfiles= viewSummaryCSI.findViewById(R.id.linearLayoutDocfiles);
         //linearLayoutDocfiles.setVisibility(View.GONE);
-        mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
-        TextView txtButtonServer1 = (TextView) viewSummaryCSI.findViewById(R.id.txtButtonServer1);
-        txtButtonServer1.setText("แจ้งเหตุ");
-        mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
+    ///    mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
+     //   TextView txtButtonServer1 = (TextView) viewSummaryCSI.findViewById(R.id.txtButtonServer1);
+     //   txtButtonServer1.setText("แจ้งเหตุ");
+     //   mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
         mViewBtnTransReport.setVisibility(View.GONE);
 
 /*

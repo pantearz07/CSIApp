@@ -1758,4 +1758,111 @@ public class DBHelper extends SQLiteAssetHelper {
         }
 
     }
+
+    public String[][] SelectAllSCDCCenter() {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM scdccenter";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            Log.i(TAG, "SelectAllSCDCCenter " + String.valueOf(cursor.getCount()));
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+
+                        Log.i(TAG, "SelectAllSCDCCenter " + arrData[i][2]);
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public String[] SelectSCDCCenterID(String SCDCAgencyCode) {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT c.SCDCCenterID " +
+                    "FROM scdccenter AS c,scdcagency WHERE scdcagency.SCDCCenterID = c.SCDCCenterID AND" +
+                    " scdcagency.SCDCAgencyCode = '" + SCDCAgencyCode + "' ORDER BY c.SCDCCenterID ASC LIMIT 1";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            Log.i(TAG, SCDCAgencyCode + " SelectAllSCDCCenter" + strSQL + " " + String.valueOf(cursor.getCount()));
+
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getColumnCount()];
+
+                    arrData[0] = cursor.getString(0);
+                }
+                Log.i("show SubCaseTypeName", arrData[0]);
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public String[][] SelectSCDCAgency(String SCDCCenterID) {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM scdcagency WHERE SCDCCenterID = '" + SCDCCenterID + "'";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            Log.i(TAG, "SelectSCDCAgency " + String.valueOf(cursor.getCount()));
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+
+                        Log.i(TAG, "SelectSCDCAgency " + arrData[i][2]);
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
 }

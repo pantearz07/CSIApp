@@ -202,297 +202,43 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/mmedium_text" />
-
                 <LinearLayout
-                    android:id="@+id/layoutButtonServer"
+                    android:id="@+id/layoutButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
 
-                    android:background="@drawable/selector_button"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="8dp">
 
-
-
-                    <TextView
-                        android:id="@+id/txtButtonServer1"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnNoticecase"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:text="อัพโหลดเข้า server"
+                        android:background="@drawable/selector_button"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="ส่งเรื่องแจ้งเหตุ"
                         android:textColor="@color/white"
                         android:textSize="@dimen/small_text" />
 
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/layoutButtonTransReport"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
-                    android:layout_marginBottom="@dimen/margin_line"
-                    android:background="@drawable/selector_button"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="8dp">
-
-
-                    <TextView
-                        android:id="@+id/txtButtonTransReport"
+                    <Button
+                        android:id="@+id/btnDownloadfile"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:text="บันทึกเป็นรายงาน"
+                        android:background="@drawable/selector_button"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:text="ออกเอกสารรายงานคดี"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/small_text"
-                       />
-
+                        android:textSize="@dimen/small_text" />
 
                 </LinearLayout>
-                <!--                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/margin_line"
-                                    android:id="@+id/linearLayoutDocfiles"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:id="@+id/txtDocfiles"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="@dimen/margin_line"
-                                        android:text="ไฟล์รายงาน"
-                                        android:textSize="@dimen/small_text" />
-
-                                    <View
-                                        android:id="@+id/view3"
-                                        android:layout_width="0dp"
-                                        android:layout_height="@dimen/view_height"
-                                        android:layout_gravity="bottom"
-                                        android:layout_marginLeft="5dp"
-                                        android:layout_weight="1"
-                                        android:background="@color/dark_brown" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:id="@+id/layoutListDocfiles"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
 
 
-                                    <ListView
-                                        android:id="@+id/listViewDocfiles"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:divider="@color/ocean"
-                                        android:dividerHeight="@dimen/divider_height"
-                                        android:padding="5dp"
-                                        android:textSize="@dimen/small_text" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/layoutButton1"
-                                    android:layout_width="@dimen/width_menuinsum"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginTop="@dimen/margin_line"
-
-                                    android:background="@drawable/selector_button"
-                                    android:clickable="true"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgButton1"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_gravity="left"
-                                        android:src="@drawable/icon_burglary_shape" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonName1"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center_horizontal"
-                                        android:text="แผนผังสถานที่เกิดเหตุ"
-                                        android:textSize="@dimen/small_text" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonCount1"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:background="@drawable/icon_plunder_shape"
-                                        android:gravity="center"
-                                        android:text="0"
-                                        android:textSize="@dimen/small_text" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/layoutButton2"
-                                    android:layout_width="@dimen/width_menuinsum"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginTop="@dimen/margin_line"
-
-                                    android:background="@drawable/selector_button"
-                                    android:clickable="true"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgButton2"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_gravity="left"
-                                        android:src="@drawable/icon_burglary_shape" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonName2"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center_horizontal"
-                                        android:text="รูปภาพ"
-                                        android:textSize="@dimen/small_text" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonCount2"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:background="@drawable/icon_plunder_shape"
-                                        android:gravity="center"
-                                        android:text="0"
-                                        android:textSize="@dimen/small_text" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/layoutButton3"
-                                    android:layout_width="@dimen/width_menuinsum"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginTop="@dimen/margin_line"
-
-                                    android:background="@drawable/selector_button"
-                                    android:clickable="true"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgButton3"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_gravity="left"
-                                        android:src="@drawable/icon_burglary_shape" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonName3"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center_horizontal"
-                                        android:text="ไฟล์เสียง"
-                                        android:textSize="@dimen/small_text" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonCount3"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:background="@drawable/icon_plunder_shape"
-                                        android:gravity="center"
-                                        android:text="0"
-                                        android:textSize="@dimen/small_text" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/layoutButton4"
-                                    android:layout_width="@dimen/width_menuinsum"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginTop="@dimen/margin_line"
-
-                                    android:background="@drawable/selector_button"
-                                    android:clickable="true"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgButton4"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_gravity="left"
-                                        android:src="@drawable/icon_burglary_shape" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonName4"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center_horizontal"
-                                        android:text="ไฟล์วิดิโอ"
-                                        android:textSize="@dimen/small_text" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonCount4"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:background="@drawable/icon_plunder_shape"
-                                        android:gravity="center"
-                                        android:text="0"
-                                        android:textSize="@dimen/small_text" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/layoutButton5"
-                                    android:layout_width="@dimen/width_menuinsum"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginBottom="@dimen/codelab_fab_margin_right"
-                                    android:layout_marginTop="@dimen/margin_line"
-                                    android:background="@drawable/selector_button"
-                                    android:clickable="true"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgButton5"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_gravity="left"
-                                        android:src="@drawable/icon_burglary_shape" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonName5"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center_horizontal"
-                                        android:text="บันทึกย่อ"
-                                        android:textSize="@dimen/small_text" />
-
-                                    <TextView
-                                        android:id="@+id/txtButtonCount5"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:background="@drawable/icon_plunder_shape"
-                                        android:gravity="center"
-                                        android:text="0"
-                                        android:textSize="@dimen/small_text" />
-                                </LinearLayout>-->
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 

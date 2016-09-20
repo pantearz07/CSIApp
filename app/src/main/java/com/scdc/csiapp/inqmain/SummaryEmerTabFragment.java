@@ -18,10 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
@@ -60,10 +60,12 @@ public class SummaryEmerTabFragment extends Fragment {
     String[] mTypeAgencyArray2, mTypeCenterArray2, mAgencyID, mCenterID;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
     private String selectedAgency, SelectedAgencyID, selectedCenter, SelectedCenterID = null;
-    private View mViewBtnSaveServer, mViewBtnFullReport, mViewBtnTransReport, layoutButton1, layoutButton2, layoutButton3, layoutButton4, layoutButton5;
-    String noticeCaseID;
+    Button btnNoticecase, btnDownloadfile;
+    String noticeCaseID,sSCDCAgencyCode;
     Snackbar snackbar;
     EmergencyTabFragment emergencyTabFragment;
+    Spinner spnSCDCcenterType, spnSCDCagencyType;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,16 +108,14 @@ public class SummaryEmerTabFragment extends Fragment {
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
         TextView edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
-
-        //View linearLayoutDocfiles= viewSummaryCSI.findViewById(R.id.linearLayoutDocfiles);
-        //linearLayoutDocfiles.setVisibility(View.GONE);
-        mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
-        TextView txtButtonServer1 = (TextView) viewSummaryCSI.findViewById(R.id.txtButtonServer1);
-        txtButtonServer1.setText("แจ้งเหตุ");
-        mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
-        mViewBtnTransReport.setVisibility(View.GONE);
-        // mViewBtnSaveServer.setOnClickListener(new SummaryOnClickListener());
-        // mViewBtnTransReport.setOnClickListener(new SummaryOnClickListener());
+        if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
+            emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+            sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+        }
+        btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
+        btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
+        btnNoticecase.setOnClickListener(new SummaryOnClickListener());
+        btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
 
         //โชว์dropdown casetype
         //ดึงค่าจาก TbCaseSceneType
@@ -168,7 +168,7 @@ public class SummaryEmerTabFragment extends Fragment {
                     EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
                     Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
                 }
-                Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.CaseTypeID);
+                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
                 if (EmergencyTabFragment.tbNoticeCase.SubCaseTypeID != null) {
                     mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(EmergencyTabFragment.tbNoticeCase.CaseTypeID);
                     for (int i = 0; i < mSubCaseTypeArray.length; i++) {
@@ -211,15 +211,15 @@ public class SummaryEmerTabFragment extends Fragment {
 
         if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID != null) {
             String InvestigatorOfficialID = EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID;
-            Log.i(TAG,"InvestigatorOfficialID : "+InvestigatorOfficialID );
+            Log.i(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
 
             String mInvOfficialArray[] = dbHelper.SelectInvOfficial(EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID);
             if (mInvOfficialArray != null) {
                 edtInvInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
                         + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") " +
                         mInvOfficialArray[7].toString());
-            }else{
-                 edtInvInfo.setText("");
+            } else {
+                edtInvInfo.setText("");
             }
 
         }
@@ -234,7 +234,7 @@ public class SummaryEmerTabFragment extends Fragment {
             edtStatus.setText("กำลังดำเนินการตรวจ");
         } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("notice")) {
             edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
-            mViewBtnSaveServer.setVisibility(View.GONE);
+            btnNoticecase.setEnabled(false);
         } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("receive")) {
             edtStatus.setText("รอส่งแจ้งเหตุ");
         } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("assign")) {
@@ -268,12 +268,14 @@ public class SummaryEmerTabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
         }
 
-        if(emergencyTabFragment.mode =="view") {
+        if (emergencyTabFragment.mode == "view") {
             fabBtn.setVisibility(View.GONE);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
-
+            btnNoticecase.setEnabled(false);
+        } else if (emergencyTabFragment.mode == "edit") {
+            btnDownloadfile.setEnabled(false);
         }
 
         fabBtn.setOnClickListener(new View.OnClickListener() {
@@ -281,7 +283,8 @@ public class SummaryEmerTabFragment extends Fragment {
             public void onClick(View view) {
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
 
-                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = null;
+                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getSCDCAgencyCode();
+                Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
                 EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
                 EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
@@ -318,18 +321,137 @@ public class SummaryEmerTabFragment extends Fragment {
         Log.i("onPause", "onPause sum");
 
     }
+
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
-            if (v == mViewBtnSaveServer) {
-
-                //new saveFullReport().execute(reportID);
+            if (v == btnNoticecase) {
+                Log.i(TAG, "btnNoticecase " + WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                dialog.setMessage("อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์");
-                dialog.setPositiveButton("บันทึกแบบร่าง", new DialogInterface.OnClickListener() {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+
+                View view1 = inflater.inflate(R.layout.emergency_send_case, null);
+                dialog.setMessage(getString(R.string.send_noticecase));
+                dialog.setView(view1);
+
+                spnSCDCcenterType = (Spinner) view1.findViewById(R.id.spnSCDCcenterType);
+                spnSCDCagencyType = (Spinner) view1.findViewById(R.id.spnSCDCagencyType);
+                final String[] selectedCenter = new String[1];
+                final String[] selectedAgencyCode = new String[1];
+                //เช็คว่ามีค่า SCDCAgencyCode
+
+                mTypeCenterArray = dbHelper.SelectAllSCDCCenter();
+
+                if (mTypeCenterArray != null) {
+
+                    mTypeCenterArray2 = new String[mTypeCenterArray.length];
+                    for (int i = 0; i < mTypeCenterArray.length; i++) {
+                        mTypeCenterArray2[i] = mTypeCenterArray[i][1] + " " + mTypeCenterArray[i][2];
+
+                        Log.i("SelectAllSCDCCenter",
+                                mTypeCenterArray2[i].toString());
+                    }
+                    adapterSCDCcenter = new ArrayAdapter<String>(
+                            getActivity(),
+                            android.R.layout.simple_dropdown_item_1line,
+                            mTypeCenterArray2);
+                    //set the view for the Drop down list
+                    adapterSCDCcenter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    spnSCDCcenterType.setAdapter(adapterSCDCcenter);
+                    if (sSCDCAgencyCode != null) {
+                        String SelectSCDCCenterID[] = dbHelper.SelectSCDCCenterID(sSCDCAgencyCode);
+                        Log.i("SelectSCDCCenterID", sSCDCAgencyCode+" "+SelectSCDCCenterID[0]);
+                        if (SelectSCDCCenterID[0] != null) {
+                            for (int i = 0; i < mTypeCenterArray.length; i++) {
+                                if (SelectSCDCCenterID[0].trim().equals(mTypeCenterArray[i][0].toString())) {
+                                    spnSCDCcenterType.setSelection(i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Log.i(TAG, "mTypeCenterArray null");
+                }
+
+                spnSCDCcenterType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                        //ค่า scdccenterid
+                        selectedCenter[0] = mTypeCenterArray[position][0];
+                        Log.i(TAG + " show selectedCenter", selectedCenter[0]);
+
+                        final String mTypeAgencyArray[][] = dbHelper.SelectSCDCAgency(selectedCenter[0]);
+                        if (mTypeAgencyArray != null) {
+                            String[] mTypeAgencyArray2 = new String[mTypeAgencyArray.length];
+                            for (int i = 0; i < mTypeAgencyArray.length; i++) {
+                                mTypeAgencyArray2[i] = mTypeAgencyArray[i][2];
+                                Log.i(TAG + " show mDistrictArray2", mTypeAgencyArray2[i].toString());
+                            }
+                            ArrayAdapter<String> adapterSCDCagencyType = new ArrayAdapter<String>(getActivity(),
+                                    android.R.layout.simple_dropdown_item_1line, mTypeAgencyArray2);
+                            spnSCDCagencyType.setAdapter(adapterSCDCagencyType);
+                        } else {
+                            spnSCDCagencyType.setAdapter(null);
+                            selectedAgencyCode[0] = null;
+                            emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
+                            Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode[0]));
+                        }
+                        spnSCDCagencyType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                            @Override
+                            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                                //ค่า SCDCAgencyCode
+                                selectedAgencyCode[0] = mTypeAgencyArray[position][0];
+                                Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode[0]);
+                                emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView) {
+                                selectedAgencyCode[0] = mTypeAgencyArray[0][0];
+                                Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode[0]);
+                                emergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode[0];
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                        selectedCenter[0] = mTypeCenterArray[0][0];
+                        Log.i(TAG + " show selectedCenter", selectedCenter[0]);
+
+                    }
+                });
+
+
+                dialog.setMessage("แจ้งเหตุ");
+                dialog.setPositiveButton("ส่ง", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //uploadDataToServer();
-                        Toast.makeText(getActivity(),
-                                "อัพโหลดข้อมูล บันทึกแบบร่าง เรียบร้อย", Toast.LENGTH_SHORT).show();
+                        // uploadDataToServer();
+                        if (EmergencyTabFragment.tbNoticeCase != null) {
+                            boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+                            if (isSuccess) {
+                                if (snackbar == null || !snackbar.isShown()) {
+                                    snackbar = Snackbar.make(rootLayout, "ส่งแจ้งเหตุเรียบร้อย"
+                                                    + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate
+                                                    + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID
+                                                    + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode
+                                            , Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+                                                }
+                                            });
+                                    snackbar.show();
+                                }
+                            }
+                        }
+
+                        //FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        //fragmentTransaction.replace(R.id.containerView, acceptListFragment).addToBackStack(null).commit();
                     }
                 });
                 dialog.setCancelable(true);
@@ -340,26 +462,17 @@ public class SummaryEmerTabFragment extends Fragment {
                     }
                 });
 
-                dialog.setNegativeButton("บันทึกเเบบสมบูรณ์", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        //uploadDataToServer();
-                       // new saveFullReport().execute(reportID);
-                        Toast.makeText(getActivity(),
-                                "อัพโหลดข้อมูล บันทึกเเบบสมบูรณ์ เรียบร้อย", Toast.LENGTH_SHORT).show();
-                    }
-                });
                 dialog.create();
                 dialog.show();
-
             }
-            if (v == mViewBtnTransReport) {
-                Log.i("mViewBtnTransReport", "mViewBtnTransReport");
-               // new DownloadFileAsync().execute(reportID);
-               //
-            }
+            if (v == btnDownloadfile)
 
+            {
+                Log.i(TAG, "btnDownloadfile");
+                // new DownloadFileAsync().execute(reportID);
+                //
+            }
         }
     }
 }

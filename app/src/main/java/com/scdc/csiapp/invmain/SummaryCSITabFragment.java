@@ -140,16 +140,16 @@ public class SummaryCSITabFragment extends Fragment {
             }
         });
 
-        mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
-         mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
+       // mViewBtnSaveServer = viewSummaryCSI.findViewById(R.id.layoutButtonServer);
+      //   mViewBtnTransReport = viewSummaryCSI.findViewById(R.id.layoutButtonTransReport);
 /*
         layoutButton1 = viewSummaryCSI.findViewById(R.id.layoutButton1);
         layoutButton2 = viewSummaryCSI.findViewById(R.id.layoutButton2);
         layoutButton3 = viewSummaryCSI.findViewById(R.id.layoutButton3);
         layoutButton4 = viewSummaryCSI.findViewById(R.id.layoutButton4);
         layoutButton5 = viewSummaryCSI.findViewById(R.id.layoutButton5);*/
-        mViewBtnSaveServer.setOnClickListener(new SummaryOnClickListener());
-         mViewBtnTransReport.setOnClickListener(new SummaryOnClickListener());
+     //   mViewBtnSaveServer.setOnClickListener(new SummaryOnClickListener());
+     //    mViewBtnTransReport.setOnClickListener(new SummaryOnClickListener());
    /*     layoutButton1.setOnClickListener(new SummaryOnClickListener());
         layoutButton2.setOnClickListener(new SummaryOnClickListener());
         layoutButton3.setOnClickListener(new SummaryOnClickListener());
