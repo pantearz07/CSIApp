@@ -342,7 +342,7 @@ public class EmergencyDetailTabFragment extends Fragment {
 //                mapIntent.setPackage("com.google.android.apps.maps");
 //                startActivity(mapIntent);
 
-                Uri gmmIntentUri = Uri.parse("google.navigation:q="+lat+","+lng);
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
@@ -353,6 +353,14 @@ public class EmergencyDetailTabFragment extends Fragment {
         // btnButtonSearchMap.setOnClickListener(new ReceiveOnClickListener());
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
+//        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
+//        if (mLastLocation != null) {
+//            Log.d(TAG, "get mLastLocation");
+//
+//
+////            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+////            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+//        }
         EmergencyTabFragment.tbNoticeCase.Latitude = "0";
         EmergencyTabFragment.tbNoticeCase.Longitude = "0";
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
