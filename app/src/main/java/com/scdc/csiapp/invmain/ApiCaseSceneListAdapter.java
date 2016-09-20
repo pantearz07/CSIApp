@@ -1,4 +1,4 @@
-package com.scdc.csiapp.inqmain;
+package com.scdc.csiapp.invmain;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 
@@ -20,14 +21,14 @@ import java.util.List;
 /**
  * Created by cbnuke on 9/19/16.
  */
-public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCaseListAdapter.CSIDataViewHolder> {
+public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneListAdapter.CSIDataViewHolder> {
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
     Cursor mCursor;
-    List<ApiNoticeCase> apiNoticeCases;
+    List<ApiCaseScene> apiNoticeCases;
     OnItemClickListener mItemClickListener;
 
-    ApiNoticeCaseListAdapter(List<ApiNoticeCase> apiNoticeCases) {
+    ApiCaseSceneListAdapter(List<ApiCaseScene> apiNoticeCases) {
         this.apiNoticeCases = apiNoticeCases;
     }
 
@@ -86,7 +87,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
     @Override
     public void onBindViewHolder(CSIDataViewHolder csidataholder, int position) {
 
-        ApiNoticeCase apiNoticeCase = apiNoticeCases.get(position);
+        ApiCaseScene apiNoticeCase = apiNoticeCases.get(position);
         csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
         String positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + apiNoticeCase.getTbDistrict().DISTRICT_NAME
                 + " " + apiNoticeCase.getTbAmphur().AMPHUR_NAME + " " + apiNoticeCase.getTbProvince().PROVINCE_NAME;

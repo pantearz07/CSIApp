@@ -6,6 +6,7 @@ import com.scdc.csiapp.tablemodel.TbCaseSceneType;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
 import com.scdc.csiapp.tablemodel.TbInvestigatorsInScene;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
@@ -53,45 +54,22 @@ public class ApiCaseScene {
     TbSCDCagency tbSCDCagency;
     TbSCDCcenter tbSCDCcenter;
 
-    // เก็บรายชื่อผู้เกี่ยวข้อง
-    List<Investigators> investigatorsList;
-
-    class Investigators {
-        TbInvestigatorsInScene tbInvestigatorsInScene;
-        TbOfficial tbOfficial;
-    }
-
     // เก็บเวลาที่ออกตรวจสถานที่นั้นๆ
     List<TbSceneInvestigation> tbSceneInvestigations;
 
     // เก็บลักษณะภายนอก
     TbSceneFeatureOutside tbSceneFeatureOutside;
 
-    // เก็บข้อมูลลักษณะภายใน และไฟล์มิเดีย
-    List<SceneFeatureInSide> sceneFeatureInSideList;
-
-    class SceneFeatureInSide {
-        TbSceneFeatureInSide tbSceneFeatureInSide;
-        List<ApiMultimedia> apiMultimedias;
-    }
+    List<TbSceneFeatureInSide> tbSceneFeatureInSide;
 
     // ตือ มิเดีย เฉพาะ photo outside
-    List<ApiMultimedia> apiMultimediasOutSide;
+    List<TbMultimediaFile> tbMultimediaFiles;
 
     // วัตถุพยานในคดีนั้นๆ รอยนิ้วมือ รอยเท้า
-    List<FindEvidence> findEvidenceList;
-
-    class FindEvidence {
-        TbFindEvidence tbFindEvidence;
-        List<ApiMultimedia> apiMultimedias;
-    }
+    List<TbFindEvidence> tbFindEvidences;
 
     // สภาพที่เกิดเหตุ
-    class ResultScene {
-        TbResultScene tbResultScene;
-        TbResultSceneType tbResultSceneType;
-        List<ApiMultimedia> apiMultimedias;
-    }
+    List<TbResultScene> tbResultScenes;
 
     // ทรัพย์สินที่สูญหาย
     List<TbPropertyLoss> tbPropertyLosses;
@@ -192,14 +170,6 @@ public class ApiCaseScene {
         this.tbSCDCcenter = tbSCDCcenter;
     }
 
-    public List<Investigators> getInvestigatorsList() {
-        return investigatorsList;
-    }
-
-    public void setInvestigatorsList(List<Investigators> investigatorsList) {
-        this.investigatorsList = investigatorsList;
-    }
-
     public List<TbSceneInvestigation> getTbSceneInvestigations() {
         return tbSceneInvestigations;
     }
@@ -216,35 +186,43 @@ public class ApiCaseScene {
         this.tbSceneFeatureOutside = tbSceneFeatureOutside;
     }
 
-    public List<SceneFeatureInSide> getSceneFeatureInSideList() {
-        return sceneFeatureInSideList;
-    }
-
-    public void setSceneFeatureInSideList(List<SceneFeatureInSide> sceneFeatureInSideList) {
-        this.sceneFeatureInSideList = sceneFeatureInSideList;
-    }
-
-    public List<ApiMultimedia> getApiMultimediasOutSide() {
-        return apiMultimediasOutSide;
-    }
-
-    public void setApiMultimediasOutSide(List<ApiMultimedia> apiMultimediasOutSide) {
-        this.apiMultimediasOutSide = apiMultimediasOutSide;
-    }
-
-    public List<FindEvidence> getFindEvidenceList() {
-        return findEvidenceList;
-    }
-
-    public void setFindEvidenceList(List<FindEvidence> findEvidenceList) {
-        this.findEvidenceList = findEvidenceList;
-    }
-
     public List<TbPropertyLoss> getTbPropertyLosses() {
         return tbPropertyLosses;
     }
 
     public void setTbPropertyLosses(List<TbPropertyLoss> tbPropertyLosses) {
         this.tbPropertyLosses = tbPropertyLosses;
+    }
+
+    public List<TbSceneFeatureInSide> getTbSceneFeatureInSide() {
+        return tbSceneFeatureInSide;
+    }
+
+    public void setTbSceneFeatureInSide(List<TbSceneFeatureInSide> tbSceneFeatureInSide) {
+        this.tbSceneFeatureInSide = tbSceneFeatureInSide;
+    }
+
+    public List<TbMultimediaFile> getTbMultimediaFiles() {
+        return tbMultimediaFiles;
+    }
+
+    public void setTbMultimediaFiles(List<TbMultimediaFile> tbMultimediaFiles) {
+        this.tbMultimediaFiles = tbMultimediaFiles;
+    }
+
+    public List<TbFindEvidence> getTbFindEvidences() {
+        return tbFindEvidences;
+    }
+
+    public void setTbFindEvidences(List<TbFindEvidence> tbFindEvidences) {
+        this.tbFindEvidences = tbFindEvidences;
+    }
+
+    public List<TbResultScene> getTbResultScenes() {
+        return tbResultScenes;
+    }
+
+    public void setTbResultScenes(List<TbResultScene> tbResultScenes) {
+        this.tbResultScenes = tbResultScenes;
     }
 }
