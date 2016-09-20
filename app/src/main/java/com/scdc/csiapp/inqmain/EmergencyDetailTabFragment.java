@@ -2,7 +2,9 @@ package com.scdc.csiapp.inqmain;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -326,8 +328,27 @@ public class EmergencyDetailTabFragment extends Fragment {
 
         });
 
-
+        Log.d(TAG, "Go to Google map " + EmergencyTabFragment.tbNoticeCase.Latitude + " " + EmergencyTabFragment.tbNoticeCase.Latitude);
+        final String lat = EmergencyTabFragment.tbNoticeCase.Latitude;
+        final String lng = EmergencyTabFragment.tbNoticeCase.Longitude;
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
+        btnButtonSearchMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                // Searches for 'Main Street' near San Francisco
+//                Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=101+main+street");
+//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                mapIntent.setPackage("com.google.android.apps.maps");
+//                startActivity(mapIntent);
+
+                Uri gmmIntentUri = Uri.parse("google.navigation:q="+lat+","+lng);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+
+            }
+        });
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
         // btnButtonSearchMap.setOnClickListener(new ReceiveOnClickListener());
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
@@ -409,7 +430,7 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
-        if(emergencyTabFragment.mode =="view") {
+        if (emergencyTabFragment.mode == "view") {
             fabBtnRec.setVisibility(View.GONE);
             editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
@@ -427,7 +448,7 @@ public class EmergencyDetailTabFragment extends Fragment {
             spinnerAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
-            editTextSuffererPhone.setEnabled(false); 
+            editTextSuffererPhone.setEnabled(false);
             editCircumstanceOfCaseDetail.setEnabled(false);
         }
         fabBtnRec.setOnClickListener(new View.OnClickListener() {

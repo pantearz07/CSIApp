@@ -26,21 +26,22 @@ public class EmergencyTabFragment extends Fragment {
     public static LinearLayout linearLayoutLayoutCSI;
     public static TabLayout tabLayoutCSI;
     public static ViewPager viewpagerCSI;
-    public static int int_items = 2 ;
+    public static int int_items = 2;
     private static final String TAG = "DEBUG-EmergencyTabFragment";
-    public static String Bundle_Key= "noticecase";
-    public static String Bundle_mode= "mode";
+    public static String Bundle_Key = "noticecase";
+    public static String Bundle_mode = "mode";
     public static TbNoticeCase tbNoticeCase;
     public static String mode;
     Snackbar snackbar;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /**
          *Inflate csi_data_tab_layout and setup Views.
          */
-        View x =  inflater.inflate(R.layout.emer_data_tab_layout,null);
-         //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
+        View x = inflater.inflate(R.layout.emer_data_tab_layout, null);
+        //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
         linearLayoutLayoutCSI = (LinearLayout) x.findViewById(R.id.linearLayoutLayoutCSI);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.inq_appname);
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
@@ -65,14 +66,15 @@ public class EmergencyTabFragment extends Fragment {
         });
         Bundle args = getArguments();
         tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
+        Log.d(TAG, "Go to Go " + tbNoticeCase.Latitude + " " + tbNoticeCase.Longitude);
         mode = args.getString(Bundle_mode);
-        Log.i(TAG, " NoticeCaseID "+tbNoticeCase.getNoticeCaseID());
+        Log.i(TAG, " NoticeCaseID " + tbNoticeCase.getNoticeCaseID());
 
         return x;
 
     }
 
-    class MyAdapter extends FragmentPagerAdapter{
+    class MyAdapter extends FragmentPagerAdapter {
 
         public MyAdapter(FragmentManager fm) {
             super(fm);
@@ -83,12 +85,13 @@ public class EmergencyTabFragment extends Fragment {
          */
 
         @Override
-        public Fragment getItem(int position)
-        {
+        public Fragment getItem(int position) {
 
-            switch (position){
-                case 0 : return new SummaryEmerTabFragment();
-                case 1 : return new EmergencyDetailTabFragment();
+            switch (position) {
+                case 0:
+                    return new SummaryEmerTabFragment();
+                case 1:
+                    return new EmergencyDetailTabFragment();
 
             }
             return null;
@@ -108,10 +111,10 @@ public class EmergencyTabFragment extends Fragment {
         @Override
         public CharSequence getPageTitle(int position) {
 
-            switch (position){
-                case 0 :
+            switch (position) {
+                case 0:
                     return "สรุป";
-                case 1 :
+                case 1:
                     return "แจ้งเหตุ";
 
             }
