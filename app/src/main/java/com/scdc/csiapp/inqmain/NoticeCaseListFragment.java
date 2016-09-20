@@ -12,11 +12,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,22 +21,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
-import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.main.CSIDataList;
-import com.scdc.csiapp.main.CSIDataListAdapter;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Pantearz07 on 14/9/2559.
@@ -49,46 +39,38 @@ public class NoticeCaseListFragment extends Fragment {
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
     Context context;
-    //Recycle view
-    private List<ApiNoticeCase> caseList;
-    RecyclerView rvDraft;
-    SwipeRefreshLayout swipeContainer;
-    private ApiNoticeCaseListAdapter apiNoticeCaseListAdapter;
     // connect sqlite
     SQLiteDatabase mDb;
     DBHelper mDbHelper;
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
     GetDateTime getDateTime;
     String officialID;
     EmergencyTabFragment emergencyTabFragment;
     private static final String TAG = "DEBUG-NoticeCaseListFragment";
-    private static final String Bundle_Key = "noticecase";
+    private static final String Bundle_Key= "noticecase";
     Snackbar snackbar;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.casescene_fragment_layout, null);
+        View x = inflater.inflate(R.layout.casescene_fragment_layout, null);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.home);
         mDbHelper = new DBHelper(getActivity());
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
-        context = view.getContext();
+        context = x.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
-        rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
+        rootLayout = (CoordinatorLayout) x.findViewById(R.id.rootLayout);
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
 
         cd = new ConnectionDetector(context);
-        networkConnectivity = cd.isNetworkAvailable();
         getDateTime = new GetDateTime();
 
         emergencyTabFragment = new EmergencyTabFragment();
 
-        fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
+        fabBtn = (FloatingActionButton) x.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -181,12 +163,22 @@ public class NoticeCaseListFragment extends Fragment {
                         tbNoticeCase.Mobile_CaseID = null;
                         tbNoticeCase.InquiryOfficialID = officialID;
                         tbNoticeCase.InvestigatorOfficialID = null;
+                        tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
+                        Log.i(TAG,tbNoticeCase.PoliceStationID);
                         tbNoticeCase.SCDCAgencyCode = null;
                         tbNoticeCase.CaseTypeID = selectedCaseType[0];
                         tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
                         tbNoticeCase.CaseStatus = "receive";
                         tbNoticeCase.ReceivingCaseDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                         tbNoticeCase.ReceivingCaseTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                        tbNoticeCase.SceneNoticeDate ="";
+                        tbNoticeCase.SceneNoticeTime ="";
+                        tbNoticeCase.HappenCaseDate ="";
+                        tbNoticeCase.HappenCaseTime ="";
+                        tbNoticeCase.KnowCaseDate ="";
+                        tbNoticeCase.KnowCaseTime ="";
+                        tbNoticeCase.CompleteSceneDate="";
+                        tbNoticeCase.CompleteSceneTime ="";
                         tbNoticeCase.DISTRICT_ID = null;
                         tbNoticeCase.AMPHUR_ID = null;
                         tbNoticeCase.PROVINCE_ID = null;
@@ -196,11 +188,11 @@ public class NoticeCaseListFragment extends Fragment {
                         if (tbNoticeCase != null) {
 //                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
 //                            if (isSuccess) {
-                            Bundle i = new Bundle();
-                            i.putSerializable(Bundle_Key, tbNoticeCase);
-                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                            emergencyTabFragment.setArguments(i);
-                            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                                Bundle i = new Bundle();
+                                i.putSerializable(Bundle_Key, tbNoticeCase);
+                                FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                emergencyTabFragment.setArguments(i);
+                                fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
 
 //                            } else {
 //                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
@@ -225,126 +217,8 @@ public class NoticeCaseListFragment extends Fragment {
 
         new ConnectlistNoticecase().execute();
 
-        caseList = new ArrayList<>();
-        rvDraft = (RecyclerView) view.findViewById(R.id.rvDraft);
-        LinearLayoutManager llm = new LinearLayoutManager(context);
-        rvDraft.setLayoutManager(llm);
-        rvDraft.setHasFixedSize(true);
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-
-            public void onRefresh() {
-                if (networkConnectivity) {
-                    Log.i("log_show draft", "Refreshing!! ");
-
-                    swipeContainer.setRefreshing(true);
-                    new ConnectlistNoticecase().execute();
-
-                } else {
-                    swipeContainer.setRefreshing(true);
-                    // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    //initializeData();
-
-                    Log.i("log_show draft", "fail network");
-                    Snackbar.make(view, "กรุณาเชื่อมต่ออินเทอร์เน็ต", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-
-            }
-
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-        swipeContainer.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("log_show draft", "Runnable");
-
-                if (networkConnectivity) {
-                    Log.i("log_show draft", "Refreshing!! ");
-
-                    swipeContainer.setRefreshing(true);
-                    new ConnectlistNoticecase().execute();
-                    //  initializeData();
-                } else {
-                    swipeContainer.setRefreshing(true);
-                    // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    //initializeData();
-
-                    Log.i("log_show draft", "fail network");
-                    Snackbar.make(view, "กรุณาเชื่อมต่ออินเทอร์เน็ต", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-        });
-        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
-        rvDraft.setAdapter(apiNoticeCaseListAdapter);
-//        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
-
-        return view;
+        return x;
     }
-
-//    ApiNoticeCaseListAdapter.OnItemClickListener onItemClickListener = new CSIDataListAdapter.OnItemClickListener() {
-//
-//        @Override
-//        public void onItemClick(View view, int position) {
-//            final ApiNoticeCase apiNoticeCase = caseList.get(position);
-//            final String caserepTD = csidata.caseReportID;
-//
-//            AlertDialog.Builder builder =
-//                    new AlertDialog.Builder(getActivity());
-//            builder.setMessage("ดูข้อมูลการตรวจนี้ " +caserepTD);
-//
-//            builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int id) {
-//                    Toast.makeText(getActivity(), "Clicked " + caserepTD, Toast.LENGTH_SHORT).show();
-//
-//                    mManager.setPreferenceData(mManager.PREF_REPORTID, caserepTD);
-//
-//                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-//                    fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-//                }
-//            });
-//            builder.setNeutralButton("ลบ", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    mDbHelper.DeleteReport1(caserepTD,
-//                            mDbHelper.TABLE_CASESCENE.toString());
-//                    mDbHelper.DeleteReport1(caserepTD,
-//                            mDbHelper.TABLE_receivingcase.toString());
-//                    mDbHelper.DeleteReport1(caserepTD,
-//                            mDbHelper.TABLE_otherofficialinscene.toString());
-//                    mDbHelper.DeleteReport1(caserepTD,
-//                            mDbHelper.TABLE_SUFFERER.toString());
-//                    Toast.makeText(getActivity(), "ลบ " + caserepTD, Toast.LENGTH_SHORT).show();
-//                    Log.i("log_show draft 1", " delete " + caserepTD);
-//
-//                    initializeData();
-//                    // swipeContainer.setOnRefreshListener((SwipeRefreshLayout.OnRefreshListener) getActivity());
-//                }
-//            });
-//
-//            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.dismiss();
-//                }
-//            });
-//            builder.create();
-//            builder.show();
-//
-//            //Snackbar.make(view, "Clicked " + csidata.caseReportID, Snackbar.LENGTH_LONG)
-//            //       .setAction("Action", null).show();
-//
-//
-//        }
-//    };
 
     public void onBackPressed() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
@@ -382,27 +256,6 @@ public class NoticeCaseListFragment extends Fragment {
             if (apiListNoticeCase != null) {
                 Log.d(TAG, apiListNoticeCase.getStatus());
                 Log.d(TAG, String.valueOf(apiListNoticeCase.getData().getResult().size()));
-
-                // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
-                caseList = apiListNoticeCase.getData().getResult();
-
-                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase
-                int size = caseList.size();
-                List<TbNoticeCase> tbNoticeCases = new ArrayList<>(size);
-                for (int i = 0; i < size; i++) {
-                    tbNoticeCases.add(caseList.get(i).getTbNoticeCase());
-                }
-                mDbHelper.syncNoticeCase(tbNoticeCases);
-
-                // เอาข้อมูลไปแสดงใน RV
-                apiNoticeCaseListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "Update apiNoticeCaseListAdapter");
-
-                if (swipeContainer.isRefreshing()) {
-                    swipeContainer.setRefreshing(false);
-                }
-                apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
-                rvDraft.setAdapter(apiNoticeCaseListAdapter);
             }
         }
     }

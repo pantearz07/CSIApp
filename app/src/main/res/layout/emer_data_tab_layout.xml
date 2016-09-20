@@ -11,7 +11,7 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayoutCSI"
-        app:tabGravity="fill"
+        app:tabGravity="center"
         app:tabMode="fixed"
         android:background="@color/dark_brown"
         app:tabIndicatorColor="@color/dark_red"

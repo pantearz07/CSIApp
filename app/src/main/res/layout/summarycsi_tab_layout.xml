@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/rootLayoutCSI"
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -84,6 +84,51 @@
                     android:entries="@array/subcasetypeproperties" />
 
                 <TextView
+                    android:id="@+id/txtInqInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="พนักงานสอบสวน: "
+                    android:textSize="@dimen/small_text" />
+                <TextView
+                    android:id="@+id/edtInqInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text=""
+                    android:textSize="@dimen/small_text" />
+                <TextView
+                    android:id="@+id/txtInvInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="ผู้ตรวจสถานที่เกิดเหตุ: "
+                    android:textSize="@dimen/small_text" />
+                <TextView
+                    android:id="@+id/edtInvInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:layout_gravity="center_horizontal"
+                    android:text="-"
+                    android:textSize="@dimen/small_text" />
+                <TextView
+                    android:id="@+id/txtPoliceStation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="สถานีตำรวจ: "
+                    android:textSize="@dimen/small_text" />
+                <TextView
+                    android:id="@+id/edtPoliceStation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text=""
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="@dimen/small_text" />
+                <TextView
                     android:id="@+id/txtStatusTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -101,22 +146,37 @@
                     android:textSize="@dimen/mmedium_text" />
 
                 <TextView
-                    android:id="@+id/txtInvestDateTimeTitle"
+                    android:id="@+id/txtSceneNoticeDateTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="วันเวลาที่เริ่มตรวจสถานที่เกิดเหตุ : "
+                    android:text="วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ: "
                     android:textSize="@dimen/small_text" />
 
                 <TextView
-                    android:id="@+id/edtInvestDateTime"
+                    android:id="@+id/edtSceneNoticeDateTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/mmedium_text" />
+                <TextView
+                    android:id="@+id/edtCompleteSceneDateTimeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="วันเวลาที่ตรวจคดีเสร็จ"
+                    android:textSize="@dimen/small_text" />
 
+                <TextView
+                    android:id="@+id/edtCompleteSceneDateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="-"
+                    android:textSize="@dimen/mmedium_text" />
                 <TextView
                     android:id="@+id/txtUpdateDateTimeTitle"
                     android:layout_width="wrap_content"
