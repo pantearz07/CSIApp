@@ -4,8 +4,10 @@ package com.scdc.csiapp.inqmain;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +28,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -35,8 +41,14 @@ import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
 
+import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
-public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener {
+
+public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    // Google play services
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -519,6 +531,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
     public void onStart() {
         super.onStart();
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
         Log.i("Check", "onStart recieve");
     }
 
@@ -533,6 +548,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     @Override
     public void onStop() {
         super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
         Log.i("onStop", "onStop receive");
     }
 
@@ -547,7 +565,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnButtonSearchMap:
-                if (lat != null || lng != null) {
+                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
+                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
+                if (EmergencyTabFragment.tbNoticeCase.Latitude != null || EmergencyTabFragment.tbNoticeCase.Longitude != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
                     Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
@@ -563,11 +583,48 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchLatLong:
+                lat = String.valueOf(mLastLocation.getLatitude());
+                lng = String.valueOf(mLastLocation.getLongitude());
                 Log.d(TAG, "Go to Google map " + lat + " " + lng);
-                EmergencyTabFragment.tbNoticeCase.Latitude = lat;
-                EmergencyTabFragment.tbNoticeCase.Longitude = lng;
+                valueLat.setText(lat);
+                valueLong.setText(lng);
+                EmergencyTabFragment.tbNoticeCase.Latitude = valueLat.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.Longitude = valueLong.getText().toString();
                 break;
         }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected");
+        Log.d(TAG, "Call Location Services");
+        LocationRequest request = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(10)//อ่านค่าใหม่ทุก 10 เมตร
+                .setFastestInterval(1000)//อ่านค่าแบบรวดเร็วภายใน 1 วินาที
+                .setInterval(10000);//อ่านค่าเป็นช่วงๆ ทุก 10 วินาที
+        FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this);
+
+        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Log.d(TAG, "get mLastLocation");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation.set(location);
+        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
     }
 
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener {

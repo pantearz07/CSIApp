@@ -4,8 +4,10 @@ package com.scdc.csiapp.invmain;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +28,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -37,7 +43,14 @@ import com.scdc.csiapp.main.TimeDialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ReceiveDataTabFragment extends Fragment {
+import static com.google.android.gms.location.LocationServices.API;
+import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+
+public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    // Google play services
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+
     private static final String TAG = "DEBUG-ReceiveDataTabFragment";
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
@@ -58,7 +71,7 @@ public class ReceiveDataTabFragment extends Fragment {
     private String sAddrDetail, sDistrict, sAmphur, sProvinceName, sPostalCode, sLatitude,
             sLongitude, sFeatureInsideDetail;
     private AutoCompleteTextView autoCompleteDistrict, autoCompleteAmphur, autoCompleteProvince2;
-    private EditText editAddrDetail, edtReportNo,editCircumstanceOfCaseDetail, edtVehicleDetail;
+    private EditText editAddrDetail, edtReportNo, editCircumstanceOfCaseDetail, edtVehicleDetail;
     private Button btnButtonSearchLatLong, btnButtonSearchMap;
     private Spinner spinnerDistrict, spinnerAmphur, spinnerProvince;
 
@@ -116,13 +129,25 @@ public class ReceiveDataTabFragment extends Fragment {
         reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
         cd = new ConnectionDetector(getActivity());
         updateDT = getDateTime.updateDataDateTime();
+
+
+        // ทำการสร้างตัวเชื่อกับ Google services
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(API)
+                    .build();
+            Log.d(TAG, "Create Google services");
+        }
+
         Log.i("viewReceiveCSI", reportID);
         // new showScheduleInvestOfCase().execute(reportID);
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
         //Form
 
         edtReportNo = (EditText) viewReceiveCSI.findViewById(R.id.edtReportNo);
-       // EmergencyTabFragment.tbNoticeCase.ReportNo = editTextPhone1.getText().toString();
+        // EmergencyTabFragment.tbNoticeCase.ReportNo = editTextPhone1.getText().toString();
         editTextPhone1 = (TextView) viewReceiveCSI.findViewById(R.id.editTextPhone);
 //        if (EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
 //            editTextPhone1.setText(EmergencyTabFragment.tbNoticeCase.CaseTel);
@@ -387,6 +412,13 @@ public class ReceiveDataTabFragment extends Fragment {
         });
 
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
+        btnButtonSearchLatLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                valueLat.setText(String.valueOf(mLastLocation.getLatitude()));
+                valueLong.setText(String.valueOf(mLastLocation.getLongitude()));
+            }
+        });
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
 
@@ -408,6 +440,9 @@ public class ReceiveDataTabFragment extends Fragment {
 
     public void onStart() {
         super.onStart();
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
         Log.i("Check", "onStart recieve");
 
     }
@@ -425,6 +460,9 @@ public class ReceiveDataTabFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
         Log.i("onStop", "onStop receive");
     }
 
@@ -436,4 +474,36 @@ public class ReceiveDataTabFragment extends Fragment {
     }
 
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected");
+        Log.d(TAG, "Call Location Services");
+        LocationRequest request = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(10)//อ่านค่าใหม่ทุก 10 เมตร
+                .setFastestInterval(1000)//อ่านค่าแบบรวดเร็วภายใน 1 วินาที
+                .setInterval(10000);//อ่านค่าเป็นช่วงๆ ทุก 10 วินาที
+        FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this);
+
+        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Log.d(TAG, "get mLastLocation");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation.set(location);
+        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+    }
 }
