@@ -130,11 +130,11 @@ public class InqMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Consume input from header view. This disables the ripple effect
-                mDrawerLayout.closeDrawers();
-                FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
-                ftprofile.replace(R.id.containerView, profileFragment);
-                ftprofile.addToBackStack(null);
-                ftprofile.commit();
+//                mDrawerLayout.closeDrawers();
+//                FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
+//                ftprofile.replace(R.id.containerView, profileFragment);
+//                ftprofile.addToBackStack(null);
+//                ftprofile.commit();
             }
         });
 
@@ -161,10 +161,10 @@ public class InqMainActivity extends AppCompatActivity {
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_police) {
-                    FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
-                    ftpolice.replace(R.id.containerView, policeListFragment);
-                    ftpolice.addToBackStack(null);
-                    ftpolice.commit();
+//                    FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
+//                    ftpolice.replace(R.id.containerView, policeListFragment);
+//                    ftpolice.addToBackStack(null);
+//                    ftpolice.commit();
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {

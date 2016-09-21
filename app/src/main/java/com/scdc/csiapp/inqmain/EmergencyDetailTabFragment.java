@@ -36,7 +36,7 @@ import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
 
 
-public class EmergencyDetailTabFragment extends Fragment {
+public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener {
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -59,13 +59,19 @@ public class EmergencyDetailTabFragment extends Fragment {
     String sKnowCaseDate_New = "";
     TextView edtUpdateDateTime2;
     EditText editTextPhone1;
-    private String sAddrDetail,
-            sDistrict, sAmphur, sProvinceName, sLatitude,
-            sLongitude;
+    private String sAddrDetail, sDistrictName, sAmphurName, sProvinceName, provinceid, amphurid, districtid;
     private Spinner spinnerDistrict, spinnerAmphur, spinnerProvince;
+    private String selectedProvince, selectedAmphur, selectedDistrict;
+    String[][] mProvinceArray;
+    String[] mProvinceArray2;
+    String[][] mAmphurArray;
+    String[] mAmphurArray2;
+    String[][] mDistrictArray;
+    String[] mDistrictArray2;
+
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
-
+    String lat, lng;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
 
     private TextView editReceiveCaseDate, editReceiveCaseTime;
@@ -153,12 +159,13 @@ public class EmergencyDetailTabFragment extends Fragment {
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
         spinnerAmphur = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAmphur);
         spinnerDistrict = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerDistrict);
-        final String[] selectedProvince = new String[1];
-        final String[] selectedAmphur = new String[1];
-        final String[] selectedDistrict = new String[1];
-        final String mProvinceArray[][] = dbHelper.SelectAllProvince();
+        amphurid = EmergencyTabFragment.tbNoticeCase.AMPHUR_ID;
+        districtid = EmergencyTabFragment.tbNoticeCase.DISTRICT_ID;
+        provinceid = EmergencyTabFragment.tbNoticeCase.PoliceStationID;
+
+        mProvinceArray = dbHelper.SelectAllProvince();
         if (mProvinceArray != null) {
-            String[] mProvinceArray2 = new String[mProvinceArray.length];
+            final String[] mProvinceArray2 = new String[mProvinceArray.length];
             for (int i = 0; i < mProvinceArray.length; i++) {
                 mProvinceArray2[i] = mProvinceArray[i][2];
                 Log.i(TAG + " show mProvinceArray2", mProvinceArray2[i].toString());
@@ -170,116 +177,71 @@ public class EmergencyDetailTabFragment extends Fragment {
         } else {
             Log.i(TAG + " show mProvinceArray", "null");
         }
-        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
-        if (EmergencyTabFragment.tbNoticeCase.PROVINCE_ID != null) {
+        mAmphurArray = dbHelper.SelectAllAumphur();
+        if (mAmphurArray != null) {
+            String[] mAmphurArray2 = new String[mAmphurArray.length];
+            for (int i = 0; i < mAmphurArray.length; i++) {
+                mAmphurArray2[i] = mAmphurArray[i][2];
+                Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
+            spinnerAmphur.setAdapter(adapterAmphur);
+        } else {
+            spinnerAmphur.setAdapter(null);
+            selectedAmphur = null;
+            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+        }
+        mDistrictArray = dbHelper.SelectAllDistrict();
+        if (mDistrictArray != null) {
+            String[] mDistrictArray2 = new String[mDistrictArray.length];
+            for (int i = 0; i < mDistrictArray.length; i++) {
+                mDistrictArray2[i] = mDistrictArray[i][2];
+                Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
+            spinnerDistrict.setAdapter(adapterDistrict);
+        } else {
+            spinnerDistrict.setAdapter(null);
+            selectedDistrict = null;
+            Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
+        }
+        //เเสดงค่าเดิม
+        if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+            spinnerProvince.setSelection(0);
+        } else {
             for (int i = 0; i < mProvinceArray.length; i++) {
-                if (EmergencyTabFragment.tbNoticeCase.PROVINCE_ID.trim().equals(mProvinceArray[i][0].toString())) {
+                if (provinceid.trim().equals(mProvinceArray[i][0])) {
                     spinnerProvince.setSelection(i);
                     break;
                 }
             }
         }
-        spinnerProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                selectedProvince[0] = mProvinceArray[position][0];
-                Log.i(TAG + " show selectedProvince", selectedProvince[0]);
-                EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince[0];
-                //ดึงค่า amphur
-                final String mAmphurArray[][] = dbHelper.SelectAmphur(selectedProvince[0]);
-                if (mAmphurArray != null) {
-                    String[] mAmphurArray2 = new String[mAmphurArray.length];
-                    for (int i = 0; i < mAmphurArray.length; i++) {
-                        mAmphurArray2[i] = mAmphurArray[i][2];
-                        Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
-                    }
-                    ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
-                            android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
-                    spinnerAmphur.setAdapter(adapterAmphur);
-                } else {
-                    spinnerAmphur.setAdapter(null);
-                    selectedAmphur[0] = null;
-                    Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur[0]));
+        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+            spinnerProvince.setSelection(0);
+        } else {
+            for (int i = 0; i < mProvinceArray.length; i++) {
+                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
+                    spinnerAmphur.setSelection(i);
+                    break;
                 }
-                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
-                if (EmergencyTabFragment.tbNoticeCase.AMPHUR_ID != null) {
-                    for (int i = 0; i < mProvinceArray.length; i++) {
-                        if (EmergencyTabFragment.tbNoticeCase.AMPHUR_ID.trim().equals(mAmphurArray[i][0].toString())) {
-                            spinnerAmphur.setSelection(i);
-                            break;
-                        }
-                    }
+            }
+        }
+        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+            spinnerProvince.setSelection(0);
+        } else {
+            for (int i = 0; i < mDistrictArray.length; i++) {
+                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
+                    spinnerDistrict.setSelection(i);
+                    break;
                 }
-                spinnerAmphur.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedAmphur[0] = mAmphurArray[position][0];
-                        Log.i(TAG + " show selectedAmphur", selectedAmphur[0]);
-
-                        EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
-                        //ดึงค่า District
-
-                        final String mDistrictArray[][] = dbHelper.SelectDistrict(selectedAmphur[0]);
-                        if (mDistrictArray != null) {
-                            String[] mDistrictArray2 = new String[mDistrictArray.length];
-                            for (int i = 0; i < mDistrictArray.length; i++) {
-                                mDistrictArray2[i] = mDistrictArray[i][2];
-                                Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
-                            }
-                            ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-                                    android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-                            spinnerDistrict.setAdapter(adapterDistrict);
-                        } else {
-                            spinnerDistrict.setAdapter(null);
-                            selectedDistrict[0] = null;
-                            Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict[0]));
-                        }
-
-                        spinnerDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                selectedDistrict[0] = mDistrictArray[position][0];
-                                Log.i(TAG + " show selectedDistrict", selectedDistrict[0]);
-                                EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict[0];
-                            }
-
-                            public void onNothingSelected(AdapterView<?> parent) {
-                                selectedDistrict[0] = mDistrictArray[0][0];
-                                Log.i(TAG + " show selectedDistrict", selectedDistrict[0]);
-                                EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict[0];
-                            }
-
-                        });
-                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
-                        if (EmergencyTabFragment.tbNoticeCase.DISTRICT_ID != null) {
-                            for (int i = 0; i < mDistrictArray.length; i++) {
-                                if (EmergencyTabFragment.tbNoticeCase.DISTRICT_ID.trim().equals(mDistrictArray[i][0].toString())) {
-                                    spinnerDistrict.setSelection(i);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        selectedAmphur[0] = mAmphurArray[0][0];
-                        Log.i(TAG + " show selectedAmphur", selectedAmphur[0]);
-                        EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
-                    }
-                });
-
             }
+        }
+        spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+        spinnerProvince.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+        spinnerAmphur.setOnItemSelectedListener(new EmerOnItemSelectedListener());
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                selectedProvince[0] = mProvinceArray[0][0];
-                Log.i(TAG + " show selectedProvince", selectedProvince[0]);
-                EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince[0];
-
-            }
-        });
 
         //datetime
         editReceiveCaseDate = (TextView) viewReceiveCSI
@@ -293,8 +255,6 @@ public class EmergencyDetailTabFragment extends Fragment {
 
                 DateDialog dialogReceiveCaseDate = new DateDialog(view);
                 dialogReceiveCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-
-
             }
 
         });
@@ -380,31 +340,14 @@ public class EmergencyDetailTabFragment extends Fragment {
 
         });
 
-        Log.d(TAG, "Go to Google map " + EmergencyTabFragment.tbNoticeCase.Latitude + " " + EmergencyTabFragment.tbNoticeCase.Latitude);
-        final String lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-        final String lng = EmergencyTabFragment.tbNoticeCase.Longitude;
-        btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
-        btnButtonSearchMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Go to Google map " + lat + " " + lng);
-                // Searches for 'Main Street' near San Francisco
-//                Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=101+main+street");
-//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                mapIntent.setPackage("com.google.android.apps.maps");
-//                startActivity(mapIntent);
 
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                startActivity(mapIntent);
-
-            }
-        });
-        btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
-        // btnButtonSearchMap.setOnClickListener(new ReceiveOnClickListener());
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
+        btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
+        btnButtonSearchMap.setOnClickListener(this);
+        btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
+        btnButtonSearchMap.setOnClickListener(this);
+
 //        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
 //        if (mLastLocation != null) {
 //            Log.d(TAG, "get mLastLocation");
@@ -413,8 +356,7 @@ public class EmergencyDetailTabFragment extends Fragment {
 ////            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
 ////            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
 //        }
-        EmergencyTabFragment.tbNoticeCase.Latitude = "0";
-        EmergencyTabFragment.tbNoticeCase.Longitude = "0";
+
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
         if (EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail != "") {
             editCircumstanceOfCaseDetail.setText(EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
@@ -438,7 +380,7 @@ public class EmergencyDetailTabFragment extends Fragment {
         });
         final Spinner spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
 
-        final String[]  Antecedent = getResources().getStringArray(R.array.antecedent);
+        final String[] Antecedent = getResources().getStringArray(R.array.antecedent);
         ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, Antecedent);
         spinnerAntecedent.setAdapter(adapterEnglish);
@@ -601,4 +543,110 @@ public class EmergencyDetailTabFragment extends Fragment {
 
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnButtonSearchMap:
+                if (lat != null || lng != null) {
+                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                } else {
+                    //Searches for 'Locale name' province amphur district
+                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + EmergencyTabFragment.tbNoticeCase.LocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+                break;
+            case R.id.btnButtonSearchLatLong:
+                Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                EmergencyTabFragment.tbNoticeCase.Latitude = lat;
+                EmergencyTabFragment.tbNoticeCase.Longitude = lng;
+                break;
+        }
+    }
+
+    public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+            String selectedItem = parent.getItemAtPosition(pos).toString();
+
+            //check which spinner triggered the listener
+            switch (parent.getId()) {
+
+                case R.id.spinnerDistrict:
+                    selectedDistrict = mDistrictArray[pos][0];
+                    sDistrictName = mDistrictArray[pos][2].toString();
+                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+                    EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
+                    Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                    break;
+                case R.id.spinnerAmphur:
+                    selectedAmphur = mAmphurArray[pos][0];
+                    sAmphurName = mAmphurArray[pos][2].toString();
+                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+                    EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
+                    Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                    //   EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
+                    //ดึงค่า District
+
+                    mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
+                    if (mDistrictArray != null) {
+                        String[] mDistrictArray2 = new String[mDistrictArray.length];
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            mDistrictArray2[i] = mDistrictArray[i][2];
+                            Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
+                        }
+                        ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
+                        spinnerDistrict.setAdapter(adapterDistrict);
+                    } else {
+                        spinnerDistrict.setAdapter(null);
+                        selectedDistrict = null;
+                        Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
+                    }
+                    spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+                    break;
+                case R.id.spinnerProvince:
+                    selectedProvince = mProvinceArray[pos][0];
+                    sProvinceName = mProvinceArray[pos][2].toString();
+                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
+                    EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
+                    Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+                    //provinceid = selectedProvince[0];
+                    //ดึงค่า amphur
+                    mAmphurArray = dbHelper.SelectAmphur(selectedProvince);
+                    if (mAmphurArray != null) {
+                        String[] mAmphurArray2 = new String[mAmphurArray.length];
+                        for (int i = 0; i < mAmphurArray.length; i++) {
+                            mAmphurArray2[i] = mAmphurArray[i][2];
+                            Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
+                        }
+                        ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
+                        spinnerAmphur.setAdapter(adapterAmphur);
+                    } else {
+                        spinnerAmphur.setAdapter(null);
+                        selectedAmphur = null;
+                        Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+                    }
+                    spinnerAmphur.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+                    break;
+                case R.id.spinnerAntecedent:
+
+                    break;
+            }
+
+
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Do nothing.
+        }
+    }
 }

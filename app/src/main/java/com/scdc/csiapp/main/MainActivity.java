@@ -153,10 +153,10 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(),"Send Selected", Toast.LENGTH_SHORT).show();
                 mDrawerLayout.closeDrawers();
                 //mFragmentTransaction.replace(R.id.containerView, profileFragment).commit();
-                FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
-                ftprofile.replace(R.id.containerView, profileFragment);
-                ftprofile.addToBackStack(null);
-                ftprofile.commit();
+//                FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
+//                ftprofile.replace(R.id.containerView, profileFragment);
+//                ftprofile.addToBackStack(null);
+//                ftprofile.commit();
             }
         });
 
@@ -182,16 +182,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_schedule) {
-                    FragmentTransaction ftschedule = mFragmentManager.beginTransaction();
-                    ftschedule.replace(R.id.containerView, scheduleInvestigatorsFragment);
-                    ftschedule.addToBackStack(null);
-                    ftschedule.commit();
+//                    FragmentTransaction ftschedule = mFragmentManager.beginTransaction();
+//                    ftschedule.replace(R.id.containerView, scheduleInvestigatorsFragment);
+//                    ftschedule.addToBackStack(null);
+//                    ftschedule.commit();
                 }
                 if (menuItem.getItemId() == R.id.nav_item_police) {
-                    FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
-                    ftpolice.replace(R.id.containerView, policeListFragment);
-                    ftpolice.addToBackStack(null);
-                    ftpolice.commit();
+//                    FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
+//                    ftpolice.replace(R.id.containerView, policeListFragment);
+//                    ftpolice.addToBackStack(null);
+//                    ftpolice.commit();
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {

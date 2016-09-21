@@ -1641,6 +1641,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
     }
 
+
     public String[][] SelectAllProvince() {
         // TODO Auto-generated method stub
 
@@ -1677,7 +1678,78 @@ public class DBHelper extends SQLiteAssetHelper {
         }
 
     }
+    public String[][] SelectAllAumphur() {
+        // TODO Auto-generated method stub
 
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM amphur";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        for (int j = 0; j < cursor.getColumnCount(); j++) {
+                            arrData[i][j] = cursor.getString(j);
+                        }
+                        // Log.i(TAG, "show SelectAllProvince " + arrData[i][0]);
+                        i++;
+                    } while (cursor.moveToNext());
+
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+    public String[][] SelectAllDistrict() {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM district";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        for (int j = 0; j < cursor.getColumnCount(); j++) {
+                            arrData[i][j] = cursor.getString(j);
+                        }
+                        // Log.i(TAG, "show SelectAllProvince " + arrData[i][0]);
+                        i++;
+                    } while (cursor.moveToNext());
+
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
     public String[][] SelectAmphur(String provinceid) {
         // TODO Auto-generated method stub
 
@@ -1688,7 +1760,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM amphur WHERE PROVINCE_ID = '" + provinceid + "'";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, " amphur " + String.valueOf(cursor.getCount()));
+            Log.i(TAG, provinceid+" amphur " + String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getCount()][cursor

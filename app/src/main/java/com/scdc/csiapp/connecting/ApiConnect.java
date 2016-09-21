@@ -47,8 +47,8 @@ import okhttp3.Response;
  */
 public class ApiConnect {
 
-    private String urlMobileIP = "http://192.168.0.100/mCSI/C_mobile/";
-    private String defaultIP = "192.168.0.100";
+    private String urlMobileIP = "http://192.168.4.100/mCSI/C_mobile/";
+    private String defaultIP = "192.168.4.100";
     // private String URL = "http://192.168.0.89/mCSI/C_mobile/";
     private String TAG = "DEBUG-ApiConnect";
     private Context mContext;
