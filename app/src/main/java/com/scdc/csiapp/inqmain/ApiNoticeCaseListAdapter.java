@@ -88,9 +88,18 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
 
         ApiNoticeCase apiNoticeCase = apiNoticeCases.get(position);
         csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
-        String positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + apiNoticeCase.getTbDistrict().DISTRICT_NAME
-                + " " + apiNoticeCase.getTbAmphur().AMPHUR_NAME + " " + apiNoticeCase.getTbProvince().PROVINCE_NAME;
-
+        String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
+        if (apiNoticeCase.getTbDistrict() != null) {
+            DISTRICT_NAME = apiNoticeCase.getTbDistrict().DISTRICT_NAME;
+        }
+        if (apiNoticeCase.getTbAmphur() != null) {
+            AMPHUR_NAME = apiNoticeCase.getTbAmphur().AMPHUR_NAME;
+        }
+        if (apiNoticeCase.getTbProvince() != null) {
+            PROVINCE_NAME = apiNoticeCase.getTbProvince().PROVINCE_NAME;
+        }
+        String positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
+                + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
         csidataholder.positioncase.setText("เกิดที่: " + positioncase);
 
         if (apiNoticeCase.getTbNoticeCase().PoliceStationID == "") {
