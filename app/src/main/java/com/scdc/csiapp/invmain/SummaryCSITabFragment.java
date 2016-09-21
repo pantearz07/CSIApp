@@ -30,6 +30,7 @@ import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.inqmain.EmergencyTabFragment;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 
@@ -61,15 +62,25 @@ public class SummaryCSITabFragment extends Fragment {
     ConnectionDetector cd;
     GetDateTime getDateTime;
     EditText edtReportNo;
-    TextView edtStatus, edtUpdateDateTime2,  edtSceneNoticeDateTime,edtCompleteSceneDateTime ,edtCompleteSceneDateTimeTitle,edtUpdateDateTime,txtUpdateDateTimeTitle,edtInqInfo, edtInvInfo, edtPoliceStation;
-    String[] updateDT, selectedCaseType, selectedSubCaseType;
+
+    TextView edtStatus, edtUpdateDateTime2, edtSceneNoticeDateTime, edtCompleteSceneDateTime, edtCompleteSceneDateTimeTitle, edtUpdateDateTime, txtUpdateDateTimeTitle, edtInqInfo, edtInvInfo, edtPoliceStation;
+    String[] updateDT;
     String message = "";
-    String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray;
-    String[] mTypeCenterArray2;
+    String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
+    String[] mTypeCenterArray2, mTypeAgencyArray2,mSubCaseTypeArray2;
+    ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
+
     Spinner spnCaseType, spnSubCaseType;
-    String caseReportID,noticeCaseID,sSCDCAgencyCode;
+    String selectedCaseType, selectedSubCaseType;
+    String sCaseTypeID, sSubCaseTypeID = null;
+
+    String SelectedAgencyID, SelectedCenterID;
+    Spinner spnSCDCcenterType, spnSCDCagencyType;
+    String selectedCenter, selectedAgencyCode;
+    String caseReportID, noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
     Button btnNoticecase, btnDownloadfile;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,11 +96,9 @@ public class SummaryCSITabFragment extends Fragment {
         cd = new ConnectionDetector(getActivity());
 
 
-       // noticeCaseID = csiDataTabFragment.tbCaseScene.NoticeCaseID;
+        // noticeCaseID = csiDataTabFragment.tbCaseScene.NoticeCaseID;
         //caseReportID = csiDataTabFragment.tbCaseScene.caseReportID;
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
-        spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
-        spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
@@ -101,21 +110,27 @@ public class SummaryCSITabFragment extends Fragment {
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
         //วันเวลาที่ตรวจคดีเสร็จ
-        edtCompleteSceneDateTimeTitle= (TextView) viewSummaryCSI.findViewById(R.id.edtCompleteSceneDateTimeTitle);
+        edtCompleteSceneDateTimeTitle = (TextView) viewSummaryCSI.findViewById(R.id.edtCompleteSceneDateTimeTitle);
         edtCompleteSceneDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtCompleteSceneDateTime);
         ///วันเวลาที่แก้ไขข้อมูลล่าสุด
-        txtUpdateDateTimeTitle= (TextView) viewSummaryCSI.findViewById(R.id.txtUpdateDateTimeTitle);
-        edtUpdateDateTime= (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
+        txtUpdateDateTimeTitle = (TextView) viewSummaryCSI.findViewById(R.id.txtUpdateDateTimeTitle);
+        edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
         btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
         btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
         btnNoticecase.setText("อัพโหลดข้อมูล");
+
+        spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
+        spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
+        spnCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+        spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+//        sCaseTypeID = EmergencyTabFragment.tbNoticeCase.CaseTypeID;
+//        sSubCaseTypeID = EmergencyTabFragment.tbNoticeCase.SubCaseTypeID;
+
         //โชว์dropdown casetype
         //ดึงค่าจาก TbCaseSceneType
-        final String[] selectedCaseType = new String[1];
-        final String[] selectedSubCaseType = new String[1];
         mCaseTypeArray = dbHelper.SelectCaseType();
         if (mCaseTypeArray != null) {
             String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
@@ -130,73 +145,43 @@ public class SummaryCSITabFragment extends Fragment {
         } else {
             Log.i(TAG + " show mCaseTypeArray", "null");
         }
-//        if (EmergencyTabFragment.tbNoticeCase.CaseTypeID != null) {
-//            for (int i = 0; i < mCaseTypeArray.length; i++) {
-//                if (EmergencyTabFragment.tbNoticeCase.CaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
-//                    spnCaseType.setSelection(i);
-//                    break;
-//                }
-//            }
-//        }
-
-        spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCaseType[0] = mCaseTypeArray[position][0];
-                Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
-                //EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType[0];
-                //ดึงค่าจาก TbSubCaseSceneType
-                mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                if (mSubCaseTypeArray != null) {
-                    String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                        mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                        Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
-                    }
-                    ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                            android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-                    spnSubCaseType.setAdapter(adapterSubCaseType);
-                } else {
-                    spnSubCaseType.setAdapter(null);
-                    selectedSubCaseType[0] = null;
-                   // EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
-                    Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
+        mSubCaseTypeArray = dbHelper.SelectSubCaseType();
+        if (mSubCaseTypeArray != null) {
+            String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+            spnSubCaseType.setAdapter(adapterSubCaseType);
+        } else {
+            spnSubCaseType.setAdapter(null);
+            selectedSubCaseType = null;
+            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
+        }
+        //เเสดงค่าเดิม
+        if (sCaseTypeID == null || sCaseTypeID.equals("") || sCaseTypeID.equals("null")) {
+            spnCaseType.setSelection(0);
+        } else {
+            for (int i = 0; i < mCaseTypeArray.length; i++) {
+                if (sCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
+                    spnCaseType.setSelection(i);
+                    break;
                 }
-//                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
-//                if (EmergencyTabFragment.tbNoticeCase.SubCaseTypeID != null) {
-//                    mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(EmergencyTabFragment.tbNoticeCase.CaseTypeID);
-//                    for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-//                        if (EmergencyTabFragment.tbNoticeCase.SubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
-//                            spnSubCaseType.setSelection(i);
-//                            break;
-//                        }
-//                    }
-//                }
-
-                spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
-                        //EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
-                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-                    }
-
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
-                        //EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
-                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-                    }
-                });
             }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedCaseType[0] = mCaseTypeArray[0][0];
-                //EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType[0];
-                Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+        }
+        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
+            spnCaseType.setSelection(0);
+        } else {
+            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+                    spnSubCaseType.setSelection(i);
+                    break;
+                }
             }
-        });
+        }
+
 
         edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
@@ -278,15 +263,12 @@ public class SummaryCSITabFragment extends Fragment {
             public void onClick(View view) {
 
 
-
-
             }
         });
 
 
         return viewSummaryCSI;
     }
-
 
 
     public void onStart() {
@@ -312,7 +294,7 @@ public class SummaryCSITabFragment extends Fragment {
                 dialog.setMessage("อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์");
                 dialog.setPositiveButton("บันทึกแบบร่าง", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                       // uploadDataToServer();
+                        // uploadDataToServer();
                         Toast.makeText(getActivity(),
                                 "อัพโหลดข้อมูล บันทึกแบบร่าง เรียบร้อย", Toast.LENGTH_SHORT).show();
                     }
@@ -375,6 +357,7 @@ public class SummaryCSITabFragment extends Fragment {
             return true;
         }
     }
+
     class DownloadFile extends AsyncTask<String, Void, String> {
 
 
@@ -389,13 +372,13 @@ public class SummaryCSITabFragment extends Fragment {
             int count;
             String root = "";
             File myDir;
-            String fileoutput="";
+            String fileoutput = "";
             try {
                 root = Environment.getExternalStorageDirectory().toString();
                 myDir = new File(root + "/CSIFiles/Documents/");
                 myDir.mkdirs();
                 ConnectServer.updateIP();
-                String filepath = ConnectServer.urlWebIP+"csi_files/2559/July"+".doc";
+                String filepath = ConnectServer.urlWebIP + "csi_files/2559/July" + ".doc";
                 URL url = new URL(filepath);
                 URLConnection conexion = url.openConnection();
                 conexion.connect();
@@ -406,8 +389,8 @@ public class SummaryCSITabFragment extends Fragment {
                 InputStream input = new BufferedInputStream(url.openStream());
 
                 // Get File Name from URL
-                fileoutput = Environment.getExternalStorageDirectory()+"/CSIFiles/Documents/"+params[0]+".doc";
-                Log.i("fileoutput",filepath+":"+fileoutput);
+                fileoutput = Environment.getExternalStorageDirectory() + "/CSIFiles/Documents/" + params[0] + ".doc";
+                Log.i("fileoutput", filepath + ":" + fileoutput);
                 OutputStream output = new FileOutputStream(fileoutput);
                 //OutputStream output = new FileOutputStream("/sdcard/Download/"+fileName+".doc");
 
@@ -431,22 +414,114 @@ public class SummaryCSITabFragment extends Fragment {
 
             return fileoutput;
         }
-/*
-        private void publishProgress(String s) {
-        }
 
-        protected void onProgressUpdate(String... progress) {
-            // setting progress percentage
-            dialog.setProgress(Integer.parseInt(progress[0]));
-        }
-*/
+        /*
+                private void publishProgress(String s) {
+                }
+
+                protected void onProgressUpdate(String... progress) {
+                    // setting progress percentage
+                    dialog.setProgress(Integer.parseInt(progress[0]));
+                }
+        */
         protected void onPostExecute(String arrData) {
             Toast.makeText(getActivity(),
                     "ดาวน์โหลดเรียบร้อยแล้ว",
                     Toast.LENGTH_SHORT).show();
             Toast.makeText(getActivity(),
-                    "ไฟล์อยู่ใน "+arrData,
+                    "ไฟล์อยู่ใน " + arrData,
                     Toast.LENGTH_SHORT).show();
+        }
+    }
+    public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            String selectedItem = parent.getItemAtPosition(pos).toString();
+            switch (parent.getId()) {
+                case R.id.spnSCDCcenterType:
+                    selectedCenter = mTypeCenterArray[pos][0];
+                    Log.i(TAG + " show selectedCenter", selectedCenter);
+                    //
+                    mTypeAgencyArray = dbHelper.SelectSCDCAgency(selectedCenter);
+                    if (mTypeAgencyArray != null) {
+                        mTypeAgencyArray2 = new String[mTypeAgencyArray.length];
+                        for (int i = 0; i < mTypeAgencyArray.length; i++) {
+                            mTypeAgencyArray2[i] = mTypeAgencyArray[i][2];
+                            Log.i(TAG + " show mDistrictArray2", mTypeAgencyArray2[i].toString());
+                        }
+                        adapterSCDCagency = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mTypeAgencyArray2);
+                        spnSCDCagencyType.setAdapter(adapterSCDCagency);
+                    } else {
+                        spnSCDCagencyType.setAdapter(null);
+                        selectedAgencyCode = null;
+                      //  EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                        Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode));
+                    }
+                    spnSCDCagencyType.setOnItemClickListener((AdapterView.OnItemClickListener) new EmerOnItemSelectedListener());
+                    break;
+                case R.id.spnSCDCagencyType:
+                    //ค่า SCDCAgencyCode
+                    selectedAgencyCode = mTypeAgencyArray[pos][0];
+
+                    //EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                    Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+                    break;
+                case R.id.spnCaseType:
+                    selectedCaseType = mCaseTypeArray[pos][0];
+                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
+                   // EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                    //ดึงค่าจาก TbSubCaseSceneType
+                    mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType);
+                    if (mSubCaseTypeArray != null) {
+                        mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                        for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                            mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                            Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                        }
+                        ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                        spnSubCaseType.setAdapter(adapterSubCaseType);
+                    } else {
+                        spnSubCaseType.setAdapter(null);
+                        selectedSubCaseType = null;
+                      //  EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                        Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
+                    }
+                  //  Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
+                    spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+
+                    break;
+                case R.id.spnSubCaseType:
+                    selectedSubCaseType = mSubCaseTypeArray[pos][0];
+                    //EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                    Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
+
+                    break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            switch (parent.getId()) {
+
+                case R.id.spnSCDCagencyType:
+                    selectedAgencyCode = mTypeAgencyArray[0][0];
+
+                   // EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+
+                    break;
+                case R.id.spnCaseType:
+                    selectedCaseType = mCaseTypeArray[0][0];
+                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
+                   // EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                    break;
+                case R.id.spnSubCaseType:
+                    selectedSubCaseType = mSubCaseTypeArray[0][0];
+                  //  EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                    Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
+                    break;
+            }
         }
     }
 }

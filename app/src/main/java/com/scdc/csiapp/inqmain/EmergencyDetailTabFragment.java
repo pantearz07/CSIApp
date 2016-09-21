@@ -584,14 +584,14 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     sDistrictName = mDistrictArray[pos][2].toString();
                     Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
                     EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
-                    Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
                     break;
                 case R.id.spinnerAmphur:
                     selectedAmphur = mAmphurArray[pos][0];
                     sAmphurName = mAmphurArray[pos][2].toString();
                     Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
                     EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
-                    Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
                     //   EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
                     //ดึงค่า District
 
@@ -617,7 +617,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     sProvinceName = mProvinceArray[pos][2].toString();
                     Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
                     EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
-                    Log.i(TAG ,EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
                     //provinceid = selectedProvince[0];
                     //ดึงค่า amphur
                     mAmphurArray = dbHelper.SelectAmphur(selectedProvince);
@@ -647,6 +647,26 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
         public void onNothingSelected(AdapterView<?> parent) {
             // Do nothing.
+            switch (parent.getId()) {
+                case R.id.spinnerDistrict:
+                    selectedDistrict = mDistrictArray[0][0];
+                    sDistrictName = mDistrictArray[0][2].toString();
+                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+                    EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
+                    break;
+                case R.id.spinnerAmphur:
+                    selectedAmphur = mAmphurArray[0][0];
+                    sAmphurName = mAmphurArray[0][2].toString();
+                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+                    EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
+                    break;
+                case R.id.spinnerProvince:
+                    selectedProvince = mProvinceArray[0][0];
+                    sProvinceName = mProvinceArray[0][2].toString();
+                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
+                    EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
+                    break;
+            }
         }
     }
 }
