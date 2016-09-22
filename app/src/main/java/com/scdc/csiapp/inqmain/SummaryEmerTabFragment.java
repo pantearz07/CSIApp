@@ -373,7 +373,7 @@ public class SummaryEmerTabFragment extends Fragment {
             if (v == fabBtn) {
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
 
-                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getSCDCAgencyCode();
+                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
                 Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
                 EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
                 EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];

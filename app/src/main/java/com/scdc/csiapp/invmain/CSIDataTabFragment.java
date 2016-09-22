@@ -9,12 +9,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiCaseScene;
 
 
 public class CSIDataTabFragment extends Fragment {
@@ -37,6 +37,7 @@ public class CSIDataTabFragment extends Fragment {
     Snackbar snackbar;
     public static String Bundle_Key = "casescene";
     public static String Bundle_mode = "mode";
+    ApiCaseScene apiCaseScene;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,9 +69,9 @@ public class CSIDataTabFragment extends Fragment {
             }
         });
         Bundle args = getArguments();
-        //tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
-        //mode = args.getString(Bundle_mode);
-        Log.i(TAG, " casesceneID " );
+        apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
+        mode = args.getString(Bundle_mode);
+        //Log.i(TAG, " casesceneID " + apiCaseScene.getTbCaseScene().CaseReportID);
         return x;
 
     }
