@@ -35,7 +35,7 @@ public class ApiLoginStatus {
         this.data = data;
     }
 
-    public static class DataEntity {
+    public class DataEntity {
         private String action;
         private String reason;
         /**
@@ -69,7 +69,7 @@ public class ApiLoginStatus {
             this.result = result;
         }
 
-        public static class ResultEntity {
+        public class ResultEntity {
             /**
              * id_users : inq1
              * id_permission : 4
@@ -119,7 +119,7 @@ public class ApiLoginStatus {
                 this.official = official;
             }
 
-            public static class UsersEntity {
+            public class UsersEntity {
                 private String id_users;
                 private String id_permission;
                 private String pass;
@@ -212,7 +212,7 @@ public class ApiLoginStatus {
                 }
             }
 
-            public static class OfficialEntity {
+            public class OfficialEntity {
                 private String OfficialID;
                 private String FirstName;
                 private String LastName;

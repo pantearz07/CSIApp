@@ -34,7 +34,7 @@ public class ApiStatus {
         this.data = data;
     }
 
-    public static class DataBean {
+    public class DataBean {
         private String action;
         private String reason;
 

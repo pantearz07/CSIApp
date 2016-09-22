@@ -37,7 +37,7 @@ public class ApiListNoticeCase {
         this.data = data;
     }
 
-    public static class DataEntity {
+    public class DataEntity {
         private String action;
         private String reason;
         /**
