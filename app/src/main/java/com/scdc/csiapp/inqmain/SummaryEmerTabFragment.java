@@ -57,7 +57,7 @@ public class SummaryEmerTabFragment extends Fragment {
     String[] updateDT;
     String message = "";
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
-    String[] mTypeCenterArray2, mTypeAgencyArray2,mSubCaseTypeArray2;
+    String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
 
     Button btnNoticecase, btnDownloadfile;
@@ -143,6 +143,7 @@ public class SummaryEmerTabFragment extends Fragment {
             Log.i(TAG + " show mCaseTypeArray", "null");
         }
         mSubCaseTypeArray = dbHelper.SelectSubCaseType();
+        Log.d(TAG, String.valueOf(mSubCaseTypeArray.length));
         if (mSubCaseTypeArray != null) {
             mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
             for (int i = 0; i < mSubCaseTypeArray.length; i++) {
@@ -168,16 +169,16 @@ public class SummaryEmerTabFragment extends Fragment {
                 }
             }
         }
-        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
-            spnCaseType.setSelection(0);
-        } else {
-            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
-                    spnSubCaseType.setSelection(i);
-                    break;
-                }
-            }
-        }
+//        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
+//            spnSubCaseType.setSelection(0);
+//        } else {
+//            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+//                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+//                    spnSubCaseType.setSelection(i);
+//                    break;
+//                }
+//            }
+//        }
 
         edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
@@ -254,33 +255,7 @@ public class SummaryEmerTabFragment extends Fragment {
             btnDownloadfile.setEnabled(false);
         }
 
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getSCDCAgencyCode();
-                Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
-                EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
-                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                if (EmergencyTabFragment.tbNoticeCase != null) {
-                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
-                        }
-                    }
-                }
-            }
-        });
+        fabBtn.setOnClickListener(new SummaryOnClickListener());
 
         return viewSummaryCSI;
     }
@@ -347,8 +322,8 @@ public class SummaryEmerTabFragment extends Fragment {
                 } else {
                     Log.i(TAG, "mTypeCenterArray null");
                 }
-                spnSCDCcenterType.setOnItemClickListener((AdapterView.OnItemClickListener) new EmerOnItemSelectedListener());
-                spnSCDCagencyType.setOnItemClickListener((AdapterView.OnItemClickListener) new EmerOnItemSelectedListener());
+                spnSCDCcenterType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
+                spnSCDCagencyType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
 
                 dialog.setMessage("แจ้งเหตุ");
                 dialog.setPositiveButton("ส่ง", new DialogInterface.OnClickListener() {
@@ -390,12 +365,34 @@ public class SummaryEmerTabFragment extends Fragment {
                 dialog.create();
                 dialog.show();
             }
-            if (v == btnDownloadfile)
-
-            {
+            if (v == btnDownloadfile) {
                 Log.i(TAG, "btnDownloadfile");
                 // new DownloadFileAsync().execute(reportID);
                 //
+            }
+            if (v == fabBtn) {
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+
+                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getSCDCAgencyCode();
+                Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+                EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
+                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                if (EmergencyTabFragment.tbNoticeCase != null) {
+                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+                    if (isSuccess) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    }
+                }
             }
         }
     }
@@ -405,35 +402,35 @@ public class SummaryEmerTabFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             String selectedItem = parent.getItemAtPosition(pos).toString();
             switch (parent.getId()) {
-                case R.id.spnSCDCcenterType:
-                    selectedCenter = mTypeCenterArray[pos][0];
-                    Log.i(TAG + " show selectedCenter", selectedCenter);
-                    //
-                    mTypeAgencyArray = dbHelper.SelectSCDCAgency(selectedCenter);
-                    if (mTypeAgencyArray != null) {
-                        mTypeAgencyArray2 = new String[mTypeAgencyArray.length];
-                        for (int i = 0; i < mTypeAgencyArray.length; i++) {
-                            mTypeAgencyArray2[i] = mTypeAgencyArray[i][2];
-                            Log.i(TAG + " show mDistrictArray2", mTypeAgencyArray2[i].toString());
-                        }
-                        adapterSCDCagency = new ArrayAdapter<String>(getActivity(),
-                                android.R.layout.simple_dropdown_item_1line, mTypeAgencyArray2);
-                        spnSCDCagencyType.setAdapter(adapterSCDCagency);
-                    } else {
-                        spnSCDCagencyType.setAdapter(null);
-                        selectedAgencyCode = null;
-                        EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
-                        Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode));
-                    }
-                    spnSCDCagencyType.setOnItemClickListener((AdapterView.OnItemClickListener) new EmerOnItemSelectedListener());
-                    break;
-                case R.id.spnSCDCagencyType:
-                    //ค่า SCDCAgencyCode
-                    selectedAgencyCode = mTypeAgencyArray[pos][0];
-
-                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
-                    Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
-                    break;
+//                case R.id.spnSCDCcenterType:
+//                    selectedCenter = mTypeCenterArray[pos][0];
+//                    Log.i(TAG + " show selectedCenter", selectedCenter);
+//                    //
+//                    mTypeAgencyArray = dbHelper.SelectSCDCAgency(selectedCenter);
+//                    if (mTypeAgencyArray != null) {
+//                        mTypeAgencyArray2 = new String[mTypeAgencyArray.length];
+//                        for (int i = 0; i < mTypeAgencyArray.length; i++) {
+//                            mTypeAgencyArray2[i] = mTypeAgencyArray[i][2];
+//                            Log.i(TAG + " show mDistrictArray2", mTypeAgencyArray2[i].toString());
+//                        }
+//                        adapterSCDCagency = new ArrayAdapter<String>(getActivity(),
+//                                android.R.layout.simple_dropdown_item_1line, mTypeAgencyArray2);
+//                        spnSCDCagencyType.setAdapter(adapterSCDCagency);
+//                    } else {
+//                        spnSCDCagencyType.setAdapter(null);
+//                        selectedAgencyCode = null;
+//                        EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+//                        Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode));
+//                    }
+//                    spnSCDCagencyType.setOnItemClickListener((AdapterView.OnItemClickListener) new EmerOnItemSelectedListener());
+//                    break;
+//                case R.id.spnSCDCagencyType:
+//                    //ค่า SCDCAgencyCode
+//                    selectedAgencyCode = mTypeAgencyArray[pos][0];
+//
+//                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+//                    Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+//                    break;
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[pos][0];
                     Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
@@ -463,7 +460,16 @@ public class SummaryEmerTabFragment extends Fragment {
                     selectedSubCaseType = mSubCaseTypeArray[pos][0];
                     EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
-
+                    if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
+                        spnSubCaseType.setSelection(0);
+                    } else {
+                        for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                            if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+                                spnSubCaseType.setSelection(i);
+                                break;
+                            }
+                        }
+                    }
                     break;
             }
         }
@@ -472,12 +478,7 @@ public class SummaryEmerTabFragment extends Fragment {
         public void onNothingSelected(AdapterView<?> parent) {
             switch (parent.getId()) {
 
-                case R.id.spnSCDCagencyType:
-                    selectedAgencyCode = mTypeAgencyArray[0][0];
 
-                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
-
-                    break;
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[0][0];
                     Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
@@ -487,6 +488,66 @@ public class SummaryEmerTabFragment extends Fragment {
                     selectedSubCaseType = mSubCaseTypeArray[0][0];
                     EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
+                    break;
+            }
+        }
+    }
+
+    public class NoticeOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+            String selectedItem = parent.getItemAtPosition(pos).toString();
+
+            //check which spinner triggered the listener
+            switch (parent.getId()) {
+
+                case R.id.spnSCDCagencyType:
+                    //make sure the animal was already selected during the onCreate
+                    selectedCenter = mTypeCenterArray[pos][0];
+                    Log.i(TAG + " show selectedCenter", selectedCenter);
+                    //
+                    mTypeAgencyArray = dbHelper.SelectSCDCAgency(selectedCenter);
+                    if (mTypeAgencyArray != null) {
+                        mTypeAgencyArray2 = new String[mTypeAgencyArray.length];
+                        for (int i = 0; i < mTypeAgencyArray.length; i++) {
+                            mTypeAgencyArray2[i] = mTypeAgencyArray[i][2];
+                            Log.i(TAG + " show mDistrictArray2", mTypeAgencyArray2[i].toString());
+                        }
+                        adapterSCDCagency = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mTypeAgencyArray2);
+                        spnSCDCagencyType.setAdapter(adapterSCDCagency);
+                    } else {
+                        spnSCDCagencyType.setAdapter(null);
+                        selectedAgencyCode = null;
+                        EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                        Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode));
+                    }
+                    spnSCDCagencyType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
+                    break;
+                case R.id.spnSCDCcenterType:
+                    //make sure the animal was already selected during the onCreate
+                    //ค่า SCDCAgencyCode
+                    selectedAgencyCode = mTypeAgencyArray[pos][0];
+
+                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                    Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+                    break;
+            }
+
+
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Do nothing.
+            //check which spinner triggered the listener
+            switch (parent.getId()) {
+
+                case R.id.spnSCDCagencyType:
+                    selectedAgencyCode = mTypeAgencyArray[0][0];
+
+                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+
                     break;
             }
         }

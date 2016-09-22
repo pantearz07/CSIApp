@@ -121,7 +121,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
                 + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
         //Show spinner สถานที่ตำรวจภูธร
-
+        lat = EmergencyTabFragment.tbNoticeCase.Latitude;
+        lng = EmergencyTabFragment.tbNoticeCase.Longitude;
 
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
         if (EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
@@ -492,39 +493,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             editTextSuffererPhone.setEnabled(false);
             editCircumstanceOfCaseDetail.setEnabled(false);
         }
-        fabBtnRec.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                EmergencyTabFragment.tbNoticeCase.HappenCaseDate = editHappenCaseDate.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = editReceiveCaseDate.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.KnowCaseDate = editKnowCaseDate.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
-                Log.i(TAG, "spinnerKnowCaseTime" + EmergencyTabFragment.tbNoticeCase.KnowCaseTime);
-                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                if (EmergencyTabFragment.tbNoticeCase != null) {
-                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
-                        }
-                    }
-                }
-            }
-        });
-
+        fabBtnRec.setOnClickListener(this);
 
         return viewReceiveCSI;
     }
@@ -564,10 +534,38 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.fabBtnRec:
+
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+
+                EmergencyTabFragment.tbNoticeCase.HappenCaseDate = editHappenCaseDate.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = editReceiveCaseDate.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.KnowCaseDate = editKnowCaseDate.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
+                Log.i(TAG, "spinnerKnowCaseTime" + EmergencyTabFragment.tbNoticeCase.KnowCaseTime);
+                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                if (EmergencyTabFragment.tbNoticeCase != null) {
+                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+                    if (isSuccess) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    }
+                }
+                break;
             case R.id.btnButtonSearchMap:
-                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
-                if (EmergencyTabFragment.tbNoticeCase.Latitude != null || EmergencyTabFragment.tbNoticeCase.Longitude != null) {
+
+                if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
                     Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);

@@ -1093,13 +1093,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                     int i = 0;
                     do {
-                        for (int j = 0; j < cursor.getColumnCount(); j++) {
-                            arrData[i][j] = cursor.getString(i);
-
-
-                        }
-
-
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
                         i++;
                     } while (cursor.moveToNext());
 
@@ -1137,13 +1133,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                     int i = 0;
                     do {
-                        for (int j = 0; j < cursor.getColumnCount(); j++) {
-                            arrData[i][j] = cursor.getString(j);
-
-
-                        }
-
-
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
                         i++;
                     } while (cursor.moveToNext());
 
@@ -1183,6 +1175,12 @@ public class DBHelper extends SQLiteAssetHelper {
                         arrData[i][0] = cursor.getString(0);
                         arrData[i][1] = cursor.getString(1);
                         arrData[i][2] = cursor.getString(2);
+                        arrData[i][3] = cursor.getString(3);
+                        arrData[i][4] = cursor.getString(4);
+                        arrData[i][5] = cursor.getString(5);
+                        arrData[i][6] = cursor.getString(6);
+                        arrData[i][7] = cursor.getString(7);
+
                         i++;
                     } while (cursor.moveToNext());
 

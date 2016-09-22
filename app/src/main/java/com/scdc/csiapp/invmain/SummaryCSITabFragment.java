@@ -323,7 +323,25 @@ public class SummaryCSITabFragment extends Fragment {
                 Log.i("mViewBtnTransReport", "mViewBtnTransReport");
 
             }
+            if (v == fabBtn) {
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+//
+//                if (EmergencyTabFragment.tbNoticeCase != null) {
+//                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+//                    if (isSuccess) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + dateTimeCurrent[2]+" "+dateTimeCurrent[1]+" "+dateTimeCurrent[0], Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
 
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+//                    }
+//                }
+            }
         }
     }
 

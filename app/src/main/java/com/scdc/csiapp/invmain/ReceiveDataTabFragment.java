@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -50,7 +51,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     // Google play services
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-
+    Snackbar snackbar;
     private static final String TAG = "DEBUG-ReceiveDataTabFragment";
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
@@ -68,8 +69,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     TextView spnLocatePolice;
     TextView edtUpdateDateTime2;
     TextView editTextPhone1;
-    private String sAddrDetail, sDistrict, sAmphur, sProvinceName, sPostalCode, sLatitude,
-            sLongitude, sFeatureInsideDetail;
+    private String sLocaleName="", sDistrictName="", sAmphurName="", sProvinceName ="";
     private AutoCompleteTextView autoCompleteDistrict, autoCompleteAmphur, autoCompleteProvince2;
     private EditText editAddrDetail, edtReportNo, editCircumstanceOfCaseDetail, edtVehicleDetail;
     private Button btnButtonSearchLatLong, btnButtonSearchMap;
@@ -109,7 +109,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     Context context;
     ArrayAdapter<String> adapterSelectDataInspector, adapterPoliceStation;
     protected static String selectScheduleID = null;
-
+    String lat,lng;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -390,37 +390,12 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             }
         });
 
-        final String lat = "";
-        final String lng = "";
-        btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
-        btnButtonSearchMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Go to Google map " + lat + " " + lng);
-                // Searches for 'Main Street' near San Francisco
-//                Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=101+main+street");
-//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                mapIntent.setPackage("com.google.android.apps.maps");
-//                startActivity(mapIntent);
-
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                startActivity(mapIntent);
-
-            }
-        });
-
-        btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
-        btnButtonSearchLatLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                valueLat.setText(String.valueOf(mLastLocation.getLatitude()));
-                valueLong.setText(String.valueOf(mLastLocation.getLongitude()));
-            }
-        });
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
+        btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
+        btnButtonSearchMap.setOnClickListener(new SummaryOnClickListener());
+        btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
+        btnButtonSearchMap.setOnClickListener(new SummaryOnClickListener());
 
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
 
@@ -428,12 +403,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
-        fabBtnRec.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        fabBtnRec.setOnClickListener(new SummaryOnClickListener());
         return viewReceiveCSI;
     }
 
@@ -505,5 +475,57 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
         Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+    }
+
+    private class SummaryOnClickListener implements View.OnClickListener {
+        public void onClick(View v) {
+
+            if (v == fabBtnRec) {
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+//
+//                if (EmergencyTabFragment.tbNoticeCase != null) {
+//                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+//                    if (isSuccess) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + dateTimeCurrent[2]+" "+dateTimeCurrent[1]+" "+dateTimeCurrent[0], Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                }
+                            });
+                    snackbar.show();
+                }
+//                    }
+//                }
+            }
+            if(v == btnButtonSearchMap){
+                if (lat != null || lng != null) {
+                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                } else {
+                    //Searches for 'Locale name' province amphur district
+
+                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + sLocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+            }
+            if(v == btnButtonSearchLatLong){
+                lat = String.valueOf(mLastLocation.getLatitude());
+                lng = String.valueOf(mLastLocation.getLongitude());
+                Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                valueLat.setText(lat);
+                valueLong.setText(lng);
+               // EmergencyTabFragment.tbNoticeCase.Latitude = valueLat.getText().toString();
+               // EmergencyTabFragment.tbNoticeCase.Longitude = valueLong.getText().toString();
+
+            }
+        }
     }
 }
