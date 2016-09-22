@@ -41,6 +41,7 @@ import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
 
+import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 
@@ -111,6 +112,16 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         getDateTime = new GetDateTime();
         emergencyTabFragment = new EmergencyTabFragment();
         cd = new ConnectionDetector(getActivity());
+
+        // ทำการสร้างตัวเชื่อกับ Google services
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(API)
+                    .build();
+            Log.d(TAG, "Create Google services");
+        }
 
         updateDT = getDateTime.getDateTimeNow();
         String noticecaseid = EmergencyTabFragment.tbNoticeCase.getNoticeCaseID();
@@ -343,7 +354,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         editKnowCaseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ClickKnowCaseTime", editKnowCaseTime.getText().toString());
+   valueLat.setText(EmergencyTabFragment.tbNoticeCase.Latitude);
+        valueLong.setText(EmergencyTabFragment.tbNoticeCase.Longitude);              Log.i("ClickKnowCaseTime", editKnowCaseTime.getText().toString());
                 TimeDialog dialogKnowCaseTime = new TimeDialog(view);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
 
@@ -365,7 +377,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
         btnButtonSearchLatLong.setOnClickListener(this);
 
-//        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
+        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
 //        if (mLastLocation != null) {
 //            Log.d(TAG, "get mLastLocation");
 //

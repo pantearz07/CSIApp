@@ -393,6 +393,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
+//        valueLat.setText(EmergencyTabFragment.tbNoticeCase.Latitude);
+//        valueLong.setText(EmergencyTabFragment.tbNoticeCase.Longitude);
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
         btnButtonSearchMap.setOnClickListener(new SummaryOnClickListener());
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
