@@ -69,7 +69,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     TextView spnLocatePolice;
     TextView edtUpdateDateTime2;
     TextView editTextPhone1;
-    private String sLocaleName="", sDistrictName="", sAmphurName="", sProvinceName ="";
+    private String sAddrDetail, sDistrictName, sAmphurName, sProvinceName, provinceid, amphurid, districtid;
     private AutoCompleteTextView autoCompleteDistrict, autoCompleteAmphur, autoCompleteProvince2;
     private EditText editAddrDetail, edtReportNo, editCircumstanceOfCaseDetail, edtVehicleDetail;
     private Button btnButtonSearchLatLong, btnButtonSearchMap;
@@ -291,6 +291,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
         spinnerAmphur = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAmphur);
         spinnerDistrict = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerDistrict);
+
         final String[] selectedProvince = new String[1];
         final String[] selectedAmphur = new String[1];
         final String[] selectedDistrict = new String[1];
@@ -395,7 +396,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
         btnButtonSearchMap.setOnClickListener(new SummaryOnClickListener());
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
-        btnButtonSearchMap.setOnClickListener(new SummaryOnClickListener());
+        btnButtonSearchLatLong.setOnClickListener(new SummaryOnClickListener());
 
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
 
@@ -500,6 +501,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 //                }
             }
             if(v == btnButtonSearchMap){
+
                 if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
@@ -510,7 +512,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 } else {
                     //Searches for 'Locale name' province amphur district
 
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + sLocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + sAddrDetail + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);

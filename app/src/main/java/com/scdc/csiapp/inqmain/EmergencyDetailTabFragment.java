@@ -121,8 +121,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
                 + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
         //Show spinner สถานที่ตำรวจภูธร
-        lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-        lng = EmergencyTabFragment.tbNoticeCase.Longitude;
+
 
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
         if (EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
@@ -221,36 +220,36 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
         }
         //เเสดงค่าเดิม
-        if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
-            spinnerProvince.setSelection(0);
-        } else {
-            for (int i = 0; i < mProvinceArray.length; i++) {
-                if (provinceid.trim().equals(mProvinceArray[i][0])) {
-                    spinnerProvince.setSelection(i);
-                    break;
-                }
-            }
-        }
-        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
-            spinnerProvince.setSelection(0);
-        } else {
-            for (int i = 0; i < mProvinceArray.length; i++) {
-                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
-                    spinnerAmphur.setSelection(i);
-                    break;
-                }
-            }
-        }
-        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
-            spinnerProvince.setSelection(0);
-        } else {
-            for (int i = 0; i < mDistrictArray.length; i++) {
-                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
-                    spinnerDistrict.setSelection(i);
-                    break;
-                }
-            }
-        }
+//        if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+//            spinnerProvince.setSelection(0);
+//        } else {
+//            for (int i = 0; i < mProvinceArray.length; i++) {
+//                if (provinceid.trim().equals(mProvinceArray[i][0])) {
+//                    spinnerProvince.setSelection(i);
+//                    break;
+//                }
+//            }
+//        }
+//        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+//            spinnerProvince.setSelection(0);
+//        } else {
+//            for (int i = 0; i < mProvinceArray.length; i++) {
+//                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
+//                    spinnerAmphur.setSelection(i);
+//                    break;
+//                }
+//            }
+//        }
+//        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+//            spinnerProvince.setSelection(0);
+//        } else {
+//            for (int i = 0; i < mDistrictArray.length; i++) {
+//                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
+//                    spinnerDistrict.setSelection(i);
+//                    break;
+//                }
+//            }
+//        }
         spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spinnerProvince.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spinnerAmphur.setOnItemSelectedListener(new EmerOnItemSelectedListener());
@@ -356,10 +355,15 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
+//        lat = EmergencyTabFragment.tbNoticeCase.Latitude;
+//        lng = EmergencyTabFragment.tbNoticeCase.Longitude;
+
+        valueLat.setText(EmergencyTabFragment.tbNoticeCase.Latitude);
+        valueLong.setText(EmergencyTabFragment.tbNoticeCase.Longitude);
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
         btnButtonSearchMap.setOnClickListener(this);
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
-        btnButtonSearchMap.setOnClickListener(this);
+        btnButtonSearchLatLong.setOnClickListener(this);
 
 //        mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
 //        if (mLastLocation != null) {
@@ -564,7 +568,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchMap:
-
+                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
+                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
                 if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
@@ -574,7 +579,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     startActivity(mapIntent);
                 } else {
                     //Searches for 'Locale name' province amphur district
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + EmergencyTabFragment.tbNoticeCase.LocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + editAddrDetail.getText().toString() + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
