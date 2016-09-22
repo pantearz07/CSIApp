@@ -186,20 +186,20 @@ public class SummaryEmerTabFragment extends Fragment {
                 + WelcomeActivity.profile.getTbOfficial().Position + ") โทร." +
                 "" + WelcomeActivity.profile.getTbOfficial().PhoneNumber + " ");
 
-        if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID != null) {
-            String InvestigatorOfficialID = EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID;
-            Log.i(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
-
-            String mInvOfficialArray[] = dbHelper.SelectInvOfficial(EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID);
-            if (mInvOfficialArray != null) {
-                edtInvInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
-                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") " +
-                        mInvOfficialArray[7].toString());
-            } else {
-                edtInvInfo.setText("");
-            }
-
-        }
+//        if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID != null) {
+//            String InvestigatorOfficialID = EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID;
+//            Log.i(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
+//
+//            String mInvOfficialArray[] = dbHelper.SelectInvOfficial(EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID);
+//            if (mInvOfficialArray != null) {
+//                edtInvInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
+//                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") " +
+//                        mInvOfficialArray[7].toString());
+//            } else {
+//                edtInvInfo.setText("");
+//            }
+//
+//        }
         edtInvInfo.setText("");
 
         String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(EmergencyTabFragment.tbNoticeCase.PoliceStationID);
