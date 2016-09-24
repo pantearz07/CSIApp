@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+import com.scdc.csiapp.apimodel.ApiCaseScene;
+import com.scdc.csiapp.apimodel.ApiListCaseScene;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.tablemodel.TbAmphur;
@@ -1358,7 +1360,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
                 cursor.moveToPosition(-1);
-//                apiNoticeCases = new ArrayList<>();
                 while (cursor.moveToNext()) {
                     ApiNoticeCase apiNoticeCase = new ApiNoticeCase();
 
@@ -1583,6 +1584,299 @@ public class DBHelper extends SQLiteAssetHelper {
             dataEntity.setResult(apiNoticeCases);
             apiListNoticeCase.setData(dataEntity);
             return apiListNoticeCase;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in selectApiNoticeCase " + e.getMessage().toString());
+            return null;
+        }
+    }
+
+    public ApiListCaseScene selectApiCaseScene(String OfficeID) {
+        Log.d(TAG, "OfficeID:" + OfficeID);
+        ApiListCaseScene apiListCaseScene = new ApiListCaseScene();
+        apiListCaseScene.setStatus("success");
+        ApiListCaseScene.DataEntity dataEntity = new ApiListCaseScene().new DataEntity();
+        dataEntity.setAction("SQLite selectApiCaseScene");
+        dataEntity.setReason("โหลดรายการคดีสำเร็จ");
+
+        List<ApiCaseScene> apiCaseScenesCases = new ArrayList<>();
+
+        try {
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+            String strSQL, strSQL_main;
+
+            strSQL_main = "SELECT * FROM casescene "
+                    + " WHERE InvestigatorOfficialID = '" + OfficeID + "'";
+
+            try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
+                cursor.moveToPosition(-1);
+                while (cursor.moveToNext()) {
+                    ApiCaseScene apiCaseSceneCase = new ApiCaseScene();
+
+                    TbCaseScene temp = new TbCaseScene();
+                    temp.CaseReportID = cursor.getString(cursor.getColumnIndex(temp.COL_CaseReportID));
+                    temp.NoticeCaseID = cursor.getString(cursor.getColumnIndex(temp.COL_NoticeCaseID));
+                    temp.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(temp.COL_Mobile_CaseID));
+                    temp.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp.COL_SCDCAgencyCode));
+                    temp.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(temp.COL_InvestigatorOfficialID));
+                    temp.CaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTypeID));
+                    temp.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_SubCaseTypeID));
+                    temp.ReportNo = cursor.getString(cursor.getColumnIndex(temp.COL_ReportNo));
+                    temp.ReportStatus = cursor.getString(cursor.getColumnIndex(temp.COL_ReportStatus));
+                    temp.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp.COL_PoliceStationID));
+                    temp.CaseTel = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTel));
+                    temp.AssignmentDate = cursor.getString(cursor.getColumnIndex(temp.COL_AssignmentDate));
+                    temp.AssignmentTime = cursor.getString(cursor.getColumnIndex(temp.COL_AssignmentTime));
+                    temp.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseDate));
+                    temp.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseTime));
+                    temp.HappenCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseDate));
+                    temp.HappenCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseTime));
+                    temp.KnowCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseDate));
+                    temp.KnowCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseTime));
+                    temp.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneDate));
+                    temp.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneTime));
+                    temp.LocaleName = cursor.getString(cursor.getColumnIndex(temp.COL_LocaleName));
+                    temp.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(temp.COL_DISTRICT_ID));
+                    temp.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(temp.COL_AMPHUR_ID));
+                    temp.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(temp.COL_PROVINCE_ID));
+                    temp.Latitude = cursor.getString(cursor.getColumnIndex(temp.COL_Latitude));
+                    temp.Longitude = cursor.getString(cursor.getColumnIndex(temp.COL_Longitude));
+                    temp.FeatureInsideDetail = cursor.getString(cursor.getColumnIndex(temp.COL_FeatureInsideDetail));
+                    temp.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp.COL_CircumstanceOfCaseDetail));
+                    temp.VehicleInfo = cursor.getString(cursor.getColumnIndex(temp.COL_VehicleInfo));
+                    temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateDate));
+                    temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateTime));
+                    apiCaseSceneCase.setTbCaseScene(temp);
+
+                    // Index TbCaseScene ดึงจากตาราง noticecase
+                    strSQL = "SELECT * FROM noticecase "
+                            + " WHERE NoticeCaseID = '" + temp.NoticeCaseID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbNoticeCase temp2 = new TbNoticeCase();
+                            temp2.NoticeCaseID = cursor.getString(cursor.getColumnIndex(temp2.COL_NoticeCaseID));
+                            temp2.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(temp2.COL_Mobile_CaseID));
+                            temp2.InquiryOfficialID = cursor.getString(cursor.getColumnIndex(temp2.COL_InquiryOfficialID));
+                            temp2.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(temp2.COL_InvestigatorOfficialID));
+                            temp2.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp2.COL_SCDCAgencyCode));
+                            temp2.CaseTypeID = cursor.getString(cursor.getColumnIndex(temp2.COL_CaseTypeID));
+                            temp2.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(temp2.COL_SubCaseTypeID));
+                            temp2.CaseStatus = cursor.getString(cursor.getColumnIndex(temp2.COL_CaseStatus));
+                            temp2.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp2.COL_PoliceStationID));
+                            temp2.CaseTel = cursor.getString(cursor.getColumnIndex(temp2.COL_CaseTel));
+                            temp2.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(temp2.COL_ReceivingCaseDate));
+                            temp2.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(temp2.COL_ReceivingCaseTime));
+                            temp2.HappenCaseDate = cursor.getString(cursor.getColumnIndex(temp2.COL_HappenCaseDate));
+                            temp2.HappenCaseTime = cursor.getString(cursor.getColumnIndex(temp2.COL_HappenCaseTime));
+                            temp2.KnowCaseDate = cursor.getString(cursor.getColumnIndex(temp2.COL_KnowCaseDate));
+                            temp2.KnowCaseTime = cursor.getString(cursor.getColumnIndex(temp2.COL_KnowCaseTime));
+                            temp2.SceneNoticeDate = cursor.getString(cursor.getColumnIndex(temp2.COL_SceneNoticeDate));
+                            temp2.SceneNoticeTime = cursor.getString(cursor.getColumnIndex(temp2.COL_SceneNoticeTime));
+                            temp2.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(temp2.COL_CompleteSceneDate));
+                            temp2.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(temp2.COL_CompleteSceneTime));
+                            temp2.LocaleName = cursor.getString(cursor.getColumnIndex(temp2.COL_LocaleName));
+                            temp2.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(temp2.COL_DISTRICT_ID));
+                            temp2.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(temp2.COL_AMPHUR_ID));
+                            temp2.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(temp2.COL_PROVINCE_ID));
+                            temp2.Latitude = cursor.getString(cursor.getColumnIndex(temp2.COL_Latitude));
+                            temp2.Longitude = cursor.getString(cursor.getColumnIndex(temp2.COL_Longitude));
+                            temp2.SuffererPrename = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererPrename));
+                            temp2.SuffererName = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererName));
+                            temp2.SuffererStatus = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererStatus));
+                            temp2.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererPhoneNum));
+                            temp2.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp2.COL_CircumstanceOfCaseDetail));
+                            temp2.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp2.COL_LastUpdateDate));
+                            temp2.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp2.COL_LastUpdateTime));
+                            apiCaseSceneCase.setTbNoticeCase(temp2);
+                        }
+                    }
+
+                    // Index tbOfficial ดึงจากตาราง official
+                    strSQL = "SELECT * FROM official "
+                            + " WHERE OfficialID = '" + apiCaseSceneCase.getTbNoticeCase().InquiryOfficialID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbOfficial temp2 = new TbOfficial();
+                            temp2.OfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialID));
+                            temp2.FirstName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_FirstName));
+                            temp2.LastName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastName));
+                            temp2.Alias = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Alias));
+                            temp2.Rank = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Rank));
+                            temp2.Position = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Position));
+                            temp2.SubPossition = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SubPossition));
+                            temp2.PhoneNumber = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PhoneNumber));
+                            temp2.OfficialEmail = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialEmail));
+                            temp2.OfficialDisplayPic = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialDisplayPic));
+                            temp2.AccessType = cursor2.getString(cursor2.getColumnIndex(temp2.COL_AccessType));
+                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SCDCAgencyCode));
+                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PoliceStationID));
+                            temp2.id_users = cursor2.getString(cursor2.getColumnIndex(temp2.COL_id_users));
+                            apiCaseSceneCase.setTbOfficial(temp2);
+                        }
+                    }
+
+                    // Index tbCaseSceneType ดึงจากตาราง casescenetype ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM casescenetype "
+                            + " WHERE CaseTypeID = '" + temp.CaseTypeID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+
+                            TbCaseSceneType temp3 = new TbCaseSceneType();
+                            temp3.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeID));
+                            temp3.CaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeName));
+                            temp3.casetype_min = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_min));
+                            temp3.casetype_max = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_max));
+                            temp3.casetype_icon = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_icon));
+                            temp3.casetype_colormin = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormin));
+                            temp3.casetype_colormedium = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormedium));
+                            temp3.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colorhigh));
+                            temp3.casetype_status = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_status));
+                            apiCaseSceneCase.setTbCaseSceneType(temp3);
+                        }
+                    }
+
+                    // Index tbSubcaseSceneType ดึงจากตาราง subcasescenetype ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM subcasescenetype "
+                            + " WHERE SubCaseTypeID = '" + temp.SubCaseTypeID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
+                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeID));
+                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_CaseTypeID));
+                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeName));
+                            apiCaseSceneCase.setTbSubcaseSceneType(temp4);
+                        }
+                    }
+
+                    // Index tbPoliceStation ดึงจากตาราง policestation ใช้ค่าจาก Index tbNoticeCase
+                    TbPoliceStation temp5 = new TbPoliceStation();
+                    strSQL = "SELECT * FROM policestation "
+                            + " WHERE PoliceStationID = '" + temp.PoliceStationID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationID));
+                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceAgencyID));
+                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationName));
+                            apiCaseSceneCase.setTbPoliceStation(temp5);
+                        }
+                    }
+
+                    // Index tbPoliceAgency ดึงจากตาราง policeagency ใช้ค่าจาก Index tbPoliceStation
+                    if (temp5.PoliceStationID != null) {
+                        strSQL = "SELECT * FROM policeagency "
+                                + " WHERE PoliceAgencyID = '" + temp5.PoliceStationID + "'";
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (cursor2.getCount() == 1) {
+                                cursor2.moveToFirst();
+                                TbPoliceAgency temp6 = new TbPoliceAgency();
+                                temp6.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyID));
+                                temp6.PoliceCenterID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceCenterID));
+                                temp6.PoliceAgencyName = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyName));
+                                apiCaseSceneCase.setTbPoliceAgency(temp6);
+                            }
+                        }
+                    }
+
+                    // Index tbDistrict ดึงจากตาราง district ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM district "
+                            + " WHERE DISTRICT_ID = '" + temp.DISTRICT_ID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbDistrict temp7 = new TbDistrict();
+                            temp7.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_ID));
+                            temp7.DISTRICT_CODE = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_CODE));
+                            temp7.DISTRICT_NAME = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_NAME));
+                            temp7.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_AMPHUR_ID));
+                            apiCaseSceneCase.setTbDistrict(temp7);
+                        }
+                    }
+
+                    // Index tbProvince ดึงจากตาราง province ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM province "
+                            + " WHERE PROVINCE_ID = '" + temp.PROVINCE_ID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbProvince temp8 = new TbProvince();
+                            temp8.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_ID));
+                            temp8.PROVINCE_CODE = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_CODE));
+                            temp8.PROVINCE_NAME = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_NAME));
+                            temp8.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_GEO_ID));
+                            temp8.province_status = cursor2.getString(cursor2.getColumnIndex(temp8.COL_province_status));
+                            apiCaseSceneCase.setTbProvince(temp8);
+                        }
+                    }
+
+                    // Index tbAmphur ดึงจากตาราง amphur ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM amphur "
+                            + " WHERE AMPHUR_ID = '" + temp.AMPHUR_ID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbAmphur temp9 = new TbAmphur();
+                            temp9.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_ID));
+                            temp9.AMPHUR_CODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_CODE));
+                            temp9.AMPHUR_NAME = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_NAME));
+                            temp9.POSTCODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_POSTCODE));
+                            temp9.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_GEO_ID));
+                            temp9.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_PROVINCE_ID));
+                            temp9.amphur_polygon = cursor2.getString(cursor2.getColumnIndex(temp9.COL_amphur_polygon));
+                            apiCaseSceneCase.setTbAmphur(temp9);
+                        }
+                    }
+
+                    // Index tbSCDCagency ดึงจากตาราง scdcagency ใช้ค่าจาก Index tbNoticeCase
+                    TbSCDCagency temp10 = new TbSCDCagency();
+                    strSQL = "SELECT * FROM scdcagency "
+                            + " WHERE SCDCAgencyCode = '" + temp.SCDCAgencyCode + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyCode));
+                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCCenterID));
+                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyName));
+                            apiCaseSceneCase.setTbSCDCagency(temp10);
+                        }
+                    }
+
+                    // Index tbSCDCcenter ดึงจากตาราง scdccenter ใช้ค่าจาก Index tbSCDCagency
+                    if (temp10.SCDCCenterID != null) {
+                        strSQL = "SELECT * FROM scdccenter "
+                                + " WHERE SCDCCenterID = '" + temp10.SCDCCenterID + "'";
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (cursor2.getCount() == 1) {
+                                cursor2.moveToFirst();
+                                TbSCDCcenter temp11 = new TbSCDCcenter();
+                                temp11.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterID));
+                                temp11.SCDCCenterName = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterName));
+                                temp11.SCDCCenterProvince = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterProvince));
+                                apiCaseSceneCase.setTbSCDCcenter(temp11);
+                            }
+                        }
+                    }
+
+                    //ส่งค่าทั้งหมดเข้า apiNoticeCases
+                    apiCaseScenesCases.add(apiCaseSceneCase);
+                    Log.d("TEST", "--" + apiCaseSceneCase.getTbNoticeCase().NoticeCaseID);
+                }
+            }
+            db.close();
+//            Log.d("TEST", apiNoticeCases.get(0).getTbNoticeCase().NoticeCaseID + " " + apiNoticeCases.get(1).getTbNoticeCase().NoticeCaseID);
+            // รวมข้อมูลที่ได้ทั้งหมดลง apiListNoticeCase ก่อนส่งกลับไปใช้
+            Log.d(TAG, "apiNoticeCases:" + apiCaseScenesCases.size());
+            for (int i = 0; i < apiCaseScenesCases.size(); i++) {
+                Log.d("TEST", "////--" + apiCaseScenesCases.get(i).getTbNoticeCase().NoticeCaseID);
+            }
+
+            dataEntity.setResult(apiCaseScenesCases);
+            apiListCaseScene.setData(dataEntity);
+            return apiListCaseScene;
         } catch (Exception e) {
             Log.d(TAG, "Error in selectApiNoticeCase " + e.getMessage().toString());
             return null;

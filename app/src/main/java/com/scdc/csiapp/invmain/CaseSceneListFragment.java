@@ -25,7 +25,9 @@ import android.view.ViewGroup;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
+import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.inqmain.ApiNoticeCaseListAdapter;
@@ -50,7 +52,7 @@ public class CaseSceneListFragment extends Fragment {
     private ApiCaseSceneListAdapter apiCaseSceneListAdapter;
     // connect sqlite
     SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
+    DBHelper mDbHelper;
     private Context mContext;
     private PreferenceData mManager;
     CSIDataTabFragment csiDataTabFragment;
@@ -68,7 +70,7 @@ public class CaseSceneListFragment extends Fragment {
 
         View viewlayout = inflater.inflate(R.layout.casescene_fragment_layout, null);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.home);
-        mDbHelper = new SQLiteDBHelper(getActivity());
+        mDbHelper = new DBHelper(getActivity());
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         context = viewlayout.getContext();
@@ -77,6 +79,7 @@ public class CaseSceneListFragment extends Fragment {
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(context);
         networkConnectivity = cd.isNetworkAvailable();
+        networkConnectivity = false;
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();
@@ -141,7 +144,7 @@ public class CaseSceneListFragment extends Fragment {
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    //selectApiNoticeCaseFromSQLite();
+                    selectApiCaseSceneFromSQLite();
 
                     Log.i("log_show draft", "fail network");
                     snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
@@ -163,7 +166,7 @@ public class CaseSceneListFragment extends Fragment {
         if (networkConnectivity) {
             new ConnectlistCasescene().execute();
         } else {
-//            selectApiNoticeCaseFromSQLite();
+            selectApiCaseSceneFromSQLite();
         }
 
         return viewlayout;
@@ -242,6 +245,20 @@ public class CaseSceneListFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    public void selectApiCaseSceneFromSQLite() {
+        ApiListCaseScene apiListNoticeCase = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+        caseList = apiListNoticeCase.getData().getResult();
+        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
+
+        if (swipeContainer != null && swipeContainer.isRefreshing()) {
+            swipeContainer.setRefreshing(false);
+        }
+        apiCaseSceneListAdapter = new ApiCaseSceneListAdapter(caseList);
+        rvDraft.setAdapter(apiCaseSceneListAdapter);
+        apiCaseSceneListAdapter.notifyDataSetChanged();
+        apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
     }
 
     class ConnectlistCasescene extends AsyncTask<Void, Void, ApiListCaseScene> {

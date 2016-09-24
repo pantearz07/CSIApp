@@ -1,5 +1,6 @@
 package com.scdc.csiapp.main;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
@@ -25,6 +26,7 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -196,6 +198,14 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         loginButton.setEnabled(false);
+
+        // ซ่อน Keyborad หลังจากกด Login แล้ว
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+        
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
 
