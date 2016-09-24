@@ -43,6 +43,7 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
         TextView receiviedatetime;
         TextView CaseStatus;
         ImageView ic_CaseType;
+        ImageView iv_mode;
 
         public CSIDataViewHolder(View itemView) {
             super(itemView);
@@ -56,6 +57,7 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
             sufferrerInfo = (TextView) itemView.findViewById(R.id.sufferrerInfo);
             receiviedatetime = (TextView) itemView.findViewById(R.id.receiviedatetime);
             CaseStatus = (TextView) itemView.findViewById(R.id.txtCaseStatus);
+            iv_mode = (ImageView) itemView.findViewById(R.id.iv_mode);
 
             cvCSI.setOnClickListener(this);
 
@@ -88,6 +90,16 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
     public void onBindViewHolder(CSIDataViewHolder csidataholder, int position) {
 
         ApiCaseScene apiNoticeCase = apiNoticeCases.get(position);
+
+        // set icon mode
+        if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("online")) {
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_router_black_24dp);
+        } else if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("offline")) {
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_phone_android_black_24dp);
+        } else {
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
+        }
+
         csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
         String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
         if (apiNoticeCase.getTbDistrict() != null) {

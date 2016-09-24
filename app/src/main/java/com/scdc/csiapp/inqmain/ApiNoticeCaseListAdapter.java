@@ -42,6 +42,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         TextView receiviedatetime;
         TextView CaseStatus;
         ImageView ic_CaseType;
+        ImageView iv_mode;
 
         public CSIDataViewHolder(View itemView) {
             super(itemView);
@@ -55,6 +56,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
             sufferrerInfo = (TextView) itemView.findViewById(R.id.sufferrerInfo);
             receiviedatetime = (TextView) itemView.findViewById(R.id.receiviedatetime);
             CaseStatus = (TextView) itemView.findViewById(R.id.txtCaseStatus);
+            iv_mode = (ImageView) itemView.findViewById(R.id.iv_mode);
 
             cvCSI.setOnClickListener(this);
 
@@ -87,6 +89,16 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
     public void onBindViewHolder(CSIDataViewHolder csidataholder, int position) {
 
         ApiNoticeCase apiNoticeCase = apiNoticeCases.get(position);
+
+        // set icon mode
+        if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("online")) {
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_router_black_24dp);
+        } else if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("offline")) {
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_phone_android_black_24dp);
+        } else {
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
+        }
+
         csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
         String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
         if (apiNoticeCase.getTbDistrict() != null) {
@@ -102,7 +114,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
                 + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
         csidataholder.positioncase.setText("เกิดที่: " + positioncase);
 
-        if (apiNoticeCase.getTbNoticeCase().PoliceStationID == "") {
+        if (apiNoticeCase.getTbNoticeCase().PoliceStationID.equalsIgnoreCase("")) {
             csidataholder.policeStation.setText("สภ.");
         } else {
             csidataholder.policeStation.setText("สภ. " + apiNoticeCase.getTbPoliceStation().PoliceStationName);

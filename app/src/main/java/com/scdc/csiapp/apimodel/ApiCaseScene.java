@@ -28,6 +28,9 @@ import java.util.List;
  * Created by cbnuke on 9/16/16.
  */
 public class ApiCaseScene {
+    // โหมดเตรียมไว้ ใช้บอกว่า online, offline
+    String mode;
+
     // ตารางหลัก
     TbCaseScene tbCaseScene;
 
@@ -224,5 +227,13 @@ public class ApiCaseScene {
 
     public void setTbResultScenes(List<TbResultScene> tbResultScenes) {
         this.tbResultScenes = tbResultScenes;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 }

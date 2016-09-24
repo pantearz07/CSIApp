@@ -6,11 +6,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
+import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.main.WelcomeActivity;
@@ -53,6 +55,8 @@ public class ApiConnect {
     private String TAG = "DEBUG-ApiConnect";
     private Context mContext;
     private OkHttpClient okHttpClient = new OkHttpClient();
+    // เตรียมไว้ใช้เวลาจะดึงค่าจาก SQLite
+    DBHelper mDbHelper;
 
     public ApiConnect(Context context) {
 
@@ -305,7 +309,31 @@ public class ApiConnect {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
-                return gson.fromJson(response.body().string(), ApiListNoticeCase.class);
+                // ข้อมูลจากเซิร์ฟเวอร์
+                ApiListNoticeCase apiListNoticeCaseServer = gson.fromJson(response.body().string(), ApiListNoticeCase.class);
+                // ข้อมูลจาก SQLite
+                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+                ApiListNoticeCase apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+                int ser_size = apiListNoticeCaseServer.getData().getResult().size();
+                int sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+                for (int i = 0; i < ser_size; i++) {
+                    ApiNoticeCase temp_ser = apiListNoticeCaseServer.getData().getResult().get(i);
+                    ApiNoticeCase temp_sql;
+                    boolean flag_have = false;
+                    for (int j = 0; j < sql_size; j++) {
+                        temp_sql = apiListNoticeCaseSQLite.getData().getResult().get(j);
+                        if (temp_ser.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_sql.getTbNoticeCase().NoticeCaseID)) {
+                            flag_have = true;
+                            break;
+                        }
+                    }
+                    if (flag_have == false) {
+                        temp_ser.setMode("online");
+                        apiListNoticeCaseSQLite.getData().getResult().add(temp_ser);
+                    }
+                }
+                return apiListNoticeCaseSQLite;
             } else {
                 Log.d(TAG, "Not Success " + response.code());
                 return null;
@@ -334,7 +362,31 @@ public class ApiConnect {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
-                return gson.fromJson(response.body().string(), ApiListCaseScene.class);
+                // ข้อมูลจากเซิร์ฟเวอร์
+                ApiListCaseScene apiListCaseSceneServer = gson.fromJson(response.body().string(), ApiListCaseScene.class);
+                // ข้อมูลจาก SQLite
+                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+                ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+                int ser_size = apiListCaseSceneServer.getData().getResult().size();
+                int sql_size = apiListCaseSceneSQLite.getData().getResult().size();
+                for (int i = 0; i < ser_size; i++) {
+                    ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
+                    ApiCaseScene temp_sql;
+                    boolean flag_have = false;
+                    for (int j = 0; j < sql_size; j++) {
+                        temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
+                        if (temp_ser.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_sql.getTbCaseScene().CaseReportID)) {
+                            flag_have = true;
+                            break;
+                        }
+                    }
+                    if (flag_have == false) {
+                        temp_ser.setMode("online");
+                        apiListCaseSceneSQLite.getData().getResult().add(temp_ser);
+                    }
+                }
+                return apiListCaseSceneSQLite;
             } else {
                 Log.d(TAG, "Not Success " + response.code());
                 return null;

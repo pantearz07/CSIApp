@@ -1569,18 +1569,12 @@ public class DBHelper extends SQLiteAssetHelper {
                     }
 
                     //ส่งค่าทั้งหมดเข้า apiNoticeCases
+                    apiNoticeCase.setMode("offline");
                     apiNoticeCases.add(apiNoticeCase);
-                    Log.d("TEST", "--" + apiNoticeCase.getTbNoticeCase().NoticeCaseID);
                 }
             }
             db.close();
-//            Log.d("TEST", apiNoticeCases.get(0).getTbNoticeCase().NoticeCaseID + " " + apiNoticeCases.get(1).getTbNoticeCase().NoticeCaseID);
             // รวมข้อมูลที่ได้ทั้งหมดลง apiListNoticeCase ก่อนส่งกลับไปใช้
-            Log.d(TAG, "apiNoticeCases:" + apiNoticeCases.size());
-            for (int i = 0; i < apiNoticeCases.size(); i++) {
-                Log.d("TEST", "////--" + apiNoticeCases.get(i).getTbNoticeCase().NoticeCaseID);
-            }
-
             dataEntity.setResult(apiNoticeCases);
             apiListNoticeCase.setData(dataEntity);
             return apiListNoticeCase;
@@ -1862,6 +1856,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     }
 
                     //ส่งค่าทั้งหมดเข้า apiNoticeCases
+                    apiCaseSceneCase.setMode("offline");
                     apiCaseScenesCases.add(apiCaseSceneCase);
                     Log.d("TEST", "--" + apiCaseSceneCase.getTbNoticeCase().NoticeCaseID);
                 }

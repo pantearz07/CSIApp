@@ -16,6 +16,9 @@ import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
  * Created by cbnuke on 9/16/16.
  */
 public class ApiNoticeCase {
+    // โหมดเตรียมไว้ ใช้บอกว่า online, offline
+    String mode;
+
     //ตารางหลัก
     TbNoticeCase tbNoticeCase;
 
@@ -125,5 +128,13 @@ public class ApiNoticeCase {
 
     public void setTbSCDCcenter(TbSCDCcenter tbSCDCcenter) {
         this.tbSCDCcenter = tbSCDCcenter;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 }

@@ -197,7 +197,7 @@ public class NoticeCaseListFragment extends Fragment {
                             i.putString(emergencyTabFragment.Bundle_mode, "new");
                             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                             emergencyTabFragment.setArguments(i);
-                           fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
                             //  fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
 //                            } else {
 //                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
@@ -326,7 +326,7 @@ public class NoticeCaseListFragment extends Fragment {
                 }
             });
 
-            if(apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("receive")) {
+            if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("receive")) {
                 builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -409,14 +409,18 @@ public class NoticeCaseListFragment extends Fragment {
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListNoticeCase.getData().getResult();
-
-                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase
-                int size = caseList.size();
-                List<TbNoticeCase> tbNoticeCases = new ArrayList<>(size);
-                for (int i = 0; i < size; i++) {
-                    tbNoticeCases.add(caseList.get(i).getTbNoticeCase());
+                //caseList.get(2).setMode("online");
+                for (int i = 0; i < caseList.size(); i++) {
+                    Log.d(TAG, caseList.get(i).getMode());
                 }
-                mDbHelper.syncNoticeCase(tbNoticeCases);
+
+                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase ปิดไว้ก่อน เพราะไม่ต้องดึงมาทั้งหมดไม่งั้นจะหนักเครื่องเฉยๆ
+                //int size = caseList.size();
+                //List<TbNoticeCase> tbNoticeCases = new ArrayList<>(size);
+                //for (int i = 0; i < size; i++) {
+                //    tbNoticeCases.add(caseList.get(i).getTbNoticeCase());
+                //}
+                //mDbHelper.syncNoticeCase(tbNoticeCases);
 
                 // เอาข้อมูลไปแสดงใน RV
                 apiNoticeCaseListAdapter.notifyDataSetChanged();

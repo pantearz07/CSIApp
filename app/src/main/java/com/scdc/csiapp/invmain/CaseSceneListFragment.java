@@ -278,13 +278,13 @@ public class CaseSceneListFragment extends Fragment {
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListCaseScene.getData().getResult();
 
-                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase
-//                int size = caseList.size();
-//                List<TbCaseScene> tbNoticeCases = new ArrayList<>(size);
-//                for (int i = 0; i < size; i++) {
-//                    tbNoticeCases.add(caseList.get(i).getTbCaseScene());
-//                }
-//                mDbHelper.syncNoticeCase(tbNoticeCases);
+                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase ปิดไว้ก่อน เพราะไม่ต้องดึงมาทั้งหมดไม่งั้นจะหนักเครื่องเฉยๆ
+                //int size = caseList.size();
+                //List<TbCaseScene> tbNoticeCases = new ArrayList<>(size);
+                //for (int i = 0; i < size; i++) {
+                //    tbNoticeCases.add(caseList.get(i).getTbCaseScene());
+                //}
+                //mDbHelper.syncNoticeCase(tbNoticeCases);
 
                 // เอาข้อมูลไปแสดงใน RV
                 apiCaseSceneListAdapter.notifyDataSetChanged();
