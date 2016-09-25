@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbCaseSceneType {
+public class TbCaseSceneType implements Serializable {
     public String TB_CaseSceneType = "casescenetype";
     // From Table casescenetype field name CaseTypeID
     public String COL_CaseTypeID = "CaseTypeID";

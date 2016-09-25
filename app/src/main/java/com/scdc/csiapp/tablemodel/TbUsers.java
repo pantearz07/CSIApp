@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbUsers {
+public class TbUsers implements Serializable {
     public String TB_Users = "users";
     // From Table users field name id_users
     public String COL_id_users = "id_users";

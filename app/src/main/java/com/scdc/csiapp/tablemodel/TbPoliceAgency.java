@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbPoliceAgency {
+public class TbPoliceAgency implements Serializable {
     public String TB_PoliceAgency = "policeagency";
     // From Table policeagency field name PoliceAgencyID
     public String COL_PoliceAgencyID = "PoliceAgencyID";

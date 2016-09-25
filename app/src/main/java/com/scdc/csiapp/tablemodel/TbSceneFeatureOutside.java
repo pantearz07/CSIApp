@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbSceneFeatureOutside {
+public class TbSceneFeatureOutside implements Serializable {
 
     public String TB_SceneFeatureOutside = "scenefeatureoutside";
     // From Table scenefeatureoutside field name CaseReportID

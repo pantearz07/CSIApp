@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbResultSceneType {
+public class TbResultSceneType implements Serializable {
 
     public String TB_ResultSceneType = "resultscenetype";
     // From Table resultscenetype field name RSTypeID

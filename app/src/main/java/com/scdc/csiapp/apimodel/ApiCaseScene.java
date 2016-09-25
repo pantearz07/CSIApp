@@ -5,7 +5,6 @@ import com.scdc.csiapp.tablemodel.TbCaseScene;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
-import com.scdc.csiapp.tablemodel.TbInvestigatorsInScene;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
@@ -14,7 +13,6 @@ import com.scdc.csiapp.tablemodel.TbPoliceStation;
 import com.scdc.csiapp.tablemodel.TbPropertyLoss;
 import com.scdc.csiapp.tablemodel.TbProvince;
 import com.scdc.csiapp.tablemodel.TbResultScene;
-import com.scdc.csiapp.tablemodel.TbResultSceneType;
 import com.scdc.csiapp.tablemodel.TbSCDCagency;
 import com.scdc.csiapp.tablemodel.TbSCDCcenter;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
@@ -22,12 +20,13 @@ import com.scdc.csiapp.tablemodel.TbSceneFeatureOutside;
 import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
 import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by cbnuke on 9/16/16.
  */
-public class ApiCaseScene {
+public class ApiCaseScene implements Serializable {
     // โหมดเตรียมไว้ ใช้บอกว่า online, offline
     String mode;
 

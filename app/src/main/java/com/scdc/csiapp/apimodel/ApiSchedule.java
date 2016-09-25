@@ -5,12 +5,13 @@ import com.scdc.csiapp.tablemodel.TbScheduleGroup;
 import com.scdc.csiapp.tablemodel.TbScheduleInvInGroup;
 import com.scdc.csiapp.tablemodel.TbScheduleInvestigates;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by cbnuke on 9/16/16.
  */
-public class ApiSchedule {
+public class ApiSchedule implements Serializable {
     // ตารางหลัก
     TbScheduleInvestigates tbScheduleInvestigates;
 

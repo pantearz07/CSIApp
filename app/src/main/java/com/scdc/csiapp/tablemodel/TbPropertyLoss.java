@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbPropertyLoss {
+public class TbPropertyLoss implements Serializable {
     public String TB_PropertyLoss = "propertyloss";
 
     // From Table propertyloss field name PropertyLossID

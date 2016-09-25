@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbRegistrationGCM {
+public class TbRegistrationGCM implements Serializable {
     public String TB_RegistrationGCM = "registrationgcm";
     // From Table registrationgcm field name RegisNO
     public String COL_RegisNO = "RegisNO";

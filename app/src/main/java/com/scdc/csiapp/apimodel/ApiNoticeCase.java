@@ -12,10 +12,12 @@ import com.scdc.csiapp.tablemodel.TbSCDCagency;
 import com.scdc.csiapp.tablemodel.TbSCDCcenter;
 import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 
+import java.io.Serializable;
+
 /**
  * Created by cbnuke on 9/16/16.
  */
-public class ApiNoticeCase {
+public class ApiNoticeCase implements Serializable {
     // โหมดเตรียมไว้ ใช้บอกว่า online, offline
     String mode;
 

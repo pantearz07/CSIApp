@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbResultScene {
+public class TbResultScene implements Serializable {
     public String TB_ResultScene = "resultscene";
     // From Table resultscene field name RSID
     public String COL_RSID = "RSID";

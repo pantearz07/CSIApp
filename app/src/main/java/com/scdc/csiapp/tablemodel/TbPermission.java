@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 18/9/2559.
  */
-public class TbPermission {
+public class TbPermission implements Serializable {
     public String TB_Permission = "permission";
     // From Table permission field name id_permission
     public String COL_id_permission = "id_permission";

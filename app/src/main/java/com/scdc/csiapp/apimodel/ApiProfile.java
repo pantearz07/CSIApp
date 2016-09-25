@@ -1,20 +1,16 @@
 package com.scdc.csiapp.apimodel;
 
 import com.scdc.csiapp.tablemodel.TbOfficial;
-import com.scdc.csiapp.tablemodel.TbPoliceAgency;
-import com.scdc.csiapp.tablemodel.TbPoliceCenter;
-import com.scdc.csiapp.tablemodel.TbPoliceStation;
 import com.scdc.csiapp.tablemodel.TbRegistrationGCM;
-import com.scdc.csiapp.tablemodel.TbSCDCagency;
-import com.scdc.csiapp.tablemodel.TbSCDCcenter;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by cbnuke on 9/16/16.
  */
-public class ApiProfile {
+public class ApiProfile implements Serializable {
     // ตารางหลัก
     private TbOfficial tbOfficial;
 

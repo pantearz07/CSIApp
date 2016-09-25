@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 18/9/2559.
  */
-public class TbInqPosition {
+public class TbInqPosition implements Serializable {
     public String TB_InqPosition = "inqposition";
     // From Table policecenter field name InvPosID
     public String COL_InqPosID = "InqPosID";

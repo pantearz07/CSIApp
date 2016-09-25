@@ -1,9 +1,11 @@
 package com.scdc.csiapp.tablemodel;
 
+import java.io.Serializable;
+
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
-public class TbProvince {
+public class TbProvince implements Serializable {
     public String TB_Province = "province";
     // From Table province field name PROVINCE_ID
     public String COL_PROVINCE_ID = "PROVINCE_ID";
