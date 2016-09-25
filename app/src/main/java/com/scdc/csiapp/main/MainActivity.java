@@ -175,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
                     FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    //  fthome2.replace(R.id.containerView, caseSceneListFragment);
-                    fthome2.replace(R.id.containerView, noticeCaseListFragment);
+                      fthome2.replace(R.id.containerView, caseSceneListFragment);
+                   // fthome2.replace(R.id.containerView, noticeCaseListFragment);
                     fthome2.addToBackStack(null);
                     fthome2.commit();
                 }
