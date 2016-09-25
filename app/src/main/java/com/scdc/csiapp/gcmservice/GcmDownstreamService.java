@@ -58,11 +58,12 @@ public class GcmDownstreamService extends GcmListenerService {
                     String ReceivingCaseDate = data.getString("gcm.notification.ReceivingCaseDate");
                     String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
                     String Address = data.getString("gcm.notification.Address");
-
+                    String InquiryOfficial = data.getString("gcm.notification.InquiryOfficial");
 
                     Log.e(TAG, "CaseReportID : " + CaseReportID);
                     Log.e(TAG, "SubCaseTypeName : " + SubCaseTypeName);
                     Log.e(TAG, "PoliceStation : " + PoliceStation);
+                    Log.e(TAG, "InquiryOfficial : " + InquiryOfficial);
                     Log.e(TAG, "ReceivingCaseDate : " + ReceivingCaseDate);
                     Log.e(TAG, "ReceivingCaseTime : " + ReceivingCaseTime);
                     String message = "คดี " + SubCaseTypeName
@@ -70,6 +71,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String bigmessage = "คดี " + SubCaseTypeName
                             + " " + "สถานีตำรวจ " + PoliceStation
                             + "\n" + "ที่อยู่ " + Address
+                            + "\n" + "พงส. " + InquiryOfficial
                             + "\n" + "รับเเจ้งเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
 
                     sendNotification("มีงานเข้าใหม่", message, bigmessage, nameintent, "casescenelistfragment");
