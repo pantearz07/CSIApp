@@ -25,12 +25,9 @@ import android.view.ViewGroup;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
-import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.inqmain.ApiNoticeCaseListAdapter;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 
@@ -57,7 +54,7 @@ public class CaseSceneListFragment extends Fragment {
     private PreferenceData mManager;
     CSIDataTabFragment csiDataTabFragment;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
+  //  Boolean networkConnectivity = false;
     Snackbar snackbar;
 
     GetDateTime getDateTime;
@@ -78,8 +75,8 @@ public class CaseSceneListFragment extends Fragment {
         rootLayout = (CoordinatorLayout) viewlayout.findViewById(R.id.rootLayout);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(context);
-        networkConnectivity = cd.isNetworkAvailable();
-        networkConnectivity = false;
+       // networkConnectivity = cd.isNetworkAvailable();
+        //networkConnectivity = false;
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();
@@ -99,7 +96,7 @@ public class CaseSceneListFragment extends Fragment {
             @Override
 
             public void onRefresh() {
-                if (networkConnectivity) {
+                if (cd.isNetworkAvailable()) {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
@@ -135,7 +132,7 @@ public class CaseSceneListFragment extends Fragment {
             public void run() {
                 Log.i("log_show draft", "Runnable");
 
-                if (networkConnectivity) {
+                if (cd.isNetworkAvailable()) {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
@@ -163,7 +160,7 @@ public class CaseSceneListFragment extends Fragment {
         apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
 
         // ตรวจสอบการเชื่อมต่ออินเตอร์แล้วแยกการทำงานกัน
-        if (networkConnectivity) {
+        if (cd.isNetworkAvailable()) {
             new ConnectlistCasescene().execute();
         } else {
             selectApiCaseSceneFromSQLite();

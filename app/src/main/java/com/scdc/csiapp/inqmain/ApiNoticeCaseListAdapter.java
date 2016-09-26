@@ -144,13 +144,13 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         } else if (CaseStatus.equalsIgnoreCase("notice")) {
             csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus2));
         } else if (CaseStatus.equalsIgnoreCase("assign")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus2));
-        } else if (CaseStatus.equalsIgnoreCase("accept")) {
             csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus3));
+        } else if (CaseStatus.equalsIgnoreCase("accept")) {
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus4));
         } else if (CaseStatus.equalsIgnoreCase("investigating")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus4));
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus5));
         } else if (CaseStatus.equalsIgnoreCase("investigated")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus4));
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus6));
         }
     }
 

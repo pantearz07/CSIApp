@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 
 public class CSIDataTabFragment extends Fragment {
@@ -39,6 +40,7 @@ public class CSIDataTabFragment extends Fragment {
     public static String Bundle_Key = "casescene";
     public static String Bundle_mode = "mode";
     public static ApiCaseScene apiCaseScene;
+    public static TbNoticeCase tbNoticeCase;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,10 +73,11 @@ public class CSIDataTabFragment extends Fragment {
         });
         Bundle args = getArguments();
 
-        apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
+//        apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
+        tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
         mode = args.getString(Bundle_mode);
         //Log.i(TAG, " casesceneID " + apiCaseScene.getTbCaseScene().CaseReportID.toString());
-        Log.i(TAG, " casesceneID " + apiCaseScene.getTbNoticeCase().NoticeCaseID.toString());
+        Log.i(TAG, " NoticeCaseID " + tbNoticeCase.NoticeCaseID.toString());
         return x;
 
     }

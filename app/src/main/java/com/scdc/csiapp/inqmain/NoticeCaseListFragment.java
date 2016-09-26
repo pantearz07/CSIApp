@@ -56,7 +56,7 @@ public class NoticeCaseListFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
+    //Boolean networkConnectivity = false;
     GetDateTime getDateTime;
     String officialID;
     EmergencyTabFragment emergencyTabFragment;
@@ -79,7 +79,7 @@ public class NoticeCaseListFragment extends Fragment {
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
 
         cd = new ConnectionDetector(context);
-        networkConnectivity = cd.isNetworkAvailable();
+        //networkConnectivity = cd.isNetworkAvailable();
         getDateTime = new GetDateTime();
 
         emergencyTabFragment = new EmergencyTabFragment();
@@ -231,7 +231,7 @@ public class NoticeCaseListFragment extends Fragment {
             @Override
 
             public void onRefresh() {
-                if (networkConnectivity) {
+                if (cd.isNetworkAvailable()) {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
@@ -267,7 +267,7 @@ public class NoticeCaseListFragment extends Fragment {
             public void run() {
                 Log.i("log_show draft", "Runnable");
 
-                if (networkConnectivity) {
+                if (cd.isNetworkAvailable()) {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
@@ -295,7 +295,7 @@ public class NoticeCaseListFragment extends Fragment {
         apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
 
         // ตรวจสอบการเชื่อมต่ออินเตอร์แล้วแยกการทำงานกัน
-        if (networkConnectivity) {
+        if (cd.isNetworkAvailable()) {
             new ConnectlistNoticecase().execute();
         } else {
             selectApiNoticeCaseFromSQLite();
