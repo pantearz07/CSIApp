@@ -1,4 +1,4 @@
-package com.scdc.csiapp.inqmain;
+package com.scdc.csiapp.invmain;
 
 
 import android.content.Context;
@@ -37,15 +37,13 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
-import com.scdc.csiapp.main.TimeDialog;
 
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 
-public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class AssignDetailTabFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // Google play services
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
@@ -56,7 +54,6 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
-    EmergencyTabFragment emergencyTabFragment;
     DBHelper dbHelper;
     private Context mContext;
     private PreferenceData mManager;
@@ -91,7 +88,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     private TextView editHappenCaseDate, editHappenCaseTime;
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
 
-    private static final String TAG = "DEBUG-EmergencyDetailTabFragment";
+    private static final String TAG = "DEBUG-AssignDetailTabFragment";
 
     View viewReceiveCSI;
     Context context;
@@ -110,7 +107,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         mManager = new PreferenceData(getActivity());
         mFragmentManager = getActivity().getSupportFragmentManager();
         getDateTime = new GetDateTime();
-        emergencyTabFragment = new EmergencyTabFragment();
+
         cd = new ConnectionDetector(getActivity());
 
         // ทำการสร้างตัวเชื่อกับ Google services
@@ -124,19 +121,19 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
 
         updateDT = getDateTime.getDateTimeNow();
-        String noticecaseid = EmergencyTabFragment.tbNoticeCase.getNoticeCaseID();
+        String noticecaseid = AssignTabFragment.apiCaseScene.getTbNoticeCase().getNoticeCaseID();
         Log.i(TAG, " NoticeCaseID " + noticecaseid);
         //Show เวลาล่าสุดที่อัพเดต
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText("อัพเดทข้อมูลล่าสุดเมื่อวันที่ " +
-                getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
-                + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
+                getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate)
+                + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
         //Show spinner สถานที่ตำรวจภูธร
 
 
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
-        if (EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
-            editTextPhone1.setText(EmergencyTabFragment.tbNoticeCase.CaseTel);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel != "") {
+            editTextPhone1.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel);
         }
         editTextPhone1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -151,13 +148,13 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
             @Override
             public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.CaseTel = editTextPhone1.getText().toString();
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel = editTextPhone1.getText().toString();
             }
         });
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
-        if (EmergencyTabFragment.tbNoticeCase.LocaleName != "") {
-            editAddrDetail.setText(EmergencyTabFragment.tbNoticeCase.LocaleName);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LocaleName != "") {
+            editAddrDetail.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().LocaleName);
         }
         editAddrDetail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -174,7 +171,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
             @Override
             public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.LocaleName = editAddrDetail.getText().toString();
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().LocaleName = editAddrDetail.getText().toString();
             }
         });
 
@@ -182,9 +179,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
         spinnerAmphur = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAmphur);
         spinnerDistrict = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerDistrict);
-        amphurid = EmergencyTabFragment.tbNoticeCase.AMPHUR_ID;
-        districtid = EmergencyTabFragment.tbNoticeCase.DISTRICT_ID;
-        provinceid = EmergencyTabFragment.tbNoticeCase.PoliceStationID;
+        amphurid = AssignTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID;
+        districtid = AssignTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID;
+        provinceid = AssignTabFragment.apiCaseScene.getTbNoticeCase().PoliceStationID;
 
         mProvinceArray = dbHelper.SelectAllProvince();
         if (mProvinceArray != null) {
@@ -269,122 +266,61 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         //datetime
         editReceiveCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseDate);
-        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate == null || EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate.equals("")) {
             editReceiveCaseDate.setText("");
         } else {
-            editReceiveCaseDate.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate));
+            editReceiveCaseDate.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate));
         }
-        editReceiveCaseDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                DateDialog dialogReceiveCaseDate = new DateDialog(view);
-                dialogReceiveCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-            }
-
-        });
         editReceiveCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseTime);
-        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime == null || EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime.equals("")) {
             editReceiveCaseTime.setText("");
         } else {
-            editReceiveCaseTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime));
+            editReceiveCaseTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime));
         }
 
-        editReceiveCaseTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                TimeDialog dialogReceiveCaseTime = new TimeDialog(view);
-                dialogReceiveCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
-
-            }
-
-        });
         editHappenCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseDate);
-        if (EmergencyTabFragment.tbNoticeCase.HappenCaseDate == null || EmergencyTabFragment.tbNoticeCase.HappenCaseDate.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate.equals("")) {
             editHappenCaseDate.setText("");
         } else {
-            editHappenCaseDate.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.HappenCaseDate));
+            editHappenCaseDate.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate));
         }
 
-        editHappenCaseDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                DateDialog dialogHappenCaseDate = new DateDialog(view);
-                dialogHappenCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-
-
-            }
-
-        });
         editHappenCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseTime);
-        if (EmergencyTabFragment.tbNoticeCase.HappenCaseTime == null || EmergencyTabFragment.tbNoticeCase.HappenCaseTime.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime.equals("")) {
             editHappenCaseTime.setText("");
         } else {
-            editHappenCaseTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.HappenCaseTime));
+            editHappenCaseTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime));
         }
-
-        editHappenCaseTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                TimeDialog dialogHappenCaseTime = new TimeDialog(view);
-                dialogHappenCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
-
-            }
-
-
-        });
 
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
-        if (EmergencyTabFragment.tbNoticeCase.KnowCaseDate == null || EmergencyTabFragment.tbNoticeCase.KnowCaseDate.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate.equals("")) {
             editKnowCaseDate.setText("");
         } else {
-            editKnowCaseDate.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.KnowCaseDate));
+            editKnowCaseDate.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate));
         }
 
-        editKnowCaseDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("Click KnowCaseTime", editKnowCaseDate.getText().toString());
-                DateDialog dialogKnowCaseDate = new DateDialog(view);
-                dialogKnowCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
-
-            }
-
-        });
         editKnowCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseTime);
 
-        if (EmergencyTabFragment.tbNoticeCase.KnowCaseTime == null || EmergencyTabFragment.tbNoticeCase.KnowCaseTime.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime.equals("")) {
             editKnowCaseTime.setText("");
         } else {
-            editKnowCaseTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.KnowCaseTime));
+            editKnowCaseTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime));
         }
 
-        editKnowCaseTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("ClickKnowCaseTime", editKnowCaseTime.getText().toString());
-                TimeDialog dialogKnowCaseTime = new TimeDialog(view);
-                dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
-
-
-            }
-
-        });
 
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
-        valueLat.setText(EmergencyTabFragment.tbNoticeCase.Latitude);
-        valueLong.setText(EmergencyTabFragment.tbNoticeCase.Longitude);
-//        lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-//        lng = EmergencyTabFragment.tbNoticeCase.Longitude;
+        valueLat.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude);
+        valueLong.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude);
+//        lat = AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude;
+//        lng = AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude;
 
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
         btnButtonSearchMap.setOnClickListener(this);
@@ -401,8 +337,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 //        }
 
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
-        if (EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail != "") {
-            editCircumstanceOfCaseDetail.setText(EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail != "") {
+            editCircumstanceOfCaseDetail.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail);
         }
         editCircumstanceOfCaseDetail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -412,13 +348,13 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
             }
         });
         final Spinner spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
@@ -427,24 +363,10 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, Antecedent);
         spinnerAntecedent.setAdapter(adapterEnglish);
-        spinnerAntecedent.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[position]);
-                Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
 
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[0]);
-
-                Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
-            }
-        });
-        if (EmergencyTabFragment.tbNoticeCase.SuffererPrename != null) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename != null) {
             for (int i = 0; i < Antecedent.length; i++) {
-                if (EmergencyTabFragment.tbNoticeCase.SuffererPrename.trim().equals(Antecedent[i].toString())) {
+                if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename.trim().equals(Antecedent[i].toString())) {
                     spinnerAntecedent.setSelection(i);
                     break;
                 }
@@ -452,57 +374,25 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
 
         final EditText editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
-        if (EmergencyTabFragment.tbNoticeCase.SuffererName != "") {
-            editSuffererName.setText(EmergencyTabFragment.tbNoticeCase.SuffererName);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererName != "") {
+            editSuffererName.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererName);
         }
-        editSuffererName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.SuffererName = editSuffererName.getText().toString();
-            }
-        });
 
         AutoCompleteTextView autoCompleteSuffererStatus = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteSuffererStatus);
-        if (EmergencyTabFragment.tbNoticeCase.SuffererStatus != "") {
-            autoCompleteSuffererStatus.setText(EmergencyTabFragment.tbNoticeCase.SuffererStatus);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus != "") {
+            autoCompleteSuffererStatus.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus);
         }
-        EmergencyTabFragment.tbNoticeCase.SuffererStatus = autoCompleteSuffererStatus.getText().toString();
+        AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
 
         final EditText editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
-        if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
-            editTextSuffererPhone.setText(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum != "") {
+            editTextSuffererPhone.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
         }
-        editTextSuffererPhone.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-            }
-        });
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
-        if (emergencyTabFragment.mode == "view") {
+        if (AssignTabFragment.mode == "view") {
             fabBtnRec.setVisibility(View.GONE);
             fabBtnRec.setEnabled(false);
             editTextPhone1.setEnabled(false);
@@ -567,36 +457,10 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         switch (view.getId()) {
             case R.id.fabBtnRec:
 
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                EmergencyTabFragment.tbNoticeCase.HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.HappenCaseTime = getDateTime.changeDateFormatToDB(editHappenCaseTime.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = getDateTime.changeDateFormatToDB(editReceiveCaseDate.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = getDateTime.changeDateFormatToDB(editReceiveCaseTime.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.KnowCaseTime = getDateTime.changeDateFormatToDB(editKnowCaseTime.getText().toString());
-                Log.i(TAG, "spinnerKnowCaseTime" + EmergencyTabFragment.tbNoticeCase.KnowCaseTime);
-                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                if (EmergencyTabFragment.tbNoticeCase != null) {
-                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
-                        }
-                    }
-                }
                 break;
             case R.id.btnButtonSearchMap:
-                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
+                lat = AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude;
+                lng = AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude;
                 if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
@@ -613,13 +477,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchLatLong:
-                lat = String.valueOf(mLastLocation.getLatitude());
-                lng = String.valueOf(mLastLocation.getLongitude());
-                Log.d(TAG, "Go to Google map " + lat + " " + lng);
-                valueLat.setText(lat);
-                valueLong.setText(lng);
-                EmergencyTabFragment.tbNoticeCase.Latitude = valueLat.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.Longitude = valueLong.getText().toString();
+
                 break;
         }
     }
@@ -670,16 +528,14 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     selectedDistrict = mDistrictArray[pos][0];
                     sDistrictName = mDistrictArray[pos][2].toString();
                     Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
-                    EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                    Log.i(TAG, AssignTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID);
                     break;
                 case R.id.spinnerAmphur:
                     selectedAmphur = mAmphurArray[pos][0];
                     sAmphurName = mAmphurArray[pos][2].toString();
                     Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
-                    EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
-                    //   EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
+                    Log.i(TAG, AssignTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID);
+                    //   AssignTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur[0];
                     //ดึงค่า District
 
                     mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
@@ -703,8 +559,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     selectedProvince = mProvinceArray[pos][0];
                     sProvinceName = mProvinceArray[pos][2].toString();
                     Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
-                    EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+
+                    Log.i(TAG, AssignTabFragment.apiCaseScene.getTbNoticeCase().PROVINCE_ID);
                     //provinceid = selectedProvince[0];
                     //ดึงค่า amphur
                     mAmphurArray = dbHelper.SelectAmphur(selectedProvince);
@@ -739,19 +595,19 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     selectedDistrict = mDistrictArray[0][0];
                     sDistrictName = mDistrictArray[0][2].toString();
                     Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
-                    EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
+
                     break;
                 case R.id.spinnerAmphur:
                     selectedAmphur = mAmphurArray[0][0];
                     sAmphurName = mAmphurArray[0][2].toString();
                     Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
-                    EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
+
                     break;
                 case R.id.spinnerProvince:
                     selectedProvince = mProvinceArray[0][0];
                     sProvinceName = mProvinceArray[0][2].toString();
                     Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
-                    EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
+
                     break;
             }
         }

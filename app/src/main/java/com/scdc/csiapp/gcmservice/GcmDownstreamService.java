@@ -144,13 +144,14 @@ public class GcmDownstreamService extends GcmListenerService {
     private void sendNotification(String Title, String message, String bigmessage, String nameintent, String namefragment) {
         Intent intent = null;
         try {
-            if(namefragment.equals("noticecaselistfragment")) {
-                intent = new Intent(this, Class.forName("com.scdc.csiapp.inqmain" + nameintent));
-            }else if(namefragment.equals("casescenelistfragment")) {
-                intent = new Intent(this, Class.forName("com.scdc.csiapp.invmain" + nameintent));
-            }else if(namefragment.equals("scheduleinvestigatorsfragment")){
-                intent = new Intent(this, Class.forName("com.scdc.csiapp.main" + nameintent));
-            }
+            intent = new Intent(this, Class.forName("com.scdc.csiapp.main." + nameintent));
+//            if(namefragment.equals("noticecaselistfragment")) {
+//                intent = new Intent(this, Class.forName("com.scdc.csiapp.inqmain." + nameintent));
+//            }else if(namefragment.equals("casescenelistfragment")) {
+//                intent = new Intent(this, Class.forName("com.scdc.csiapp.invmain." + nameintent));
+//            }else if(namefragment.equals("scheduleinvestigatorsfragment")){
+//                intent = new Intent(this, Class.forName("com.scdc.csiapp.main." + nameintent));
+//            }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

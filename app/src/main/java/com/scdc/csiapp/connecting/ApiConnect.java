@@ -369,7 +369,12 @@ public class ApiConnect {
                 ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListCaseSceneServer.getData().getResult().size();
-                int sql_size = apiListCaseSceneSQLite.getData().getResult().size();
+                int sql_size;
+                if(apiListCaseSceneSQLite.getData() == null){
+                    sql_size = 0;
+                }else {
+                    sql_size = apiListCaseSceneSQLite.getData().getResult().size();
+                }
                 for (int i = 0; i < ser_size; i++) {
                     ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
                     ApiCaseScene temp_sql;

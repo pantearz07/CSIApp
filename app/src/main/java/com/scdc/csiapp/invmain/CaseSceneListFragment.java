@@ -53,8 +53,9 @@ public class CaseSceneListFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     CSIDataTabFragment csiDataTabFragment;
+    AssignTabFragment assignTabFragment;
     ConnectionDetector cd;
-  //  Boolean networkConnectivity = false;
+    //  Boolean networkConnectivity = false;
     Snackbar snackbar;
 
     GetDateTime getDateTime;
@@ -75,7 +76,7 @@ public class CaseSceneListFragment extends Fragment {
         rootLayout = (CoordinatorLayout) viewlayout.findViewById(R.id.rootLayout);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(context);
-       // networkConnectivity = cd.isNetworkAvailable();
+        // networkConnectivity = cd.isNetworkAvailable();
         //networkConnectivity = false;
         getDateTime = new GetDateTime();
 
@@ -84,7 +85,7 @@ public class CaseSceneListFragment extends Fragment {
         fabBtn.setVisibility(View.GONE);
 
         csiDataTabFragment = new CSIDataTabFragment();
-
+        assignTabFragment = new AssignTabFragment();
         caseList = new ArrayList<>();
         rvDraft = (RecyclerView) viewlayout.findViewById(R.id.rvDraft);
         LinearLayoutManager llm = new LinearLayoutManager(context);
@@ -183,11 +184,22 @@ public class CaseSceneListFragment extends Fragment {
             builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Bundle i = new Bundle();
-                    i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
-                    i.putString(csiDataTabFragment.Bundle_mode, "view");
-                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                    csiDataTabFragment.setArguments(i);
-                    fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+                    //สถานะคดี 
+                    if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
+                        i.putSerializable(assignTabFragment.Bundle_Key, apiNoticeCase);
+                        i.putString(assignTabFragment.Bundle_mode, "view");
+                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        assignTabFragment.setArguments(i);
+                        fragmentTransaction.replace(R.id.containerView, assignTabFragment).addToBackStack(null).commit();
+
+                    } else {
+
+                        i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
+                        i.putString(csiDataTabFragment.Bundle_mode, "view");
+                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        csiDataTabFragment.setArguments(i);
+                        fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+                    }
                 }
             });
 
@@ -196,7 +208,7 @@ public class CaseSceneListFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Bundle i = new Bundle();
-                        i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+                        i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
                         i.putString(csiDataTabFragment.Bundle_mode, "edit");
                         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                         csiDataTabFragment.setArguments(i);
@@ -204,6 +216,7 @@ public class CaseSceneListFragment extends Fragment {
                     }
                 });
             }
+
 
             builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
                 @Override

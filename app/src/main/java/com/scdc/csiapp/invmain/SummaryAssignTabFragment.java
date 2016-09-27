@@ -1,8 +1,7 @@
-package com.scdc.csiapp.inqmain;
+package com.scdc.csiapp.invmain;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,12 +27,14 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.TimeDialog;
 import com.scdc.csiapp.main.WelcomeActivity;
 
 
-public class SummaryEmerTabFragment extends Fragment {
-    private static final String TAG = "DEBUG-SummaryEmerTabFragment";
+public class SummaryAssignTabFragment extends Fragment {
+    private static final String TAG = "DEBUG-SummaryAssignTabFragment";
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     // connect sqlite
@@ -60,13 +61,15 @@ public class SummaryEmerTabFragment extends Fragment {
     String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
 
-    Button btnNoticecase, btnDownloadfile;
+    Button btnAcceptCase, btnNoticecase, btnDownloadfile;
     String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
     String SelectedAgencyID, SelectedCenterID;
     Spinner spnSCDCcenterType, spnSCDCagencyType;
     String selectedCenter, selectedAgencyCode;
-    View layoutButton1,linearLayoutReportNo,layoutSceneNoticeDate;
+    View layoutButton, layoutButton1, linearLayoutReportNo,layoutSceneNoticeDate;
+    CSIDataTabFragment csiDataTabFragment;
+    TextView editSceneNoticeDate,editSceneNoticeTime;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +78,7 @@ public class SummaryEmerTabFragment extends Fragment {
 //โชว์ scenenoticedate & time
         final Context context = viewSummaryCSI.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
-
+        csiDataTabFragment = new CSIDataTabFragment();
         rootLayout = (CoordinatorLayout) viewSummaryCSI.findViewById(R.id.rootLayout);
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
@@ -83,14 +86,14 @@ public class SummaryEmerTabFragment extends Fragment {
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
         cd = new ConnectionDetector(getActivity());
 
-        noticeCaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
+        noticeCaseID = AssignTabFragment.apiCaseScene.getTbNoticeCase().NoticeCaseID;
         Log.i(TAG, " NoticeCaseID " + noticeCaseID);
 
         updateDT = getDateTime.getDateTimeNow();
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
+        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
 
         linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
         linearLayoutReportNo.setVisibility(View.GONE);
@@ -98,9 +101,9 @@ public class SummaryEmerTabFragment extends Fragment {
         edtReportNo.setVisibility(View.GONE);
 
         layoutButton1 = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton1);
-        layoutButton1.setVisibility(View.GONE);
-        layoutSceneNoticeDate= (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutSceneNoticeDate);
-        layoutSceneNoticeDate.setVisibility(View.GONE);
+        //layoutButton1.setVisibility(View.GONE);
+        layoutButton = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton);
+        layoutButton.setVisibility(View.GONE);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
         edtPoliceStation = (TextView) viewSummaryCSI.findViewById(R.id.edtPoliceStation);
@@ -117,20 +120,21 @@ public class SummaryEmerTabFragment extends Fragment {
         TextView edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
         if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
-            EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+            AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
             sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
         }
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
-        btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
+        //btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
-        btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
-
+        //btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
+        btnAcceptCase = (Button) viewSummaryCSI.findViewById(R.id.btnAcceptCase);
+        btnAcceptCase.setOnClickListener(new SummaryOnClickListener());
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         spnCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
-        sCaseTypeID = EmergencyTabFragment.tbNoticeCase.CaseTypeID;
-        sSubCaseTypeID = EmergencyTabFragment.tbNoticeCase.SubCaseTypeID;
+        sCaseTypeID = AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID;
+        sSubCaseTypeID = AssignTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID;
 
         //โชว์dropdown casetype
         //ดึงค่าจาก TbCaseSceneType
@@ -186,81 +190,83 @@ public class SummaryEmerTabFragment extends Fragment {
 //            }
 //        }
 
-        edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
+        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
                 + WelcomeActivity.profile.getTbOfficial().LastName + " ("
                 + WelcomeActivity.profile.getTbOfficial().Position + ") โทร." +
                 "" + WelcomeActivity.profile.getTbOfficial().PhoneNumber + " ");
 
-        if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID == null || EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID.equals("") || EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID.equals("null")) {
-            edtInvInfo.setText("");
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID.equals("") || AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID.equals("null")) {
+            edtInqInfo.setText("");
         } else {
-            String InvestigatorOfficialID = EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID;
-            Log.i(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
+            String InquiryOfficialID = AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID;
+            Log.i(TAG, "InquiryOfficialID : " + InquiryOfficialID);
 
-            String mInvOfficialArray[] = dbHelper.SelectInvOfficial(EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID);
+            String mInvOfficialArray[] = dbHelper.SelectInvOfficial(InquiryOfficialID);
             if (mInvOfficialArray != null) {
-                edtInvInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
+                edtInqInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
                         + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") โทร." +
                         mInvOfficialArray[7].toString());
             } else {
-                edtInvInfo.setText("");
+                edtInqInfo.setText("");
             }
 
         }
 
 
-        String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(EmergencyTabFragment.tbNoticeCase.PoliceStationID);
+        String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(AssignTabFragment.apiCaseScene.getTbNoticeCase().PoliceStationID);
         if (mTypePoliceStationArray != null) {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
 
-        if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigating")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("investigating")) {
             edtStatus.setText("กำลังดำเนินการตรวจ");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("notice")) {
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("notice")) {
             edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
             btnNoticecase.setEnabled(false);
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("receive")) {
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("receive")) {
             edtStatus.setText("รอส่งแจ้งเหตุ");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("assign")) {
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("assign")) {
             edtStatus.setText("รอรับไปตรวจ");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("accept")) {
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("accept")) {
             edtStatus.setText("รับเรื่องแล้ว");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigated")) {
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("investigated")) {
             edtStatus.setText("ตรวจเสร็จแล้ว");
         }
-
-        //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
-        if (EmergencyTabFragment.tbNoticeCase.SceneNoticeDate == null) {
+        TextView txtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.txtSceneNoticeDateTime);
+        txtSceneNoticeDateTime.setText("วันเวลาที่จ่ายงาน");
+            //ววันเวลาที่จ่ายงานห
+        if (AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate == null) {
             edtSceneNoticeDateTime.setText("-");
         } else {
-            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.SceneNoticeDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.SceneNoticeTime + " น.");
+            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate+ " น.");
         }
 
-        //วันเวลาที่ตรวจคดีเสร็จ
-        if (EmergencyTabFragment.tbNoticeCase.CompleteSceneDate == null) {
-            edtCompleteSceneDateTime.setText("-");
-
-        } else {
-            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.CompleteSceneDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.CompleteSceneTime + " น.");
-
-        }
+        edtCompleteSceneDateTime.setVisibility(View.GONE);
+        //วันเวลาที่ จะออกไปตรวจ
+        TextView edtCompleteSceneDateTimeTitle = (TextView) viewSummaryCSI.findViewById(R.id.edtCompleteSceneDateTimeTitle);
+        edtCompleteSceneDateTimeTitle.setText("กำหนดวันเวลาทีออกไปตรวจ");
+        editSceneNoticeDate = (TextView) viewSummaryCSI.findViewById(R.id.editSceneNoticeDate);
+        editSceneNoticeTime= (TextView) viewSummaryCSI.findViewById(R.id.editSceneNoticeTime);
+        editSceneNoticeDate.setOnClickListener(new SummaryOnClickListener());
+        editSceneNoticeTime.setOnClickListener(new SummaryOnClickListener());
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
-        if (EmergencyTabFragment.tbNoticeCase.LastUpdateDate == null) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate == null) {
 
             edtUpdateDateTime.setText("-");
         } else {
-            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime + " น.");
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime + " น.");
 
         }
 
-        if (EmergencyTabFragment.mode == "view") {
+        if (AssignTabFragment.mode == "view") {
             fabBtn.setVisibility(View.GONE);
+            fabBtn.setEnabled(false);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
             btnNoticecase.setEnabled(false);
-        } else if (EmergencyTabFragment.mode == "edit") {
+        } else if (AssignTabFragment.mode == "edit") {
             btnDownloadfile.setEnabled(false);
         }
 
@@ -284,95 +290,61 @@ public class SummaryEmerTabFragment extends Fragment {
 
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
-            if (v == btnNoticecase) {
-                Log.i(TAG, "btnNoticecase " + WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                View view1 = inflater.inflate(R.layout.emergency_send_case, null);
-                dialog.setMessage(getString(R.string.send_noticecase));
-                dialog.setView(view1);
+            if (v == btnAcceptCase) {
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "accept";
+                AssignTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "accept";
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate = getDateTime.changeDateFormatToDB(editSceneNoticeDate.getText().toString());
+                AssignTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime = getDateTime.changeDateFormatToDB(editSceneNoticeTime.getText().toString());
 
-                spnSCDCcenterType = (Spinner) view1.findViewById(R.id.spnSCDCcenterType);
-                spnSCDCagencyType = (Spinner) view1.findViewById(R.id.spnSCDCagencyType);
-                //เช็คว่ามีค่า SCDCAgencyCode
+                //save ลงมือถือ
+                boolean isSuccess1 = dbHelper.saveCaseScene(AssignTabFragment.apiCaseScene.getTbCaseScene());
+                if (isSuccess1) {
+                    boolean isSuccess = dbHelper.saveNoticeCase(AssignTabFragment.apiCaseScene.getTbNoticeCase());
+                    if (isSuccess) {
+                        //แก้ไขตารางในเซิฟก่อน แล้วเด้งไปหน้าใหม่
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.edit), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Bundle i = new Bundle();
+                                            i.putSerializable(csiDataTabFragment.Bundle_Key, AssignTabFragment.apiCaseScene);
+                                            i.putString(csiDataTabFragment.Bundle_mode, "edit");
+                                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                            csiDataTabFragment.setArguments(i);
+                                            fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
 
-                mTypeCenterArray = dbHelper.SelectAllSCDCCenter();
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    }else{
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
 
-                if (mTypeCenterArray != null) {
 
-                    mTypeCenterArray2 = new String[mTypeCenterArray.length];
-                    for (int i = 0; i < mTypeCenterArray.length; i++) {
-                        mTypeCenterArray2[i] = mTypeCenterArray[i][1] + " " + mTypeCenterArray[i][2];
-
-                        Log.i("SelectAllSCDCCenter",
-                                mTypeCenterArray2[i].toString());
-                    }
-                    adapterSCDCcenter = new ArrayAdapter<String>(
-                            getActivity(),
-                            android.R.layout.simple_dropdown_item_1line,
-                            mTypeCenterArray2);
-                    //set the view for the Drop down list
-                    adapterSCDCcenter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spnSCDCcenterType.setAdapter(adapterSCDCcenter);
-
-                    if (sSCDCAgencyCode != null) {
-                        String SelectSCDCCenterID[] = dbHelper.SelectSCDCCenterID(sSCDCAgencyCode);
-                        Log.i("SelectSCDCCenterID", sSCDCAgencyCode + " " + SelectSCDCCenterID[0]);
-                        if (SelectSCDCCenterID[0] != null) {
-                            for (int i = 0; i < mTypeCenterArray.length; i++) {
-                                if (SelectSCDCCenterID[0].trim().equals(mTypeCenterArray[i][0].toString())) {
-                                    spnSCDCcenterType.setSelection(i);
-                                    break;
-                                }
-                            }
+                                        }
+                                    });
+                            snackbar.show();
                         }
                     }
-                } else {
-                    Log.i(TAG, "mTypeCenterArray null");
+                }else{
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+
+                                    }
+                                });
+                        snackbar.show();
+                    }
                 }
-                spnSCDCcenterType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
-                spnSCDCagencyType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
-
-                dialog.setMessage("แจ้งเหตุ");
-                dialog.setPositiveButton("ส่ง", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // uploadDataToServer();
-                        if (EmergencyTabFragment.tbNoticeCase != null) {
-                            boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-                            if (isSuccess) {
-                                if (snackbar == null || !snackbar.isShown()) {
-                                    snackbar = Snackbar.make(rootLayout, "ส่งแจ้งเหตุเรียบร้อย"
-                                                    + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate
-                                                    + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID
-                                                    + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode
-                                            , Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-
-                                                }
-                                            });
-                                    snackbar.show();
-                                }
-                            }
-                        }
-
-                        //FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                        //fragmentTransaction.replace(R.id.containerView, acceptListFragment).addToBackStack(null).commit();
-                    }
-                });
-                dialog.setCancelable(true);
-                dialog.setNeutralButton("ยกเลิก", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-
-                dialog.create();
-                dialog.show();
             }
             if (v == btnDownloadfile) {
                 Log.i(TAG, "btnDownloadfile");
@@ -380,28 +352,17 @@ public class SummaryEmerTabFragment extends Fragment {
                 //
             }
             if (v == fabBtn) {
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
 
-                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
-                Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
-                EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
-                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                if (EmergencyTabFragment.tbNoticeCase != null) {
-                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
-                        }
-                    }
-                }
+            }
+            if(v == editSceneNoticeDate){
+                Log.i("Click SceneNoticeDate", editSceneNoticeDate.getText().toString());
+                DateDialog dialogKnowCaseDate = new DateDialog(v);
+                dialogKnowCaseDate.show(getActivity().getFragmentManager(), "Date Picker");
+            }
+            if(v == editSceneNoticeTime){
+                Log.i("Click SceneNoticeTime", editSceneNoticeTime.getText().toString());
+                TimeDialog dialogKnowCaseTime = new TimeDialog(v);
+                dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
             }
         }
     }
@@ -414,7 +375,7 @@ public class SummaryEmerTabFragment extends Fragment {
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[pos][0];
                     Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
-                    EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID = selectedCaseType;
                     //ดึงค่าจาก TbSubCaseSceneType
                     mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType);
                     if (mSubCaseTypeArray != null) {
@@ -429,16 +390,16 @@ public class SummaryEmerTabFragment extends Fragment {
                     } else {
                         spnSubCaseType.setAdapter(null);
                         selectedSubCaseType = null;
-                        EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                        AssignTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                         Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
                     }
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
+                    Log.i(TAG, AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID);
                     spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
 
                     break;
                 case R.id.spnSubCaseType:
                     selectedSubCaseType = mSubCaseTypeArray[pos][0];
-                    EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
                     if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
                         spnSubCaseType.setSelection(0);
@@ -462,11 +423,11 @@ public class SummaryEmerTabFragment extends Fragment {
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[0][0];
                     Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
-                    EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID = selectedCaseType;
                     break;
                 case R.id.spnSubCaseType:
                     selectedSubCaseType = mSubCaseTypeArray[0][0];
-                    EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
                     break;
             }
@@ -500,7 +461,7 @@ public class SummaryEmerTabFragment extends Fragment {
                     } else {
                         spnSCDCagencyType.setAdapter(null);
                         selectedAgencyCode = null;
-                        EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                        AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = selectedAgencyCode;
                         Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode));
                     }
                     spnSCDCagencyType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
@@ -510,8 +471,8 @@ public class SummaryEmerTabFragment extends Fragment {
                     //ค่า SCDCAgencyCode
                     selectedAgencyCode = mTypeAgencyArray[pos][0];
 
-                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
-                    Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = selectedAgencyCode;
+                    Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode);
                     break;
             }
 
@@ -526,7 +487,7 @@ public class SummaryEmerTabFragment extends Fragment {
                 case R.id.spnSCDCagencyType:
                     selectedAgencyCode = mTypeAgencyArray[0][0];
 
-                    EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = selectedAgencyCode;
 
                     break;
             }

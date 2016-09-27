@@ -21,8 +21,8 @@
     <string name="update_database">อัพเดทฐานข้อมูล...</string>
 
     <string name="send_noticecase">ส่งเรื่องเเจ้งเหตุไปยัง...</string>
-
-
+    <string name="save_error">บันทึกข้อมูลไม่สำเร็จ</string>
+    <string name="edit">แก้ไข</string>
     <string name="txt_yo_yo">CSI Management System</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">เปลี่ยนค่า IP</string>
@@ -33,7 +33,7 @@
     <string name="logout">ออกจากระบบ</string>
     <string name="setip">ตั้งค่า IP</string>
     <string name="th_appname">ระบบบันทึกข้อมูลการตรวจสถานที่เกิดเหตุ</string>
-    <string name="inq_appname">ระบบแจ้งเหตุ</string>
+    <string name="inq_appname">ข้อมูลแจ้งเหตุ</string>
     <string name="home">หน้าหลัก</string>
     <string name="receivingcase">งานเข้า</string>
     <string name="draftcsidata">กำลังตรวจ</string>

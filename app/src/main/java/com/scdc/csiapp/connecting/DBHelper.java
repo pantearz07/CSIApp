@@ -51,10 +51,7 @@ import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Pantearz07 on 15/9/2559.
@@ -1218,9 +1215,13 @@ public class DBHelper extends SQLiteAssetHelper {
                     arrData[0] = cursor.getString(0);
                     arrData[1] = cursor.getString(1);
                     arrData[2] = cursor.getString(2);
-
+                    arrData[3] = cursor.getString(3);
+                    arrData[4] = cursor.getString(4);
+                    arrData[5] = cursor.getString(5);
+                    arrData[6] = cursor.getString(6);
+                    arrData[7] = cursor.getString(7);
                 }
-                Log.i(TAG, "show selectofficial" + arrData[2]);
+                Log.i(TAG, "show selectofficial " + arrData[1]+" "+arrData[2]);
             }
             cursor.close();
 
@@ -1339,7 +1340,88 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+    public boolean saveCaseScene(TbCaseScene tbCaseScene) {
+        if (tbCaseScene == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
 
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            db.beginTransaction();
+            PRIMARY_KEY = tbCaseScene.CaseReportID;
+            strSQL = "SELECT * FROM casescene WHERE "
+                    + "CaseReportID = '" + PRIMARY_KEY + "'";
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            TbCaseScene temp = new TbCaseScene();
+            ContentValues Val = new ContentValues();
+            Val.put(temp.COL_CaseReportID, tbCaseScene.CaseReportID);
+            Val.put(temp.COL_NoticeCaseID, tbCaseScene.NoticeCaseID);
+            Val.put(temp.COL_Mobile_CaseID, tbCaseScene.Mobile_CaseID);
+            Val.put(temp.COL_SCDCAgencyCode, tbCaseScene.SCDCAgencyCode);
+            Val.put(temp.COL_InvestigatorOfficialID, tbCaseScene.InvestigatorOfficialID);
+            Val.put(temp.COL_CaseTypeID, tbCaseScene.CaseTypeID);
+            Val.put(temp.COL_SubCaseTypeID, tbCaseScene.SubCaseTypeID);
+            Val.put(temp.COL_ReportNo, tbCaseScene.ReportNo);
+            Val.put(temp.COL_ReportStatus, tbCaseScene.ReportStatus);
+            Val.put(temp.COL_PoliceStationID, tbCaseScene.PoliceStationID);
+            Val.put(temp.COL_CaseTel, tbCaseScene.CaseTel);
+            Val.put(temp.COL_AssignmentDate, tbCaseScene.AssignmentDate);
+            Val.put(temp.COL_AssignmentTime, tbCaseScene.AssignmentTime);
+            Val.put(temp.COL_ReceivingCaseDate, tbCaseScene.ReceivingCaseDate);
+            Val.put(temp.COL_ReceivingCaseTime, tbCaseScene.ReceivingCaseTime);
+            Val.put(temp.COL_HappenCaseDate, tbCaseScene.HappenCaseDate);
+            Val.put(temp.COL_HappenCaseTime, tbCaseScene.HappenCaseTime);
+            Val.put(temp.COL_KnowCaseDate, tbCaseScene.KnowCaseDate);
+            Val.put(temp.COL_KnowCaseTime, tbCaseScene.KnowCaseTime);
+            Val.put(temp.COL_CompleteSceneDate, tbCaseScene.CompleteSceneDate);
+            Val.put(temp.COL_CompleteSceneTime, tbCaseScene.CompleteSceneTime);
+            Val.put(temp.COL_LocaleName, tbCaseScene.LocaleName);
+            Val.put(temp.COL_DISTRICT_ID, tbCaseScene.DISTRICT_ID);
+            Val.put(temp.COL_AMPHUR_ID, tbCaseScene.AMPHUR_ID);
+            Val.put(temp.COL_PROVINCE_ID, tbCaseScene.PROVINCE_ID);
+            Val.put(temp.COL_Latitude, tbCaseScene.Latitude);
+            Val.put(temp.COL_Longitude, tbCaseScene.Longitude);
+            Val.put(temp.COL_FeatureInsideDetail, tbCaseScene.FeatureInsideDetail);
+            Val.put(temp.COL_CircumstanceOfCaseDetail, tbCaseScene.CircumstanceOfCaseDetail);
+            Val.put(temp.COL_FullEvidencePerformed, tbCaseScene.FullEvidencePerformed);
+            Val.put(temp.COL_Annotation, tbCaseScene.Annotation);
+            Val.put(temp.COL_MaleCriminalNum, tbCaseScene.MaleCriminalNum);
+            Val.put(temp.COL_FemaleCriminalNum, tbCaseScene.FemaleCriminalNum);
+            Val.put(temp.COL_ConfineSufferer, tbCaseScene.ConfineSufferer);
+            Val.put(temp.COL_SuffererPrename, tbCaseScene.SuffererPrename);
+            Val.put(temp.COL_SuffererName, tbCaseScene.SuffererName);
+            Val.put(temp.COL_SuffererStatus, tbCaseScene.SuffererStatus);
+            Val.put(temp.COL_SuffererPhoneNum, tbCaseScene.SuffererPhoneNum);
+            Val.put(temp.COL_CriminalUsedWeapon, tbCaseScene.CriminalUsedWeapon);
+            Val.put(temp.COL_VehicleInfo, tbCaseScene.VehicleInfo);
+            Val.put(temp.COL_LastUpdateDate, tbCaseScene.LastUpdateDate);
+            Val.put(temp.COL_LastUpdateTime, tbCaseScene.LastUpdateTime);
+
+            if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                db.insert("casescene", null, Val);
+                insert++;
+            } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                db.update("casescene", Val, " CaseReportID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                update++;
+            }
+            cursor.close();
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d(TAG, "Sync Table casescene: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in savecasescene " + e.getMessage().toString());
+            return false;
+        }
+    }
     public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
         Log.d(TAG, "OfficeID:" + OfficeID);
         ApiListNoticeCase apiListNoticeCase = new ApiListNoticeCase();
@@ -1641,7 +1723,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateDate));
                     temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateTime));
                     apiCaseSceneCase.setTbCaseScene(temp);
-
+                    Log.d(TAG, "NoticeCaseID " + temp.NoticeCaseID.toString());
                     // Index TbCaseScene ดึงจากตาราง noticecase
                     strSQL = "SELECT * FROM noticecase "
                             + " WHERE NoticeCaseID = '" + temp.NoticeCaseID + "'";
@@ -1649,39 +1731,39 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbNoticeCase temp2 = new TbNoticeCase();
-                            temp2.NoticeCaseID = cursor.getString(cursor.getColumnIndex(temp2.COL_NoticeCaseID));
-                            temp2.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(temp2.COL_Mobile_CaseID));
-                            temp2.InquiryOfficialID = cursor.getString(cursor.getColumnIndex(temp2.COL_InquiryOfficialID));
-                            temp2.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(temp2.COL_InvestigatorOfficialID));
-                            temp2.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp2.COL_SCDCAgencyCode));
-                            temp2.CaseTypeID = cursor.getString(cursor.getColumnIndex(temp2.COL_CaseTypeID));
-                            temp2.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(temp2.COL_SubCaseTypeID));
-                            temp2.CaseStatus = cursor.getString(cursor.getColumnIndex(temp2.COL_CaseStatus));
-                            temp2.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp2.COL_PoliceStationID));
-                            temp2.CaseTel = cursor.getString(cursor.getColumnIndex(temp2.COL_CaseTel));
-                            temp2.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(temp2.COL_ReceivingCaseDate));
-                            temp2.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(temp2.COL_ReceivingCaseTime));
-                            temp2.HappenCaseDate = cursor.getString(cursor.getColumnIndex(temp2.COL_HappenCaseDate));
-                            temp2.HappenCaseTime = cursor.getString(cursor.getColumnIndex(temp2.COL_HappenCaseTime));
-                            temp2.KnowCaseDate = cursor.getString(cursor.getColumnIndex(temp2.COL_KnowCaseDate));
-                            temp2.KnowCaseTime = cursor.getString(cursor.getColumnIndex(temp2.COL_KnowCaseTime));
-                            temp2.SceneNoticeDate = cursor.getString(cursor.getColumnIndex(temp2.COL_SceneNoticeDate));
-                            temp2.SceneNoticeTime = cursor.getString(cursor.getColumnIndex(temp2.COL_SceneNoticeTime));
-                            temp2.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(temp2.COL_CompleteSceneDate));
-                            temp2.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(temp2.COL_CompleteSceneTime));
-                            temp2.LocaleName = cursor.getString(cursor.getColumnIndex(temp2.COL_LocaleName));
-                            temp2.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(temp2.COL_DISTRICT_ID));
-                            temp2.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(temp2.COL_AMPHUR_ID));
-                            temp2.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(temp2.COL_PROVINCE_ID));
-                            temp2.Latitude = cursor.getString(cursor.getColumnIndex(temp2.COL_Latitude));
-                            temp2.Longitude = cursor.getString(cursor.getColumnIndex(temp2.COL_Longitude));
-                            temp2.SuffererPrename = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererPrename));
-                            temp2.SuffererName = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererName));
-                            temp2.SuffererStatus = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererStatus));
-                            temp2.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(temp2.COL_SuffererPhoneNum));
-                            temp2.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp2.COL_CircumstanceOfCaseDetail));
-                            temp2.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp2.COL_LastUpdateDate));
-                            temp2.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp2.COL_LastUpdateTime));
+                            temp2.NoticeCaseID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_NoticeCaseID));
+                            temp2.Mobile_CaseID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Mobile_CaseID));
+                            temp2.InquiryOfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_InquiryOfficialID));
+                            temp2.InvestigatorOfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_InvestigatorOfficialID));
+                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SCDCAgencyCode));
+                            temp2.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CaseTypeID));
+                            temp2.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SubCaseTypeID));
+                            temp2.CaseStatus = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CaseStatus));
+                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PoliceStationID));
+                            temp2.CaseTel = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CaseTel));
+                            temp2.ReceivingCaseDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_ReceivingCaseDate));
+                            temp2.ReceivingCaseTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_ReceivingCaseTime));
+                            temp2.HappenCaseDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_HappenCaseDate));
+                            temp2.HappenCaseTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_HappenCaseTime));
+                            temp2.KnowCaseDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_KnowCaseDate));
+                            temp2.KnowCaseTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_KnowCaseTime));
+                            temp2.SceneNoticeDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SceneNoticeDate));
+                            temp2.SceneNoticeTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SceneNoticeTime));
+                            temp2.CompleteSceneDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CompleteSceneDate));
+                            temp2.CompleteSceneTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CompleteSceneTime));
+                            temp2.LocaleName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LocaleName));
+                            temp2.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_DISTRICT_ID));
+                            temp2.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_AMPHUR_ID));
+                            temp2.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PROVINCE_ID));
+                            temp2.Latitude = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Latitude));
+                            temp2.Longitude = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Longitude));
+                            temp2.SuffererPrename = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererPrename));
+                            temp2.SuffererName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererName));
+                            temp2.SuffererStatus = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererStatus));
+                            temp2.SuffererPhoneNum = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererPhoneNum));
+                            temp2.CircumstanceOfCaseDetail = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CircumstanceOfCaseDetail));
+                            temp2.LastUpdateDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastUpdateDate));
+                            temp2.LastUpdateTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastUpdateTime));
                             apiCaseSceneCase.setTbNoticeCase(temp2);
                         }
                     }
@@ -1873,7 +1955,7 @@ public class DBHelper extends SQLiteAssetHelper {
             apiListCaseScene.setData(dataEntity);
             return apiListCaseScene;
         } catch (Exception e) {
-            Log.d(TAG, "Error in selectApiNoticeCase " + e.getMessage().toString());
+            Log.d(TAG, "Error in selectApiCaseScene " + e.getMessage().toString());
             return null;
         }
     }

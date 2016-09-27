@@ -13,6 +13,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,7 +70,7 @@ public class SummaryCSITabFragment extends Fragment {
     String[] updateDT;
     String message = "";
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
-    String[] mTypeCenterArray2, mTypeAgencyArray2,mSubCaseTypeArray2;
+    String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
 
     Spinner spnCaseType, spnSubCaseType;
@@ -79,7 +82,8 @@ public class SummaryCSITabFragment extends Fragment {
     String selectedCenter, selectedAgencyCode;
     String caseReportID, noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
-    Button btnNoticecase, btnDownloadfile;
+    Button btnNoticecase, btnDownloadfile, btnAcceptCase;
+    View layoutButton1,layoutButton, linearLayoutReportNo,layoutSceneNoticeDate;
 
     @Nullable
     @Override
@@ -94,12 +98,49 @@ public class SummaryCSITabFragment extends Fragment {
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
         cd = new ConnectionDetector(getActivity());
+        layoutButton1 = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton1);
+        layoutButton1.setVisibility(View.GONE);
+        layoutSceneNoticeDate= (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutSceneNoticeDate);
+        layoutSceneNoticeDate.setVisibility(View.GONE);
+        layoutButton= (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton);
+        noticeCaseID = CSIDataTabFragment.apiCaseScene.getTbNoticeCase().NoticeCaseID;
+        caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+        if (noticeCaseID.equals("null") || noticeCaseID == null || noticeCaseID.equals("")) {
+            Log.i(TAG, " show noticeCaseID: ");
+        } else {
+            Log.i(TAG, " show noticeCaseID: " + noticeCaseID.toString());
+        }
+
+        if (caseReportID.equals("null") || caseReportID == null || caseReportID.equals("")) {
+            Log.i(TAG, " show caseReportID: ");
+        } else {
+            Log.i(TAG, " show caseReportID: " + caseReportID);
+        }
 
 
-        // noticeCaseID = csiDataTabFragment.tbCaseScene.NoticeCaseID;
-        //caseReportID = csiDataTabFragment.tbCaseScene.caseReportID;
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
-        edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
+       // Log.i(TAG, " show edtReportNo: " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo);
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo.equals("")) {
+            edtReportNo.setText("");
+        } else {
+            edtReportNo.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo.toString());
+        }
+        edtReportNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo = edtReportNo.getText().toString();
+            }
+        });
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
         edtPoliceStation = (TextView) viewSummaryCSI.findViewById(R.id.edtPoliceStation);
@@ -107,6 +148,7 @@ public class SummaryCSITabFragment extends Fragment {
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
 
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
+        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
         //วันเวลาที่ตรวจคดีเสร็จ
@@ -121,13 +163,15 @@ public class SummaryCSITabFragment extends Fragment {
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
         btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
         btnNoticecase.setText("อัพโหลดข้อมูล");
+        btnAcceptCase = (Button) viewSummaryCSI.findViewById(R.id.btnAcceptCase);
+
 
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         spnCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
-//        sCaseTypeID = EmergencyTabFragment.tbNoticeCase.CaseTypeID;
-//        sSubCaseTypeID = EmergencyTabFragment.tbNoticeCase.SubCaseTypeID;
+        sCaseTypeID = CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID;
+        sSubCaseTypeID = CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID;
 
         //โชว์dropdown casetype
         //ดึงค่าจาก TbCaseSceneType
@@ -183,88 +227,88 @@ public class SummaryCSITabFragment extends Fragment {
         }
 
 
-        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
-                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
-                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
-                + WelcomeActivity.profile.getTbOfficial().Position + ") โทร." +
-                "" + WelcomeActivity.profile.getTbOfficial().PhoneNumber + " ");
 //ชื่อพนักงานสอบสวน
-        if (WelcomeActivity.profile.getTbOfficial().OfficialID != null) {
-            String InvestigatorOfficialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getInquiryOfficialID() == null) {
+            edtInqInfo.setText("");
+        } else {
+            String InvestigatorOfficialID = CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getInquiryOfficialID();
             Log.i(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
 
-            String mInvOfficialArray[] = dbHelper.SelectInvOfficial(WelcomeActivity.profile.getTbOfficial().OfficialID);
+            String mInvOfficialArray[] = dbHelper.SelectInvOfficial(InvestigatorOfficialID);
             if (mInvOfficialArray != null) {
-//                edtInqInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
-//                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") " +
-//                        mInvOfficialArray[7].toString());
+                edtInqInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
+                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") โทร." +
+                        mInvOfficialArray[7].toString());
             } else {
                 edtInqInfo.setText("");
             }
 
         }
-        edtInqInfo.setText("");
 
-//        String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(EmergencyTabFragment.tbNoticeCase.PoliceStationID);
-//        if (mTypePoliceStationArray != null) {
-//            edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
-//        }
+
+        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
+                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
+                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
+                + WelcomeActivity.profile.getTbOfficial().Position + ") โทร." +
+                "" + WelcomeActivity.profile.getTbOfficial().PhoneNumber + " ");
+        String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().PoliceStationID);
+        if (mTypePoliceStationArray != null) {
+            edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
+        }
+
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("investigating")) {
+            edtStatus.setText("กำลังดำเนินการตรวจ");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("notice")) {
+            edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
+            btnNoticecase.setEnabled(false);
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("receive")) {
+            edtStatus.setText("รอส่งแจ้งเหตุ");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("assign")) {
+            edtStatus.setText("รอรับไปตรวจ");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("accept")) {
+            edtStatus.setText("รับเรื่องแล้ว");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("investigated")) {
+            edtStatus.setText("ตรวจเสร็จแล้ว");
+        }
 //
-//        if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigating")) {
-//            edtStatus.setText("กำลังดำเนินการตรวจ");
-//        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("notice")) {
-//            edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
-//            btnNoticecase.setEnabled(false);
-//        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("receive")) {
-//            edtStatus.setText("รอส่งแจ้งเหตุ");
-//        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("assign")) {
-//            edtStatus.setText("รอรับไปตรวจ");
-//        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("accept")) {
-//            edtStatus.setText("รับเรื่องแล้ว");
-//        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigated")) {
-//            edtStatus.setText("ตรวจเสร็จแล้ว");
-//        }
+        //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate == null) {
+            edtSceneNoticeDateTime.setText("-");
+        } else {
+            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime + " น.");
+        }
+        //วันเวลาที่ตรวจคดีเสร็จ
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate == null) {
+            edtCompleteSceneDateTime.setText("-");
+
+        } else {
+            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneTime + " น.");
+
+        }
+        //วันเวลาที่แก้ไขข้อมูลล่าสุด
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate == null) {
+            edtUpdateDateTime.setText("-");
+
+        } else {
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime + " น.");
+        }
 //
-//        //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
-//        if (EmergencyTabFragment.tbNoticeCase.SceneNoticeDate != "") {
-//
-//            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.SceneNoticeDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.SceneNoticeTime + " น.");
-//
-//        } else {
-//            edtSceneNoticeDateTime.setText("-");
-//        }
-//        //วันเวลาที่ตรวจคดีเสร็จ
-//        if (EmergencyTabFragment.tbNoticeCase.CompleteSceneDate != "") {
-//
-//            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.CompleteSceneDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.CompleteSceneTime + " น.");
-//
-//        } else {
-//            edtCompleteSceneDateTime.setText("-");
-//        }
-//        //วันเวลาที่แก้ไขข้อมูลล่าสุด
-//        if (EmergencyTabFragment.tbNoticeCase.LastUpdateDate != "") {
-//            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime + " น.");
-//        } else {
-//            edtUpdateDateTime.setText("-");
-//        }
-//
-//        if (EmergencyTabFragment.mode == "view") {
-//            fabBtn.setVisibility(View.GONE);
-//            spnCaseType.setEnabled(false);
-//            spnSubCaseType.setEnabled(false);
-//            edtReportNo.setEnabled(false);
-//            btnNoticecase.setEnabled(false);
-//        } else if (EmergencyTabFragment.mode == "edit") {
-//            btnDownloadfile.setEnabled(false);
-//        }
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fabBtn.setOnClickListener(new SummaryOnClickListener());
 
+        if (CSIDataTabFragment.mode == "view") {
+            //fabBtn.setVisibility(View.GONE);
+            fabBtn.setEnabled(false);
+            spnCaseType.setEnabled(false);
+            spnSubCaseType.setEnabled(false);
+            btnNoticecase.setEnabled(false);
+            layoutButton1.setVisibility(View.GONE);
 
-            }
-        });
+        } else if (CSIDataTabFragment.mode == "edit") {
+            btnDownloadfile.setEnabled(false);
+            layoutButton1.setVisibility(View.GONE);
+            layoutButton.setVisibility(View.VISIBLE);
+        }
 
 
         return viewSummaryCSI;
@@ -323,24 +367,39 @@ public class SummaryCSITabFragment extends Fragment {
                 Log.i("mViewBtnTransReport", "mViewBtnTransReport");
 
             }
+            if(v == btnAcceptCase){
+
+            }
             if (v == fabBtn) {
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+               // CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo = edtReportNo.getText().toString();
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
+                Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo.toString());
 //
-//                if (EmergencyTabFragment.tbNoticeCase != null) {
-//                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-//                    if (isSuccess) {
+                if (CSIDataTabFragment.apiCaseScene != null) {
+                    boolean isSuccess = dbHelper.saveNoticeCase(CSIDataTabFragment.apiCaseScene.getTbNoticeCase());
+                    if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + dateTimeCurrent[2]+" "+dateTimeCurrent[1]+" "+dateTimeCurrent[0], Snackbar.LENGTH_INDEFINITE)
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + dateTimeCurrent[2] + " " + dateTimeCurrent[1] + " " + dateTimeCurrent[0], Snackbar.LENGTH_INDEFINITE)
                                     .setAction(getString(R.string.ok), new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
+
 
                                         }
                                     });
                             snackbar.show();
                         }
-//                    }
-//                }
+                    }
+                }
             }
         }
     }
@@ -451,6 +510,7 @@ public class SummaryCSITabFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -473,7 +533,7 @@ public class SummaryCSITabFragment extends Fragment {
                     } else {
                         spnSCDCagencyType.setAdapter(null);
                         selectedAgencyCode = null;
-                      //  EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = selectedAgencyCode;
                         Log.i(TAG + " show selectedAgencyCode", String.valueOf(selectedAgencyCode));
                     }
                     spnSCDCagencyType.setOnItemClickListener((AdapterView.OnItemClickListener) new EmerOnItemSelectedListener());
@@ -482,13 +542,13 @@ public class SummaryCSITabFragment extends Fragment {
                     //ค่า SCDCAgencyCode
                     selectedAgencyCode = mTypeAgencyArray[pos][0];
 
-                    //EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = selectedAgencyCode;
                     Log.i(TAG + " show selectedAgencyCode", selectedAgencyCode + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
                     break;
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[pos][0];
                     Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
-                   // EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID = selectedCaseType;
                     //ดึงค่าจาก TbSubCaseSceneType
                     mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType);
                     if (mSubCaseTypeArray != null) {
@@ -503,16 +563,16 @@ public class SummaryCSITabFragment extends Fragment {
                     } else {
                         spnSubCaseType.setAdapter(null);
                         selectedSubCaseType = null;
-                      //  EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                         Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
                     }
-                  //  Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
+                    //  Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
                     spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
 
                     break;
                 case R.id.spnSubCaseType:
                     selectedSubCaseType = mSubCaseTypeArray[pos][0];
-                    //EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
 
                     break;
@@ -526,17 +586,17 @@ public class SummaryCSITabFragment extends Fragment {
                 case R.id.spnSCDCagencyType:
                     selectedAgencyCode = mTypeAgencyArray[0][0];
 
-                   // EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = selectedAgencyCode;
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = selectedAgencyCode;
 
                     break;
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[0][0];
                     Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
-                   // EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID = selectedCaseType;
                     break;
                 case R.id.spnSubCaseType:
                     selectedSubCaseType = mSubCaseTypeArray[0][0];
-                  //  EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
                     break;
             }

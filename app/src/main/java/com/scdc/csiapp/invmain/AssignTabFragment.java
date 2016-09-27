@@ -13,44 +13,38 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
-import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
+public class AssignTabFragment extends Fragment {
+    //หน้าโชว์ข้อมูลคดีทั้งหมด โดยเเบ่งเป็นเเท็บ 2 แท็บ
+    //SummaryEmerTabFragment
+    //EmergencyDetailTabFragment
 
-public class CSIDataTabFragment extends Fragment {
-    // โชว์ข้อมูล คดี มีเเท็บ 7 เเท็บ
-    // case 0 : return new SummaryCSITabFragment();
-//    case 1 : return new ReceiveDataTabFragment();
-//    case 2 : return new DetailsTabFragment();
-//    case 3 : return new ResultTabFragment();
-//    case 4 : return new DiagramTabFragment();
-//    case 5 : return new PhotoTabFragment();
-//    case 6 : return new VideoTabFragment();
-//    case 7 : return new VoiceTabFragment();
-//    case 8 : return new NoteTabFragment(); ตัดออกก่อน
-   // CoordinatorLayout rootLayoutCSI;
+    public static LinearLayout linearLayoutLayoutCSI;
     public static TabLayout tabLayoutCSI;
     public static ViewPager viewpagerCSI;
-    public static int int_items = 8 ;
-    private static final String TAG = "DEBUG-CSIDataTabFragment";
+    public static int int_items = 2;
+    private static final String TAG = "DEBUG-AssignTabFragment";
+    public static String Bundle_Key = "noticecase";
+    public static String Bundle_mode = "mode";
+   // public static TbNoticeCase tbNoticeCase;
     public static String mode;
     Snackbar snackbar;
-    public static String Bundle_Key = "casescene";
-    public static String Bundle_mode = "mode";
     public static ApiCaseScene apiCaseScene;
-    public static TbNoticeCase tbNoticeCase;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /**
          *Inflate csi_data_tab_layout and setup Views.
          */
-        View x =  inflater.inflate(R.layout.csi_data_tab_layout,null);
+        View x = inflater.inflate(R.layout.emer_data_tab_layout, null);
         //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
-
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.form_csi);
+        linearLayoutLayoutCSI = (LinearLayout) x.findViewById(R.id.linearLayoutLayoutCSI);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.inq_appname);
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
         viewpagerCSI = (ViewPager) x.findViewById(R.id.viewpagerCSI);
 
@@ -72,17 +66,14 @@ public class CSIDataTabFragment extends Fragment {
             }
         });
         Bundle args = getArguments();
-
         apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
 //        tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
-        mode = args.getString(Bundle_mode);
         Log.i(TAG, " NoticeCaseID " + apiCaseScene.getTbNoticeCase().NoticeCaseID.toString());
-        //Log.i(TAG, " NoticeCaseID " + tbNoticeCase.NoticeCaseID.toString());
+        mode = args.getString(Bundle_mode);
         return x;
-
     }
 
-    class MyAdapter extends FragmentPagerAdapter{
+    class MyAdapter extends FragmentPagerAdapter {
 
         public MyAdapter(FragmentManager fm) {
             super(fm);
@@ -93,18 +84,14 @@ public class CSIDataTabFragment extends Fragment {
          */
 
         @Override
-        public Fragment getItem(int position)
-        {
-            switch (position){
-                case 0 : return new SummaryCSITabFragment();
-                case 1 : return new ReceiveDataTabFragment();
-                case 2 : return new DetailsTabFragment();
-                case 3 : return new ResultTabFragment();
-                case 4 : return new DiagramTabFragment();
-                case 5 : return new PhotoTabFragment();
-                case 6 : return new VideoTabFragment();
-                case 7 : return new VoiceTabFragment();
-               // case 8 : return new NoteTabFragment();
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    return new SummaryAssignTabFragment();
+                case 1:
+                    return new AssignDetailTabFragment();
+
             }
             return null;
         }
@@ -123,25 +110,12 @@ public class CSIDataTabFragment extends Fragment {
         @Override
         public CharSequence getPageTitle(int position) {
 
-            switch (position){
-                case 0 :
+            switch (position) {
+                case 0:
                     return "สรุป";
-                case 1 :
-                    return "รับแจ้ง";
-                case 2 :
-                    return "สภาพที่เกิดเหตุ";
-                case 3 :
-                    return "ผลตรวจ";
-                case 4 :
-                    return "แผนผัง";
-                case 5 :
-                    return "ภาพ";
-                case 6 :
-                    return "วิดีโอ";
-                case 7 :
-                    return "เสียง";
-               // case 8 :
-                 //   return "บันทึกย่อ";
+                case 1:
+                    return "แจ้งเหตุ";
+
             }
             return null;
         }

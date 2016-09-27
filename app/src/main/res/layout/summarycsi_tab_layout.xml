@@ -186,7 +186,31 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="วันเวลาที่ตรวจคดีเสร็จ"
                     android:textSize="@dimen/small_text" />
+            <LinearLayout
+                android:id="@+id/layoutSceneNoticeDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_line"
+                android:layout_marginBottom="@dimen/margin_line"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/editSceneNoticeDate"
+                    style="@android:style/Widget.Holo.Light.Spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_column="0"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/small_text" />
 
+                <TextView
+                    android:id="@+id/editSceneNoticeTime"
+                    style="@android:style/Widget.Holo.Light.Spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_column="1"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/small_text" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/edtCompleteSceneDateTime"
                     android:layout_width="wrap_content"
@@ -212,14 +236,35 @@
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="-"
                     android:textSize="@dimen/mmedium_text" />
+                <LinearLayout
+                    android:id="@+id/layoutButton1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:layout_marginBottom="@dimen/margin_line"
+                    android:orientation="horizontal">
 
+                    <Button
+                        android:id="@+id/btnAcceptCase"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_button"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="5dp"
+                        android:text="รับคดีมาตรวจ"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/small_text" />
+
+
+                </LinearLayout>
                 <LinearLayout
                     android:id="@+id/layoutButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-
-
+                    android:layout_marginBottom="@dimen/margin_line"
                     android:orientation="horizontal">
 
                     <Button
