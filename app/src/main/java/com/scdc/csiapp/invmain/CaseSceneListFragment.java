@@ -184,7 +184,7 @@ public class CaseSceneListFragment extends Fragment {
             builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Bundle i = new Bundle();
-                    //สถานะคดี 
+                    //สถานะคดี
                     if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
                         i.putSerializable(assignTabFragment.Bundle_Key, apiNoticeCase);
                         i.putString(assignTabFragment.Bundle_mode, "view");

@@ -560,7 +560,6 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                     sProvinceName = mProvinceArray[pos][2].toString();
                     Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
 
-                    Log.i(TAG, AssignTabFragment.apiCaseScene.getTbNoticeCase().PROVINCE_ID);
                     //provinceid = selectedProvince[0];
                     //ดึงค่า amphur
                     mAmphurArray = dbHelper.SelectAmphur(selectedProvince);
