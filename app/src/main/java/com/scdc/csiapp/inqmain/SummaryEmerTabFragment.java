@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,14 +60,15 @@ public class SummaryEmerTabFragment extends Fragment {
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
     String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
-
+    boolean oldselectedCT = false;
     Button btnNoticecase, btnDownloadfile;
     String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
     String SelectedAgencyID, SelectedCenterID;
     Spinner spnSCDCcenterType, spnSCDCagencyType;
     String selectedCenter, selectedAgencyCode;
-    View layoutButton1,linearLayoutReportNo,layoutSceneNoticeDate;
+    View layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,7 +101,7 @@ public class SummaryEmerTabFragment extends Fragment {
 
         layoutButton1 = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton1);
         layoutButton1.setVisibility(View.GONE);
-        layoutSceneNoticeDate= (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutSceneNoticeDate);
+        layoutSceneNoticeDate = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutSceneNoticeDate);
         layoutSceneNoticeDate.setVisibility(View.GONE);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
@@ -129,6 +131,8 @@ public class SummaryEmerTabFragment extends Fragment {
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         spnCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
+        spnSubCaseType.setOnTouchListener(new EmerOnItemSelectedListener());
+        spnCaseType.setOnTouchListener(new EmerOnItemSelectedListener());
         sCaseTypeID = EmergencyTabFragment.tbNoticeCase.CaseTypeID;
         sSubCaseTypeID = EmergencyTabFragment.tbNoticeCase.SubCaseTypeID;
 
@@ -139,7 +143,7 @@ public class SummaryEmerTabFragment extends Fragment {
             String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
             for (int i = 0; i < mCaseTypeArray.length; i++) {
                 mCaseTypeArray2[i] = mCaseTypeArray[i][1];
-                Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
+                //  Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
             }
             ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
                     getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -148,43 +152,46 @@ public class SummaryEmerTabFragment extends Fragment {
         } else {
             Log.i(TAG + " show mCaseTypeArray", "null");
         }
-        mSubCaseTypeArray = dbHelper.SelectSubCaseType();
-        Log.d(TAG, String.valueOf(mSubCaseTypeArray.length));
-        if (mSubCaseTypeArray != null) {
-            mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
-            }
-            ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-            spnSubCaseType.setAdapter(adapterSubCaseType);
-        } else {
-            spnSubCaseType.setAdapter(null);
-            selectedSubCaseType = null;
-            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
-        }
+
         //เเสดงค่าเดิม
+
         if (sCaseTypeID == null || sCaseTypeID.equals("") || sCaseTypeID.equals("null")) {
             spnCaseType.setSelection(0);
         } else {
             for (int i = 0; i < mCaseTypeArray.length; i++) {
                 if (sCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
                     spnCaseType.setSelection(i);
+                    oldselectedCT = true;
+                    break;
+                }
+            }
+            mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(sCaseTypeID);
+            if (mSubCaseTypeArray != null) {
+                mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                    mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                    Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                }
+                ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                spnSubCaseType.setAdapter(adapterSubCaseType);
+            } else {
+                spnSubCaseType.setAdapter(null);
+                selectedSubCaseType = null;
+                EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
+            }
+        }
+        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
+            spnSubCaseType.setSelection(0);
+        } else {
+            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+                    spnSubCaseType.setSelection(i);
                     break;
                 }
             }
         }
-//        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
-//            spnSubCaseType.setSelection(0);
-//        } else {
-//            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-//                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
-//                    spnSubCaseType.setSelection(i);
-//                    break;
-//                }
-//            }
-//        }
 
         edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
@@ -406,50 +413,52 @@ public class SummaryEmerTabFragment extends Fragment {
         }
     }
 
-    public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+    public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent motionEvent) {
+            if (v == spnCaseType) {
+
+                oldselectedCT = false;
+            }
+
+
+            return false;
+        }
 
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             String selectedItem = parent.getItemAtPosition(pos).toString();
             switch (parent.getId()) {
                 case R.id.spnCaseType:
-                    selectedCaseType = mCaseTypeArray[pos][0];
-                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
-                    EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
-                    //ดึงค่าจาก TbSubCaseSceneType
-                    mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType);
-                    if (mSubCaseTypeArray != null) {
-                        mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-                        for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                            mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                            Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                    if (oldselectedCT == false) {
+                        selectedCaseType = mCaseTypeArray[pos][0];
+                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
+                        EmergencyTabFragment.tbNoticeCase.CaseTypeID = selectedCaseType;
+                        //ดึงค่าจาก TbSubCaseSceneType
+                        mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(selectedCaseType);
+                        if (mSubCaseTypeArray != null) {
+                            mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                                mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                                Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                            }
+                            ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                                    android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                            spnSubCaseType.setAdapter(adapterSubCaseType);
+                        } else {
+                            spnSubCaseType.setAdapter(null);
+                            selectedSubCaseType = null;
+                            EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
                         }
-                        ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                                android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-                        spnSubCaseType.setAdapter(adapterSubCaseType);
-                    } else {
-                        spnSubCaseType.setAdapter(null);
-                        selectedSubCaseType = null;
-                        EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
-                        Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
+                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
+                        spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
                     }
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.CaseTypeID);
-                    spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
-
                     break;
                 case R.id.spnSubCaseType:
                     selectedSubCaseType = mSubCaseTypeArray[pos][0];
                     EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
                     Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
-                    if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
-                        spnSubCaseType.setSelection(0);
-                    } else {
-                        for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                            if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
-                                spnSubCaseType.setSelection(i);
-                                break;
-                            }
-                        }
-                    }
+
                     break;
             }
         }
@@ -471,13 +480,13 @@ public class SummaryEmerTabFragment extends Fragment {
                     break;
             }
         }
+
+
     }
 
     public class NoticeOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-
-            String selectedItem = parent.getItemAtPosition(pos).toString();
 
             //check which spinner triggered the listener
             switch (parent.getId()) {

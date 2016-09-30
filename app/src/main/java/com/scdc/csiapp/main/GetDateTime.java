@@ -214,4 +214,19 @@ public class GetDateTime {
             return null;
         }
     }
+    public String changeTimeFormatToDB(String time) {
+        try {
+
+            if (time == null) {
+                return "";
+            }
+            String[] split = time.split(":");
+            //String $temp = ('/', date);
+            return split[0] + ':' + split[1];
+
+
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }

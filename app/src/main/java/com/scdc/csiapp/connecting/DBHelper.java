@@ -1415,12 +1415,16 @@ public class DBHelper extends SQLiteAssetHelper {
             db.setTransactionSuccessful();
             db.endTransaction();
             Log.d(TAG, "Sync Table casescene: Insert " + insert + ", Update " + update);
+            Log.d(TAG, "Sync Table casescene: " + tbCaseScene.HappenCaseDate + " " + tbCaseScene.HappenCaseTime);
             db.close();
             return true;
         } catch (Exception e) {
             Log.d(TAG, "Error in savecasescene " + e.getMessage().toString());
             return false;
         }
+    }
+    public boolean updateAlldataCase(ApiCaseScene apiCaseScene) {
+        return true;
     }
     public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
         Log.d(TAG, "OfficeID:" + OfficeID);
@@ -1719,6 +1723,16 @@ public class DBHelper extends SQLiteAssetHelper {
                     temp.Longitude = cursor.getString(cursor.getColumnIndex(temp.COL_Longitude));
                     temp.FeatureInsideDetail = cursor.getString(cursor.getColumnIndex(temp.COL_FeatureInsideDetail));
                     temp.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp.COL_CircumstanceOfCaseDetail));
+                    temp.FullEvidencePerformed = cursor.getString(cursor.getColumnIndex(temp.COL_FullEvidencePerformed));
+                    temp.Annotation = cursor.getString(cursor.getColumnIndex(temp.COL_Annotation));
+                    temp.MaleCriminalNum = cursor.getString(cursor.getColumnIndex(temp.COL_MaleCriminalNum));
+                    temp.FemaleCriminalNum = cursor.getString(cursor.getColumnIndex(temp.COL_FemaleCriminalNum));
+                    temp.ConfineSufferer = cursor.getString(cursor.getColumnIndex(temp.COL_ConfineSufferer));
+                    temp.SuffererPrename = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPrename));
+                    temp.SuffererName = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererName));
+                    temp.SuffererStatus = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererStatus));
+                    temp.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPhoneNum));
+                    temp.CriminalUsedWeapon = cursor.getString(cursor.getColumnIndex(temp.COL_CriminalUsedWeapon));
                     temp.VehicleInfo = cursor.getString(cursor.getColumnIndex(temp.COL_VehicleInfo));
                     temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateDate));
                     temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateTime));

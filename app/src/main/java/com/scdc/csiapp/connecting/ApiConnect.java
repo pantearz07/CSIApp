@@ -436,4 +436,42 @@ public class ApiConnect {
             return null;
         }
     }
+    public ApiStatus updateStatusCase(ApiCaseScene apiCaseScene) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
+                .add("Password", WelcomeActivity.profile.getTbUsers().pass)
+                .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
+                .add("NoticeCaseID", apiCaseScene.getTbNoticeCase().getNoticeCaseID())
+                .add("CaseStatus", apiCaseScene.getTbNoticeCase().getCaseStatus())
+                .add("SceneNoticeDate", apiCaseScene.getTbNoticeCase().getSceneNoticeDate())
+                .add("SceneNoticeTime", apiCaseScene.getTbNoticeCase().getSceneNoticeTime())
+                .add("LastUpdateDate", apiCaseScene.getTbNoticeCase().getLastUpdateDate())
+                .add("LastUpdateTime", apiCaseScene.getTbNoticeCase().getLastUpdateTime())
+                .add("CaseReportID", apiCaseScene.getTbCaseScene().getCaseReportID())
+                .add("ReportStatus", apiCaseScene.getTbCaseScene().getReportStatus())
+                .build();
+        Log.d(TAG, "Not User " +  WelcomeActivity.profile.getTbUsers().id_users);
+        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
+        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "updateStatusCase")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
 }

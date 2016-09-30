@@ -147,6 +147,7 @@
                             android:layout_height="50dp"
                             android:layout_column="0"
                             android:layout_weight="1"
+
                             android:textSize="@dimen/small_text" />
 
                         <TextView
@@ -156,6 +157,7 @@
                             android:layout_height="50dp"
                             android:layout_column="1"
                             android:layout_weight="1"
+                            android:inputType="time"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
