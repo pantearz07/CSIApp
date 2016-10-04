@@ -15,6 +15,7 @@ import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.syncmodel.SyncAmphur;
 import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
@@ -35,6 +36,7 @@ import com.scdc.csiapp.syncmodel.SyncSCDCagency;
 import com.scdc.csiapp.syncmodel.SyncSCDCcenter;
 import com.scdc.csiapp.syncmodel.SyncSubCaseSceneType;
 import com.scdc.csiapp.syncmodel.SyncResultSceneType;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 import java.io.IOException;
 
@@ -463,6 +465,71 @@ public class ApiConnect {
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
                 return gson.fromJson(response.body().string(), ApiStatus.class);
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
+    //sendNewNoticeCase
+    public ApiStatusResult sendNewNoticeCase(TbNoticeCase tbNoticeCase) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
+                .add("Password", WelcomeActivity.profile.getTbUsers().pass)
+                .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
+                .add("NoticeCaseID", tbNoticeCase.getNoticeCaseID())
+                .add("Mobile_CaseID", tbNoticeCase.getMobile_CaseID())
+                .add("InquiryOfficialID", tbNoticeCase.getInquiryOfficialID())
+                .add("InvestigatorOfficialID", "")
+                .add("SCDCAgencyCode", tbNoticeCase.getSCDCAgencyCode())
+                .add("CaseTypeID", tbNoticeCase.getCaseTypeID())
+                .add("SubCaseTypeID", tbNoticeCase.getSubCaseTypeID())
+                .add("CaseStatus", tbNoticeCase.getCaseStatus())
+                .add("PoliceStationID", tbNoticeCase.getPoliceStationID())
+                .add("CaseTel", tbNoticeCase.getCaseTel())
+                .add("ReceivingCaseDate", tbNoticeCase.getReceivingCaseDate())
+                .add("ReceivingCaseTime", tbNoticeCase.getReceivingCaseTime())
+                .add("HappenCaseDate", tbNoticeCase.getHappenCaseDate())
+                .add("HappenCaseTime", tbNoticeCase.getHappenCaseTime())
+                .add("KnowCaseDate", tbNoticeCase.getKnowCaseDate())
+                .add("KnowCaseTime", tbNoticeCase.getKnowCaseTime())
+                .add("SceneNoticeDate", "")
+                .add("SceneNoticeTime", "")
+                .add("CompleteSceneDate", "")
+                .add("CompleteSceneTime", "")
+                .add("LocaleName", tbNoticeCase.getLocaleName())
+                .add("DISTRICT_ID", tbNoticeCase.getDISTRICT_ID())
+                .add("AMPHUR_ID", tbNoticeCase.getAMPHUR_ID())
+                .add("PROVINCE_ID", tbNoticeCase.getPROVINCE_ID())
+                .add("Latitude", tbNoticeCase.getLatitude())
+                .add("Longitude", tbNoticeCase.getLongitude())
+                .add("SuffererPrename", tbNoticeCase.getSuffererPrename())
+                .add("SuffererName", tbNoticeCase.getSuffererName())
+                .add("SuffererStatus", tbNoticeCase.getSuffererStatus())
+                .add("SuffererPhoneNum", tbNoticeCase.getSuffererPhoneNum())
+                .add("CircumstanceOfCaseDetail", tbNoticeCase.getCircumstanceOfCaseDetail())
+                .add("LastUpdateDate", tbNoticeCase.getLastUpdateDate())
+                .add("LastUpdateTime", tbNoticeCase.getLastUpdateTime())
+                .build();
+        Log.d(TAG, "NoticeCaseID " +  tbNoticeCase.getNoticeCaseID());
+        Log.d(TAG, "Not User " +  WelcomeActivity.profile.getTbUsers().id_users);
+        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
+        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "saveNewNoticeCase")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatusResult.class);
             } else {
                 Log.d(TAG, "Not Success " + response.code());
                 return null;

@@ -4,6 +4,7 @@ package com.scdc.csiapp.inqmain;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -11,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,11 +28,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
+import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 
 public class SummaryEmerTabFragment extends Fragment {
@@ -68,6 +72,7 @@ public class SummaryEmerTabFragment extends Fragment {
     Spinner spnSCDCcenterType, spnSCDCagencyType;
     String selectedCenter, selectedAgencyCode;
     View layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
+    NoticeCaseListFragment noticeCaseListFragment;
 
     @Nullable
     @Override
@@ -84,7 +89,7 @@ public class SummaryEmerTabFragment extends Fragment {
         dbHelper = new DBHelper(getContext());
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
         cd = new ConnectionDetector(getActivity());
-
+        noticeCaseListFragment = new NoticeCaseListFragment();
         noticeCaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
         Log.i(TAG, " NoticeCaseID " + noticeCaseID);
 
@@ -92,7 +97,7 @@ public class SummaryEmerTabFragment extends Fragment {
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
+        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
 
         linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
         linearLayoutReportNo.setVisibility(View.GONE);
@@ -226,7 +231,7 @@ public class SummaryEmerTabFragment extends Fragment {
             edtStatus.setText("กำลังดำเนินการตรวจ");
         } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("notice")) {
             edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
-            btnNoticecase.setEnabled(false);
+            btnNoticecase.setVisibility(View.GONE);
         } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("receive")) {
             edtStatus.setText("รอส่งแจ้งเหตุ");
         } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("assign")) {
@@ -263,12 +268,33 @@ public class SummaryEmerTabFragment extends Fragment {
 
         if (EmergencyTabFragment.mode == "view") {
             fabBtn.setVisibility(View.GONE);
+            if (fabBtn != null || fabBtn.isShown()) {
+                fabBtn.setVisibility(View.GONE);
+            }
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
-            btnNoticecase.setEnabled(false);
+            btnNoticecase.setVisibility(View.GONE);
+
+            if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
+                btnNoticecase.setVisibility(View.VISIBLE);
+                btnDownloadfile.setVisibility(View.VISIBLE);
+                btnDownloadfile.setText("ลบคดี");
+            }
+            if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("notice")) {
+                btnDownloadfile.setVisibility(View.GONE);
+            }
         } else if (EmergencyTabFragment.mode == "edit") {
-            btnDownloadfile.setEnabled(false);
+            btnDownloadfile.setVisibility(View.GONE);
+            if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
+                btnDownloadfile.setVisibility(View.VISIBLE);
+                btnDownloadfile.setText("ลบคดี");
+                btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
+            }
+        } else {
+            btnNoticecase.setVisibility(View.VISIBLE);
+            btnDownloadfile.setVisibility(View.VISIBLE);
+            btnDownloadfile.setText("ลบคดี");
         }
 
         fabBtn.setOnClickListener(new SummaryOnClickListener());
@@ -330,6 +356,7 @@ public class SummaryEmerTabFragment extends Fragment {
                             for (int i = 0; i < mTypeCenterArray.length; i++) {
                                 if (SelectSCDCCenterID[0].trim().equals(mTypeCenterArray[i][0].toString())) {
                                     spnSCDCcenterType.setSelection(i);
+
                                     break;
                                 }
                             }
@@ -345,24 +372,39 @@ public class SummaryEmerTabFragment extends Fragment {
                 dialog.setPositiveButton("ส่ง", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // uploadDataToServer();
+                        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                        Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+
+                        EmergencyTabFragment.tbNoticeCase.CaseStatus = "notice";
+                        EmergencyTabFragment.tbNoticeCase.Mobile_CaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
+                        EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID = null;
+                        EmergencyTabFragment.tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
+                        EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                        EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
                         if (EmergencyTabFragment.tbNoticeCase != null) {
                             boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
                             if (isSuccess) {
+                                SendNewNoticeCase noticeCase = new SendNewNoticeCase();
+                                noticeCase.execute(EmergencyTabFragment.tbNoticeCase);
+
+                                btnNoticecase.setVisibility(View.GONE);
+                                btnDownloadfile.setVisibility(View.GONE);
+                            } else {
                                 if (snackbar == null || !snackbar.isShown()) {
-                                    snackbar = Snackbar.make(rootLayout, "ส่งแจ้งเหตุเรียบร้อย"
-                                                    + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate
-                                                    + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID
-                                                    + " " + EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode
-                                            , Snackbar.LENGTH_INDEFINITE)
+                                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString(), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
+
 
                                                 }
                                             });
                                     snackbar.show();
                                 }
                             }
+
+
                         }
 
                         //FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -382,9 +424,27 @@ public class SummaryEmerTabFragment extends Fragment {
                 dialog.show();
             }
             if (v == btnDownloadfile) {
-                Log.i(TAG, "btnDownloadfile");
-                // new DownloadFileAsync().execute(reportID);
-                //
+                if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive") || EmergencyTabFragment.mode == "new") {
+                    Log.i(TAG, "ลบคดี");
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.delete_noticecase), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        boolean isSuccess = dbHelper.DeleteNoticeCase(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
+                                        if (isSuccess) {
+                                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                            fragmentTransaction.replace(R.id.containerView, noticeCaseListFragment).addToBackStack(null).commit();
+                                        }
+                                    }
+                                });
+                        snackbar.show();
+                    }
+
+
+                } else {
+                    Log.i(TAG, "btnDownloadfile");
+                }
             }
             if (v == fabBtn) {
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
@@ -395,6 +455,7 @@ public class SummaryEmerTabFragment extends Fragment {
                 EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
                 if (EmergencyTabFragment.tbNoticeCase != null) {
+
                     boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
@@ -407,7 +468,66 @@ public class SummaryEmerTabFragment extends Fragment {
                                     });
                             snackbar.show();
                         }
+                    } else {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
                     }
+                }
+            }
+        }
+    }
+
+    class SendNewNoticeCase extends AsyncTask<TbNoticeCase, Void, ApiStatusResult> {
+
+        @Override
+        protected ApiStatusResult doInBackground(TbNoticeCase... params) {
+            return WelcomeActivity.api.sendNewNoticeCase(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatusResult apiStatusResult) {
+            super.onPostExecute(apiStatusResult);
+            Log.d(TAG, apiStatusResult.getData().getResult());
+            Log.d(TAG, apiStatusResult.getData().getReason());
+            if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
+
+                EmergencyTabFragment.tbNoticeCase.NoticeCaseID = apiStatusResult.getData().getResult();
+                boolean isSuccess = dbHelper.updateNoticeCaseID(EmergencyTabFragment.tbNoticeCase);
+                if (isSuccess) {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, apiStatusResult.getData().getReason()
+                                        + "\nรหัสคดี " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID
+                                , Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                    }
+                                });
+                        snackbar.show();
+
+                    }
+                }
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, apiStatusResult.getData().getReason(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+
+                                }
+                            });
+                    snackbar.show();
                 }
             }
         }
@@ -491,7 +611,7 @@ public class SummaryEmerTabFragment extends Fragment {
             //check which spinner triggered the listener
             switch (parent.getId()) {
 
-                case R.id.spnSCDCagencyType:
+                case R.id.spnSCDCcenterType:
                     //make sure the animal was already selected during the onCreate
                     selectedCenter = mTypeCenterArray[pos][0];
                     Log.i(TAG + " show selectedCenter", selectedCenter);
@@ -514,7 +634,7 @@ public class SummaryEmerTabFragment extends Fragment {
                     }
                     spnSCDCagencyType.setOnItemSelectedListener(new NoticeOnItemSelectedListener());
                     break;
-                case R.id.spnSCDCcenterType:
+                case R.id.spnSCDCagencyType:
                     //make sure the animal was already selected during the onCreate
                     //ค่า SCDCAgencyCode
                     selectedAgencyCode = mTypeAgencyArray[pos][0];

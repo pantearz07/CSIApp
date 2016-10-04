@@ -174,8 +174,9 @@ public class NoticeCaseListFragment extends Fragment {
                         String NoticeCaseID = "MC_" + saveDataTime;
                         TbNoticeCase tbNoticeCase = new TbNoticeCase();
                         tbNoticeCase.NoticeCaseID = NoticeCaseID;
-                        tbNoticeCase.Mobile_CaseID = null;
+                        tbNoticeCase.Mobile_CaseID = NoticeCaseID;
                         tbNoticeCase.InquiryOfficialID = officialID;
+                        tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
                         tbNoticeCase.InvestigatorOfficialID = null;
                         tbNoticeCase.SCDCAgencyCode = null;
                         tbNoticeCase.CaseTypeID = selectedCaseType[0];

@@ -62,7 +62,7 @@ public class SummaryAssignTabFragment extends Fragment {
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
     String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
-
+    boolean oldSelectedCenter = false;
     Button btnAcceptCase, btnNoticecase, btnDownloadfile;
     String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
@@ -265,6 +265,9 @@ public class SummaryAssignTabFragment extends Fragment {
 
         if (AssignTabFragment.mode == "view") {
             fabBtn.setVisibility(View.GONE);
+            if (fabBtn != null || fabBtn.isShown()) {
+                fabBtn.setVisibility(View.GONE);
+            }
             fabBtn.setEnabled(false);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
@@ -293,21 +296,6 @@ public class SummaryAssignTabFragment extends Fragment {
     }
 
     class UpdateStatusCase extends AsyncTask<ApiCaseScene, Void, ApiStatus> {
-//        ProgressDialog progressDialog;
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            /*
-//            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
-//            */
-//            progressDialog = new ProgressDialog(getActivity(),
-//                    R.style.AppTheme_Dark_Dialog);
-//            progressDialog.setIndeterminate(true);
-//            progressDialog.setMessage(getString(R.string.send_token));
-//            progressDialog.show();
-//        }
 
         @Override
         protected ApiStatus doInBackground(ApiCaseScene... params) {
@@ -317,7 +305,6 @@ public class SummaryAssignTabFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiStatus apiStatus) {
             super.onPostExecute(apiStatus);
-            // progressDialog.dismiss();
             Log.d(TAG, apiStatus.getStatus());
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
@@ -339,7 +326,6 @@ public class SummaryAssignTabFragment extends Fragment {
                 }
 
             } else {
-                //Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
                 if (snackbar == null || !snackbar.isShown()) {
                     snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason() + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {

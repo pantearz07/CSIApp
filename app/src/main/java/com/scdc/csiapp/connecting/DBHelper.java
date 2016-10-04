@@ -1221,7 +1221,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     arrData[6] = cursor.getString(6);
                     arrData[7] = cursor.getString(7);
                 }
-                Log.i(TAG, "show selectofficial " + arrData[1]+" "+arrData[2]);
+                Log.i(TAG, "show selectofficial " + arrData[1] + " " + arrData[2]);
             }
             cursor.close();
 
@@ -1340,6 +1340,59 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+
+    public boolean updateNoticeCaseID(TbNoticeCase tbNoticeCases) {
+        if (tbNoticeCases == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+
+            String PRIMARY_KEY;
+            db.beginTransaction();
+            PRIMARY_KEY = tbNoticeCases.Mobile_CaseID;
+
+            TbNoticeCase temp = new TbNoticeCase();
+            ContentValues Val = new ContentValues();
+            Val.put(temp.COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
+
+            db.update("noticecase", Val, " Mobile_CaseID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d(TAG, "Update Table noticecase: NoticeCaseID " + tbNoticeCases.NoticeCaseID);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in saveNoticeCase " + e.getMessage().toString());
+            return false;
+        }
+    }
+
+    public boolean DeleteNoticeCase(String Mobile_CaseID) {
+        // TODO Auto-generated method stub
+        try {
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+            db.beginTransaction();
+            db.delete("noticecase", " Mobile_CaseID = ?", new String[]{String.valueOf(Mobile_CaseID)});
+
+            Log.d(TAG, "DeleteNoticeCase " + Mobile_CaseID);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+
+            return true;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in DeleteNoticeCase " + e.getMessage().toString());
+            return false;
+        }
+    }
+
     public boolean saveCaseScene(TbCaseScene tbCaseScene) {
         if (tbCaseScene == null) {
             return false;
@@ -1423,9 +1476,11 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+
     public boolean updateAlldataCase(ApiCaseScene apiCaseScene) {
         return true;
     }
+
     public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
         Log.d(TAG, "OfficeID:" + OfficeID);
         ApiListNoticeCase apiListNoticeCase = new ApiListNoticeCase();
@@ -2315,4 +2370,5 @@ public class DBHelper extends SQLiteAssetHelper {
         }
 
     }
+
 }

@@ -477,6 +477,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (emergencyTabFragment.mode == "view") {
             fabBtnRec.setVisibility(View.GONE);
+            if (fabBtnRec != null || fabBtnRec.isShown()) {
+                fabBtnRec.setVisibility(View.GONE);
+            }
             fabBtnRec.setEnabled(false);
             editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
@@ -541,15 +544,38 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             case R.id.fabBtnRec:
 
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                if (editHappenCaseDate.getText().toString() == null || editHappenCaseDate.getText().toString().equals("")) {
+                    EmergencyTabFragment.tbNoticeCase.HappenCaseDate = "";
+                } else {
+                    EmergencyTabFragment.tbNoticeCase.HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
+                }
+                if (editHappenCaseTime.getText().toString() == null || editHappenCaseTime.getText().toString().equals("")) {
+                    EmergencyTabFragment.tbNoticeCase.HappenCaseTime = "";
+                } else {
+                    EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
+                }
+                if (editReceiveCaseDate.getText().toString() == null || editReceiveCaseDate.getText().toString().equals("")) {
+                    EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = "";
+                } else {
+                    EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = getDateTime.changeDateFormatToDB(editReceiveCaseDate.getText().toString());
+                }
+                if (editReceiveCaseTime.getText().toString() == null || editReceiveCaseTime.getText().toString().equals("")) {
+                    EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = "";
+                } else {
+                    EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
+                }
+                if (editKnowCaseDate.getText().toString() == null || editKnowCaseDate.getText().toString().equals("")) {
+                    EmergencyTabFragment.tbNoticeCase.KnowCaseDate = "";
+                } else {
+                    EmergencyTabFragment.tbNoticeCase.KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
+                }
+                if (editKnowCaseTime.getText().toString() == null || editKnowCaseTime.getText().toString().equals("")) {
+                    EmergencyTabFragment.tbNoticeCase.KnowCaseTime = "";
+                } else {
+                    EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
+                }
 
-                EmergencyTabFragment.tbNoticeCase.HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = getDateTime.changeDateFormatToDB(editReceiveCaseDate.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
-                EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
 
-                Log.i(TAG, "spinnerKnowCaseTime" + EmergencyTabFragment.tbNoticeCase.KnowCaseTime);
                 EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
                 if (EmergencyTabFragment.tbNoticeCase != null) {

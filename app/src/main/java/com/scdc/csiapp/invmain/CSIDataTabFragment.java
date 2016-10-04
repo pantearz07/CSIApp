@@ -146,6 +146,15 @@ public class CSIDataTabFragment extends Fragment {
             return null;
         }
     }
-
-
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putSerializable(Bundle_Key,apiCaseScene);
+//    }
+//
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable(Bundle_Key);
+//    }
 }

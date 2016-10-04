@@ -123,18 +123,41 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
 
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " + apiNoticeCase.getTbNoticeCase().ReceivingCaseDate + " เวลา " + apiNoticeCase.getTbNoticeCase().ReceivingCaseTime + " น.");
 
-        if (apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != null) {
-            csidataholder.inqInfo.setVisibility(View.VISIBLE);
-            csidataholder.inqInfo.setText(apiNoticeCase.getTbOfficial().Rank + " " + apiNoticeCase.getTbOfficial().FirstName + " " + apiNoticeCase.getTbOfficial().LastName
-                    + " (" + apiNoticeCase.getTbOfficial().Position
-                    + ") โทร. " + apiNoticeCase.getTbOfficial().PhoneNumber);
-        }
+        if (apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != null || apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != "") {
+                if(apiNoticeCase.getTbOfficial() == null){
+                    csidataholder.inqInfo.setVisibility(View.GONE);
+                }else {
 
-        if (apiNoticeCase.getTbNoticeCase().SuffererName == "") {
+             csidataholder.inqInfo.setVisibility(View.VISIBLE);
+                    csidataholder.inqInfo.setText(apiNoticeCase.getTbOfficial().Rank + " " +apiNoticeCase.getTbOfficial().FirstName+ " " + apiNoticeCase.getTbOfficial().LastName
+                        + " (" + apiNoticeCase.getTbOfficial().Position
+                        + ") โทร. " + apiNoticeCase.getTbOfficial().PhoneNumber);
+                }
+
+//            if(apiNoticeCase.getTbOfficial().Rank !=null) {
+//                csidataholder.inqInfo.setVisibility(View.VISIBLE);
+//                csidataholder.inqInfo.setText(apiNoticeCase.getTbOfficial().Rank + " " + apiNoticeCase.getTbOfficial().FirstName + " " + apiNoticeCase.getTbOfficial().LastName
+//                        + " (" + apiNoticeCase.getTbOfficial().Position
+//                        + ") โทร. " + apiNoticeCase.getTbOfficial().PhoneNumber);
+//            }
+//            csidataholder.inqInfo.setVisibility(View.GONE);
+        }else{
+            csidataholder.inqInfo.setVisibility(View.GONE);
+        }
+        String SuffererPrename = "", SuffererName = "", SuffererPhoneNum = "";
+        if (apiNoticeCase.getTbNoticeCase().SuffererName == null || apiNoticeCase.getTbNoticeCase().SuffererName.equals("") ) {
             csidataholder.sufferrerInfo.setVisibility(View.GONE);
         } else {
-            csidataholder.sufferrerInfo.setText("ผู้เสียหาย" + apiNoticeCase.getTbNoticeCase().SuffererPrename + " "
-                    + apiNoticeCase.getTbNoticeCase().SuffererName + " โทร: " + apiNoticeCase.getTbNoticeCase().SuffererPhoneNum);
+            if (apiNoticeCase.getTbNoticeCase().SuffererPrename != null) {
+                SuffererPrename = apiNoticeCase.getTbNoticeCase().SuffererPrename;
+            }
+            if (apiNoticeCase.getTbNoticeCase().SuffererName != null) {
+                SuffererName = apiNoticeCase.getTbNoticeCase().SuffererName;
+            }
+            if (apiNoticeCase.getTbNoticeCase().SuffererPhoneNum != null) {
+                SuffererPhoneNum = apiNoticeCase.getTbNoticeCase().SuffererPhoneNum;
+            }
+            csidataholder.sufferrerInfo.setText("ผู้เสียหาย" + SuffererPrename + " " + SuffererName + " โทร: " + SuffererPhoneNum);
         }
 
         // เปลี่ยนสีเส้นตาม CaseStatus ด้วยการเปลี่ยนรูปใหม่มาใส่แทนตัวเก่า

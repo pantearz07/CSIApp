@@ -626,4 +626,16 @@ public class SummaryCSITabFragment extends Fragment {
 
 
     }
+
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putSerializable(CSIDataTabFragment.Bundle_Key,CSIDataTabFragment.apiCaseScene);
+//    }
+//
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        CSIDataTabFragment.apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable(CSIDataTabFragment.Bundle_Key);
+//    }
 }

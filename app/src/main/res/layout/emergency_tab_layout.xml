@@ -501,7 +501,8 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="โทรศัพท์ติดต่อ"
-                                android:textSize="@dimen/small_text" />
+                                android:textSize="@dimen/small_text"
+                                android:inputType="phone"/>
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
