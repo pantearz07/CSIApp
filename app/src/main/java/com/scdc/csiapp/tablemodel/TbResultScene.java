@@ -23,4 +23,35 @@ public class TbResultScene implements Serializable {
     public String COL_RSDetail = "RSDetail";
     public String RSDetail = "";
 
+    public String getRSID() {
+        return RSID;
+    }
+
+    public void setRSID(String RSID) {
+        this.RSID = RSID;
+    }
+
+    public String getRSTypeID() {
+        return RSTypeID;
+    }
+
+    public void setRSTypeID(String RSTypeID) {
+        this.RSTypeID = RSTypeID;
+    }
+
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
+
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getRSDetail() {
+        return RSDetail;
+    }
+
+    public void setRSDetail(String RSDetail) {
+        this.RSDetail = RSDetail;
+    }
 }

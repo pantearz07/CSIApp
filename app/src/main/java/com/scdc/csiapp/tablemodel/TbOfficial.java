@@ -65,4 +65,115 @@ public class TbOfficial implements Serializable {
     public String COL_id_users = "id_users";
     public String id_users = "";
 
+    public String getOfficialID() {
+        return OfficialID;
+    }
+
+    public void setOfficialID(String officialID) {
+        OfficialID = officialID;
+    }
+
+    public String getFirstName() {
+        return FirstName;
+    }
+
+    public void setFirstName(String firstName) {
+        FirstName = firstName;
+    }
+
+    public String getLastName() {
+        return LastName;
+    }
+
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
+
+    public String getAlias() {
+        return Alias;
+    }
+
+    public void setAlias(String alias) {
+        Alias = alias;
+    }
+
+    public String getRank() {
+        return Rank;
+    }
+
+    public void setRank(String rank) {
+        Rank = rank;
+    }
+
+    public String getPosition() {
+        return Position;
+    }
+
+    public void setPosition(String position) {
+        Position = position;
+    }
+
+    public String getSubPossition() {
+        return SubPossition;
+    }
+
+    public void setSubPossition(String subPossition) {
+        SubPossition = subPossition;
+    }
+
+    public String getPhoneNumber() {
+        return PhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        PhoneNumber = phoneNumber;
+    }
+
+    public String getOfficialEmail() {
+        return OfficialEmail;
+    }
+
+    public void setOfficialEmail(String officialEmail) {
+        OfficialEmail = officialEmail;
+    }
+
+    public String getOfficialDisplayPic() {
+        return OfficialDisplayPic;
+    }
+
+    public void setOfficialDisplayPic(String officialDisplayPic) {
+        OfficialDisplayPic = officialDisplayPic;
+    }
+
+    public String getAccessType() {
+        return AccessType;
+    }
+
+    public void setAccessType(String accessType) {
+        AccessType = accessType;
+    }
+
+    public String getSCDCAgencyCode() {
+        return SCDCAgencyCode;
+    }
+
+    public void setSCDCAgencyCode(String SCDCAgencyCode) {
+        this.SCDCAgencyCode = SCDCAgencyCode;
+    }
+
+    public String getPoliceStationID() {
+        return PoliceStationID;
+    }
+
+    public void setPoliceStationID(String policeStationID) {
+        PoliceStationID = policeStationID;
+    }
+
+    public String getId_users() {
+        return id_users;
+    }
+
+    public void setId_users(String id_users) {
+        this.id_users = id_users;
+    }
 }

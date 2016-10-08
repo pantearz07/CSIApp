@@ -44,6 +44,7 @@ public class CaseSceneListFragment extends Fragment {
     Context context;
     //Recycle view
     private List<ApiCaseScene> caseList;
+
     RecyclerView rvDraft;
     SwipeRefreshLayout swipeContainer;
     private ApiCaseSceneListAdapter apiCaseSceneListAdapter;
@@ -61,7 +62,7 @@ public class CaseSceneListFragment extends Fragment {
     GetDateTime getDateTime;
     String officialID;
     private static final String TAG = "DEBUG-CaseSceneListFragment";
-
+    public static final String LIST_INSTANCE_STATE = "datastate";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -350,5 +351,31 @@ public class CaseSceneListFragment extends Fragment {
         }
     }
 
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//
+//        outState.putParcelable(LIST_INSTANCE_STATE, caseList);
+//        super.onSaveInstanceState(outState);
+//    }
+//
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        if(savedInstanceState != null){
+//            caseList = (List<ApiCaseScene>) savedInstanceState.getSerializable("caselist");
+//        }
+//    }
+//
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        caseList = (List<ApiCaseScene>) savedInstanceState.getSerializable("caselist");
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        caseList = (List<ApiCaseScene>) savedInstanceState.getSerializable("caselist");
+//    }
 
 }

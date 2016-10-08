@@ -27,203 +27,222 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_addinside_dialog"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="15dp">
--->
-    <TableLayout
-        android:id="@+id/tableFeatureInsideClass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+                <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/layout_addinside_dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="15dp">
+                -->
+                <TableLayout
+                    android:id="@+id/tableFeatureInsideClass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
-        <TableRow>
+                    <TableRow>
 
-            <TextView
-                android:id="@+id/txtFeatureInsideFloor"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:gravity="left"
-                android:text="ชั้นที่"
-                android:textSize="@dimen/small_text" />
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideFloor"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/editFeatureInsideFloor"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:gravity="left"
-                android:hint="0"
-                android:inputType="number"
-                android:textSize="@dimen/small_text" />
+                            <EditText
+                                android:id="@+id/editFeatureInsideFloor"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ชั้นที่"
+                                android:inputType="number"
 
-            <TextView
-                android:id="@+id/editNoti1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="*"
-                android:textColor="#FF0000"
-                android:textSize="18sp" />
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
 
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideCave"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-        </TableRow>
-<TableRow>
+                            <EditText
+                                android:id="@+id/editFeatureInsideCave"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="คูหาที่"
+                                android:inputType="number"
 
-    <TextView
-        android:id="@+id/editNoti3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="กรุณากรอกข้อมูลชั้น"
-        android:textColor="#FF0000"
-        android:textSize="@dimen/ssmall_text"
-        android:visibility="gone"/>
-</TableRow>
-        <TableRow>
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+                    </TableRow>
 
-            <TextView
-                android:id="@+id/txtFeatureInsideCave"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:gravity="left"
-                android:text="คูหาที่"
-                android:textSize="@dimen/small_text" />
+                    <TableRow>
 
-            <EditText
-                android:id="@+id/editFeatureInsideCave"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:gravity="left"
-                android:hint="0"
-                android:inputType="number"
-                android:textSize="@dimen/small_text" />
+                        <TextView
+                            android:id="@+id/editNoti3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="กรุณากรอกข้อมูลชั้น"
+                            android:textColor="#FF0000"
+                            android:textSize="@dimen/ssmall_text"
+                            android:visibility="gone" />
+                    </TableRow>
 
-            <TextView
-                android:id="@+id/editNoti2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="*"
-                android:textColor="#FF0000"
-                android:textSize="18sp" />
-        </TableRow>
-        <TableRow>
+                    <TableRow>
 
-            <TextView
-                android:id="@+id/editNoti4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="กรุณากรอกข้อมูลคูหา"
-                android:textColor="#FF0000"
-                android:textSize="@dimen/ssmall_text"
-                android:visibility="gone"/>
-        </TableRow>
+                        <TextView
+                            android:id="@+id/editNoti4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="กรุณากรอกข้อมูลคูหา"
+                            android:textColor="#FF0000"
+                            android:textSize="@dimen/ssmall_text"
+                            android:visibility="gone" />
+                    </TableRow>
 
-        <View
-            android:layout_height="2dp"
-            android:layout_marginBottom="@dimen/padding_s"
-            android:layout_marginTop="@dimen/padding_s"
-            android:background="#00A0B0" />
+                    <View
+                        android:layout_height="2dp"
+                        android:layout_marginBottom="@dimen/padding_s"
+                        android:layout_marginTop="@dimen/padding_s"
+                        android:background="#00A0B0" />
 
-        <TableRow android:gravity="center_horizontal|center_vertical">
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
 
-            <EditText
-                android:id="@+id/editFeatureInsideClassFront"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:hint="ด้านหน้า"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideClassFront"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-        <TableRow android:gravity="center_horizontal|center_vertical">
+                            <EditText
+                                android:id="@+id/editFeatureInsideClassFront"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านหน้า"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+                    </TableRow>
 
-            <EditText
-                android:id="@+id/editFeatureInsideClassLeft"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:hint="ด้านซ้าย"
-                android:textSize="@dimen/small_text" />
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
 
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideClassLeft"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-        </TableRow>
+                            <EditText
+                                android:id="@+id/editFeatureInsideClassLeft"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านซ้าย"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
 
-        <TableRow>
+                    </TableRow>
 
-            <EditText
-                android:id="@+id/editFeatureInsideClassCenter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:hint="ตรงกลาง"
-                android:textSize="@dimen/small_text" />
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
 
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideClassCenter"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-        </TableRow>
+                            <EditText
+                                android:id="@+id/editFeatureInsideClassCenter"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ตรงกลาง"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
 
-        <TableRow>
+                    </TableRow>
 
-            <EditText
-                android:id="@+id/editFeatureInsideClassRight"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:hint="ด้านขวา"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
 
-        <TableRow android:gravity="center_horizontal|center_vertical">
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideClassRight"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/editFeatureInsideClassBack"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:hint="ด้านหลัง"
-                android:textSize="@dimen/small_text" />
+                            <EditText
+                                android:id="@+id/editFeatureInsideClassRight"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านขวา"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+                    </TableRow>
 
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:background="@color/ocean">
-            <Button
-                android:id="@+id/btnTakePhotoInside"
-                android:layout_width="@dimen/icon_image_l"
-                android:layout_height="@dimen/icon_image_l"
-                android:layout_marginRight="10dp"
-                android:gravity="center|center_horizontal"
-                android:background="@drawable/ic_camera_wh"/>
-            <Button
-                android:id="@+id/btnVideoInside"
-                android:layout_width="@dimen/icon_image_l"
-                android:layout_height="@dimen/icon_image_l"
-                android:gravity="center|center_horizontal"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/ic_video_wh"
-                android:visibility="gone"/>
-        </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
 
-    </TableLayout>
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtFeatureInsideClassBack"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editFeatureInsideClassBack"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="ด้านหลัง"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/ocean"
+                        android:gravity="center_horizontal">
+
+                        <Button
+                            android:id="@+id/btnTakePhotoInside"
+                            android:layout_width="@dimen/icon_image_l"
+                            android:layout_height="@dimen/icon_image_l"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_camera_wh"
+                            android:gravity="center|center_horizontal" />
+
+                        <Button
+                            android:id="@+id/btnVideoInside"
+                            android:layout_width="@dimen/icon_image_l"
+                            android:layout_height="@dimen/icon_image_l"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/ic_video_wh"
+                            android:gravity="center|center_horizontal"
+                            android:visibility="gone" />
+                    </TableRow>
+
+                </TableLayout>
+
                 <TextView
                     android:id="@+id/txtPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_s"
                     android:background="@color/orange"
                     android:padding="5dp"
                     android:text="รูปภาพ"
                     android:textAppearance="@style/SectionText" />
+
                 <HorizontalScrollView
                     android:id="@+id/horizontalScrollViewInside"
                     android:layout_width="match_parent"
@@ -241,8 +260,9 @@
                             android:id="@+id/horizontal_gridView_Inside"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
                             android:gravity="center_vertical"
-                            android:columnWidth="100dp" android:horizontalSpacing="1dp" />
+                            android:horizontalSpacing="1dp" />
                     </LinearLayout>
                 </HorizontalScrollView>
 
@@ -250,10 +270,12 @@
                     android:id="@+id/txtVideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_s"
                     android:background="@color/orange"
                     android:padding="5dp"
                     android:text="วิดีโอ"
                     android:textAppearance="@style/SectionText" />
+
                 <HorizontalScrollView
                     android:id="@+id/horizontalScrollViewInside_video"
                     android:layout_width="match_parent"
@@ -271,11 +293,12 @@
                             android:id="@+id/horizontal_gridView_Inside_video"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:columnWidth="100dp"
                             android:gravity="center_vertical"
-                            android:columnWidth="100dp" android:horizontalSpacing="1dp" />
+                            android:horizontalSpacing="1dp" />
                     </LinearLayout>
                 </HorizontalScrollView>
-</LinearLayout>
+            </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.design.widget.FloatingActionButton
@@ -288,7 +311,7 @@
             android:src="@drawable/ic_saveas_wh"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
-            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

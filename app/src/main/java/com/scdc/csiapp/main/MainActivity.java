@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public static Context mContext;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
-    FragmentManager mFragmentManager;
+    static FragmentManager mFragmentManager;
 
     //รายการคดี ทั้งหมด อันให่ม่  อยู่ใน package/invmain
     CaseSceneListFragment caseSceneListFragment;
@@ -129,19 +130,20 @@ public class MainActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
 
         mFragmentManager = getSupportFragmentManager();
-
-        FragmentTransaction fthome = mFragmentManager.beginTransaction();
-        fthome.replace(R.id.containerView, caseSceneListFragment);
-        fthome.addToBackStack(null);
-        fthome.commit();
+        setFragment(caseSceneListFragment,0);
+//        FragmentTransaction fthome = mFragmentManager.beginTransaction();
+//        fthome.replace(R.id.containerView, caseSceneListFragment);
+//        fthome.addToBackStack(null);
+//        fthome.commit();
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("caseSceneListFragment")) {
-                FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                fthome2.replace(R.id.containerView, caseSceneListFragment);
-                fthome2.addToBackStack(null);
-                fthome2.commit();
+                setFragment(caseSceneListFragment,0);
+//                FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
+//                fthome2.replace(R.id.containerView, caseSceneListFragment);
+//                fthome2.addToBackStack(null);
+//                fthome2.commit();
 
             }
         }
@@ -174,11 +176,11 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
-                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                      fthome2.replace(R.id.containerView, caseSceneListFragment);
-                   // fthome2.replace(R.id.containerView, noticeCaseListFragment);
-                    fthome2.addToBackStack(null);
-                    fthome2.commit();
+                    setFragment(caseSceneListFragment,0);
+//                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
+//                      fthome2.replace(R.id.containerView, caseSceneListFragment);
+//                    fthome2.addToBackStack(null);
+//                    fthome2.commit();
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_schedule) {
@@ -195,10 +197,11 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
-                    FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-                    ftsetting.replace(R.id.containerView, settingFragment);
-                    ftsetting.addToBackStack(null);
-                    ftsetting.commit();
+                    setFragment(settingFragment,0);
+//                    FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
+//                    ftsetting.replace(R.id.containerView, settingFragment);
+//                    ftsetting.addToBackStack(null);
+//                    ftsetting.commit();
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
@@ -233,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
 
         /**
          * Setup Drawer Toggle of the Toolbar
@@ -315,10 +319,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-            ftsetting.replace(R.id.containerView, settingFragment);
-            ftsetting.addToBackStack(null);
-            ftsetting.commit();
+            setFragment(settingFragment,1);
+//            FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
+//            ftsetting.replace(R.id.containerView, settingFragment);
+//            ftsetting.addToBackStack(null);
+//            ftsetting.commit();
         }
 
         return super.onOptionsItemSelected(item);
@@ -351,5 +356,11 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultEvent(requestCode, resultCode, data));
     }
 
-
+    public static void setFragment(Fragment fragment, int backstackyes) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+        if (backstackyes==1) {fragmentTransaction.addToBackStack(null);}
+        fragmentTransaction.replace(R.id.containerView, fragment);
+        fragmentTransaction.commit();
+    }
 }

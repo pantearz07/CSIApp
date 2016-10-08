@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-
+                    android:freezesText="true"
                     android:textSize="@dimen/ssmall_text" />
 
                 <TableRow
@@ -111,6 +111,7 @@
                             android:layout_height="50dp"
                             android:layout_column="0"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
 
                         <TextView
@@ -120,6 +121,7 @@
                             android:layout_height="50dp"
                             android:layout_column="1"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -147,7 +149,7 @@
                             android:layout_height="50dp"
                             android:layout_column="0"
                             android:layout_weight="1"
-
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
 
                         <TextView
@@ -157,6 +159,7 @@
                             android:layout_height="50dp"
                             android:layout_column="1"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:inputType="time"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
@@ -186,6 +189,7 @@
                             android:layout_height="50dp"
                             android:layout_column="0"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
 
                         <TextView
@@ -195,24 +199,56 @@
                             android:layout_height="50dp"
                             android:layout_column="1"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/margin_line"
+                        >
 
                         <TextView
                             android:id="@+id/txtSceneInvestDateTime1"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="left"
                             android:text="วันเวลาที่ทำการตรวจสถานที่เกิดเหตุ"
                             android:textSize="@dimen/small_text" />
 
-                    </TableRow>
+                        <ImageButton
+                            android:id="@+id/btn_property"
+                            android:layout_width="@dimen/width_btn"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/ic_property" />
 
+                    </TableRow>
                     <TableRow
+                        android:id="@+id/tableRowSceneInvestDateTimeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+
+
+                        <ListView
+                            android:id="@+id/listViewAddSceneInvestDateTime"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:divider="@color/ocean"
+                            android:dividerHeight="@dimen/divider_height"
+                            android:padding="5dp"
+                            android:textSize="@dimen/small_text" />
+
+                    </TableRow>
+                    <!--<TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -223,6 +259,7 @@
                             android:layout_height="50dp"
                             android:layout_column="0"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
 
                         <TextView
@@ -232,8 +269,9 @@
                             android:layout_height="50dp"
                             android:layout_column="1"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
-                    </TableRow>
+                    </TableRow>-->
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -275,8 +313,7 @@
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                       >
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:id="@+id/txtProvince"
@@ -422,6 +459,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:gravity="left"
                             android:text="0"
                             android:textSize="@dimen/small_text" />
@@ -445,6 +483,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:gravity="left"
                             android:text="0"
                             android:textSize="@dimen/small_text" />

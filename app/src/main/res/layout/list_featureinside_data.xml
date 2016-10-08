@@ -53,18 +53,19 @@
                 android:textSize="@dimen/small_text" />
             <ImageButton
                 android:id="@+id/imgEdit"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
                 android:layout_gravity="right|center_vertical"
-                android:src="@android:drawable/ic_menu_edit"/>
+                android:layout_marginRight="@dimen/padding_s"
+                android:src="@drawable/ic_edit"/>
             <ImageButton
                 android:id="@+id/imgDelete"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
                 android:layout_gravity="right|center_vertical"
-                android:src="@android:drawable/ic_delete"/>
+                android:src="@drawable/ic_drop"/>
         </TableRow>
 
         <View

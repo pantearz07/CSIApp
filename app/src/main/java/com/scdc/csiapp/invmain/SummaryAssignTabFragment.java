@@ -305,7 +305,7 @@ public class SummaryAssignTabFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiStatus apiStatus) {
             super.onPostExecute(apiStatus);
-            Log.d(TAG, apiStatus.getStatus());
+//            Log.d(TAG, apiStatus.getStatus());
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
                 if (snackbar == null || !snackbar.isShown()) {
@@ -366,9 +366,9 @@ public class SummaryAssignTabFragment extends Fragment {
                 AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
                 //save ลงมือถือ
-                boolean isSuccess1 = dbHelper.saveCaseScene(AssignTabFragment.apiCaseScene.getTbCaseScene());
-                if (isSuccess1) {
-                    boolean isSuccess = dbHelper.saveNoticeCase(AssignTabFragment.apiCaseScene.getTbNoticeCase());
+//                boolean isSuccess1 = dbHelper.saveCaseScene(AssignTabFragment.apiCaseScene.getTbCaseScene());
+//                if (isSuccess1) {
+                    boolean isSuccess = dbHelper.updateAlldataCase(AssignTabFragment.apiCaseScene);
                     if (isSuccess) {
                         //แก้ไขตารางในเซิฟก่อน แล้วเด้งไปหน้าใหม่
                         UpdateStatusCase statusCase = new UpdateStatusCase();
@@ -388,19 +388,19 @@ public class SummaryAssignTabFragment extends Fragment {
                             snackbar.show();
                         }
                     }
-                } else {
-                    if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-
-                                    }
-                                });
-                        snackbar.show();
-                    }
-                }
+//                } else {
+//                    if (snackbar == null || !snackbar.isShown()) {
+//                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+//                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//
+//
+//                                    }
+//                                });
+//                        snackbar.show();
+//                    }
+//                }
             }
             if (v == btnDownloadfile) {
                 Log.i(TAG, "btnDownloadfile");

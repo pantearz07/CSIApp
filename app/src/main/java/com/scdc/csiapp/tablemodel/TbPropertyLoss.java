@@ -36,4 +36,59 @@ public class TbPropertyLoss implements Serializable {
     public String COL_PropInsurance = "PropInsurance";
     public String PropInsurance = "";
 
+    public String getPropertyLossID() {
+        return PropertyLossID;
+    }
+
+    public void setPropertyLossID(String propertyLossID) {
+        PropertyLossID = propertyLossID;
+    }
+
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
+
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getPropertyLossName() {
+        return PropertyLossName;
+    }
+
+    public void setPropertyLossName(String propertyLossName) {
+        PropertyLossName = propertyLossName;
+    }
+
+    public String getPropertyLossNumber() {
+        return PropertyLossNumber;
+    }
+
+    public void setPropertyLossNumber(String propertyLossNumber) {
+        PropertyLossNumber = propertyLossNumber;
+    }
+
+    public String getPropertyLossUnit() {
+        return PropertyLossUnit;
+    }
+
+    public void setPropertyLossUnit(String propertyLossUnit) {
+        PropertyLossUnit = propertyLossUnit;
+    }
+
+    public String getPropertyLossPosition() {
+        return PropertyLossPosition;
+    }
+
+    public void setPropertyLossPosition(String propertyLossPosition) {
+        PropertyLossPosition = propertyLossPosition;
+    }
+
+    public String getPropInsurance() {
+        return PropInsurance;
+    }
+
+    public void setPropInsurance(String propInsurance) {
+        PropInsurance = propInsurance;
+    }
 }

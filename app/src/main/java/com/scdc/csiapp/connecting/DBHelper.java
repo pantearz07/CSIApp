@@ -1478,7 +1478,314 @@ public class DBHelper extends SQLiteAssetHelper {
     }
 
     public boolean updateAlldataCase(ApiCaseScene apiCaseScene) {
-        return true;
+        if (apiCaseScene == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+
+            String sCaseReportID;
+            String strSQL;
+            db.beginTransaction();
+            sCaseReportID = apiCaseScene.getTbCaseScene().CaseReportID;
+            //บันทึกข้อมูลลง TbCaseScene
+            strSQL = "SELECT * FROM casescene WHERE "
+                    + "CaseReportID = '" + sCaseReportID + "'";
+            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                TbCaseScene temp = new TbCaseScene();
+                ContentValues Val = new ContentValues();
+                Val.put(temp.COL_CaseReportID, apiCaseScene.getTbCaseScene().CaseReportID);
+                Val.put(temp.COL_NoticeCaseID, apiCaseScene.getTbCaseScene().NoticeCaseID);
+                Val.put(temp.COL_Mobile_CaseID, apiCaseScene.getTbCaseScene().Mobile_CaseID);
+                Val.put(temp.COL_SCDCAgencyCode, apiCaseScene.getTbCaseScene().SCDCAgencyCode);
+                Val.put(temp.COL_InvestigatorOfficialID, apiCaseScene.getTbCaseScene().InvestigatorOfficialID);
+                Val.put(temp.COL_CaseTypeID, apiCaseScene.getTbCaseScene().CaseTypeID);
+                Val.put(temp.COL_SubCaseTypeID, apiCaseScene.getTbCaseScene().SubCaseTypeID);
+                Val.put(temp.COL_ReportNo, apiCaseScene.getTbCaseScene().ReportNo);
+                Val.put(temp.COL_ReportStatus, apiCaseScene.getTbCaseScene().ReportStatus);
+                Val.put(temp.COL_PoliceStationID, apiCaseScene.getTbCaseScene().PoliceStationID);
+                Val.put(temp.COL_CaseTel, apiCaseScene.getTbCaseScene().CaseTel);
+                Val.put(temp.COL_AssignmentDate, apiCaseScene.getTbCaseScene().AssignmentDate);
+                Val.put(temp.COL_AssignmentTime, apiCaseScene.getTbCaseScene().AssignmentTime);
+                Val.put(temp.COL_ReceivingCaseDate, apiCaseScene.getTbCaseScene().ReceivingCaseDate);
+                Val.put(temp.COL_ReceivingCaseTime, apiCaseScene.getTbCaseScene().ReceivingCaseTime);
+                Val.put(temp.COL_HappenCaseDate, apiCaseScene.getTbCaseScene().HappenCaseDate);
+                Val.put(temp.COL_HappenCaseTime, apiCaseScene.getTbCaseScene().HappenCaseTime);
+                Val.put(temp.COL_KnowCaseDate, apiCaseScene.getTbCaseScene().KnowCaseDate);
+                Val.put(temp.COL_KnowCaseTime, apiCaseScene.getTbCaseScene().KnowCaseTime);
+                Val.put(temp.COL_CompleteSceneDate, apiCaseScene.getTbCaseScene().CompleteSceneDate);
+                Val.put(temp.COL_CompleteSceneTime, apiCaseScene.getTbCaseScene().CompleteSceneTime);
+                Val.put(temp.COL_LocaleName, apiCaseScene.getTbCaseScene().LocaleName);
+                Val.put(temp.COL_DISTRICT_ID, apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                Val.put(temp.COL_AMPHUR_ID, apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                Val.put(temp.COL_PROVINCE_ID, apiCaseScene.getTbCaseScene().PROVINCE_ID);
+                Val.put(temp.COL_Latitude, apiCaseScene.getTbCaseScene().Latitude);
+                Val.put(temp.COL_Longitude, apiCaseScene.getTbCaseScene().Longitude);
+                Val.put(temp.COL_FeatureInsideDetail, apiCaseScene.getTbCaseScene().FeatureInsideDetail);
+                Val.put(temp.COL_CircumstanceOfCaseDetail, apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
+                Val.put(temp.COL_FullEvidencePerformed, apiCaseScene.getTbCaseScene().FullEvidencePerformed);
+                Val.put(temp.COL_Annotation, apiCaseScene.getTbCaseScene().Annotation);
+                Val.put(temp.COL_MaleCriminalNum, apiCaseScene.getTbCaseScene().MaleCriminalNum);
+                Val.put(temp.COL_FemaleCriminalNum, apiCaseScene.getTbCaseScene().FemaleCriminalNum);
+                Val.put(temp.COL_ConfineSufferer, apiCaseScene.getTbCaseScene().ConfineSufferer);
+                Val.put(temp.COL_SuffererPrename, apiCaseScene.getTbCaseScene().SuffererPrename);
+                Val.put(temp.COL_SuffererName, apiCaseScene.getTbCaseScene().SuffererName);
+                Val.put(temp.COL_SuffererStatus, apiCaseScene.getTbCaseScene().SuffererStatus);
+                Val.put(temp.COL_SuffererPhoneNum, apiCaseScene.getTbCaseScene().SuffererPhoneNum);
+                Val.put(temp.COL_CriminalUsedWeapon, apiCaseScene.getTbCaseScene().CriminalUsedWeapon);
+                Val.put(temp.COL_VehicleInfo, apiCaseScene.getTbCaseScene().VehicleInfo);
+                Val.put(temp.COL_LastUpdateDate, apiCaseScene.getTbCaseScene().LastUpdateDate);
+                Val.put(temp.COL_LastUpdateTime, apiCaseScene.getTbCaseScene().LastUpdateTime);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("casescene", null, Val);
+                    Log.d(TAG, "Sync Table casescene: Insert ");
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("casescene", Val, " CaseReportID = ?", new String[]{String.valueOf(sCaseReportID)});
+                    Log.d(TAG, "Sync Table casescene: Update ");
+                }
+            }
+            //บันทึกข้อมูลลง TbNoticeCase
+            strSQL = "SELECT * FROM noticecase WHERE "
+                    + "NoticeCaseID = '" + apiCaseScene.getTbCaseScene().NoticeCaseID + "'";
+            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                TbNoticeCase temp = new TbNoticeCase();
+                ContentValues Val = new ContentValues();
+                Val.put(temp.COL_NoticeCaseID, apiCaseScene.getTbNoticeCase().NoticeCaseID);
+                Val.put(temp.COL_Mobile_CaseID, apiCaseScene.getTbNoticeCase().Mobile_CaseID);
+                Val.put(temp.COL_InquiryOfficialID, apiCaseScene.getTbNoticeCase().InquiryOfficialID);
+                Val.put(temp.COL_InvestigatorOfficialID, apiCaseScene.getTbNoticeCase().InvestigatorOfficialID);
+                Val.put(temp.COL_SCDCAgencyCode, apiCaseScene.getTbNoticeCase().SCDCAgencyCode);
+                Val.put(temp.COL_CaseTypeID, apiCaseScene.getTbNoticeCase().CaseTypeID);
+                Val.put(temp.COL_SubCaseTypeID, apiCaseScene.getTbNoticeCase().SubCaseTypeID);
+                Val.put(temp.COL_CaseStatus, apiCaseScene.getTbNoticeCase().CaseStatus);
+                Val.put(temp.COL_PoliceStationID, apiCaseScene.getTbNoticeCase().PoliceStationID);
+                Val.put(temp.COL_CaseTel, apiCaseScene.getTbNoticeCase().CaseTel);
+                Val.put(temp.COL_ReceivingCaseDate, apiCaseScene.getTbNoticeCase().ReceivingCaseDate);
+                Val.put(temp.COL_ReceivingCaseTime, apiCaseScene.getTbNoticeCase().ReceivingCaseTime);
+                Val.put(temp.COL_HappenCaseDate, apiCaseScene.getTbNoticeCase().HappenCaseDate);
+                Val.put(temp.COL_HappenCaseTime, apiCaseScene.getTbNoticeCase().HappenCaseTime);
+                Val.put(temp.COL_KnowCaseDate, apiCaseScene.getTbNoticeCase().KnowCaseDate);
+                Val.put(temp.COL_KnowCaseTime, apiCaseScene.getTbNoticeCase().KnowCaseTime);
+                Val.put(temp.COL_SceneNoticeDate, apiCaseScene.getTbNoticeCase().SceneNoticeDate);
+                Val.put(temp.COL_SceneNoticeTime, apiCaseScene.getTbNoticeCase().SceneNoticeTime);
+                Val.put(temp.COL_CompleteSceneDate, apiCaseScene.getTbNoticeCase().CompleteSceneDate);
+                Val.put(temp.COL_CompleteSceneTime, apiCaseScene.getTbNoticeCase().CompleteSceneTime);
+                Val.put(temp.COL_LocaleName, apiCaseScene.getTbNoticeCase().LocaleName);
+                Val.put(temp.COL_DISTRICT_ID, apiCaseScene.getTbNoticeCase().DISTRICT_ID);
+                Val.put(temp.COL_AMPHUR_ID, apiCaseScene.getTbNoticeCase().AMPHUR_ID);
+                Val.put(temp.COL_PROVINCE_ID, apiCaseScene.getTbNoticeCase().PROVINCE_ID);
+                Val.put(temp.COL_Latitude, apiCaseScene.getTbNoticeCase().Latitude);
+                Val.put(temp.COL_Longitude, apiCaseScene.getTbNoticeCase().Longitude);
+                Val.put(temp.COL_SuffererPrename, apiCaseScene.getTbNoticeCase().SuffererPrename);
+                Val.put(temp.COL_SuffererName, apiCaseScene.getTbNoticeCase().SuffererName);
+                Val.put(temp.COL_SuffererStatus, apiCaseScene.getTbNoticeCase().SuffererStatus);
+                Val.put(temp.COL_SuffererPhoneNum, apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
+                Val.put(temp.COL_CircumstanceOfCaseDetail, apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail);
+                Val.put(temp.COL_LastUpdateDate, apiCaseScene.getTbNoticeCase().LastUpdateDate);
+                Val.put(temp.COL_LastUpdateTime, apiCaseScene.getTbNoticeCase().LastUpdateTime);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("noticecase", null, Val);
+                    Log.d(TAG, "Sync Table noticecase: Insert ");
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("noticecase", Val, " NoticeCaseID = ?", new String[]{String.valueOf(apiCaseScene.getTbCaseScene().NoticeCaseID)});
+                    Log.d(TAG, "Sync Table noticecase: Update ");
+                }
+            }
+// บันทึกข้อมูลลง tbSceneInvestigations
+            if (apiCaseScene.getTbSceneInvestigations() != null) {
+                for (int i = 0; i < apiCaseScene.getTbSceneInvestigations().size(); i++) {
+                    strSQL = "SELECT * FROM sceneinvestigation "
+                            + " WHERE SceneInvestID = '" + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbSceneInvestigation temp = new TbSceneInvestigation();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_SceneInvestID, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbSceneInvestigations().get(i).CaseReportID);
+                        Val.put(temp.COL_SceneInvestDate, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestDate);
+                        Val.put(temp.COL_SceneInvestTime, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestTime);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("sceneinvestigation", null, Val);
+                            Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Insert " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("sceneinvestigation", Val, " SceneInvestID = ?", new String[]{String.valueOf(apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID)});
+                            Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Update " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
+                        }
+                    }
+                }
+            }
+            if (apiCaseScene.getTbSceneFeatureOutside() != null) {
+                //บันทึกข้อมูลลง Tbscenefeatureoutside
+                strSQL = "SELECT * FROM scenefeatureoutside "
+                        + " WHERE CaseReportID = '" + sCaseReportID + "'";
+                try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                    TbSceneFeatureOutside temp = new TbSceneFeatureOutside();
+                    ContentValues Val = new ContentValues();
+                    Val.put(temp.COL_CaseReportID, apiCaseScene.getTbSceneFeatureOutside().CaseReportID);
+                    Val.put(temp.COL_OutsideTypeName, apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName);
+                    Val.put(temp.COL_OutsideTypeDetail, apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
+                    Val.put(temp.COL_FloorNum, apiCaseScene.getTbSceneFeatureOutside().FloorNum);
+                    Val.put(temp.COL_CaveNum, apiCaseScene.getTbSceneFeatureOutside().CaveNum);
+                    Val.put(temp.COL_HaveFence, apiCaseScene.getTbSceneFeatureOutside().HaveFence);
+                    Val.put(temp.COL_HaveMezzanine, apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine);
+                    Val.put(temp.COL_HaveRooftop, apiCaseScene.getTbSceneFeatureOutside().HaveRooftop);
+                    Val.put(temp.COL_FrontSide, apiCaseScene.getTbSceneFeatureOutside().FrontSide);
+                    Val.put(temp.COL_LeftSide, apiCaseScene.getTbSceneFeatureOutside().LeftSide);
+                    Val.put(temp.COL_RightSide, apiCaseScene.getTbSceneFeatureOutside().RightSide);
+                    Val.put(temp.COL_BackSide, apiCaseScene.getTbSceneFeatureOutside().BackSide);
+                    Val.put(temp.COL_SceneZone, apiCaseScene.getTbSceneFeatureOutside().SceneZone);
+                    if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                        db.insert("scenefeatureoutside", null, Val);
+                        Log.d(TAG, "Sync Table scenefeatureoutside: Insert ");
+                    } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                        db.update("scenefeatureoutside", Val, " CaseReportID = ?", new String[]{String.valueOf(sCaseReportID)});
+                        Log.d(TAG, "Sync Table scenefeatureoutside: Update ");
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbSceneFeatureInSide
+            if (apiCaseScene.getTbSceneFeatureInSide() != null) {
+                for (int i = 0; i < apiCaseScene.getTbSceneFeatureInSide().size(); i++) {
+                    strSQL = "SELECT * FROM scenefeatureinside "
+                            + " WHERE FeatureInsideID = '" + apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbSceneFeatureInSide temp = new TbSceneFeatureInSide();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_FeatureInsideID, apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbSceneFeatureInSide().get(i).CaseReportID);
+                        Val.put(temp.COL_FloorNo, apiCaseScene.getTbSceneFeatureInSide().get(i).FloorNo);
+                        Val.put(temp.COL_CaveNo, apiCaseScene.getTbSceneFeatureInSide().get(i).CaveNo);
+                        Val.put(temp.COL_FrontInside, apiCaseScene.getTbSceneFeatureInSide().get(i).FrontInside);
+                        Val.put(temp.COL_LeftInside, apiCaseScene.getTbSceneFeatureInSide().get(i).LeftInside);
+                        Val.put(temp.COL_RightInside, apiCaseScene.getTbSceneFeatureInSide().get(i).RightInside);
+                        Val.put(temp.COL_BackInside, apiCaseScene.getTbSceneFeatureInSide().get(i).BackInside);
+                        Val.put(temp.COL_CenterInside, apiCaseScene.getTbSceneFeatureInSide().get(i).CenterInside);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("scenefeatureinside", null, Val);
+                            Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("scenefeatureinside", Val, " FeatureInsideID = ?", new String[]{String.valueOf(apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID)});
+                            Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbMultimediaFiles
+            if (apiCaseScene.getTbMultimediaFiles() != null) {
+                for (int i = 0; i < apiCaseScene.getTbMultimediaFiles().size(); i++) {
+                    strSQL = "SELECT * FROM multimediaFile "
+                            + " WHERE FileID = '" + apiCaseScene.getTbMultimediaFiles().get(i).FileID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbMultimediaFile temp = new TbMultimediaFile();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_FileID, apiCaseScene.getTbMultimediaFiles().get(i).FileID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbMultimediaFiles().get(i).CaseReportID);
+                        Val.put(temp.COL_FileType, apiCaseScene.getTbMultimediaFiles().get(i).FileType);
+                        Val.put(temp.COL_FilePath, apiCaseScene.getTbMultimediaFiles().get(i).FilePath);
+                        Val.put(temp.COL_FileDescription, apiCaseScene.getTbMultimediaFiles().get(i).FileDescription);
+                        Val.put(temp.COL_Timestamp, apiCaseScene.getTbMultimediaFiles().get(i).Timestamp);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("MultimediaFile", null, Val);
+                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("MultimediaFile", Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getTbMultimediaFiles().get(i).FileID)});
+                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbFindEvidences
+            if (apiCaseScene.getTbFindEvidences() != null) {
+                for (int i = 0; i < apiCaseScene.getTbFindEvidences().size(); i++) {
+                    strSQL = "SELECT * FROM findevidence "
+                            + " WHERE FindEvidenceID = '" + apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbFindEvidence temp = new TbFindEvidence();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_FindEvidenceID, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbFindEvidences().get(i).CaseReportID);
+                        Val.put(temp.COL_SceneInvestID, apiCaseScene.getTbFindEvidences().get(i).SceneInvestID);
+                        Val.put(temp.COL_EvidenceTypeName, apiCaseScene.getTbFindEvidences().get(i).EvidenceTypeName);
+                        Val.put(temp.COL_EvidenceNumber, apiCaseScene.getTbFindEvidences().get(i).EvidenceNumber);
+                        Val.put(temp.COL_FindEvidenceZone, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceZone);
+                        Val.put(temp.COL_FindEvidencecol, apiCaseScene.getTbFindEvidences().get(i).FindEvidencecol);
+                        Val.put(temp.COL_Marking, apiCaseScene.getTbFindEvidences().get(i).Marking);
+                        Val.put(temp.COL_Parceling, apiCaseScene.getTbFindEvidences().get(i).Parceling);
+                        Val.put(temp.COL_EvidencePerformed, apiCaseScene.getTbFindEvidences().get(i).EvidencePerformed);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("FindEvidence", null, Val);
+                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("FindEvidence", Val, " FindEvidenceID = ?", new String[]{String.valueOf(apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID)});
+                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbResultScenes
+            if (apiCaseScene.getTbResultScenes() != null) {
+                for (int i = 0; i < apiCaseScene.getTbResultScenes().size(); i++) {
+                    strSQL = "SELECT * FROM resultscene "
+                            + " WHERE RSID = '" + apiCaseScene.getTbResultScenes().get(i).RSID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbResultScene temp = new TbResultScene();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_RSID, apiCaseScene.getTbResultScenes().get(i).RSID);
+                        Val.put(temp.COL_RSTypeID, apiCaseScene.getTbResultScenes().get(i).RSTypeID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbResultScenes().get(i).CaseReportID);
+                        Val.put(temp.COL_RSDetail, apiCaseScene.getTbResultScenes().get(i).RSDetail);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("resultscene", null, Val);
+                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbResultScenes().get(i).RSID)});
+                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbPropertyLosses
+            if (apiCaseScene.getTbPropertyLosses() != null) {
+                for (int i = 0; i < apiCaseScene.getTbPropertyLosses().size(); i++) {
+                    strSQL = "SELECT * FROM propertyloss "
+                            + " WHERE PropertyLossID = '" + apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbPropertyLoss temp = new TbPropertyLoss();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_PropertyLossID, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbPropertyLosses().get(i).CaseReportID);
+                        Val.put(temp.COL_PropertyLossName, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossName);
+                        Val.put(temp.COL_PropertyLossNumber, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossNumber);
+                        Val.put(temp.COL_PropertyLossUnit, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossUnit);
+                        Val.put(temp.COL_PropertyLossPosition, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossPosition);
+                        Val.put(temp.COL_PropInsurance, apiCaseScene.getTbPropertyLosses().get(i).PropInsurance);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("propertyloss", null, Val);
+                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("propertyloss", Val, " PropertyLossID = ?", new String[]{String.valueOf(apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID)});
+                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in updateAlldataCase " + e.getMessage().toString());
+            return false;
+        }
+
     }
 
     public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
@@ -2005,7 +2312,191 @@ public class DBHelper extends SQLiteAssetHelper {
                             }
                         }
                     }
+                    // Index tbSceneInvestigations ดึงจากตาราง sceneinvestigation ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM sceneinvestigation "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        List<TbSceneInvestigation> tbSceneInvestigations = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbSceneInvestigations == null) {
+                                tbSceneInvestigations = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbSceneInvestigation temp12 = new TbSceneInvestigation();
+                                    temp12.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(temp12.COL_SceneInvestID));
+                                    temp12.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp12.COL_CaseReportID));
+                                    temp12.SceneInvestDate = cursor2.getString(cursor2.getColumnIndex(temp12.COL_SceneInvestDate));
+                                    temp12.SceneInvestTime = cursor2.getString(cursor2.getColumnIndex(temp12.COL_SceneInvestTime));
+                                    tbSceneInvestigations.add(temp12);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbSceneInvestigations(tbSceneInvestigations);
 
+                    }
+                    // Index tbSceneFeatureOutside ดึงจากตาราง scenefeatureoutside ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM scenefeatureoutside "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (cursor2.getCount() == 1) {
+                                cursor2.moveToFirst();
+                                TbSceneFeatureOutside temp13 = new TbSceneFeatureOutside();
+                                temp13.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp13.COL_CaseReportID));
+                                temp13.OutsideTypeName = cursor2.getString(cursor2.getColumnIndex(temp13.COL_OutsideTypeName));
+                                temp13.OutsideTypeDetail = cursor2.getString(cursor2.getColumnIndex(temp13.COL_OutsideTypeDetail));
+                                temp13.FloorNum = cursor2.getString(cursor2.getColumnIndex(temp13.COL_FloorNum));
+                                temp13.CaveNum = cursor2.getString(cursor2.getColumnIndex(temp13.COL_CaveNum));
+                                temp13.HaveFence = cursor2.getString(cursor2.getColumnIndex(temp13.COL_HaveFence));
+                                temp13.HaveMezzanine = cursor2.getString(cursor2.getColumnIndex(temp13.COL_HaveMezzanine));
+                                temp13.HaveRooftop = cursor2.getString(cursor2.getColumnIndex(temp13.COL_HaveRooftop));
+                                temp13.FrontSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_FrontSide));
+                                temp13.LeftSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_LeftSide));
+                                temp13.RightSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_RightSide));
+                                temp13.BackSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_BackSide));
+                                temp13.SceneZone = cursor2.getString(cursor2.getColumnIndex(temp13.COL_SceneZone));
+                                apiCaseSceneCase.setTbSceneFeatureOutside(temp13);
+                            }
+                        }
+                    }
+                    // Index tbSceneFeatureInSide ดึงจากตาราง scenefeatureinside ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM scenefeatureinside "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        List<TbSceneFeatureInSide> tbSceneFeatureInSides = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbSceneFeatureInSides == null) {
+                                tbSceneFeatureInSides = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbSceneFeatureInSide temp14 = new TbSceneFeatureInSide();
+                                    temp14.FeatureInsideID = cursor2.getString(cursor2.getColumnIndex(temp14.COL_FeatureInsideID));
+                                    temp14.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp14.COL_CaseReportID));
+                                    temp14.FloorNo = cursor2.getString(cursor2.getColumnIndex(temp14.COL_FloorNo));
+                                    temp14.CaveNo = cursor2.getString(cursor2.getColumnIndex(temp14.COL_CaveNo));
+                                    temp14.FrontInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_FrontInside));
+                                    temp14.LeftInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_LeftInside));
+                                    temp14.RightInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_RightInside));
+                                    temp14.BackInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_BackInside));
+                                    temp14.CenterInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_CenterInside));
+                                    tbSceneFeatureInSides.add(temp14);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbSceneFeatureInSide(tbSceneFeatureInSides);
+
+                    }
+                    // Index tbMultimediaFiles ดึงจากตาราง multimediafile ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM multimediafile "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        List<TbMultimediaFile> tbMultimediaFiles = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbMultimediaFiles == null) {
+                                tbMultimediaFiles = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbMultimediaFile temp15 = new TbMultimediaFile();
+                                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
+                                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
+                                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
+                                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
+                                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
+                                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                                    tbMultimediaFiles.add(temp15);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbMultimediaFiles(tbMultimediaFiles);
+
+                    }
+                    // Index tbFindEvidences ดึงจากตาราง findevidence ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM findevidence "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        List<TbFindEvidence> tbFindEvidences = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbFindEvidences == null) {
+                                tbFindEvidences = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbFindEvidence temp16 = new TbFindEvidence();
+                                    temp16.FindEvidenceID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidenceID));
+                                    temp16.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_CaseReportID));
+                                    temp16.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_SceneInvestID));
+                                    temp16.EvidenceTypeName = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceTypeName));
+                                    temp16.EvidenceNumber = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceNumber));
+                                    temp16.FindEvidenceZone = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidenceZone));
+                                    temp16.FindEvidencecol = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidencecol));
+                                    temp16.Marking = cursor2.getString(cursor2.getColumnIndex(temp16.COL_Marking));
+                                    temp16.Parceling = cursor2.getString(cursor2.getColumnIndex(temp16.COL_Parceling));
+                                    temp16.EvidencePerformed = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidencePerformed));
+                                    tbFindEvidences.add(temp16);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbFindEvidences(tbFindEvidences);
+
+                    }
+                    // Index tbResultScenes ดึงจากตาราง resultscene ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM resultscene "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        List<TbResultScene> tbResultScenes = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbResultScenes == null) {
+                                tbResultScenes = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbResultScene temp17 = new TbResultScene();
+                                    temp17.RSID = cursor2.getString(cursor2.getColumnIndex(temp17.COL_RSID));
+                                    temp17.RSTypeID = cursor2.getString(cursor2.getColumnIndex(temp17.COL_RSTypeID));
+                                    temp17.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp17.COL_CaseReportID));
+                                    temp17.RSDetail = cursor2.getString(cursor2.getColumnIndex(temp17.COL_RSDetail));
+                                    tbResultScenes.add(temp17);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbResultScenes(tbResultScenes);
+
+                    }
+                    // Index tbPropertyLosses ดึงจากตาราง propertyloss ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM propertyloss "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        List<TbPropertyLoss> tbPropertyLosses = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbPropertyLosses == null) {
+                                tbPropertyLosses = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbPropertyLoss temp18 = new TbPropertyLoss();
+                                    temp18.PropertyLossID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossID));
+                                    temp18.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_CaseReportID));
+                                    temp18.PropertyLossName = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossName));
+                                    temp18.PropertyLossNumber = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossNumber));
+                                    temp18.PropertyLossUnit = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossUnit));
+                                    temp18.PropertyLossPosition = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossPosition));
+                                    temp18.PropInsurance = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropInsurance));
+                                    tbPropertyLosses.add(temp18);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbPropertyLosses(tbPropertyLosses);
+
+                    }
                     //ส่งค่าทั้งหมดเข้า apiNoticeCases
                     apiCaseSceneCase.setMode("offline");
                     apiCaseScenesCases.add(apiCaseSceneCase);
@@ -2371,4 +2862,43 @@ public class DBHelper extends SQLiteAssetHelper {
 
     }
 
+    public long DeleteSelectedFeatureInside(String sFeatureInsideID) {
+        // TODO Auto-generated method stub
+        try {
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+
+            long rows = db.delete(oSceneFeatureInSide.TB_SceneFeatureInSide,
+                    oSceneFeatureInSide.COL_FeatureInsideID + " = ?",
+                    new String[]{String.valueOf(sFeatureInsideID)});
+
+            db.close();
+            Log.i(TAG, "delete SceneFeatureInSide: " + String.valueOf(rows) + " " + sFeatureInsideID);
+            return rows; // return rows deleted.
+
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public long DeleteSelectedData(String tableName, String colName, String id) {
+        // TODO Auto-generated method stub
+        try {
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+
+            long rows = db.delete(tableName,
+                    colName + " = ?",
+                    new String[]{String.valueOf(id)});
+
+            db.close();
+            Log.i(TAG, "delete " + tableName + ": " + String.valueOf(rows) + " " + id);
+            return rows; // return rows deleted.
+
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 }

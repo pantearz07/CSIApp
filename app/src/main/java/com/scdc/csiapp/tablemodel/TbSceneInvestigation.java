@@ -25,4 +25,35 @@ public class TbSceneInvestigation implements Serializable {
     public String COL_SceneInvestTime = "SceneInvestTime";
     public String SceneInvestTime = "";
 
+    public String getSceneInvestID() {
+        return SceneInvestID;
+    }
+
+    public void setSceneInvestID(String sceneInvestID) {
+        SceneInvestID = sceneInvestID;
+    }
+
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
+
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getSceneInvestDate() {
+        return SceneInvestDate;
+    }
+
+    public void setSceneInvestDate(String sceneInvestDate) {
+        SceneInvestDate = sceneInvestDate;
+    }
+
+    public String getSceneInvestTime() {
+        return SceneInvestTime;
+    }
+
+    public void setSceneInvestTime(String sceneInvestTime) {
+        SceneInvestTime = sceneInvestTime;
+    }
 }

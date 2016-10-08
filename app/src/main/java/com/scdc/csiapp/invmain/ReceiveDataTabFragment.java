@@ -1,7 +1,11 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -24,8 +28,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,9 +48,11 @@ import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
+import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
@@ -64,12 +73,12 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     private PreferenceData mManager;
     ConnectionDetector cd;
     GetDateTime getDateTime;
-    String officialID, reportID;
+    String officialID;
     String[] updateDT;
     private String message = "";
     TextView spnLocatePolice;
     TextView edtUpdateDateTime2;
-    TextView editTextPhone1;
+    EditText editTextPhone1;
     private String sAddrDetail, sDistrictName, sAmphurName, sProvinceName, provinceid, amphurid, districtid;
     Spinner spinnerAntecedent;
     AutoCompleteTextView autoCompleteSuffererStatus;
@@ -102,17 +111,16 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     private TextView editHappenCaseDate, editHappenCaseTime;
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
     // InvestDateTime ตรวจ
-    private TextView editSceneInvestDate, editSceneInvestTime;
+    private TextView editSceneInvestDate, editSceneInvestTime, txtSceneInvest;
     // ตรวจเสร็จ
     //private TextView editCompleteSceneDate, editCompleteSceneTime;
-
+    ImageButton btn_property;
 
     ArrayList<Integer> mMultiSelected;
     ArrayList<Boolean> mMultiChecked;
     String[][] mSelectDataInvestigatorArray = null;
     private ArrayList<HashMap<String, String>> InvestigatorList;
-    protected static final int DIALOG_SelectDataInvestigator = 1; // Dialog 1 ID
-    protected static final int DIALOG_AddSufferer = 0; // Dialog 2 ID
+
     ViewGroup viewByIdaddsufferer;
     View viewReceiveCSI;
     Context context;
@@ -120,6 +128,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     protected static String selectScheduleID = null;
     String lat, lng;
     boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
+    ViewGroup viewAddSceneInvestigation;
+    protected static final int DIALOG_AddSceneInvestigation = 0;
+    List<TbSceneInvestigation> tbSceneInvestigations = null;
+    ListView listViewAddSceneInvestDateTime;
 
     @Nullable
     @Override
@@ -137,7 +149,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         mFragmentManager = getActivity().getSupportFragmentManager();
         getDateTime = new GetDateTime();
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
+
         cd = new ConnectionDetector(getActivity());
         updateDT = getDateTime.updateDataDateTime();
 
@@ -152,58 +164,25 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             Log.d(TAG, "Create Google services");
         }
 
-        Log.i("viewReceiveCSI", reportID);
-        // new showScheduleInvestOfCase().execute(reportID);
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
+        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
 
         //โทรศัพท์ติดต่อ
-        editTextPhone1 = (TextView) viewReceiveCSI.findViewById(R.id.editTextPhone);
+        editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel.equals("")) {
             editTextPhone1.setText("");
         } else {
             editTextPhone1.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel);
         }
-        editTextPhone1.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel = editTextPhone1.getText().toString();
-            }
-        });
+        editTextPhone1.addTextChangedListener(new ReceiveTextWatcher(editTextPhone1));
 
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName.equals("")) {
             editAddrDetail.setText("");
         } else {
             editAddrDetail.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName);
-
         }
-        editAddrDetail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName = editAddrDetail.getText().toString();
-
-            }
-        });
+        editAddrDetail.addTextChangedListener(new ReceiveTextWatcher(editAddrDetail));
 
 
         //datetime
@@ -257,37 +236,14 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             editKnowCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime));
         }
         editKnowCaseTime.setOnClickListener(new SummaryOnClickListener());
+
         //วันเวลาตรวจสถานที่เกิดเหตุ
-        editSceneInvestDate = (TextView) viewReceiveCSI
-                .findViewById(R.id.editSceneInvestDate);
-//        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SceneInvestDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("")) {
-//            editSceneInvestDate.setText("");
-//        } else {
-//            editSceneInvestDate.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SceneInvestDate);
-//        }
-        editSceneInvestDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("Click SceneInvestDate", "null");
-                DateDialog dialogSceneInvestDate = new DateDialog(view);
-                dialogSceneInvestDate.show(getActivity().getFragmentManager(), "Date Picker");
-
-            }
-
-        });
-        editSceneInvestTime = (TextView) viewReceiveCSI
-                .findViewById(R.id.editSceneInvestTime);
-        editSceneInvestTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("ClickSceneInvestTime", "null");
-                TimeDialog dialogSceneInvestTime = new TimeDialog(view);
-                dialogSceneInvestTime.show(getActivity().getFragmentManager(), "Time Picker");
-            }
-
-        });
-
-
+        btn_property = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_property);
+        btn_property.setOnClickListener(new SummaryOnClickListener());
+        listViewAddSceneInvestDateTime = (ListView) viewReceiveCSI
+                .findViewById(R.id.listViewAddSceneInvestDateTime);
+        listViewAddSceneInvestDateTime.setOnTouchListener(new ListviewSetOnTouchListener());
+        showListSceneInvestigation();
 // /show spinner
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
         spinnerAmphur = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAmphur);
@@ -311,39 +267,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         } else {
             Log.i(TAG + " show mProvinceArray", "null");
         }
-//        mAmphurArray = dbHelper.SelectAllAumphur();
-//        if (mAmphurArray != null) {
-//            String[] mAmphurArray2 = new String[mAmphurArray.length];
-//            for (int i = 0; i < mAmphurArray.length; i++) {
-//                mAmphurArray2[i] = mAmphurArray[i][2];
-//                // Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
-//            }
-//            ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
-//                    android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
-//            spinnerAmphur.setAdapter(adapterAmphur);
-//        } else {
-//            spinnerAmphur.setAdapter(null);
-//            selectedAmphur = null;
-//            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
-//        }
-//        mDistrictArray = dbHelper.SelectAllDistrict();
-//        if (mDistrictArray != null) {
-//            String[] mDistrictArray2 = new String[mDistrictArray.length];
-//            for (int i = 0; i < mDistrictArray.length; i++) {
-//                mDistrictArray2[i] = mDistrictArray[i][2];
-//                //Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
-//            }
-//            ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-//                    android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-//            spinnerDistrict.setAdapter(adapterDistrict);
-//        } else {
-//            spinnerDistrict.setAdapter(null);
-//            selectedDistrict = null;
-//            Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
-//        }
         //เเสดงค่าเดิม
-
-
         if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
             spinnerProvince.setSelection(0);
         } else {
@@ -455,65 +379,25 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
 
         editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
-        //Log.i(TAG, "SuffererName " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererName);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName.equals("")) {
             editSuffererName.setText("");
         } else {
             editSuffererName.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName);
-
-
         }
-        editSuffererName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName = editSuffererName.getText().toString();
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererName = editSuffererName.getText().toString();
-
-                Log.i(TAG, "SuffererName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName);
-            }
-        });
+        editSuffererName.addTextChangedListener(new ReceiveTextWatcher(editSuffererName));
 
         autoCompleteSuffererStatus = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteSuffererStatus);
-        // Log.i(TAG, "SuffererStatus " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus);
         final String[] SuffererStatus = getResources().getStringArray(R.array.suffererStatus);
         ArrayAdapter<String> adapterSuffererStatus = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, SuffererStatus);
         autoCompleteSuffererStatus.setAdapter(adapterSuffererStatus);
-
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus.equals("")) {
             autoCompleteSuffererStatus.setText("");
         } else {
             autoCompleteSuffererStatus.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus);
         }
-        autoCompleteSuffererStatus.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        autoCompleteSuffererStatus.addTextChangedListener(new ReceiveTextWatcher(autoCompleteSuffererStatus));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
-
-                Log.i(TAG, "SuffererStatus " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus);
-            }
-        });
         editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
         // Log.i(TAG, "SuffererPhoneNum " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum.equals("")) {
@@ -521,74 +405,24 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         } else {
             editTextSuffererPhone.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum);
         }
-        editTextSuffererPhone.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        editTextSuffererPhone.addTextChangedListener(new ReceiveTextWatcher(editTextSuffererPhone));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-
-                Log.i(TAG, "SuffererPhoneNum " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum);
-            }
-        });
 
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail.equals("")) {
             editCircumstanceOfCaseDetail.setText("");
-
         } else {
             editCircumstanceOfCaseDetail.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
-
         }
-        editCircumstanceOfCaseDetail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        editCircumstanceOfCaseDetail.addTextChangedListener(new ReceiveTextWatcher(editCircumstanceOfCaseDetail));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-            }
-        });
         edtVehicleDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtVehicleDetail);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo.equals("")) {
             edtVehicleDetail.setText("");
-
         } else {
             edtVehicleDetail.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo);
-
         }
-        edtVehicleDetail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo = edtVehicleDetail.getText().toString();
-            }
-        });
+        edtVehicleDetail.addTextChangedListener(new ReceiveTextWatcher(edtVehicleDetail));
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         fabBtnRec.setOnClickListener(new SummaryOnClickListener());
@@ -621,6 +455,66 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         return viewReceiveCSI;
     }
 
+    public class ListviewSetOnTouchListener implements ListView.OnTouchListener {
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    // Allow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event);
+            return true;
+        }
+    }
+
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+            Log.i("inside", String.valueOf(numberOfItems));
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                Log.i("inside", String.valueOf(item.getMeasuredHeight()));
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+            int totalHeight = totalItemsHeight + totalDividersHeight;
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
+            params.height = totalHeight;
+            Log.i("inside totalHeight", String.valueOf(totalHeight));
+            //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
 
     public void onStart() {
         super.onStart();
@@ -699,30 +593,43 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
 
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = editHappenCaseTime.getText().toString();
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = editKnowCaseTime.getText().toString();
+                if (editHappenCaseDate.getText().toString() == null || editHappenCaseDate.getText().toString().equals("")) {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = "";
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
+                }
+                if (editHappenCaseTime.getText().toString() == null || editHappenCaseTime.getText().toString().equals("")) {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = "";
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = editHappenCaseTime.getText().toString();
+                }
+                if (editKnowCaseDate.getText().toString() == null || editKnowCaseDate.getText().toString().equals("")) {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = "";
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
+                }
+                if (editKnowCaseTime.getText().toString() == null || editKnowCaseTime.getText().toString().equals("")) {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = "";
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = editKnowCaseTime.getText().toString();
+                }
 
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
 
 
                 if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
-                    boolean isSuccess = dbHelper.saveCaseScene(CSIDataTabFragment.apiCaseScene.getTbCaseScene());
+                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
-                        boolean isSuccess1 = dbHelper.saveNoticeCase(CSIDataTabFragment.apiCaseScene.getTbNoticeCase());
-                        if (isSuccess1) {
-                            if (snackbar == null || !snackbar.isShown()) {
-                                snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
 
-                                            }
-                                        });
-                                snackbar.show();
-                            }
+                                        }
+                                    });
+                            snackbar.show();
                         }
                     } else {
                         if (snackbar == null || !snackbar.isShown()) {
@@ -738,6 +645,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                         }
                     }
                 }
+
             }
             if (v == btnButtonSearchMap) {
 
@@ -790,7 +698,145 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 TimeDialog dialogKnowCaseTime = new TimeDialog(v);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
             }
+            if (v == btn_property) {
+                viewAddSceneInvestigation = (ViewGroup) v.findViewById(R.id.layout_addsceneinvestigation_dialog);
+                createdDialog(DIALOG_AddSceneInvestigation).show();
+                Log.i(TAG, "tbSceneInvestigations num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().size()));
 
+            }
+            if (v == editSceneInvestDate) {
+                Log.i("Click SceneInvestDate", "null");
+                DateDialog dialogSceneInvestDate = new DateDialog(v);
+                dialogSceneInvestDate.show(getActivity().getFragmentManager(), "Date Picker");
+            }
+            if (v == editSceneInvestTime) {
+                Log.i("ClickSceneInvestTime", "null");
+                TimeDialog dialogSceneInvestTime = new TimeDialog(v);
+                dialogSceneInvestTime.show(getActivity().getFragmentManager(), "Time Picker");
+            }
+        }
+    }
+
+    protected Dialog createdDialog(int id) {
+        Dialog dialog = null;
+        AlertDialog.Builder builder;
+        switch (id) {
+
+            case DIALOG_AddSceneInvestigation:
+                builder = new AlertDialog.Builder(getActivity());
+                final LayoutInflater inflaterDialogSceneInvestigation = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                final View ViewlayoutAddSceneInvestigation = inflaterDialogSceneInvestigation
+                        .inflate(
+                                R.layout.add_sceneinvestigation_dialog,
+                                viewAddSceneInvestigation);
+                builder.setIcon(R.drawable.ic_property);
+                builder.setTitle("เพิ่มวันเวลาออกตรวจสถานที่เกิดเหตุ");
+                builder.setView(ViewlayoutAddSceneInvestigation);
+//                txtSceneInvest = (TextView) ViewlayoutAddSceneInvestigation
+//                    .findViewById(R.id.txtSceneInvest);
+
+                editSceneInvestDate = (TextView) ViewlayoutAddSceneInvestigation
+                        .findViewById(R.id.editSceneInvestDate);
+                editSceneInvestDate.setOnClickListener(new SummaryOnClickListener());
+                editSceneInvestTime = (TextView) ViewlayoutAddSceneInvestigation
+                        .findViewById(R.id.editSceneInvestTime);
+                editSceneInvestTime.setOnClickListener(new SummaryOnClickListener());
+
+                builder.setPositiveButton("Save",
+                        new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                Log.i(TAG, "Click SceneInvestDate " + editSceneInvestDate.getText().toString());
+                                Log.i(TAG, "Click SceneInvestTime " + editSceneInvestTime.getText().toString());
+                                if (tbSceneInvestigations == null) {
+                                    tbSceneInvestigations = new ArrayList<>();
+                                }
+                                TbSceneInvestigation tbSceneInvestigation = new TbSceneInvestigation();
+                                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                                final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0] + "_" + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
+
+                                tbSceneInvestigation.SceneInvestID = "SI_" + saveDataTime;
+                                tbSceneInvestigation.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+                                tbSceneInvestigation.SceneInvestDate = getDateTime.changeDateFormatToDB(editSceneInvestDate.getText().toString());
+                                tbSceneInvestigation.SceneInvestTime = editSceneInvestTime.getText().toString();
+
+                                tbSceneInvestigations.add(tbSceneInvestigation);
+                                CSIDataTabFragment.apiCaseScene.setTbSceneInvestigations(tbSceneInvestigations);
+                                Log.i(TAG, "tbSceneInvestigations num2:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().size()));
+                                showListSceneInvestigation();
+                                dialog.dismiss();
+                            }
+                        })
+                        // Button Cancel
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                dialog = builder.create();
+
+                break;
+            default:
+                dialog = null;
+        }
+        return dialog;
+    }
+
+    private void showListSceneInvestigation() {
+        if (CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations() != null) {
+            listViewAddSceneInvestDateTime.setAdapter(new SceneInvestigationAdapter(getActivity()));
+            setListViewHeightBasedOnItems(listViewAddSceneInvestDateTime);
+            listViewAddSceneInvestDateTime.setVisibility(View.VISIBLE);
+        } else {
+            listViewAddSceneInvestDateTime.setVisibility(View.GONE);
+        }
+    }
+
+    public class SceneInvestigationAdapter extends BaseAdapter {
+        private Context context;
+
+        public SceneInvestigationAdapter(Context c) {
+            // TODO Auto-generated method stub
+            context = c;
+        }
+
+        @Override
+        public int getCount() {
+            return CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            if (view == null) {
+                view = inflater.inflate(R.layout.list_sceneinvestigation, null);
+            }
+            final String sSceneInvestID = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(i).getSceneInvestID();
+            final String sSceneInvestDate = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(i).getSceneInvestDate();
+            final String sSceneInvestTime = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(i).getSceneInvestTime();
+            Log.i(TAG, " SceneInvestigation :" + sSceneInvestID);
+            final String sceneInvestinfo = "ครั้งที่ " + String.valueOf(i + 1) + " วันที่ " + getDateTime.changeDateFormatToCalendar(sSceneInvestDate) + " เวลา " + sSceneInvestTime + " น.";
+            final TextView txtSceneInvest = (TextView) view.findViewById(R.id.txtSceneInvest);
+            txtSceneInvest.setText(sceneInvestinfo);
+            return view;
         }
     }
 
@@ -807,7 +853,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 oldAmphur = false;
             }
             if (view == spinnerDistrict) {
-               // oldDistrict = false;
+                // oldDistrict = false;
             }
             return false;
         }
@@ -818,40 +864,40 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             switch (parent.getId()) {
 
                 case R.id.spinnerDistrict:
-                   // if (oldDistrict == false) {
-                        selectedDistrict = mDistrictArray[pos][0];
-                        sDistrictName = mDistrictArray[pos][2].toString();
-                        Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
-                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
-                        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
-                  // }
+                    // if (oldDistrict == false) {
+                    selectedDistrict = mDistrictArray[pos][0];
+                    sDistrictName = mDistrictArray[pos][2].toString();
+                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
+                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                    // }
                     break;
                 case R.id.spinnerAmphur:
 //                    if (oldAmphur == false) {
-                        selectedAmphur = mAmphurArray[pos][0];
-                        sAmphurName = mAmphurArray[pos][2].toString();
-                        Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
-                        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
-                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
-                        //ดึงค่า District
+                    selectedAmphur = mAmphurArray[pos][0];
+                    sAmphurName = mAmphurArray[pos][2].toString();
+                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
+                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
+                    //ดึงค่า District
 
-                        mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
-                        if (mDistrictArray != null) {
-                            String[] mDistrictArray2 = new String[mDistrictArray.length];
-                            for (int i = 0; i < mDistrictArray.length; i++) {
-                                mDistrictArray2[i] = mDistrictArray[i][2];
-                                // Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
-                            }
-                            ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-                                    android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-                            spinnerDistrict.setAdapter(adapterDistrict);
-                        } else {
-                            spinnerDistrict.setAdapter(null);
-                            selectedDistrict = null;
-                            Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
+                    mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
+                    if (mDistrictArray != null) {
+                        String[] mDistrictArray2 = new String[mDistrictArray.length];
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            mDistrictArray2[i] = mDistrictArray[i][2];
+                            // Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
                         }
+                        ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
+                        spinnerDistrict.setAdapter(adapterDistrict);
+                    } else {
+                        spinnerDistrict.setAdapter(null);
+                        selectedDistrict = null;
+                        Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
+                    }
 //                    }
                     break;
                 case R.id.spinnerProvince:
@@ -926,6 +972,53 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
 
 
+    }
+
+    private class ReceiveTextWatcher implements TextWatcher {
+        private EditText mEditText;
+
+        public ReceiveTextWatcher(EditText editText) {
+            mEditText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s == editTextPhone1.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel = editTextPhone1.getText().toString();
+                Log.i(TAG, "CaseTel " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel);
+            } else if (s == editAddrDetail.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName = editAddrDetail.getText().toString();
+                Log.i(TAG, "LocaleName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName);
+            } else if (s == editSuffererName.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName = editSuffererName.getText().toString();
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererName = editSuffererName.getText().toString();
+                Log.i(TAG, "SuffererName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName);
+            } else if (s == autoCompleteSuffererStatus.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
+                Log.i(TAG, "SuffererStatus " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus);
+            } else if (s == editTextSuffererPhone.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
+                Log.i(TAG, "SuffererPhoneNum " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum);
+            } else if (s == editCircumstanceOfCaseDetail) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
+                Log.i(TAG, "CircumstanceOfCaseDetail " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
+            } else if (s == edtVehicleDetail) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo = edtVehicleDetail.getText().toString();
+                Log.i(TAG, "VehicleInfo " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo);
+            }
+        }
     }
 
 //    @Override

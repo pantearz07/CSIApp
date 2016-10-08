@@ -32,13 +32,14 @@ import com.scdc.csiapp.syncmodel.SyncPolicePosition;
 import com.scdc.csiapp.syncmodel.SyncPoliceRank;
 import com.scdc.csiapp.syncmodel.SyncPoliceStation;
 import com.scdc.csiapp.syncmodel.SyncProvince;
+import com.scdc.csiapp.syncmodel.SyncResultSceneType;
 import com.scdc.csiapp.syncmodel.SyncSCDCagency;
 import com.scdc.csiapp.syncmodel.SyncSCDCcenter;
 import com.scdc.csiapp.syncmodel.SyncSubCaseSceneType;
-import com.scdc.csiapp.syncmodel.SyncResultSceneType;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -301,14 +302,20 @@ public class ApiConnect {
                 .add("Password", WelcomeActivity.profile.getTbUsers().pass)
                 .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
                 .build();
-
+        okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
         Request.Builder builder = new Request.Builder();
         Request request = builder
                 .url(urlMobileIP + "listNoticecase")
                 .post(formBody)
                 .build();
         try {
+
             Response response = okHttpClient.newCall(request).execute();
+
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
                 // ข้อมูลจากเซิร์ฟเวอร์
@@ -354,6 +361,7 @@ public class ApiConnect {
                 .add("Password", WelcomeActivity.profile.getTbUsers().pass)
                 .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
                 .build();
+
 
         Request.Builder builder = new Request.Builder();
         Request request = builder

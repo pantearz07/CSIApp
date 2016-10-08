@@ -148,13 +148,28 @@ public class CSIDataTabFragment extends Fragment {
     }
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {
+//
+//        outState.putSerializable("case",apiCaseScene);
 //        super.onSaveInstanceState(outState);
-//        outState.putSerializable(Bundle_Key,apiCaseScene);
+//    }
+//
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        if(savedInstanceState != null){
+//            apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable("case");
+//        }
 //    }
 //
 //    @Override
 //    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 //        super.onActivityCreated(savedInstanceState);
-//        apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable(Bundle_Key);
+//        apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable("case");
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable("case");
 //    }
 }

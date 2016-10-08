@@ -15,9 +15,9 @@
             android:id="@+id/ScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
 
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -28,19 +28,21 @@
                 android:orientation="vertical"
                 android:paddingBottom="20dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
                 <TextView
                     android:id="@+id/edtUpdateDateTime3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-
+                    android:freezesText="true"
                     android:textSize="@dimen/ssmall_text" />
-                <TableLayout
+
+               <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TableRow
+                    <!-- <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -60,24 +62,16 @@
                                 android:maxLines="3"
                                 android:minLines="2" />
                         </android.support.design.widget.TextInputLayout>
-<!--
-                        <Button
-                            android:id="@+id/btn_clear_txt_24"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="@dimen/icon_image"
-                            android:layout_gravity="right|center_vertical"
 
-                            android:background="@drawable/ic_delete"
-                            android:visibility="gone" />-->
                         <ImageButton
                             android:id="@+id/btn_clear_txt_24"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
-                    </TableRow>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
+                    </TableRow>-->
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -89,20 +83,22 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
 
-                            android:layout_weight="1"
-
                             android:layout_gravity="center_vertical"
+
+                            android:layout_weight="1"
                             android:padding="5dp"
                             android:text="1. ทางเข้า-ออกของคนร้าย"
                             android:textAppearance="@style/SectionText" />
+
                         <ImageButton
                             android:id="@+id/btnShowHide1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_maxlayout"
                             android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent" />
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_maxlayout" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -114,16 +110,18 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button"
+                            android:padding="5dp"
                             android:text="เพิ่มรายการ"
-                            android:textSize="@dimen/small_text"
                             android:textColor="@color/white"
-                            android:padding="5dp"/>
+                            android:textSize="@dimen/small_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_line">
+
                         <TextView
                             android:id="@+id/txtAddGatewayCriminal"
                             android:layout_width="0dp"
@@ -133,6 +131,7 @@
                             android:textSize="@dimen/mmedium_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRowAddGatewayCriminal"
                         android:layout_width="match_parent"
@@ -159,19 +158,21 @@
                             android:id="@+id/txtCriminalClue"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
                             android:padding="5dp"
                             android:text="2. ร่องรอยที่ปรากฎ"
                             android:textAppearance="@style/SectionText" />
+
                         <ImageButton
                             android:id="@+id/btnShowHide2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_maxlayout"
                             android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent" />
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_maxlayout" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -183,16 +184,18 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button"
-                            android:text="เพิ่มรายการ"
-                            android:textSize="@dimen/small_text"
                             android:padding="5dp"
-                            android:textColor="@color/white"/>
+                            android:text="เพิ่มรายการ"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/small_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_line">
+
                         <TextView
                             android:id="@+id/txtAddClueShown"
                             android:layout_width="0dp"
@@ -202,6 +205,7 @@
                             android:textSize="@dimen/mmedium_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRowAddClueShown"
                         android:layout_width="match_parent"
@@ -228,18 +232,19 @@
                             android:id="@+id/txtPropertyLoss"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
                             android:padding="5dp"
                             android:text="3. รายการทรัพย์สินที่คนร้ายโจรกรรม"
                             android:textAppearance="@style/SectionText" />
+
                         <ImageButton
                             android:id="@+id/btnShowHide3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_maxlayout"
                             android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent" />
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_maxlayout" />
                     </TableRow>
 
 
@@ -254,16 +259,18 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button"
+                            android:padding="5dp"
                             android:text="เพิ่มรายการ"
-                            android:textSize="@dimen/small_text"
                             android:textColor="@color/white"
-                            android:padding="5dp"/>
+                            android:textSize="@dimen/small_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_line">
+
                         <TextView
                             android:id="@+id/txtPropertyLossDetail"
                             android:layout_width="0dp"
@@ -273,6 +280,7 @@
                             android:textSize="@dimen/mmedium_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRowPropertyLoss"
                         android:layout_width="match_parent"
@@ -289,6 +297,7 @@
                             android:padding="10dp"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -298,19 +307,21 @@
                             android:id="@+id/txtRealEvidences"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
                             android:padding="5dp"
                             android:text="4. วัตถุพยานและตำแหน่งที่ตรวจพบ"
                             android:textAppearance="@style/SectionText" />
+
                         <ImageButton
                             android:id="@+id/btnShowHide4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_maxlayout"
                             android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent" />
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_maxlayout" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -322,12 +333,13 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button"
+                            android:padding="5dp"
                             android:text="เพิ่มรายการ"
-                            android:textSize="@dimen/small_text"
                             android:textColor="@color/white"
-                            android:padding="5dp"/>
+                            android:textSize="@dimen/small_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRowAddEvidences"
                         android:layout_width="match_parent"
@@ -344,6 +356,7 @@
                             android:padding="10dp"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -367,14 +380,15 @@
 
 
                         </android.support.design.widget.TextInputLayout>
+
                         <ImageButton
                             android:id="@+id/btn_clear_txt_25"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
 
 
                     </TableRow>
@@ -407,10 +421,10 @@
                             android:id="@+id/btn_clear_txt_26"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
 
 
                     </TableRow>
@@ -451,7 +465,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="20dp"
-
+                            android:freezesText="true"
                             android:text="0"
                             android:textSize="@dimen/small_text" />
 
@@ -482,9 +496,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="มีผู้ชาย เป็นจำนวน"
+                                android:inputType="number"
                                 android:maxLines="1"
-                                android:minLines="1"
-                                android:inputType="number"/>
+                                android:minLines="1" />
 
 
                         </android.support.design.widget.TextInputLayout>
@@ -493,10 +507,10 @@
                             android:id="@+id/btn_clear_txt_27"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
 
 
                         <TextView
@@ -527,9 +541,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="มีผู้หญิง เป็นจำนวน"
+                                android:inputType="number"
                                 android:maxLines="1"
-                                android:minLines="1"
-                                android:inputType="number"/>
+                                android:minLines="1" />
 
 
                         </android.support.design.widget.TextInputLayout>
@@ -538,10 +552,10 @@
                             android:id="@+id/btn_clear_txt_28"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/txtCriminalFemaleUnit"
@@ -580,10 +594,10 @@
                             android:id="@+id/btn_clear_txt_29"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
 
                     </TableRow>
 
@@ -622,14 +636,15 @@
                                 android:hint="อธิบายการพันธนาการผู้เสียหาย"
                                 android:minLines="3" />
                         </android.support.design.widget.TextInputLayout>
+
                         <ImageButton
                             android:id="@+id/btn_clear_txt_30"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_delete"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
-                            android:visibility="gone"/>
+                            android:src="@drawable/ic_delete"
+                            android:visibility="gone" />
                     </TableRow>
 
                     <TableRow
@@ -660,6 +675,7 @@
                             android:layout_width="0dp"
                             android:layout_height="50dp"
                             android:layout_column="0"
+                            android:freezesText="true"
                             android:layout_weight="1"
                             android:textSize="@dimen/small_text" />
 
@@ -670,6 +686,7 @@
                             android:layout_height="50dp"
                             android:layout_column="1"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
                 </TableLayout>

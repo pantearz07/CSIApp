@@ -83,7 +83,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     String[][] mDistrictArray;
     String[] mDistrictArray2;
 
-    private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail;
+    private EditText editAddrDetail, editCircumstanceOfCaseDetail, editTextSuffererPhone;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
     String lat, lng;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
@@ -143,45 +143,14 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         if (EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
             editTextPhone1.setText(EmergencyTabFragment.tbNoticeCase.CaseTel);
         }
-        editTextPhone1.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        editTextPhone1.addTextChangedListener(new EmerTextWatcher(editTextPhone1));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.CaseTel = editTextPhone1.getText().toString();
-            }
-        });
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
         if (EmergencyTabFragment.tbNoticeCase.LocaleName != "") {
             editAddrDetail.setText(EmergencyTabFragment.tbNoticeCase.LocaleName);
         }
-        editAddrDetail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // btn_clear_txt_1.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                //btn_clear_txt_1.setVisibility(View.VISIBLE);
-                //btn_clear_txt_1.setOnClickListener(new ReceiveOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.LocaleName = editAddrDetail.getText().toString();
-            }
-        });
+        editAddrDetail.addTextChangedListener(new EmerTextWatcher(editAddrDetail));
 
 // /show spinner
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
@@ -361,22 +330,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             editCircumstanceOfCaseDetail.setText(EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
 
         }
-        editCircumstanceOfCaseDetail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        editCircumstanceOfCaseDetail.addTextChangedListener(new EmerTextWatcher(editCircumstanceOfCaseDetail));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-            }
-        });
         spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
 
         Antecedent = getResources().getStringArray(R.array.antecedent);
@@ -404,22 +359,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
 
         }
-        editSuffererName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.SuffererName = editSuffererName.getText().toString();
-            }
-        });
+        editSuffererName.addTextChangedListener(new EmerTextWatcher(editSuffererName));
 
         autoCompleteSuffererStatus = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteSuffererStatus);
         final String[] SuffererStatus = getResources().getStringArray(R.array.suffererStatus);
@@ -431,48 +371,15 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         } else {
             autoCompleteSuffererStatus.setText(EmergencyTabFragment.tbNoticeCase.SuffererStatus);
         }
-        autoCompleteSuffererStatus.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        autoCompleteSuffererStatus.addTextChangedListener(new EmerTextWatcher(autoCompleteSuffererStatus));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.SuffererStatus = autoCompleteSuffererStatus.getText().toString();
-
-                Log.i(TAG, "SuffererStatus " + EmergencyTabFragment.tbNoticeCase.SuffererStatus);
-            }
-        });
-
-        final EditText editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
+        editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
         if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum == null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum.equals("")) {
             editTextSuffererPhone.setText("");
         } else {
             editTextSuffererPhone.setText(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
         }
-        editTextSuffererPhone.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
-            }
-        });
+        editTextSuffererPhone.addTextChangedListener(new EmerTextWatcher(editTextSuffererPhone));
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (emergencyTabFragment.mode == "view") {
@@ -807,6 +714,46 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[0]);
                     Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
                     break;
+            }
+        }
+    }
+
+    private class EmerTextWatcher implements TextWatcher {
+        private EditText mEditText;
+        public EmerTextWatcher(EditText editText) {
+
+                mEditText = editText;
+        }
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s == editTextPhone1.getEditableText()) {
+                EmergencyTabFragment.tbNoticeCase.CaseTel = editTextPhone1.getText().toString();
+                Log.i(TAG, "CaseTel " + EmergencyTabFragment.tbNoticeCase.CaseTel);
+            } else if (s == editAddrDetail.getEditableText()) {
+                EmergencyTabFragment.tbNoticeCase.LocaleName = editAddrDetail.getText().toString();
+                Log.i(TAG, "LocaleName " + EmergencyTabFragment.tbNoticeCase.LocaleName);
+            } else if (s == editSuffererName.getEditableText()) {
+                EmergencyTabFragment.tbNoticeCase.SuffererName = editSuffererName.getText().toString();
+                Log.i(TAG, "SuffererName " + EmergencyTabFragment.tbNoticeCase.SuffererName);
+            } else if (s == autoCompleteSuffererStatus.getEditableText()) {
+                EmergencyTabFragment.tbNoticeCase.SuffererStatus = autoCompleteSuffererStatus.getText().toString();
+                Log.i(TAG, "SuffererStatus " + EmergencyTabFragment.tbNoticeCase.SuffererStatus);
+            } else if (s == editTextSuffererPhone.getEditableText()) {
+                EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
+                Log.i(TAG, "SuffererPhoneNum " + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
+            } else if (s == editCircumstanceOfCaseDetail) {
+                EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
+                Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
             }
         }
     }

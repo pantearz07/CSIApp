@@ -31,66 +31,95 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-                    <EditText
-                        android:id="@+id/editPropertyLossName"
+                    android:orientation="horizontal">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/txtPropertyLossName"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="ทรัพย์สินที่หายไป"
-                        android:textSize="@dimen/small_text" />
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/editPropertyLossName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="ทรัพย์สินที่หายไป"
+                            android:textSize="@dimen/small_text" />
+                    </android.support.design.widget.TextInputLayout>
+
                     <TextView
                         android:id="@+id/editNoti"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="*จำเป็น"
-                        android:textSize="18sp"
-                        android:textColor="#FF0000" />
+                        android:textColor="#FF0000"
+                        android:textSize="18sp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
                         android:text="จำนวน " />
 
                     <EditText
                         android:id="@+id/editPropertyLossAmount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:hint="0"
                         android:inputType="number"
                         android:textSize="@dimen/small_text" />
 
-                    <AutoCompleteTextView
-                        android:id="@+id/autoPropertyLossUnit"
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/txtPropertyLossUnit"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:completionThreshold="1"
-                        android:ems="10"
-                        android:hint="หน่วย"
-                        android:textSize="@dimen/small_text" />
+                        android:layout_weight="1">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoPropertyLossUnit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:completionThreshold="1"
+                            android:ems="10"
+                            android:hint="หน่วย"
+                            android:textSize="@dimen/small_text" />
+                    </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
 
-                <EditText
-                    android:id="@+id/editPropertyLossPosition"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/txtPropertyLossPosition"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="บริเวณ"
-                    android:textSize="@dimen/small_text" />
-                <EditText
-                    android:id="@+id/editPropertyInsurance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="การประกันทรัพย์สิน"
-                    android:textSize="@dimen/small_text" />
+                    android:layout_height="wrap_content">
 
+                    <EditText
+                        android:id="@+id/editPropertyLossPosition"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="บริเวณ"
+                        android:textSize="@dimen/small_text" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/txtPropertyInsurance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editPropertyInsurance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="การประกันทรัพย์สิน"
+                        android:textSize="@dimen/small_text" />
+                </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,17 +133,17 @@
                         android:layout_height="@dimen/icon_image_l"
                         android:layout_marginRight="10dp"
 
-                        android:gravity="center|center_horizontal"
-                        android:background="@drawable/ic_camera_wh"/>
+                        android:background="@drawable/ic_camera_wh"
+                        android:gravity="center|center_horizontal" />
 
                     <ImageButton
                         android:id="@+id/btnVideoPL"
                         android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"
-                        android:gravity="center|center_horizontal"
                         android:layout_gravity="center_horizontal"
                         android:background="@drawable/ic_video_wh"
-                        android:visibility="gone"/>
+                        android:gravity="center|center_horizontal"
+                        android:visibility="gone" />
                     />
                 </LinearLayout>
 
@@ -195,7 +224,7 @@
             android:src="@drawable/ic_saveas_wh"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
-            app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
+            app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

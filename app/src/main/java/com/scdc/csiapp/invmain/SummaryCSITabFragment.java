@@ -146,7 +146,7 @@ public class SummaryCSITabFragment extends Fragment {
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
 
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
+        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
         //วันเวลาที่ตรวจคดีเสร็จ
@@ -395,9 +395,9 @@ public class SummaryCSITabFragment extends Fragment {
 
 //
                 if (CSIDataTabFragment.apiCaseScene != null) {
-                    boolean isSuccess1 = dbHelper.saveCaseScene(CSIDataTabFragment.apiCaseScene.getTbCaseScene());
-                    if (isSuccess1) {
-                        boolean isSuccess = dbHelper.saveNoticeCase(CSIDataTabFragment.apiCaseScene.getTbNoticeCase());
+//                    boolean isSuccess1 = dbHelper.saveCaseScene(CSIDataTabFragment.apiCaseScene.getTbCaseScene());
+//                    if (isSuccess1) {
+                        boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                         if (isSuccess) {
                             if (snackbar == null || !snackbar.isShown()) {
                                 snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
@@ -423,19 +423,19 @@ public class SummaryCSITabFragment extends Fragment {
                                 snackbar.show();
                             }
                         }
-                    } else {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-
-                                        }
-                                    });
-                            snackbar.show();
-                        }
-                    }
+//                    } else {
+//                        if (snackbar == null || !snackbar.isShown()) {
+//                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+//                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View view) {
+//
+//
+//                                        }
+//                                    });
+//                            snackbar.show();
+//                        }
+//                    }
                 }
             }
         }

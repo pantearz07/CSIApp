@@ -10,6 +10,7 @@
     <string name="please_input_data">กรุณาป้อนข้อมูล</string>
     <string name="save">บันทึก</string>
     <string name="save_complete">บันทึกเรียบร้อย</string>
+    <string name="delete_complete">ลบข้อมูลเรียบร้อย</string>
     <string name="cancel">ยกเลิก</string>
     <string name="ok">ตกลง</string>
     <string name="next">ถัดไป</string>
@@ -160,6 +161,7 @@
         <item>รอยลายนิ้วมือ/ฝ่ามือแฝง</item>
         <item>รอยลายฝ่าเท้าแฝง</item>
         <item>รอยพื้นรองเท้า</item>
+
         <item>คราบสีแดงคล้ายโลหิต</item>
         <item>เส้นผม/เส้นขน</item>
         <item>เส้นใย</item>

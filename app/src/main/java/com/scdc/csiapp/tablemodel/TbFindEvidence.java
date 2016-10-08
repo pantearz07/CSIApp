@@ -47,4 +47,83 @@ public class TbFindEvidence implements Serializable {
     public String COL_EvidencePerformed = "EvidencePerformed";
     public String EvidencePerformed = "";
 
+    public String getFindEvidenceID() {
+        return FindEvidenceID;
+    }
+
+    public void setFindEvidenceID(String findEvidenceID) {
+        FindEvidenceID = findEvidenceID;
+    }
+
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
+
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getSceneInvestID() {
+        return SceneInvestID;
+    }
+
+    public void setSceneInvestID(String sceneInvestID) {
+        SceneInvestID = sceneInvestID;
+    }
+
+    public String getEvidenceTypeName() {
+        return EvidenceTypeName;
+    }
+
+    public void setEvidenceTypeName(String evidenceTypeName) {
+        EvidenceTypeName = evidenceTypeName;
+    }
+
+    public String getEvidenceNumber() {
+        return EvidenceNumber;
+    }
+
+    public void setEvidenceNumber(String evidenceNumber) {
+        EvidenceNumber = evidenceNumber;
+    }
+
+    public String getFindEvidenceZone() {
+        return FindEvidenceZone;
+    }
+
+    public void setFindEvidenceZone(String findEvidenceZone) {
+        FindEvidenceZone = findEvidenceZone;
+    }
+
+    public String getFindEvidencecol() {
+        return FindEvidencecol;
+    }
+
+    public void setFindEvidencecol(String findEvidencecol) {
+        FindEvidencecol = findEvidencecol;
+    }
+
+    public String getMarking() {
+        return Marking;
+    }
+
+    public void setMarking(String marking) {
+        Marking = marking;
+    }
+
+    public String getParceling() {
+        return Parceling;
+    }
+
+    public void setParceling(String parceling) {
+        Parceling = parceling;
+    }
+
+    public String getEvidencePerformed() {
+        return EvidencePerformed;
+    }
+
+    public void setEvidencePerformed(String evidencePerformed) {
+        EvidencePerformed = evidencePerformed;
+    }
 }

@@ -3,140 +3,146 @@
     android:id="@+id/linearLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <TableLayout
         android:id="@+id/tableClass"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_s">
+        android:layout_height="wrap_content">
 
 
         <TableRow
-            android:layout_marginTop="@dimen/padding_s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/txtNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="1."
-                android:textSize="@dimen/ssmall_text"
-                android:visibility="gone"
-                />
+
+
             <TextView
                 android:id="@+id/txtPropertyLossName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:textSize="@dimen/ssmall_text"
-                />
+                android:layout_gravity="left|center_vertical"
+                android:layout_weight="1"
+                android:hint="ทรัพย์สิน"
+                android:textSize="@dimen/small_text" />
 
+            <ImageButton
+                android:id="@+id/imgEdit"
+                android:layout_width="@dimen/width_btn"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_edit" />
 
+            <ImageButton
+                android:id="@+id/imgDelete"
+                android:layout_width="@dimen/width_btn"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_drop" />
         </TableRow>
+
         <TableRow
-            android:layout_marginTop="@dimen/padding_s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="จำนวน "
-                android:textSize="@dimen/ssmall_text"  />
+                android:textSize="@dimen/small_text" />
 
             <TextView
                 android:id="@+id/txtPropertyLossAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
-                android:textSize="@dimen/ssmall_text"
+                android:layout_marginLeft="@dimen/padding_m"
                 android:layout_marginRight="@dimen/padding_m"
-                android:layout_marginLeft="@dimen/padding_m"/>
+                android:text="1"
+                android:textSize="@dimen/small_text" />
+
             <TextView
                 android:id="@+id/txtPropertyLossUnit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="หน่วย"
-                android:textSize="@dimen/ssmall_text"  />
+                android:textSize="@dimen/small_text" />
 
 
         </TableRow>
-        <TableRow android:gravity="center_vertical" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/PropertyLossPosition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="บริเวณ : "
-                android:textSize="@dimen/ssmall_text" />
+                android:textSize="@dimen/small_text" />
+
             <TextView
                 android:id="@+id/txtPropertyLossPosition"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:maxLines="@integer/medium_size"
-                android:textSize="@dimen/ssmall_text" />
+                android:textSize="@dimen/small_text" />
 
         </TableRow>
-        <TableRow android:gravity="center_vertical" >
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/PropertyInsurance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="การประกันทรัพย์สิน : "
-                android:textSize="@dimen/ssmall_text" />
+                android:textSize="@dimen/small_text" />
+
             <TextView
                 android:id="@+id/txtPropertyInsurance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:maxLines="@integer/small_size"
-                android:textSize="@dimen/ssmall_text" />
+                android:textSize="@dimen/small_text" />
         </TableRow>
 
 
-        <TableRow android:layout_marginTop="@dimen/padding_s">
-            <TextView
-                android:id="@+id/txtPhoto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="รูปภาพ (0)"
-                android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic"  />
-        </TableRow>
         <TableRow
-            android:layout_marginTop="@dimen/padding_s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/txtVideo"
-                android:layout_width="match_parent"
+                android:id="@+id/txtPhoto"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+
+                android:text="รูปภาพ (0)"
                 android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic"
+                android:textStyle="bold|italic" />
 
-                android:text="วิดีโอ (0)"  />
-        </TableRow>
-        <TableRow android:gravity="center_vertical|right">
+            <TextView
+                android:id="@+id/txtVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
 
-            <ImageButton
-                android:id="@+id/imgEdit"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:text="วิดีโอ (0)"
+                android:textSize="@dimen/ssmall_text"
+                android:textStyle="bold|italic" />
 
-                android:layout_gravity="right|center_vertical"
-                android:src="@android:drawable/ic_menu_edit"/>
-            <ImageButton
-                android:id="@+id/imgDelete"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-
-                android:layout_gravity="right|center_vertical"
-                android:src="@android:drawable/ic_delete"/>
         </TableRow>
     </TableLayout>
 

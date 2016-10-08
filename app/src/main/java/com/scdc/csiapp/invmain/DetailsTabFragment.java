@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -43,31 +44,36 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
-import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.MainActivity;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
+import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
+import com.scdc.csiapp.tablemodel.TbSceneFeatureOutside;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Pantearz07 on 22/9/2558.
  */
 public class DetailsTabFragment extends Fragment {
     FloatingActionButton fabBtnDetails;
-    CoordinatorLayout rootLayout;
+    private CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
     // connect sqlite
     SQLiteDatabase mDb;
+    DBHelper dbHelper;
     SQLiteDBHelper mDbHelper;
     private Context mContext;
     private PreferenceData mManager;
@@ -75,7 +81,7 @@ public class DetailsTabFragment extends Fragment {
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
     GetDateTime getDateTime;
-    String[] updateDT,datetime;
+    String[] updateDT, datetime;
     String officialID, reportID;
     AutoCompleteTextView autoCompleteTypeOutside;
     Spinner spnTypeReceive;
@@ -88,13 +94,11 @@ public class DetailsTabFragment extends Fragment {
             editOutsideAroundRight, editOutsideAroundFront,
             editDetailInside, editFeatureAtTheScene;
     private GridView horizontal_gridView_Outside;
-   String sOutsideTypeName, sFloorNum, sCaveNum, sOutsideTypeDetail,
-            sFrontSide, sLeftSide, sRightSide, sBackSide, sSceneZone,sFeatureInsideDetail, sHaveFence, sHaveMezzanine, sHaveRoofTop;
+    String sOutsideTypeName, sFloorNum, sCaveNum, sOutsideTypeDetail,
+            sFrontSide, sLeftSide, sRightSide, sBackSide, sSceneZone, sFeatureInsideDetail, sHaveFence, sHaveMezzanine, sHaveRoofTop;
     Boolean sHaveFenceBoolean, sHaveMezzanineBoolean,
             sHaveRoofTopBoolean;
-    Button btnAddFeatureInside;
-            ImageButton btn_camera;
-    ListView listViewAddFeatureInside;
+    ImageButton btn_camera;
     //View linearLayoutAddFeatureInside;
     private ArrayList<HashMap<String, String>> featureInsideList;
 
@@ -106,13 +110,25 @@ public class DetailsTabFragment extends Fragment {
     Uri uri;
     static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     String sPhotoID;
-    String arrDataPhoto[][],arrDataPhoto2[][],arrDataVideo[][];
+    String arrDataPhoto[][], arrDataPhoto2[][], arrDataVideo[][];
 
-    GridView horizontal_gridView_Inside_photo,horizontal_gridView_Inside_video;
-    TextView txtPhoto,txtVideo;
+    GridView horizontal_gridView_Inside_photo, horizontal_gridView_Inside_video;
+    TextView txtPhoto, txtVideo;
     private View mViewAddFeatureInside;
     ImageButton btnShowHide1;
     private boolean viewGroupIsVisible = true;
+    private static final String TAG = "DEBUG-DetailsTabFragment";
+    private TbSceneFeatureOutside tbSceneFeatureOutside;
+    private Snackbar snackbar;
+    public static String Bundle_InsideID = "insideid";
+    public static String Bundle_InsideTB = "tbSceneFeatureInSide";
+    public static String Bundle_Inside_mode = "mode";
+    public static List<TbSceneFeatureInSide> tbSceneFeatureInSideList = null;
+    Button btnAddFeatureInside;
+    ListView listViewAddFeatureInside;
+    AddFeatureInsideFragment addFeatureInsideFragment;
+    public static List<TbMultimediaFile> tbMultimediaFiles = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -121,15 +137,29 @@ public class DetailsTabFragment extends Fragment {
         mContext = viewDetails.getContext();
         rootLayout = (CoordinatorLayout) viewDetails.findViewById(R.id.rootLayout);
         mDbHelper = new SQLiteDBHelper(getActivity());
+        dbHelper = new DBHelper(getActivity());
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         mFragmentManager = getActivity().getSupportFragmentManager();
+        cd = new ConnectionDetector(getActivity());
         getDateTime = new GetDateTime();
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+        ////
         reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
-        cd = new ConnectionDetector(getActivity());
         networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
+        ////
+        tbSceneFeatureOutside = new TbSceneFeatureOutside();
+        if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide() == null) {
+            tbSceneFeatureInSideList = new ArrayList<>();
+            Log.i(TAG, "getTbSceneFeatureInSide null");
+        } else {
+            tbSceneFeatureInSideList = CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide();
+            Log.i(TAG, "getTbSceneFeatureInSide not null");
+        }
+
+        addFeatureInsideFragment = new AddFeatureInsideFragment();
+        mDbHelper = new SQLiteDBHelper(getActivity());
         updateDT = getDateTime.getDateTimeNow();
         datetime = getDateTime.getDateTimeCurrent();
         Log.i("page viewDetails", reportID);
@@ -151,11 +181,13 @@ public class DetailsTabFragment extends Fragment {
         btnShowHide1.setOnClickListener(new DetailsOnClickListener());
 
         edtUpdateDateTime = (TextView) viewDetails.findViewById(R.id.edtUpdateDateTime);
-// ลักษณะสถานที่เกิดเหตุ
+        edtUpdateDateTime.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+
+        // ลักษณะสถานที่เกิดเหตุ
         // ภายนอก
         autoCompleteTypeOutside = (AutoCompleteTextView) viewDetails
                 .findViewById(R.id.autoCompleteTypeOutside);
-        String[] mOutsideTypeArray = getResources().getStringArray(
+        final String[] mOutsideTypeArray = getResources().getStringArray(
                 R.array.type_outside);
         ArrayAdapter<String> adapterOutsideType = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -163,24 +195,6 @@ public class DetailsTabFragment extends Fragment {
         autoCompleteTypeOutside.setThreshold(1);
         autoCompleteTypeOutside.setAdapter(adapterOutsideType);
 
-        autoCompleteTypeOutside.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_14.setVisibility(View.VISIBLE);
-                btn_clear_txt_14.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         // มีชั้นเเบบ
         checkBoxHaveFence = (CheckBox) viewDetails
                 .findViewById(R.id.checkBoxHaveFence);
@@ -188,214 +202,136 @@ public class DetailsTabFragment extends Fragment {
                 .findViewById(R.id.checkBoxHaveMezzanine);
         checkBoxHaveRoofTop = (CheckBox) viewDetails
                 .findViewById(R.id.checkBoxHaveRoofTop);
+        checkBoxHaveFence.setOnClickListener(new DetailsOnClickListener());
+        checkBoxHaveMezzanine.setOnClickListener(new DetailsOnClickListener());
+        checkBoxHaveRoofTop.setOnClickListener(new DetailsOnClickListener());
 
 
         // จำนวนชั้น
         edtFloorNum = (EditText) viewDetails.findViewById(R.id.edtFloorNum);
-        edtFloorNum.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_15.setVisibility(View.VISIBLE);
-                btn_clear_txt_15.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         // จำนวนคูหา
         edtCaveNum = (EditText) viewDetails.findViewById(R.id.edtCaveNum);
-        edtCaveNum.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_16.setVisibility(View.VISIBLE);
-                btn_clear_txt_16.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        editDetailOutside = (EditText) viewDetails
-                .findViewById(R.id.editDetailOutside);
-
-        editDetailOutside.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_17.setVisibility(View.VISIBLE);
-                btn_clear_txt_17.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        editDetailOutside = (EditText) viewDetails.findViewById(R.id.editDetailOutside);
         editOutsideAroundBack = (EditText) viewDetails
                 .findViewById(R.id.editOutsideAroundBack);
-        editOutsideAroundBack.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_18.setVisibility(View.VISIBLE);
-                btn_clear_txt_18.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         editOutsideAroundLeft = (EditText) viewDetails
                 .findViewById(R.id.editOutsideAroundLeft);
-        editOutsideAroundLeft.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_19.setVisibility(View.VISIBLE);
-                btn_clear_txt_19.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        editOutsideAroundRight = (EditText) viewDetails
-                .findViewById(R.id.editOutsideAroundRight);
-        editOutsideAroundRight.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_20.setVisibility(View.VISIBLE);
-                btn_clear_txt_20.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        editOutsideAroundRight = (EditText) viewDetails.findViewById(R.id.editOutsideAroundRight);
         editOutsideAroundFront = (EditText) viewDetails
                 .findViewById(R.id.editOutsideAroundFront);
-        editOutsideAroundFront.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // บริเวณที่เกิดเหตุ
+        editFeatureAtTheScene = (EditText) viewDetails
+                .findViewById(R.id.editFeatureAtTheScene);
 
+        if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside() != null) {
+            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaseReportID);
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName.equals("")) {
+                autoCompleteTypeOutside.setText("");
+            } else {
+                autoCompleteTypeOutside.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName);
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence.equals("")) {
+                checkBoxHaveFence.setChecked(false);
+            } else {
+                if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence.equals("1")) {
+                    checkBoxHaveFence.setChecked(true);
+                } else {
+                    checkBoxHaveFence.setChecked(false);
+                }
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine.equals("")) {
+                checkBoxHaveMezzanine.setChecked(false);
+            } else {
+                if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine.equals("1")) {
+                    checkBoxHaveMezzanine.setChecked(true);
+                } else {
+                    checkBoxHaveMezzanine.setChecked(false);
+                }
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop.equals("")) {
+                checkBoxHaveRoofTop.setChecked(false);
+            } else {
+                if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop.equals("1")) {
+                    checkBoxHaveRoofTop.setChecked(true);
+                } else {
+                    checkBoxHaveRoofTop.setChecked(false);
+                }
             }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_21.setVisibility(View.VISIBLE);
-                btn_clear_txt_21.setOnClickListener(new DetailsOnClickListener());
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FloorNum == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FloorNum.equals("")) {
+                edtFloorNum.setText("");
+            } else {
+                edtFloorNum.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FloorNum);
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaveNum == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaveNum.equals("")) {
+                edtCaveNum.setText("");
+            } else {
+                edtCaveNum.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaveNum);
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail.equals("")) {
+                editDetailOutside.setText("");
+            } else {
+                editDetailOutside.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide.equals("")) {
+                editOutsideAroundBack.setText("");
+            } else {
+                editOutsideAroundBack.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide);
             }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide.equals("")) {
+                editOutsideAroundLeft.setText("");
+            } else {
+                editOutsideAroundLeft.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide);
             }
-        });
-
-
-        // ภายใน
-        editDetailInside = (EditText) viewDetails
-                .findViewById(R.id.editDetailInside);
-        editDetailInside.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().RightSide == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().RightSide.equals("")) {
+                editOutsideAroundRight.setText("");
+            } else {
+                editOutsideAroundRight.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().RightSide);
             }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_22.setVisibility(View.VISIBLE);
-                btn_clear_txt_22.setOnClickListener(new DetailsOnClickListener());
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FrontSide == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FrontSide.equals("")) {
+                editOutsideAroundFront.setText("");
+            } else {
+                editOutsideAroundFront.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FrontSide);
             }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().SceneZone == null) {
+                editFeatureAtTheScene.setText("");
+            } else {
+                editFeatureAtTheScene.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().SceneZone);
             }
-        });
+        } else {
+            CSIDataTabFragment.apiCaseScene.setTbSceneFeatureOutside(tbSceneFeatureOutside);
 
-        horizontal_gridView_Outside= (GridView) viewDetails.findViewById(R.id.horizontal_gridView_Outside);
+            CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+            Log.i(TAG, "new " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaseReportID);
+        }
+        autoCompleteTypeOutside.addTextChangedListener(new DetailTextWatcher(autoCompleteTypeOutside));
+        edtFloorNum.addTextChangedListener(new DetailTextWatcher(edtFloorNum));
+        edtCaveNum.addTextChangedListener(new DetailTextWatcher(edtCaveNum));
+        editDetailOutside.addTextChangedListener(new DetailTextWatcher(editDetailOutside));
+        editOutsideAroundBack.addTextChangedListener(new DetailTextWatcher(editOutsideAroundBack));
+        editOutsideAroundLeft.addTextChangedListener(new DetailTextWatcher(editOutsideAroundLeft));
+        editOutsideAroundRight.addTextChangedListener(new DetailTextWatcher(editOutsideAroundRight));
+        editOutsideAroundFront.addTextChangedListener(new DetailTextWatcher(editOutsideAroundFront));
+        editFeatureAtTheScene.addTextChangedListener(new DetailTextWatcher(editFeatureAtTheScene));
+
+        horizontal_gridView_Outside = (GridView) viewDetails.findViewById(R.id.horizontal_gridView_Outside);
         showAllPhoto();
         btn_camera = (ImageButton) viewDetails.findViewById(R.id.btn_camera);
-        btn_camera.setOnClickListener(new View.OnClickListener() {
+        btn_camera.setOnClickListener(new DetailsOnClickListener());
 
-            @Override
-            public void onClick(View v) {
 
-                String timeStamp = "";
-                File newfile;
-                createFolder("Pictures");
-
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                 timeStamp = updateDT[0]+" "+updateDT[1];
-
-                sPhotoID = "IMG_" + datetime[2]+""+datetime[1]+""+datetime[0]+"_"+ datetime[3]+""+datetime[4]+""+datetime[5];
-                String sPhotoPath = sPhotoID + ".jpg";
-                newfile = new File(strSDCardPathName, "Pictures/" + sPhotoPath);
-                if (newfile.exists())
-                    newfile.delete();
-                try {
-                    newfile.createNewFile();
-                    mCurrentPhotoPath = newfile.getAbsolutePath();
-                } catch (IOException e) {
-                }
-                if (newfile != null) {
-                    uri = Uri.fromFile(newfile);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                    getActivity().startActivityForResult(Intent.createChooser(cameraIntent
-                            , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
-
-                    String sPhotoDescription = "";
-                    new saveDataMedia().execute(reportID, sPhotoID, sPhotoPath, sPhotoDescription, timeStamp, "photo");
-
-                    Log.i("show", "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoPath);
-                }
-
-            }
-        });
-
+// ภายใน
+        editDetailInside = (EditText) viewDetails
+                .findViewById(R.id.editDetailInside);
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().FeatureInsideDetail == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().FeatureInsideDetail.equals("")) {
+            editDetailInside.setText("");
+        } else {
+            editDetailInside.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().FeatureInsideDetail);
+        }
+        editDetailInside.addTextChangedListener(new DetailTextWatcher(editDetailInside));
         listViewAddFeatureInside = (ListView) viewDetails
                 .findViewById(R.id.listViewAddFeatureInside);
         btnAddFeatureInside = (Button) viewDetails
@@ -403,44 +339,16 @@ public class DetailsTabFragment extends Fragment {
 
         listViewAddFeatureInside.setVisibility(View.GONE);
         listViewAddFeatureInside.setOnTouchListener(new ListviewSetOnTouchListener());
-        ShowSelectedFeatureInside(reportID);
+        ShowSelectedFeatureInside();
 
         btnAddFeatureInside.setOnClickListener(new DetailsOnClickListener());
 
-
-        // บริเวณที่เกิดเหตุ
-        editFeatureAtTheScene = (EditText) viewDetails
-                .findViewById(R.id.editFeatureAtTheScene);
-        editFeatureAtTheScene.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                btn_clear_txt_23.setVisibility(View.VISIBLE);
-                btn_clear_txt_23.setOnClickListener(new DetailsOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-
         fabBtnDetails = (FloatingActionButton) viewDetails.findViewById(R.id.fabBtnDetails);
-        fabBtnDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                 saveAllDetailsData();
-            }
-        });
+        fabBtnDetails.setOnClickListener(new DetailsOnClickListener());
         return viewDetails;
 
     }
+
     public static void createFolder(String pathType) {
         File folder = new File(Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
         try {
@@ -448,7 +356,7 @@ public class DetailsTabFragment extends Fragment {
             if (!folder.exists()) {
                 folder.mkdir();
                 Log.i("mkdir", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
-            }else {
+            } else {
                 Log.i("folder.exists", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
 
             }
@@ -456,6 +364,7 @@ public class DetailsTabFragment extends Fragment {
         }
 
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
@@ -499,6 +408,7 @@ public class DetailsTabFragment extends Fragment {
             }
         }
     }
+
     class saveDataMedia extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -521,7 +431,7 @@ public class DetailsTabFragment extends Fragment {
                 if (saveStatus2 <= 0) {
                     arrData = "error";
                     Log.i("saveData " + params[5], "Error!! ");
-                }else{
+                } else {
                     arrData = "save";
                     Log.i("saveData " + params[5], params[2]);
                 }
@@ -529,6 +439,7 @@ public class DetailsTabFragment extends Fragment {
 
             return arrData;
         }
+
         protected void onPostExecute(String arrData) {
             if (arrData == "save") {
                 Log.i("saveData", "save");
@@ -541,17 +452,18 @@ public class DetailsTabFragment extends Fragment {
             }
         }
     }
+
     public void showAllPhoto() {
         // TODO Auto-generated method stub
-        int photolength=0;
-        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID,"photo");
+        int photolength = 0;
+        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID, "photo");
         //Log.i("arrDataPhoto_Outside",arrDataPhoto[0][0]);
         if (arrDataPhoto != null) {
             Log.i("arrDataPhoto_Outside", String.valueOf(arrDataPhoto.length));
             photolength = arrDataPhoto.length;
             //int size=list.size();
             // Calculated single Item Layout Width for each grid element ....
-            int width = 70 ;
+            int width = 70;
 
             DisplayMetrics dm = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -564,7 +476,7 @@ public class DetailsTabFragment extends Fragment {
                     totalWidth, singleItemWidth);
 
             horizontal_gridView_Outside.setLayoutParams(params);
-           // horizontal_gridView_Outside.setHorizontalSpacing(2);
+            // horizontal_gridView_Outside.setHorizontalSpacing(2);
             horizontal_gridView_Outside.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
             horizontal_gridView_Outside.setNumColumns(photolength);
 
@@ -585,6 +497,7 @@ public class DetailsTabFragment extends Fragment {
 
         }
     }
+
     public void showViewPic(String sPicPath) {
         // TODO Auto-generated method stub
         final Dialog dialog = new Dialog(getActivity(),
@@ -606,6 +519,7 @@ public class DetailsTabFragment extends Fragment {
         imageView.setImageBitmap(resizedBitmap);
         dialog.show();
     }
+
     public class PhotoAdapter extends BaseAdapter {
         private Context context;
         private String[][] lis;
@@ -650,7 +564,7 @@ public class DetailsTabFragment extends Fragment {
                     + lis[position][3].toString();
 
             Log.i("list photo", "/CSIFiles/Pictures/" + lis[position][3].toString());
-           // "file:///android_asset/DvpvklR.png"
+            // "file:///android_asset/DvpvklR.png"
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
@@ -665,7 +579,7 @@ public class DetailsTabFragment extends Fragment {
                     .into(imageView);
  */
             Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-            if(bmpSelectedImage != null) {
+            if (bmpSelectedImage != null) {
                 int width1 = bmpSelectedImage.getWidth();
                 int height1 = bmpSelectedImage.getHeight();
                 Log.i("size", width1 + " " + height1);
@@ -684,354 +598,61 @@ public class DetailsTabFragment extends Fragment {
         }
     }
 
-    private boolean saveAllDetailsData() {
-        sOutsideTypeName = "";
-        sOutsideTypeDetail = "";
-        sFloorNum = "";
-        sCaveNum = "";
-        int FloorNum = 0, CaveNum = 0;
-
-        sFrontSide = "";
-        sLeftSide = "";
-        sRightSide = "";
-        sBackSide = "";
-        sSceneZone = "";
-        if (autoCompleteTypeOutside.getText().toString().length() != 0) {
-            sOutsideTypeName = autoCompleteTypeOutside.getText().toString();
-        }else{
-            sOutsideTypeName="";
-        }
-
-        if (editDetailOutside.getText().toString().length() != 0) {
-            sOutsideTypeDetail = editDetailOutside.getText().toString();
-        }else{
-            sOutsideTypeDetail="";
-        }
-		if (edtFloorNum.getText().toString().length() != 0) {
-			sFloorNum = edtFloorNum.getText().toString();
-			FloorNum = Integer.parseInt(sFloorNum);
-		}else{
-            sFloorNum="0";
-        }
-        if (edtCaveNum.getText().toString().length() != 0) {
-            sCaveNum = edtCaveNum.getText().toString();
-            CaveNum = Integer.parseInt(sCaveNum);
-        }else{
-            sCaveNum="0";
-        }
-
-        Log.i("sFloorNum sCaveNum", sFloorNum+" "+sCaveNum);
-
-        sFeatureInsideDetail = "";
-        if (editDetailInside.getText().toString().length() != 0) {
-            sFeatureInsideDetail = editDetailInside.getText().toString();
-        }else{
-            sFeatureInsideDetail="";
-        }
-        sHaveFenceBoolean = checkBoxHaveFence.isChecked();
-        Log.i("HaveFence detailscase", String.valueOf(sHaveFenceBoolean));
-        if (sHaveFenceBoolean != true) {
-            sHaveFence = "0";
-        } else {
-            sHaveFence = "1";
-        }
-        sHaveMezzanineBoolean = checkBoxHaveMezzanine.isChecked();
-        Log.i("Mezzanine detailscase", String.valueOf(sHaveMezzanineBoolean));
-        if (sHaveMezzanineBoolean != true) {
-            sHaveMezzanine = "0";
-        } else {
-            sHaveMezzanine = "1";
-        }
-
-        sHaveRoofTopBoolean = checkBoxHaveRoofTop.isChecked();
-        if (sHaveRoofTopBoolean != true) {
-            sHaveRoofTop = "0"; Log.i("RoofTop detailscase", String.valueOf(sHaveRoofTop));
-        } else {
-            sHaveRoofTop = "1"; Log.i("RoofTop detailscase", String.valueOf(sHaveRoofTop));
-        }
-        if (editOutsideAroundFront.getText().toString().length() != 0) {
-            sFrontSide = editOutsideAroundFront.getText().toString();
-        }else{
-            sFrontSide="";
-        }
-
-        if (editOutsideAroundLeft.getText().toString().length() != 0) {
-            sLeftSide = editOutsideAroundLeft.getText().toString();
-        }else{
-            sLeftSide="";
-        }
-
-        if (editOutsideAroundRight.getText().toString().length() != 0) {
-            sRightSide = editOutsideAroundRight.getText().toString();
-        }else{
-            sRightSide="";
-        }
-
-        if (editOutsideAroundBack.getText().toString().length() != 0) {
-            sBackSide = editOutsideAroundBack.getText().toString();
-        }else{
-            sBackSide="";
-        }
-
-        if (editFeatureAtTheScene.getText().toString().length() != 0) {
-            sSceneZone = editFeatureAtTheScene.getText().toString();
-        }else{
-            sSceneZone="";
-        }
-
-
-        new saveDetailsData().execute(reportID,
-                sOutsideTypeName, sOutsideTypeDetail, sFloorNum, sCaveNum,
-                sHaveFence, sHaveMezzanine, sHaveRoofTop, sFrontSide,
-                sLeftSide, sRightSide, sBackSide,sSceneZone);
-        new saveDetailsData2().execute(reportID, sFeatureInsideDetail,updateDT[0],updateDT[1]);
-return true;
-
-    }
-    class saveDetailsData extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String arrData = "";
-
-            long saveDataFeatureOutside = mDbHelper.saveDataFeatureOutside(params[0], params[1], params[2],
-                    params[3], params[4], params[5], params[6], params[7],
-                    params[8], params[9], params[10], params[11], params[12]);
-
-            if (saveDataFeatureOutside <= 0) {
-                Log.i("saveDataFeatureOutside", "error detailscase");
-                arrData = "error";
-            } else {
-                Log.i("saveDataFeatureOutside", "save detailscase");
-                arrData = "save";
-            }
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String arrData) {
-            String message="";
-            if (arrData == "save") {
-                message = "บันทึกข้อมูลเรียบร้อยแล้ว";
-
-            } else {
-                message = "เกิดข้อผิดพลาด";
-
-            }
-            Log.i("save  FeatureOutside","detailscase "+ message);
-           Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-
-        }
-
-
-    }
-    class showData extends AsyncTask<String, Void, String[]> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-
-        @Override
-        protected String[] doInBackground(String... params) {
-            String[] arrData = {""};
-            arrData = mDbHelper.SelectDataFeatureOutside(params[0]);
-
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String[] arrDataFeatureOutside) {
-
-
-                if (arrDataFeatureOutside != null) {
-                    Log.i("SelectFeatureOutside", "detailscase "+ arrDataFeatureOutside[1]);
-                    if (arrDataFeatureOutside[1].length() != 0) {
-                        autoCompleteTypeOutside.setText(arrDataFeatureOutside[1]);
-                    }
-                    if (arrDataFeatureOutside[2].length() != 0) {
-                        editDetailOutside.setText(arrDataFeatureOutside[2]);
-                    }
-
-                    if (arrDataFeatureOutside[3].length() != 0) {
-
-                        if(arrDataFeatureOutside[3].equals(0)){
-                            edtFloorNum.setText("");
-                        }else {
-                            edtFloorNum.setText(arrDataFeatureOutside[3]);
-                        }
-                    }
-
-                    if (arrDataFeatureOutside[4].length() != 0) {
-                        if(arrDataFeatureOutside[4].equals(0)){
-                            edtCaveNum.setText("");
-                        }else {
-                            edtCaveNum.setText(arrDataFeatureOutside[4]);
-                        }
-                    }
-                    Log.i("arrDataFeatureOutside", "detailscase "+ arrDataFeatureOutside[0]+"/"+arrDataFeatureOutside[1]+"/"+arrDataFeatureOutside[5]+"/"
-                            + arrDataFeatureOutside[6]+"/" + arrDataFeatureOutside[7]);
-                    if (Integer.parseInt(arrDataFeatureOutside[5]) == 1) {
-
-                        checkBoxHaveFence.setChecked(true);
-                    }
-                    if (Integer.parseInt(arrDataFeatureOutside[6]) == 1) {
-                        checkBoxHaveMezzanine.setChecked(true);
-                    }
-                    if (Integer.parseInt(arrDataFeatureOutside[7]) == 1) {
-                        checkBoxHaveRoofTop.setChecked(true);
-                    }
-
-                    if (arrDataFeatureOutside[8].length() != 0) {
-                        editOutsideAroundFront.setText(arrDataFeatureOutside[8]);
-                    }
-                    if (arrDataFeatureOutside[9].length() != 0) {
-                        editOutsideAroundLeft.setText(arrDataFeatureOutside[9]);
-                    }
-
-                    if (arrDataFeatureOutside[10].length() != 0) {
-                        editOutsideAroundRight.setText(arrDataFeatureOutside[10]);
-                    }
-                    if (arrDataFeatureOutside[11].length() != 0) {
-                        editOutsideAroundBack.setText(arrDataFeatureOutside[11]);
-                    }
-                    if (arrDataFeatureOutside[12].length() != 0) {
-                        editFeatureAtTheScene.setText(arrDataFeatureOutside[12]);
-                    }
-
-                } else {
-                    Log.i("Recieve FeatureOutside", "Null!! detailscase ");
-                }
-        }
-    }
-    class saveDetailsData2 extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String arrData = "";
-
-            long updateCaseSceneDetails = mDbHelper.updateCaseSceneDetails(params[0], params[1], params[2],params[3]);
-
-            if (updateCaseSceneDetails <= 0) {
-                Log.i("updateCaseSceneDetails2", "error detailscase");
-                arrData = "error";
-            } else {
-                Log.i("updateCaseSceneDetails2", "save detailscase" );
-                arrData = "save";
-            }
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String arrData) {
-            String message="";
-            if (arrData == "save") {
-                message = "บันทึกข้อมูลเรียบร้อยแล้ว";
-
-            } else {
-                message = "เกิดข้อผิดพลาด";
-
-            }
-            Log.i("updateCaseSceneDetails2", "detailscase "+ message);
-           //Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-
-        }
-
-
-    }
-    class showData2 extends AsyncTask<String, Void, String[]> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-
-        @Override
-        protected String[] doInBackground(String... params) {
-            String[] arrData = {""};
-            arrData = mDbHelper.SelectDataCaseScene(params[0]);
-
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String[] arrData) {
-            if (arrData != null) {
-
-                if (arrData[7]!=null) {
-                    edtUpdateDateTime.setText("อัพเดทข้อมูลล่าสุดเมื่อวันที่ " + getDateTime.changeDateFormatToCalendar(arrData[7]) + " เวลา " + arrData[8]);
-                   /* Toast.makeText(getActivity()
-                                    .getApplicationContext(),
-                            "อัพเดทข้อมูลล่าสุดเมื่อวันที่ " + arrData[7] + " เวลา " + arrData[8],
-                            Toast.LENGTH_LONG).show();*/
-                    Log.i("update data when", "อัพเดทข้อมูลล่าสุดเมื่อวันที่ " + getDateTime.changeDateFormatToCalendar(arrData[7]) + " เวลา " + arrData[8]);
-                }
-                if (arrData[2]!=null) {
-                    editDetailInside.setText(arrData[2]);
-                }
-
-            }
-        }
-    }
     public class DetailsOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
-            if(v == btnAddFeatureInside){
-                Log.i("Investigator1", "showlist");
+            if (v == fabBtnDetails) {
+                Log.i(TAG, "fabBtnDetails");
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
+                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                    if (isSuccess) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete)
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID
+                                    + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    } else {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    }
+                }
+
+            }
+            if (v == btnAddFeatureInside) {
+                Log.i(TAG, "btnAddFeatureInside");
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-                String sFeatureInsideID = "IN_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0]+"_"+CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                String sFeatureInsideID = "IN_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                Bundle i = new Bundle();
+                i.putString(Bundle_InsideID, sFeatureInsideID);
+                i.putString(Bundle_Inside_mode, "new");
+                addFeatureInsideFragment.setArguments(i);
+                MainActivity.setFragment(addFeatureInsideFragment, 1);
 
-                Intent showActivity = new Intent(getActivity(), FeatureInsideActivity.class);
-                showActivity.putExtra("featureid", sFeatureInsideID);
-                showActivity.putExtra("type", "new");
-                startActivity(showActivity);
-/*
-                viewByIdaddinside = (ViewGroup) v.findViewById(R.id.layout_addinside_dialog);
-
-                createdDialog(DIALOG_AddFeatureInside).show();*/
             }
-            if (v == btn_clear_txt_14) {
-                autoCompleteTypeOutside.setText("");
-            }
-
-            if(v==btn_clear_txt_15){
-                edtFloorNum.setText("");
-            }
-            if(v==btn_clear_txt_16){
-                edtCaveNum.setText("");
-            }
-
-            if(v==btn_clear_txt_17){
-                editDetailOutside.setText("");
-            }
-            if(v==btn_clear_txt_18){
-                editOutsideAroundBack.setText("");
-            }
-            if(v==btn_clear_txt_19){
-                editOutsideAroundLeft.setText("");
-            }
-            if(v==btn_clear_txt_20){
-                editOutsideAroundRight.setText("");
-            }
-            if(v==btn_clear_txt_21){
-                editOutsideAroundFront.setText("");
-            }
-            if(v==btn_clear_txt_22){
-                editDetailInside.setText("");
-            }
-            if(v==btn_clear_txt_23){
-                editFeatureAtTheScene.setText("");
-            }
-            if(v == btnShowHide1){
+            if (v == btnShowHide1) {
                 if (viewGroupIsVisible) {
                     mViewAddFeatureInside.setVisibility(View.VISIBLE);
                     btnShowHide1.setImageResource(R.drawable.ic_maxlayout);
@@ -1041,240 +662,104 @@ return true;
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
+            if (v == btn_camera) {
+                String timeStamp = "";
+                File newfile;
+                createFolder("Pictures");
 
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                timeStamp = updateDT[0] + " " + updateDT[1];
+
+                sPhotoID = "IMG_" + datetime[2] + "" + datetime[1] + "" + datetime[0] + "_" + datetime[3] + "" + datetime[4] + "" + datetime[5];
+                String sPhotoPath = sPhotoID + ".jpg";
+                newfile = new File(strSDCardPathName, "Pictures/" + sPhotoPath);
+                if (newfile.exists())
+                    newfile.delete();
+                try {
+                    newfile.createNewFile();
+                    mCurrentPhotoPath = newfile.getAbsolutePath();
+                } catch (IOException e) {
+                }
+                if (newfile != null) {
+                    uri = Uri.fromFile(newfile);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                    getActivity().startActivityForResult(Intent.createChooser(cameraIntent
+                            , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
+
+                    String sPhotoDescription = "";
+                    new saveDataMedia().execute(reportID, sPhotoID, sPhotoPath, sPhotoDescription, timeStamp, "photo");
+
+                    Log.i("show", "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoPath);
+                }
+            }
+            if (v == checkBoxHaveFence) {
+                if (checkBoxHaveFence.isChecked()) {
+                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence = "1";
+                    Log.i(TAG, "HaveFence " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence);
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence = "0";
+                    Log.i(TAG, "HaveFence " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveFence);
+                }
+            }
+            if (v == checkBoxHaveMezzanine) {
+                if (checkBoxHaveMezzanine.isChecked()) {
+                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine = "1";
+                    Log.i(TAG, "HaveMezzanine " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine);
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine = "0";
+                    Log.i(TAG, "HaveMezzanine " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine);
+                }
+            }
+            if (v == checkBoxHaveRoofTop) {
+                if (checkBoxHaveRoofTop.isChecked()) {
+                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop = "1";
+                    Log.i(TAG, "HaveRooftop " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop);
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop = "0";
+                    Log.i(TAG, "HaveRooftop " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().HaveRooftop);
+                }
+            }
+            if (v == btn_clear_txt_14) {
+                autoCompleteTypeOutside.setText("");
+            }
+            if (v == btn_clear_txt_15) {
+                edtFloorNum.setText("");
+            }
+            if (v == btn_clear_txt_16) {
+                edtCaveNum.setText("");
+            }
+            if (v == btn_clear_txt_17) {
+                editDetailOutside.setText("");
+            }
+            if (v == btn_clear_txt_18) {
+                editOutsideAroundBack.setText("");
+            }
+            if (v == btn_clear_txt_19) {
+                editOutsideAroundLeft.setText("");
+            }
+            if (v == btn_clear_txt_20) {
+                editOutsideAroundRight.setText("");
+            }
+            if (v == btn_clear_txt_21) {
+                editOutsideAroundFront.setText("");
+            }
+            if (v == btn_clear_txt_22) {
+                editDetailInside.setText("");
+            }
+            if (v == btn_clear_txt_23) {
+                editFeatureAtTheScene.setText("");
+            }
         }
     }
-    protected Dialog createdDialog(int id){
-        Dialog dialog = null;
-        final AlertDialog.Builder otherInsideDialog,FeatureInsideDialog;
 
-
-        switch (id) {
-            case DIALOG_AddFeatureInside:
-                Log.i("DIALOG_AddFeatureInside", "AddFeatureInside");
-                otherInsideDialog = new AlertDialog.Builder(getActivity());
-                FeatureInsideDialog = new AlertDialog.Builder(getActivity());
-                final LayoutInflater inflaterDialogFeatureInside = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View Viewlayout = inflaterDialogFeatureInside.inflate(
-                        R.layout.add_inside_dialog,viewByIdaddinside);
-                otherInsideDialog.setIcon(android.R.drawable.btn_star_big_on);
-                otherInsideDialog.setTitle("เพิ่มลักษณะภายใน");
-                otherInsideDialog.setView(Viewlayout);
-
-                final EditText editFeatureInsideFloor = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideFloor);
-                final TextView editNoti1 = (TextView) Viewlayout
-                        .findViewById(R.id.editNoti1);
-                editFeatureInsideFloor
-                        .addTextChangedListener(new TextWatcher() {
-
-                            @Override
-                            public void onTextChanged(CharSequence s,
-                                                      int start, int before, int count) {
-                                // TODO Auto-generated method stub
-                                editNoti1.setVisibility(View.GONE);
-
-                            }
-
-                            @Override
-                            public void beforeTextChanged(CharSequence s,
-                                                          int start, int count, int after) {
-                                // TODO Auto-generated method stub
-                                editNoti1.setVisibility(View.VISIBLE);
-
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable s) {
-                                // TODO Auto-generated method stub
-                                if (s.toString().length() != 0) {
-                                    editNoti1.setVisibility(View.GONE);
-                                    // buttonPOS.setEnabled(true);
-                                } else {
-                                    editNoti1.setVisibility(View.VISIBLE);
-                                    // buttonPOS.setEnabled(false);
-                                }
-                            }
-                        });
-                final EditText editFeatureInsideCave = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideCave);
-                final TextView editNoti2 = (TextView) Viewlayout
-                        .findViewById(R.id.editNoti2);
-                editFeatureInsideCave.addTextChangedListener(new TextWatcher() {
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start,
-                                              int before, int count) {
-                        // TODO Auto-generated method stub
-                        editNoti2.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start,
-                                                  int count, int after) {
-                        // TODO Auto-generated method stub
-                        editNoti2.setVisibility(View.VISIBLE);
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        // TODO Auto-generated method stub
-                        if (s.toString().length() != 0) {
-                            editNoti2.setVisibility(View.GONE);
-
-                        } else {
-                            editNoti2.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-                final EditText editFeatureInsideClassBack = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideClassBack);
-                final EditText editFeatureInsideClassLeft = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideClassLeft);
-                final EditText editFeatureInsideClassCenter = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideClassCenter);
-                final EditText editFeatureInsideClassRight = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideClassRight);
-                final EditText editFeatureInsideClassFront = (EditText) Viewlayout
-                        .findViewById(R.id.editFeatureInsideClassFront);
-
-                // Button OK
-
-                otherInsideDialog.setPositiveButton("Save",
-                        new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-
-                                if (editFeatureInsideFloor.getText().toString()
-                                        .equals("")
-                                        || editFeatureInsideCave.getText()
-                                        .toString().equals("")) {
-                                    FeatureInsideDialog
-                                            .setIcon(android.R.drawable.btn_star_big_on);
-                                    FeatureInsideDialog
-                                            .setTitle("กรุณากรอกข้อมูลชั้นและคูหา!");
-                                    FeatureInsideDialog.setPositiveButton("OK",
-                                            null);
-                                    FeatureInsideDialog.show();
-
-                                } else {
-
-									/*	*/
-                                    String sFloorNo, sCaveNo, sFrontInside, sLeftInside, sRightInside, sBackInside, sCenterInside;
-
-                                    sFloorNo = "";
-                                    sCaveNo = "";
-                                    sFrontInside = "";
-                                    sLeftInside = "";
-                                    sRightInside = "";
-                                    sBackInside = "";
-                                    sCenterInside = "";
-                                    if (editFeatureInsideFloor.getText()
-                                            .toString().length() != 0) {
-                                        sFloorNo = editFeatureInsideFloor
-                                                .getText().toString();
-                                    }
-
-                                    if (editFeatureInsideCave.getText()
-                                            .toString().length() != 0) {
-                                        sCaveNo = editFeatureInsideCave
-                                                .getText().toString();
-                                    }
-                                    if (editFeatureInsideClassBack.getText()
-                                            .toString().length() != 0) {
-                                        sBackInside = editFeatureInsideClassBack
-                                                .getText().toString();
-                                    }
-                                    if (editFeatureInsideClassLeft.getText()
-                                            .toString().length() != 0) {
-                                        sLeftInside = editFeatureInsideClassLeft
-                                                .getText().toString();
-                                    }
-                                    if (editFeatureInsideClassCenter.getText()
-                                            .toString().length() != 0) {
-                                        sCenterInside = editFeatureInsideClassCenter
-                                                .getText().toString();
-                                    }
-                                    if (editFeatureInsideClassRight.getText()
-                                            .toString().length() != 0) {
-                                        sRightInside = editFeatureInsideClassRight
-                                                .getText().toString();
-                                    }
-                                    if (editFeatureInsideClassFront.getText()
-                                            .toString().length() != 0) {
-                                        sFrontInside = editFeatureInsideClassFront
-                                                .getText().toString();
-                                    }
-                                    Context context = getActivity()
-                                            .getApplicationContext();
-                                    Toast.makeText(context,
-                                            "เพิ่มข้อมูลเรียบร้อยเเล้ว",
-                                            Toast.LENGTH_LONG).show();
-                                    saveDataAddFeatureInside(reportID,
-                                            sFloorNo, sCaveNo, sFrontInside,
-                                            sLeftInside, sRightInside,
-                                            sBackInside, sCenterInside);
-                                    dialog.dismiss();
-                                }
-                            }
-
-                        })
-
-                        // Button Cancel
-                        .setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                dialog = otherInsideDialog.create();
-                break;
-            default:
-                dialog = null;
-        }
-        return dialog;
-    }
-    public void saveDataAddFeatureInside(String reportID, String sFloorNo,
-                                         String sCaveNo, String sFrontInside, String sLeftInside,
-                                         String sRightInside, String sBackInside, String sCenterInside) {
+    public void ShowSelectedFeatureInside() {
         // TODO Auto-generated method stub
-        String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-        String sFeatureInsideID = "IN_" + CurrentDate_ID[2]+CurrentDate_ID[1]+CurrentDate_ID[0]+"_"+CurrentDate_ID[3]+CurrentDate_ID[4]+CurrentDate_ID[5];
-        int floorno = 0, caveno = 0;
-        if (sFloorNo.length() != 0) {
-            floorno = Integer.parseInt(sFloorNo);
-        }
-        if (sCaveNo.length() != 0) {
+//        featureInsideList = mDbHelper.SelectAllFeatureInside(reportID);
 
-            caveno = Integer.parseInt(sCaveNo);
-        }
-        long saveStatus = mDbHelper.saveDataFeatureInside(reportID,
-                sFeatureInsideID, floorno, caveno, sFrontInside, sLeftInside,
-                sRightInside, sBackInside, sCenterInside);
-        if (saveStatus <= 0) {
-            Log.i("saveDataFeatureInside", "Error!! ");
-        } else {
-            Log.i("saveDataFeatureInside", "OK!! ");
-
-            ShowSelectedFeatureInside(reportID);
-        }
-        Log.i("saveData FeatureInside", sFeatureInsideID + " " + sFrontInside
-                + " " + sLeftInside + " " + sRightInside+ " " + sBackInside+ " " + sCenterInside);
-    }
-
-    public void ShowSelectedFeatureInside(String reportID) {
-        // TODO Auto-generated method stub
-        featureInsideList = mDbHelper.SelectAllFeatureInside(reportID);
-
-
-        if (featureInsideList != null) {
+        if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide() != null) {
             listViewAddFeatureInside.setAdapter(new FeatureInsideAdapter(
-                getActivity()));
-            Log.i("featureInsideList",String.valueOf(featureInsideList.size()));
+                    getActivity()));
+            Log.i("featureInsideList", String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
             setListViewHeightBasedOnItems(listViewAddFeatureInside);
             listViewAddFeatureInside.setVisibility(View.VISIBLE);
         } else {
@@ -1294,7 +779,7 @@ return true;
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return featureInsideList.size();
+            return CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size();
         }
 
         public Object getItem(int position) {
@@ -1319,158 +804,70 @@ return true;
                         null);
 
             }
-            final String sFeatureInsideID = featureInsideList.get(position)
-                    .get("FeatureInsideID");
+            final String sFeatureInsideID = CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getFeatureInsideID();
+            final String sCaseReportID = CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getCaseReportID();
             final TextView showFeatureInsideFloor = (TextView) convertView
                     .findViewById(R.id.showFeatureInsideFloor);
             final TextView showFeatureInsideCave = (TextView) convertView
                     .findViewById(R.id.showFeatureInsideCave);
-            showFeatureInsideFloor.setText(featureInsideList.get(position).get(
-                    "FloorNo"));
-            showFeatureInsideCave.setText(featureInsideList.get(position).get(
-                    "CaveNo"));
+            showFeatureInsideFloor.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getFloorNo());
+            showFeatureInsideCave.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getCaveNo());
             final TextView editFeatureInsideClassBack = (TextView) convertView
                     .findViewById(R.id.txtFeatureInsideClassBack2);
-            editFeatureInsideClassBack.setText(featureInsideList.get(position)
-                    .get("BackInside"));
+            editFeatureInsideClassBack.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getBackInside());
 
             final TextView editFeatureInsideClassLeft = (TextView) convertView
                     .findViewById(R.id.txtFeatureInsideClassLeft2);
-            editFeatureInsideClassLeft.setText(featureInsideList.get(position)
-                    .get("LeftInside"));
+            editFeatureInsideClassLeft.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getLeftInside());
 
             final TextView editFeatureInsideClassCenter = (TextView) convertView
                     .findViewById(R.id.txtFeatureInsideClassCenter2);
-            editFeatureInsideClassCenter.setText(featureInsideList
-                    .get(position).get("CenterInside"));
+            editFeatureInsideClassCenter.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getCenterInside());
 
             final TextView editFeatureInsideClassRight = (TextView) convertView
                     .findViewById(R.id.txtFeatureInsideClassRight2);
-            editFeatureInsideClassRight.setText(featureInsideList.get(position)
-                    .get("RightInside"));
+            editFeatureInsideClassRight.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getRightInside());
             final TextView editFeatureInsideClassFront = (TextView) convertView
                     .findViewById(R.id.txtFeatureInsideClassFront2);
-            editFeatureInsideClassFront.setText(featureInsideList.get(position).get(
-                    "FrontInside"));
-            /*final EditText showFeatureInsideFloor = (EditText) convertView
-                    .findViewById(R.id.showFeatureInsideFloor);
-            showFeatureInsideFloor.setText(featureInsideList.get(position).get(
-                    "FloorNo"));
-            Log.i("FloorNo", featureInsideList.get(position).get(
-                    "FloorNo"));
+            editFeatureInsideClassFront.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position).getFrontInside());
 
-            final EditText showFeatureInsideCave = (EditText) convertView
-                    .findViewById(R.id.showFeatureInsideCave);
-            showFeatureInsideCave.setText(featureInsideList.get(position).get(
-                    "CaveNo"));
-            Log.i("CaveNo", featureInsideList.get(position).get(
-                    "CaveNo"));
-
-            final EditText editFeatureInsideClassBack = (EditText) convertView
-                    .findViewById(R.id.editFeatureInsideClassBack);
-            editFeatureInsideClassBack.setText(featureInsideList.get(position)
-                    .get("BackInside"));
-
-            final EditText editFeatureInsideClassLeft = (EditText) convertView
-                    .findViewById(R.id.editFeatureInsideClassLeft);
-            editFeatureInsideClassLeft.setText(featureInsideList.get(position)
-                    .get("LeftInside"));
-
-            final EditText editFeatureInsideClassCenter = (EditText) convertView
-                    .findViewById(R.id.editFeatureInsideClassCenter);
-            editFeatureInsideClassCenter.setText(featureInsideList
-                    .get(position).get("CenterInside"));
-
-            final EditText editFeatureInsideClassRight = (EditText) convertView
-                    .findViewById(R.id.editFeatureInsideClassRight);
-            editFeatureInsideClassRight.setText(featureInsideList.get(position)
-                    .get("RightInside"));
-             final EditText editFeatureInsideClassFront = (EditText) convertView
-                    .findViewById(R.id.editFeatureInsideClassFront);
-            editFeatureInsideClassFront.setText(featureInsideList.get(position).get(
-                    "FrontInside"));
-            Log.i("FrontInside", featureInsideList.get(position).get(
-                            "FrontInside"));*/
 
             //horizontal_gridView_Inside_photo= (GridView)convertView.findViewById(R.id.horizontal_gridView_Inside_photo);
             //horizontal_gridView_Inside_video= (GridView)convertView.findViewById(R.id.horizontal_gridView_Inside_video);
-            txtPhoto = (TextView)convertView.findViewById(R.id.txtPhoto);
-            txtVideo = (TextView)convertView.findViewById(R.id.txtVideo);
+            txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
+            txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
 
-            arrDataPhoto2 = mDbHelper.SelectDataPhotoOfInside(reportID,sFeatureInsideID, "photo");
-
-            if (arrDataPhoto2 != null) {
-                Log.i("arrDataPhoto_Inside", sFeatureInsideID + " " + String.valueOf(arrDataPhoto2.length));
-                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-
-            } else {
-
-                txtPhoto.setText("รูปภาพ (0)");
-
-                Log.i("Recieve_inside", sFeatureInsideID + " Null!! ");
-
-            }
+//            arrDataPhoto2 = mDbHelper.SelectDataPhotoOfInside(reportID, sFeatureInsideID, "photo");
+//
+//            if (arrDataPhoto2 != null) {
+//                Log.i("arrDataPhoto_Inside", sFeatureInsideID + " " + String.valueOf(arrDataPhoto2.length));
+//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
+//
+//            } else {
+//
+//                txtPhoto.setText("รูปภาพ (0)");
+//
+//                Log.i("Recieve_inside", sFeatureInsideID + " Null!! ");
+//
+//            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
             imgEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent showActivity = new Intent(getActivity(), FeatureInsideActivity.class);
-                    showActivity.putExtra("featureid", sFeatureInsideID);
-                    showActivity.putExtra("type", "update");
-                    startActivity(showActivity);
+                    Log.i(TAG, " sFeatureInsideID " + sFeatureInsideID);
+                    Log.i(TAG, " sCaseReportID " + sCaseReportID);
+                    final TbSceneFeatureInSide tbSceneFeatureInSide = CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().get(position);
+                    Bundle i = new Bundle();
+                    i.putString(Bundle_InsideID, sFeatureInsideID);
+                    i.putString(Bundle_Inside_mode, "edit");
+                    i.putSerializable(Bundle_InsideTB, tbSceneFeatureInSide);
+                    addFeatureInsideFragment.setArguments(i);
+                    MainActivity.setFragment(addFeatureInsideFragment, 1);
                 }
             });
-            /*
-            final AlertDialog.Builder adbEdit = new AlertDialog.Builder(
-                    getActivity());
-            imgEdit.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
 
-                    adbEdit.setTitle("แก้ไขข้อมูล");
-                    adbEdit.setMessage("ยืนยันการแก้ไขข้อมูล [ ลักษณะภายในชั้นที่ "
-                            + featureInsideList.get(position).get("FloorNo")
-                            + "]");
-                    adbEdit.setNegativeButton("Cancel", null);
-                    adbEdit.setPositiveButton("Ok",
-                            new AlertDialog.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-
-                                    long saveStatus = mDbHelper.updateDataSelectedFeatureInside(
-                                            sFeatureInsideID,
-                                            Integer.parseInt(showFeatureInsideFloor
-                                                    .getText().toString()),
-                                            Integer.parseInt(showFeatureInsideCave
-                                                    .getText().toString()),
-                                            editFeatureInsideClassBack
-                                                    .getText().toString(),
-                                            editFeatureInsideClassLeft
-                                                    .getText().toString(),
-                                            editFeatureInsideClassCenter
-                                                    .getText().toString(),
-                                            editFeatureInsideClassRight
-                                                    .getText().toString(),
-                                            editFeatureInsideClassFront
-                                                    .getText().toString());
-                                    if (saveStatus <= 0) {
-                                        Log.i("update FeatureInside",
-                                                "Error!! ");
-                                    } else {
-                                        Log.i("update FeatureInside",
-                                                "ok!! ");
-                                        Toast.makeText(getActivity(),
-                                                "แก้ไขเรียบร้อยเเล้ว",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-
-                                }
-
-                            });
-                    adbEdit.show();
-                }
-            });*/
             // imgDelete
             ImageButton imgDelete = (ImageButton) convertView
                     .findViewById(R.id.imgDelete);
@@ -1487,26 +884,46 @@ return true;
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
-
-                                    long flg = mDbHelper
-                                            .DeleteSelectedFeatureInside(sFeatureInsideID);
+                                    long flg = dbHelper.DeleteSelectedData("scenefeatureinside", "FeatureInsideID", sFeatureInsideID);
+//                                    long flg = dbHelper
+//                                            .DeleteSelectedFeatureInside(sFeatureInsideID);
                                     if (flg > 0) {
-
-                                            long saveStatus2 = mDbHelper.DeletePhotoOfAllInside(sFeatureInsideID);
-                                            if (saveStatus2 <= 0) {
-                                                Log.i("DeletePhotoOf inside", "Cannot delete!! ");
-
-                                            } else {
-                                                Toast.makeText(getActivity(),
-                                                        "ลบข้อมูลเรียบรอยแล้ว",
-                                                        Toast.LENGTH_LONG).show();
-                                                ShowSelectedFeatureInside(reportID);
-                                            }
+                                        ShowSelectedFeatureInside();
+                                        if (snackbar == null || !snackbar.isShown()) {
+                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+                                                    , Snackbar.LENGTH_INDEFINITE)
+                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            ShowSelectedFeatureInside();
+                                                        }
+                                                    });
+                                            snackbar.show();
+                                        }
+//                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllInside(sFeatureInsideID);
+//                                        if (saveStatus2 <= 0) {
+//                                            Log.i("DeletePhotoOf inside", "Cannot delete!! ");
+//
+//                                        } else {
+//                                            Toast.makeText(getActivity(),
+//                                                    "ลบข้อมูลเรียบรอยแล้ว",
+//                                                    Toast.LENGTH_LONG).show();
+//                                            ShowSelectedFeatureInside(reportID);
+//                                        }
 
 
                                     } else {
-                                        Log.i("Delete FeatureInside",
-                                                "Delete Data Failed.");
+                                        if (snackbar == null || !snackbar.isShown()) {
+                                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                                    , Snackbar.LENGTH_INDEFINITE)
+                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            ShowSelectedFeatureInside();
+                                                        }
+                                                    });
+                                            snackbar.show();
+                                        }
                                     }
 
                                 }
@@ -1521,6 +938,7 @@ return true;
         }
 
     }
+
     public class ListviewSetOnTouchListener implements ListView.OnTouchListener {
         @SuppressLint("ClickableViewAccessibility")
         @Override
@@ -1543,6 +961,7 @@ return true;
             return true;
         }
     }
+
     /**
      * Sets ListView height dynamically based on the height of the items.
      *
@@ -1555,7 +974,7 @@ return true;
         if (listAdapter != null) {
 
             int numberOfItems = listAdapter.getCount();
-            Log.i("inside",String.valueOf(numberOfItems));
+            Log.i("inside", String.valueOf(numberOfItems));
             // Get total height of all items.
             int totalItemsHeight = 0;
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
@@ -1569,13 +988,13 @@ return true;
 
             int totalDividersHeight = listView.getDividerHeight() *
                     (numberOfItems - 1);
-            int totalHeight = totalItemsHeight + totalDividersHeight ;
-             // Set list height.
+            int totalHeight = totalItemsHeight + totalDividersHeight;
+            // Set list height.
             ViewGroup.LayoutParams params = listView.getLayoutParams();
             //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
-            params.height =totalHeight;
-            Log.i("inside totalHeight",String.valueOf(totalHeight));
-                  //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
+            params.height = totalHeight;
+            Log.i("inside totalHeight", String.valueOf(totalHeight));
+            //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
             listView.setLayoutParams(params);
             listView.requestLayout();
 
@@ -1586,31 +1005,28 @@ return true;
         }
 
     }
+
     public void onStart() {
         super.onStart();
-        Log.i("Check", "onStart detailscase "+reportID);
-
-        new showData().execute(reportID);
-        new showData2().execute(reportID);
-        ShowSelectedFeatureInside(reportID);
-        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
+        Log.i(TAG, "onStart detailscase ");
+        ShowSelectedFeatureInside();
+//        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
     }
+
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("onStop", "onStop detailscase");
-        saveAllDetailsData();
-        ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
+        Log.i(TAG, "onStop detailscase");
+
+//        ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("onResume", "onResume detailscase");
-      //  saveAllDetailsData();
-        new showData().execute(reportID);
-        new showData2().execute(reportID);
-        ShowSelectedFeatureInside(reportID);
+        Log.i(TAG, "onResume detailscase");
+
+//        ShowSelectedFeatureInside(reportID);
     }
 
     private Object mActivityResultSubscriber = new Object() {
@@ -1622,12 +1038,107 @@ return true;
             onActivityResult(requestCode, resultCode, data);
         }
     };
+
     @Override
     public void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        Log.i("onPause", "onPause detailscase");
-        saveAllDetailsData();
+        Log.i(TAG, "onPause detailscase");
+    }
+
+    private class DetailTextWatcher implements TextWatcher {
+        private EditText mEditText;
+
+        public DetailTextWatcher(EditText editText) {
+            mEditText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (mEditText == autoCompleteTypeOutside) {
+                btn_clear_txt_14.setVisibility(View.VISIBLE);
+                btn_clear_txt_14.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == edtFloorNum) {
+                btn_clear_txt_15.setVisibility(View.VISIBLE);
+                btn_clear_txt_15.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == edtCaveNum) {
+                btn_clear_txt_16.setVisibility(View.VISIBLE);
+                btn_clear_txt_16.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == editDetailOutside) {
+                btn_clear_txt_17.setVisibility(View.VISIBLE);
+                btn_clear_txt_17.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == editOutsideAroundBack) {
+                btn_clear_txt_18.setVisibility(View.VISIBLE);
+                btn_clear_txt_18.setOnClickListener(new DetailsOnClickListener());
+            }
+
+            if (mEditText == editOutsideAroundLeft) {
+                btn_clear_txt_19.setVisibility(View.VISIBLE);
+                btn_clear_txt_19.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == editOutsideAroundRight) {
+                btn_clear_txt_20.setVisibility(View.VISIBLE);
+                btn_clear_txt_20.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == editOutsideAroundFront) {
+                btn_clear_txt_21.setVisibility(View.VISIBLE);
+                btn_clear_txt_21.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == editFeatureAtTheScene) {
+                btn_clear_txt_23.setVisibility(View.VISIBLE);
+                btn_clear_txt_23.setOnClickListener(new DetailsOnClickListener());
+            }
+            if (mEditText == editDetailInside) {
+                btn_clear_txt_22.setVisibility(View.VISIBLE);
+                btn_clear_txt_22.setOnClickListener(new DetailsOnClickListener());
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            if (s == autoCompleteTypeOutside.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName = autoCompleteTypeOutside.getText().toString();
+                Log.i(TAG, "OutsideTypeName " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName);
+            } else if (s == edtFloorNum.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FloorNum = edtFloorNum.getText().toString();
+                Log.i(TAG, "FloorNum " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FloorNum);
+            } else if (s == edtCaveNum.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaveNum = edtCaveNum.getText().toString();
+                Log.i(TAG, "CaveNum " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().CaveNum);
+            } else if (s == editDetailOutside.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail = editDetailOutside.getText().toString();
+                Log.i(TAG, "OutsideTypeDetail " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
+            } else if (s == editOutsideAroundBack.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide = editOutsideAroundBack.getText().toString();
+                Log.i(TAG, "BackSide " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide);
+            } else if (s == editOutsideAroundLeft.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide = editOutsideAroundLeft.getText().toString();
+                Log.i(TAG, "LeftSide " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().getLeftSide());
+            } else if (s == editOutsideAroundRight.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().RightSide = editOutsideAroundRight.getText().toString();
+                Log.i(TAG, "RightSide " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().RightSide);
+            } else if (s == editOutsideAroundFront.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FrontSide = editOutsideAroundFront.getText().toString();
+                Log.i(TAG, "FrontSide " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().FrontSide);
+            } else if (s == editFeatureAtTheScene.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().SceneZone = editFeatureAtTheScene.getText().toString();
+                Log.i(TAG, "SceneZone " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().SceneZone);
+            } else if (s == editDetailInside.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().FeatureInsideDetail = editDetailInside.getText().toString();
+                Log.i(TAG, "FeatureInsideDetail " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().FeatureInsideDetail);
+            }
+        }
+
     }
 /*
     public void showAllPhoto2(String sFeatureInsideID) {
