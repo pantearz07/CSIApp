@@ -21,6 +21,7 @@ import com.scdc.csiapp.syncmodel.SyncAmphur;
 import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
 import com.scdc.csiapp.syncmodel.SyncComPosition;
 import com.scdc.csiapp.syncmodel.SyncDistrict;
+import com.scdc.csiapp.syncmodel.SyncEvidenceType;
 import com.scdc.csiapp.syncmodel.SyncGeography;
 import com.scdc.csiapp.syncmodel.SyncInqPosition;
 import com.scdc.csiapp.syncmodel.SyncInvPosition;
@@ -280,6 +281,12 @@ public class ApiConnect {
                         SyncSubCaseSceneType data_subcasescenetype = gson.fromJson(response.body().string(), SyncSubCaseSceneType.class);
                         if (data_subcasescenetype != null) {
                             dbHelper.syncSubCaseSceneType(data_subcasescenetype.getData());
+                        }
+                        break;
+                    case "evidencetype":
+                        SyncEvidenceType data_evidencetype = gson.fromJson(response.body().string(), SyncEvidenceType.class);
+                        if (data_evidencetype != null) {
+                            dbHelper.syncEvidenceType(data_evidencetype.getData());
                         }
                         break;
                 }

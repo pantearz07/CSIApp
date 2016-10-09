@@ -15,9 +15,12 @@ import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.tablemodel.TbAmphur;
 import com.scdc.csiapp.tablemodel.TbCaseScene;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
+import com.scdc.csiapp.tablemodel.TbClueShown;
 import com.scdc.csiapp.tablemodel.TbComPosition;
 import com.scdc.csiapp.tablemodel.TbDistrict;
+import com.scdc.csiapp.tablemodel.TbEvidenceType;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
+import com.scdc.csiapp.tablemodel.TbGatewayCriminal;
 import com.scdc.csiapp.tablemodel.TbGeography;
 import com.scdc.csiapp.tablemodel.TbInqPosition;
 import com.scdc.csiapp.tablemodel.TbInvPosition;
@@ -99,6 +102,7 @@ public class DBHelper extends SQLiteAssetHelper {
     TbScheduleGroup oScheduleGroup = new TbScheduleGroup();
     TbScheduleInvestigates oScheduleInvestigates = new TbScheduleInvestigates();
     TbSubcaseSceneType oSubcaseSceneType = new TbSubcaseSceneType();
+    TbEvidenceType oEvidenceType = new TbEvidenceType();
     TbUsers oUsers = new TbUsers();
 
     public DBHelper(Context context) {
@@ -837,7 +841,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 ContentValues Val = new ContentValues();
                 Val.put(oResultSceneType.COL_RSTypeID, tbResultSceneTypes.get(i).RSTypeID);
-                Val.put(oResultSceneType.COL_RSTypeName, tbResultSceneTypes.get(i).RSTypeName);
+                Val.put(oResultSceneType.COL_RSTypeNameEN, tbResultSceneTypes.get(i).RSTypeNameEN);
+                Val.put(oResultSceneType.COL_RSTypeNameTH, tbResultSceneTypes.get(i).RSTypeNameTH);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("resultscenetype", null, Val);
                     insert++;
@@ -995,6 +1000,51 @@ public class DBHelper extends SQLiteAssetHelper {
             Log.d(TAG, "Error in syncSubCaseSceneType " + e.getMessage().toString());
             return false;
         }
+    }
+
+    public boolean syncEvidenceType(List<TbEvidenceType> tbEvidenceTypes) {
+        if (tbEvidenceTypes.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = tbEvidenceTypes.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            db.beginTransaction();
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = tbEvidenceTypes.get(i).EvidenceTypeID;
+                strSQL = "SELECT * FROM evidencetype WHERE "
+                        + "EvidenceTypeID = '" + PRIMARY_KEY + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+                ContentValues Val = new ContentValues();
+                Val.put(oEvidenceType.COL_EvidenceTypeID, tbEvidenceTypes.get(i).EvidenceTypeID);
+                Val.put(oEvidenceType.COL_EvidenceTypeNameEN, tbEvidenceTypes.get(i).EvidenceTypeNameEN);
+                Val.put(oEvidenceType.COL_EvidenceTypeNameTH, tbEvidenceTypes.get(i).EvidenceTypeNameTH);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("evidencetype", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("evidencetype", Val, " EvidenceTypeID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                cursor.close();
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d(TAG, "Sync Table evidencetype: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncEvidenceType " + e.getMessage().toString());
+            return false;
+        }
+
     }
 
     public boolean syncNoticeCase(List<TbNoticeCase> tbNoticeCases) {
@@ -1710,7 +1760,7 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(temp.COL_FindEvidenceID, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID);
                         Val.put(temp.COL_CaseReportID, apiCaseScene.getTbFindEvidences().get(i).CaseReportID);
                         Val.put(temp.COL_SceneInvestID, apiCaseScene.getTbFindEvidences().get(i).SceneInvestID);
-                        Val.put(temp.COL_EvidenceTypeName, apiCaseScene.getTbFindEvidences().get(i).EvidenceTypeName);
+                        Val.put(temp.COL_EvidenceTypeID, apiCaseScene.getTbFindEvidences().get(i).EvidenceTypeID);
                         Val.put(temp.COL_EvidenceNumber, apiCaseScene.getTbFindEvidences().get(i).EvidenceNumber);
                         Val.put(temp.COL_FindEvidenceZone, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceZone);
                         Val.put(temp.COL_FindEvidencecol, apiCaseScene.getTbFindEvidences().get(i).FindEvidencecol);
@@ -1746,6 +1796,52 @@ public class DBHelper extends SQLiteAssetHelper {
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbResultScenes().get(i).RSID)});
                             Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbGatewayCriminals
+            if (apiCaseScene.getTbGatewayCriminals() != null) {
+                for (int i = 0; i < apiCaseScene.getTbGatewayCriminals().size(); i++) {
+                    strSQL = "SELECT * FROM resultscene "
+                            + " WHERE RSID = '" + apiCaseScene.getTbGatewayCriminals().get(i).RSID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbResultScene temp = new TbResultScene();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_RSID, apiCaseScene.getTbGatewayCriminals().get(i).RSID);
+                        Val.put(temp.COL_RSTypeID, apiCaseScene.getTbGatewayCriminals().get(i).RSTypeID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbGatewayCriminals().get(i).CaseReportID);
+                        Val.put(temp.COL_RSDetail, apiCaseScene.getTbGatewayCriminals().get(i).RSDetail);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("resultscene", null, Val);
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbGatewayCriminals().get(i).RSID)});
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Update ");
+                        }
+                    }
+                }
+            }
+            // บันทึกข้อมูลลง tbClueShowns
+            if (apiCaseScene.getTbClueShowns() != null) {
+                for (int i = 0; i < apiCaseScene.getTbClueShowns().size(); i++) {
+                    strSQL = "SELECT * FROM resultscene "
+                            + " WHERE RSID = '" + apiCaseScene.getTbClueShowns().get(i).RSID + "' " +
+                            "AND CaseReportID = '" + sCaseReportID + "'";
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        TbResultScene temp = new TbResultScene();
+                        ContentValues Val = new ContentValues();
+                        Val.put(temp.COL_RSID, apiCaseScene.getTbClueShowns().get(i).RSID);
+                        Val.put(temp.COL_RSTypeID, apiCaseScene.getTbClueShowns().get(i).RSTypeID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbClueShowns().get(i).CaseReportID);
+                        Val.put(temp.COL_RSDetail, apiCaseScene.getTbClueShowns().get(i).RSDetail);
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("resultscene", null, Val);
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbClueShowns().get(i).RSID)});
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Update ");
                         }
                     }
                 }
@@ -2432,7 +2528,7 @@ public class DBHelper extends SQLiteAssetHelper {
                                     temp16.FindEvidenceID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidenceID));
                                     temp16.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_CaseReportID));
                                     temp16.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_SceneInvestID));
-                                    temp16.EvidenceTypeName = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceTypeName));
+                                    temp16.EvidenceTypeID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceTypeID));
                                     temp16.EvidenceNumber = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceNumber));
                                     temp16.FindEvidenceZone = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidenceZone));
                                     temp16.FindEvidencecol = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidencecol));
@@ -2470,6 +2566,56 @@ public class DBHelper extends SQLiteAssetHelper {
                         apiCaseSceneCase.setTbResultScenes(tbResultScenes);
 
                     }
+                    // Index tbGatewayCriminals ดึงจากตาราง resultscene ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM resultscene "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'"
+                                + " AND RSTypeID = 'GC'";
+                        List<TbGatewayCriminal> tbGatewayCriminals = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbGatewayCriminals == null) {
+                                tbGatewayCriminals = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbGatewayCriminal temp18 = new TbGatewayCriminal();
+                                    temp18.RSID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_RSID));
+                                    temp18.RSTypeID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_RSTypeID));
+                                    temp18.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_CaseReportID));
+                                    temp18.RSDetail = cursor2.getString(cursor2.getColumnIndex(temp18.COL_RSDetail));
+                                    tbGatewayCriminals.add(temp18);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbGatewayCriminals(tbGatewayCriminals);
+
+                    }
+                    // Index tbClueShowns ดึงจากตาราง resultscene ใช้ค่าจาก Index tbCaseScene
+                    if (temp.CaseReportID != null) {
+                        strSQL = "SELECT * FROM resultscene "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'"
+                                + " AND RSTypeID = 'CS'";
+                        List<TbClueShown> tbClueShowns = null;
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (tbClueShowns == null) {
+                                tbClueShowns = new ArrayList<>(cursor2.getCount());
+                            }
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    TbClueShown temp19 = new TbClueShown();
+                                    temp19.RSID = cursor2.getString(cursor2.getColumnIndex(temp19.COL_RSID));
+                                    temp19.RSTypeID = cursor2.getString(cursor2.getColumnIndex(temp19.COL_RSTypeID));
+                                    temp19.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp19.COL_CaseReportID));
+                                    temp19.RSDetail = cursor2.getString(cursor2.getColumnIndex(temp19.COL_RSDetail));
+                                    tbClueShowns.add(temp19);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setTbClueShowns(tbClueShowns);
+
+                    }
                     // Index tbPropertyLosses ดึงจากตาราง propertyloss ใช้ค่าจาก Index tbCaseScene
                     if (temp.CaseReportID != null) {
                         strSQL = "SELECT * FROM propertyloss "
@@ -2482,15 +2628,15 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() > 0) {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
-                                    TbPropertyLoss temp18 = new TbPropertyLoss();
-                                    temp18.PropertyLossID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossID));
-                                    temp18.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_CaseReportID));
-                                    temp18.PropertyLossName = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossName));
-                                    temp18.PropertyLossNumber = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossNumber));
-                                    temp18.PropertyLossUnit = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossUnit));
-                                    temp18.PropertyLossPosition = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropertyLossPosition));
-                                    temp18.PropInsurance = cursor2.getString(cursor2.getColumnIndex(temp18.COL_PropInsurance));
-                                    tbPropertyLosses.add(temp18);
+                                    TbPropertyLoss temp20 = new TbPropertyLoss();
+                                    temp20.PropertyLossID = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossID));
+                                    temp20.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp20.COL_CaseReportID));
+                                    temp20.PropertyLossName = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossName));
+                                    temp20.PropertyLossNumber = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossNumber));
+                                    temp20.PropertyLossUnit = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossUnit));
+                                    temp20.PropertyLossPosition = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossPosition));
+                                    temp20.PropInsurance = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropInsurance));
+                                    tbPropertyLosses.add(temp20);
                                 }
                             }
                         }
@@ -2900,5 +3046,114 @@ public class DBHelper extends SQLiteAssetHelper {
         } catch (Exception e) {
             return -1;
         }
+    }
+    public String[][] SelectAllEvidenceType() {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM evidencetype ORDER BY EvidenceTypeID ASC";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        for (int j = 0; j < cursor.getColumnCount(); j++) {
+                            arrData[i][j] = cursor.getString(j);
+                        }
+                        // Log.i(TAG, "show SelectAllEvidenceType " + arrData[i][0]);
+                        i++;
+                    } while (cursor.moveToNext());
+
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+    public String[][] SelectDataMultimediaFile(String sCaseReportID,
+                                               String sFileType) {
+        // TODO Auto-generated method stub
+        try {
+            String arrData[][] = null;
+
+            mDb = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM multimediafile WHERE "
+                    + oMultimediaFile.CaseReportID + " = '" + sCaseReportID + "' AND "
+                    + oMultimediaFile.COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
+                    + oMultimediaFile.COL_FileID + " DESC";
+            Log.i("show", strSQL);
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+                        arrData[i][3] = cursor.getString(3);
+                        arrData[i][4] = cursor.getString(4);
+                        arrData[i][5] = cursor.getString(5);
+
+                        Log.i(TAG,"show Photo "+sFileType+ arrData[i][0]);
+                        i++;
+                    } while (cursor.moveToNext());
+
+                }
+
+            }
+
+            cursor.close();
+            mDb.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public List<TbMultimediaFile> selectedMediafiles(String sCaseReportID, String sFileType){
+        SQLiteDatabase db;
+        db = this.getReadableDatabase(); // Read Data
+        String strSQL = "SELECT * FROM multimediafile WHERE "
+                + oMultimediaFile.COL_CaseReportID + " = '" + sCaseReportID + "' AND "
+                + oMultimediaFile.COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
+                + oMultimediaFile.COL_FileID + " DESC";
+        List<TbMultimediaFile> tbMultimediaFiles = null;
+        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+            if (tbMultimediaFiles == null) {
+                tbMultimediaFiles = new ArrayList<>(cursor2.getCount());
+            }
+            if (cursor2.getCount() > 0) {
+                cursor2.moveToPosition(-1);
+                while (cursor2.moveToNext()) {
+                    TbMultimediaFile temp15 = new TbMultimediaFile();
+                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
+                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
+                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
+                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
+                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
+                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                    tbMultimediaFiles.add(temp15);
+                }
+            }
+        }
+        return tbMultimediaFiles;
     }
 }

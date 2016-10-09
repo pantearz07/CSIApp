@@ -101,7 +101,7 @@
             android:src="@drawable/save" />
     </LinearLayout>
 
-    <com.example.pantearz07.csidatatabs.DrawingView
+    <com.scdc.csiapp.invmain.DrawingView
         android:id="@+id/drawing"
         android:layout_width="fill_parent"
         android:layout_height="0dp"

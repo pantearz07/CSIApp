@@ -123,6 +123,7 @@ public class DetailsTabFragment extends Fragment {
     public static String Bundle_InsideID = "insideid";
     public static String Bundle_InsideTB = "tbSceneFeatureInSide";
     public static String Bundle_Inside_mode = "mode";
+    public static String Bundle_Index = "position";
     public static List<TbSceneFeatureInSide> tbSceneFeatureInSideList = null;
     Button btnAddFeatureInside;
     ListView listViewAddFeatureInside;
@@ -862,6 +863,7 @@ public class DetailsTabFragment extends Fragment {
                     Bundle i = new Bundle();
                     i.putString(Bundle_InsideID, sFeatureInsideID);
                     i.putString(Bundle_Inside_mode, "edit");
+                    i.putInt(Bundle_Index,position);
                     i.putSerializable(Bundle_InsideTB, tbSceneFeatureInSide);
                     addFeatureInsideFragment.setArguments(i);
                     MainActivity.setFragment(addFeatureInsideFragment, 1);
@@ -884,10 +886,12 @@ public class DetailsTabFragment extends Fragment {
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
+                                    CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("scenefeatureinside", "FeatureInsideID", sFeatureInsideID);
 //                                    long flg = dbHelper
 //                                            .DeleteSelectedFeatureInside(sFeatureInsideID);
                                     if (flg > 0) {
+                                        Log.i(TAG, "scenefeatureinside " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
                                         ShowSelectedFeatureInside();
                                         if (snackbar == null || !snackbar.isShown()) {
                                             snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)

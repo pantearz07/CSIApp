@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.main.GetDateTime;
-import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
 
 /**
@@ -37,7 +36,10 @@ public class AddFeatureInsideFragment extends Fragment {
     TbSceneFeatureInSide tbSceneFeatureInSide;
     DBHelper dbHelper;
     DetailsTabFragment detailsTabFragment;
-    String sFeatureInsideID,mode;
+    CSIDataTabFragment csiDataTabFragment;
+    String sFeatureInsideID, mode;
+    int position = 0;
+
     public AddFeatureInsideFragment() {
 
     }
@@ -58,6 +60,7 @@ public class AddFeatureInsideFragment extends Fragment {
         dbHelper = new DBHelper(getActivity());
         tbSceneFeatureInSide = new TbSceneFeatureInSide();
         detailsTabFragment = new DetailsTabFragment();
+        csiDataTabFragment = new CSIDataTabFragment();
         getDateTime = new GetDateTime();
         Log.i(TAG, "tbSceneFeatureInSideList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
 
@@ -80,7 +83,9 @@ public class AddFeatureInsideFragment extends Fragment {
         editFeatureInsideClassFront.addTextChangedListener(new InsideTextWatcher(editFeatureInsideClassFront));
         editFeatureInsideClassLeft.addTextChangedListener(new InsideTextWatcher(editFeatureInsideClassLeft));
 
-        if(mode == "edit"){
+        if (mode == "edit") {
+            position = args.getInt(DetailsTabFragment.Bundle_Index, -1);
+            Log.i(TAG, "position " + position);
             tbSceneFeatureInSide = (TbSceneFeatureInSide) args.getSerializable(DetailsTabFragment.Bundle_InsideTB);
             editFeatureInsideFloor.setText(tbSceneFeatureInSide.getFloorNo());
             editFeatureInsideCave.setText(tbSceneFeatureInSide.getCaveNo());
@@ -110,17 +115,22 @@ public class AddFeatureInsideFragment extends Fragment {
 
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-//                if(DetailsTabFragment.tbSceneFeatureInSideList == null){
-//                    DetailsTabFragment.tbSceneFeatureInSideList = new ArrayList<>();
-//                }
+
                 tbSceneFeatureInSide.FeatureInsideID = sFeatureInsideID;
                 tbSceneFeatureInSide.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
                 DetailsTabFragment.tbSceneFeatureInSideList.add(tbSceneFeatureInSide);
                 CSIDataTabFragment.apiCaseScene.setTbSceneFeatureInSide(DetailsTabFragment.tbSceneFeatureInSideList);
-                Log.i(TAG, "tbSceneFeatureInSideList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
-                    MainActivity.setFragment(detailsTabFragment, 0);
+                    if(mode == "edit"){
+                        CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().remove(position);
+                        Log.i(TAG, "tbSceneFeatureInSideList remove num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
+
+                    }else{
+                        Log.i(TAG, "tbSceneFeatureInSideList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
+
+                    }
+                    getActivity().onBackPressed();
                 }
 
             }

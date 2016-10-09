@@ -76,6 +76,7 @@ public class CSIDataTabFragment extends Fragment {
         apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
 //        tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
         mode = args.getString(Bundle_mode);
+
         Log.i(TAG, " NoticeCaseID " + apiCaseScene.getTbNoticeCase().NoticeCaseID.toString());
         //Log.i(TAG, " NoticeCaseID " + tbNoticeCase.NoticeCaseID.toString());
         return x;

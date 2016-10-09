@@ -19,9 +19,9 @@ public class TbFindEvidence implements Serializable {
     public String COL_SceneInvestID = "SceneInvestID";
     public String SceneInvestID = "";
 
-    // From Table findevidence field name EvidenceTypeName
-    public String COL_EvidenceTypeName = "EvidenceTypeName";
-    public String EvidenceTypeName = "";
+    // From Table findevidence field name EvidenceTypeID
+    public String COL_EvidenceTypeID = "EvidenceTypeID";
+    public String EvidenceTypeID = "";
 
     // From Table findevidence field name EvidenceNumber
     public String COL_EvidenceNumber = "EvidenceNumber";
@@ -71,12 +71,12 @@ public class TbFindEvidence implements Serializable {
         SceneInvestID = sceneInvestID;
     }
 
-    public String getEvidenceTypeName() {
-        return EvidenceTypeName;
+    public String getEvidenceTypeID() {
+        return EvidenceTypeID;
     }
 
-    public void setEvidenceTypeName(String evidenceTypeName) {
-        EvidenceTypeName = evidenceTypeName;
+    public void setEvidenceTypeID(String evidenceTypeID) {
+        EvidenceTypeID = evidenceTypeID;
     }
 
     public String getEvidenceNumber() {

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.main.GetDateTime;
-import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.tablemodel.TbPropertyLoss;
 
 /**
@@ -31,7 +30,7 @@ public class AddPropertyLossFragment extends Fragment {
     FloatingActionButton fabBtnDetails;
     private CoordinatorLayout rootLayout;
     private static final String TAG = "DEBUG-AddPropertyLossFragment";
-    EditText editPropertyLossName, editPropertyLossAmount,editPropertyLossPosition,editPropertyInsurance;
+    EditText editPropertyLossName, editPropertyLossAmount, editPropertyLossPosition, editPropertyInsurance;
     AutoCompleteTextView autoPropertyLossUnit;
     private GridView horizontal_gridView_PL_photo, horizontal_gridView_PL_video;
     private TextView txtPhoto, txtVideo;
@@ -39,7 +38,9 @@ public class AddPropertyLossFragment extends Fragment {
     TbPropertyLoss tbPropertyLoss;
     DBHelper dbHelper;
     ResultTabFragment resultTabFragment;
-    String sPLID,mode;
+    String sPLID, mode;
+    int position = 0;
+
     public AddPropertyLossFragment() {
 
     }
@@ -87,7 +88,9 @@ public class AddPropertyLossFragment extends Fragment {
         editPropertyLossPosition.addTextChangedListener(new PropertyTextWatcher(editPropertyLossPosition));
         editPropertyInsurance.addTextChangedListener(new PropertyTextWatcher(editPropertyInsurance));
 
-        if(mode == "edit"){
+        if (mode == "edit") {
+            position = args.getInt(ResultTabFragment.Bundle_Index, -1);
+            Log.i(TAG, "position " + position);
             tbPropertyLoss = (TbPropertyLoss) args.getSerializable(ResultTabFragment.Bundle_TB);
             editPropertyLossName.setText(tbPropertyLoss.getPropertyLossName());
             editPropertyLossAmount.setText(tbPropertyLoss.getPropertyLossNumber());
@@ -96,7 +99,7 @@ public class AddPropertyLossFragment extends Fragment {
             editPropertyInsurance.setText(tbPropertyLoss.getPropInsurance());
 
         }
-        horizontal_gridView_PL_photo= (GridView) view.findViewById(R.id.horizontal_gridView_PL_photo);
+        horizontal_gridView_PL_photo = (GridView) view.findViewById(R.id.horizontal_gridView_PL_photo);
         horizontal_gridView_PL_video = (GridView) view.findViewById(R.id.horizontal_gridView_PL_video);
         txtPhoto = (TextView) view.findViewById(R.id.txtPhoto);
         txtVideo = (TextView) view.findViewById(R.id.txtVideo);
@@ -126,7 +129,15 @@ public class AddPropertyLossFragment extends Fragment {
                 Log.i(TAG, "tbPropertyLosses num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().size()));
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
-                    MainActivity.setFragment(resultTabFragment, 0);
+                    if(mode == "edit"){
+                        CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().remove(position);
+                        Log.i(TAG, "tbPropertyLosses remove num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().size()));
+
+                    }else{
+                        Log.i(TAG, "tbPropertyLosses num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().size()));
+
+                    }
+                    getActivity().onBackPressed();
                 }
 
             }

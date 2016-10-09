@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -20,8 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,12 +31,15 @@ import java.io.FileOutputStream;
  * Created by Pantearz07 on 25/12/2558.
  */
 public class DrawingDiagramFragment extends Fragment implements OnClickListener {
+    private static final String TAG = "DEBUG-DrawingDiagramFragment";
     SQLiteDBHelper mDbHelper;
+    DBHelper dbHelper;
     SQLiteDatabase mDb;
     private static final String ARG_REPORT_ID = "report_id";
     private static final String ARG_MEDIA_NAME = "MediaName";
     private static final String ARG_MEDIA_DESC = "MediaDescription";
-    TextView txtFilesName,txtDescFile;
+    TextView txtFilesName, txtDescFile;
+    String sDiagramID, FileType, FilePath, FileDescription;
     // custom drawing view
     private DrawingView drawView;
     // buttons
@@ -44,20 +48,7 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
     private float smallBrush, mediumBrush, largeBrush;
     GetDateTime getDateTime;
     String[] updateDT;
-    public DrawingDiagramFragment newInstance(String reportID,
-                                              String sMediaName, String sMediaDescription) {
-        DrawingDiagramFragment drawingDiagramFragment = new DrawingDiagramFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_REPORT_ID, reportID);
-        Log.i("  Drawing  ", sMediaName + " " + sMediaDescription);
-        args.putString(ARG_MEDIA_NAME, sMediaName);
-        args.putString(ARG_MEDIA_DESC, sMediaDescription);
-
-        drawingDiagramFragment.setArguments(args);
-
-        return drawingDiagramFragment;
-
-    }
+    TbMultimediaFile tbMultimediaFile;
 
     public DrawingDiagramFragment() {
 
@@ -78,18 +69,24 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                 container, false);
 
         // Permission StrictMode
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+//        if (android.os.Build.VERSION.SDK_INT > 9) {
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+//                    .permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//        }
         // database
+        Bundle args = getArguments();
+        sDiagramID = args.getString(DiagramTabFragment.Bundle_ID);
+        FileDescription = args.getString(DiagramTabFragment.Bundle_MediaDescription, "");
+        Log.i(TAG, "  Drawing  " + sDiagramID + " " + FileDescription);
+        tbMultimediaFile = new TbMultimediaFile();
+        dbHelper = new DBHelper(getActivity());
         mDbHelper = new SQLiteDBHelper(getActivity());
-        txtFilesName = (TextView)rootView.findViewById(R.id.txtFilesName);
-        txtDescFile = (TextView)rootView.findViewById(R.id.txtDescFile);
-        txtFilesName.setText(getArguments().getString(ARG_MEDIA_NAME));
-        txtDescFile.setText(getArguments().getString(ARG_MEDIA_DESC));
-        getDateTime =new GetDateTime();
+        txtFilesName = (TextView) rootView.findViewById(R.id.txtFilesName);
+        txtDescFile = (TextView) rootView.findViewById(R.id.txtDescFile);
+        txtFilesName.setText(sDiagramID);
+        txtDescFile.setText(FileDescription);
+        getDateTime = new GetDateTime();
         updateDT = getDateTime.getDateTimeNow();
 
         // get drawing view
@@ -102,7 +99,7 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
         //currPaint.setImageDrawable(getResources().getDrawable(
         //        R.drawable.paint_pressed));
         currPaint.setImageResource(getResources().getIdentifier(
-                "paint_pressed", "drawable", "com.example.pantearz07.navitab"));
+                "paint_pressed", "drawable", "com.scdc.csiapp"));
 
         // sizes from dimensions
         smallBrush = getResources().getInteger(R.integer.small_size);
@@ -145,17 +142,17 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
             // update ui
 
             imgView.setImageResource(getResources().getIdentifier(
-                    "paint_pressed", "drawable", "com.example.pantearz07.navitab"));
+                    "paint_pressed", "drawable", "com.scdc.csiapp"));
 
             currPaint.setImageResource(getResources().getIdentifier(
-                    "paint", "drawable", "com.example.pantearz07.navitab"));
+                    "paint", "drawable", "com.scdc.csiapp"));
 
             // imgView.setImageDrawable(getResources().getDrawable(
             //        R.drawable.paint_pressed));
-           // currPaint.setImageDrawable(getResources().getDrawable(
-           //         R.drawable.paint));
+            // currPaint.setImageDrawable(getResources().getDrawable(
+            //         R.drawable.paint));
             currPaint.setImageResource(getResources().getIdentifier(
-                    "paint", "drawable", "com.example.pantearz07.navitab"));
+                    "paint", "drawable", "com.scdc.csiapp"));
 
             currPaint = (ImageButton) view;
         }
@@ -278,11 +275,18 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                                     .getExternalStorageDirectory().toString();
                             File myDir = new File(root + "/CSIFiles/Pictures/");
                             myDir.mkdirs();
-                            String timeStamp = updateDT[0]+" "+updateDT[1];
-
-                            String sMediaName = getArguments().getString(
-                                    ARG_MEDIA_NAME);
-                            String fname = sMediaName + ".jpg";
+                            String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+                            String timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+                            tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+                            tbMultimediaFile.FileID = sDiagramID;
+                            tbMultimediaFile.FileDescription = FileDescription;
+                            tbMultimediaFile.FileType = "diagram";
+                            tbMultimediaFile.FilePath = sDiagramID + ".jpg";
+                            tbMultimediaFile.Timestamp = timeStamp;
+                             DiagramTabFragment.tbMultimediaFileList.add(tbMultimediaFile);
+                            CSIDataTabFragment.apiCaseScene.setTbMultimediaFiles(DiagramTabFragment.tbMultimediaFileList);
+                            Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+                            String fname = sDiagramID + ".jpg";
                             File file = new File(myDir, fname);
                             if (file.exists())
                                 file.delete();
@@ -293,21 +297,17 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                                         Bitmap.CompressFormat.JPEG, 100, out);
                                 out.flush();
                                 out.close();
-                                Toast savedToast = Toast.makeText(getActivity()
-                                                .getApplicationContext(),
-                                        "Drawing saved to Gallery!" + myDir
-                                                + " : " + fname,
-                                        Toast.LENGTH_SHORT);
-                                savedToast.show();
-                                mDbHelper.saveDataMultimediaifile(getArguments()
-                                                .getString(ARG_REPORT_ID),
-                                        sMediaName, "diagram",
-                                        fname,
 
-                                        getArguments()
-                                                .getString(ARG_MEDIA_DESC),
-                                        timeStamp);
-                                getActivity().onBackPressed();
+                                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                                if (isSuccess) {
+                                    Toast savedToast = Toast.makeText(getActivity()
+                                                    .getApplicationContext(),
+                                            "Drawing saved to Gallery!" + myDir
+                                                    + " : " + fname,
+                                            Toast.LENGTH_SHORT);
+                                    savedToast.show();
+                                    getActivity().onBackPressed();
+                                }
 
                             } catch (Exception e) {
                                 e.printStackTrace();

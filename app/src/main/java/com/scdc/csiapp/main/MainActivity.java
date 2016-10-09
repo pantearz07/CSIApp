@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
 
         mFragmentManager = getSupportFragmentManager();
-        setFragment(caseSceneListFragment,0);
+        setFragment(caseSceneListFragment,1);
 //        FragmentTransaction fthome = mFragmentManager.beginTransaction();
 //        fthome.replace(R.id.containerView, caseSceneListFragment);
 //        fthome.addToBackStack(null);
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("caseSceneListFragment")) {
-                setFragment(caseSceneListFragment,0);
+                setFragment(caseSceneListFragment,1);
 //                FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
 //                fthome2.replace(R.id.containerView, caseSceneListFragment);
 //                fthome2.addToBackStack(null);
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
-                    setFragment(caseSceneListFragment,0);
+                    setFragment(caseSceneListFragment,1);
 //                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
 //                      fthome2.replace(R.id.containerView, caseSceneListFragment);
 //                    fthome2.addToBackStack(null);
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
-                    setFragment(settingFragment,0);
+                    setFragment(settingFragment,1);
 //                    FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
 //                    ftsetting.replace(R.id.containerView, settingFragment);
 //                    ftsetting.addToBackStack(null);

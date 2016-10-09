@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
@@ -38,7 +36,9 @@ import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.main.TimeDialog;
+import com.scdc.csiapp.tablemodel.TbClueShown;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
+import com.scdc.csiapp.tablemodel.TbGatewayCriminal;
 import com.scdc.csiapp.tablemodel.TbPropertyLoss;
 import com.scdc.csiapp.tablemodel.TbResultScene;
 
@@ -87,15 +87,15 @@ public class ResultTabFragment extends Fragment {
 
     private ViewGroup viewByIdadddialog;
     // gatewaycriminal : ทางเข้าออกของคนร้าย
-
     private ArrayList<HashMap<String, String>> gatewaycriminalList;
     private ListView listViewGatewayCriminal;
     private Button btnAddGatewayCriminal;
-
+    public static List<TbGatewayCriminal> tbGatewayCriminals = null;
     // clueshown : ร่องรอยที่ปรากฏ
     private ArrayList<HashMap<String, String>> clueShownList;
     private ListView listViewClueShown;
     private Button btnAddClueShown;
+    public static List<TbClueShown> tbClueShowns = null;
     public static List<TbResultScene> tbResultScenes = null;
     // property
     private ArrayList<HashMap<String, String>> propertylossList;
@@ -118,9 +118,13 @@ public class ResultTabFragment extends Fragment {
     public static String Bundle_ID = "dataid";
     public static String Bundle_TB = "datatb";
     public static String Bundle_mode = "mode";
+    public static String Bundle_Index = "position";
+    public static String Bundle_RSType = "rstype";
     public static String Bundle_SceneInvestID = "SceneInvestID";
     AddFindEvidenceFragment addFindEvidenceFragment;
     AddPropertyLossFragment addPropertyLossFragment;
+    AddGatewayFragment addGatewayFragment;
+    AddClueShownFragment addClueShownFragment;
 
     @Nullable
     @Override
@@ -147,6 +151,9 @@ public class ResultTabFragment extends Fragment {
 
         addFindEvidenceFragment = new AddFindEvidenceFragment();
         addPropertyLossFragment = new AddPropertyLossFragment();
+        addGatewayFragment = new AddGatewayFragment();
+        addClueShownFragment = new AddClueShownFragment();
+
         sRSID = null;
         mViewAddGatewayCriminal = viewDetails.findViewById(R.id.tableRowAddGatewayCriminal);
         mViewAddClueShown = viewDetails.findViewById(R.id.tableRowAddClueShown);
@@ -277,19 +284,39 @@ public class ResultTabFragment extends Fragment {
         editCompleteSceneTime.setOnClickListener(new ResultOnClickListener());
 
 // ทางเข้า-ออกคนร้าย
+
+//        tbResultScenes = new ArrayList<>();
+        if (CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals() == null) {
+            tbGatewayCriminals = new ArrayList<>();
+            Log.i(TAG, "getTbGatewayCriminals null");
+        } else {
+            tbGatewayCriminals = CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals();
+            Log.i(TAG, "getTbGatewayCriminals not null");
+
+        }
+
         listViewGatewayCriminal = (ListView) viewDetails
                 .findViewById(R.id.listViewAddGatewayCriminal);
         listViewGatewayCriminal.setVisibility(View.GONE);
         listViewGatewayCriminal.setOnTouchListener(new ListviewSetOnTouchListener());
-        ShowSelectedGatewayCriminal(reportID, "gatewaycriminal");
+        ShowSelectedGatewayCriminal();
         btnAddGatewayCriminal = (Button) viewDetails.findViewById(R.id.btnAddGatewayCriminal);
         btnAddGatewayCriminal.setOnClickListener(new ResultOnClickListener());
 // ร่องรอยที่ปรากฏ ตรวจพบร่องรอยการรื้อค้น/งัดแงะบริเวณ clueshown
+        if (CSIDataTabFragment.apiCaseScene.getTbClueShowns() == null) {
+            tbClueShowns = new ArrayList<>();
+
+            Log.i(TAG, "getTbClueShowns null");
+        } else {
+            tbClueShowns = CSIDataTabFragment.apiCaseScene.getTbClueShowns();
+            Log.i(TAG, "getTbClueShowns not null");
+
+        }
         listViewClueShown = (ListView) viewDetails
                 .findViewById(R.id.listViewAddClueShown);
         listViewClueShown.setVisibility(View.GONE);
         listViewClueShown.setOnTouchListener(new ListviewSetOnTouchListener());
-        ShowSelectedClueShown(reportID, "clueshown");
+        ShowSelectedClueShown();
         btnAddClueShown = (Button) viewDetails.findViewById(R.id.btnAddClueShown);
         btnAddClueShown.setOnClickListener(new ResultOnClickListener());
 
@@ -316,7 +343,7 @@ public class ResultTabFragment extends Fragment {
             Log.i(TAG, "getTbFindEvidences null");
         } else {
             tbFindEvidences = CSIDataTabFragment.apiCaseScene.getTbFindEvidences();
-            Log.i(TAG, "getTbFindEvidences not null");
+            Log.i(TAG, "getTbFindEvidences not null  " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().size()));
         }
         listViewEvidences = (ListView) viewDetails
                 .findViewById(R.id.listViewEvidences);
@@ -331,6 +358,14 @@ public class ResultTabFragment extends Fragment {
         fabBtn.setOnClickListener(new ResultOnClickListener());
 
         return viewDetails;
+    }
+
+    public static List<TbGatewayCriminal> cloneList(List<TbGatewayCriminal> tbResultScenesList) {
+        List<TbGatewayCriminal> cloneList = new ArrayList<TbGatewayCriminal>(tbResultScenesList.size());
+        for (TbGatewayCriminal tbGatewayCriminal : tbResultScenesList) {
+            cloneList.add(new TbGatewayCriminal());
+        }
+        return cloneList;
     }
 
     public class ResultOnClickListener implements View.OnClickListener {
@@ -407,29 +442,27 @@ public class ResultTabFragment extends Fragment {
             }
             if (v == btnAddGatewayCriminal) {
                 Log.i("GatewayCriminal", "showlist");
+
+                Log.i(TAG, "btnAddGatewayCriminal");
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-
-                sRSID = "GC_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-                Intent showActivity = new Intent(getActivity(), GatewayCriminalActivity.class);
-                showActivity.putExtra("sGatewayCriminalID", sRSID);
-                showActivity.putExtra("type", "new");
-                startActivity(showActivity);
-                // ShowSelectedGatewayCriminal(reportID, "gatewaycriminal");
-                //viewByIdadddialog = (ViewGroup) v.findViewById(R.id.layout_gatewaycriminal_dialog);
-
-                //  createdDialog(DIALOG_AddGatewayCriminal).show();
+                String sRSID = "GC_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                Bundle i = new Bundle();
+                i.putString(Bundle_ID, sRSID);
+                i.putString(Bundle_mode, "new");
+                i.putString(Bundle_RSType, "GC");
+                addGatewayFragment.setArguments(i);
+                MainActivity.setFragment(addGatewayFragment, 1);
             }
             if (v == btnAddClueShown) {
-                Log.i("ClueShown", "showlist");
-                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-                sRSID = "CS_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-                Intent showActivity = new Intent(getActivity(), ClueShownActivity.class);
-                showActivity.putExtra("sClueShownID", sRSID);
-                showActivity.putExtra("type", "new");
-                startActivity(showActivity);
-                /*viewByIdadddialog = (ViewGroup) v.findViewById(R.id.layout_clueshown_dialog);
 
-                createdDialog(DIALOG_AddClueShown).show();*/
+                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+                String sRSID = "CS_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                Bundle i = new Bundle();
+                i.putString(Bundle_ID, sRSID);
+                i.putString(Bundle_mode, "new");
+                i.putString(Bundle_RSType, "CS");
+                addClueShownFragment.setArguments(i);
+                MainActivity.setFragment(addClueShownFragment, 1);
             }
             if (v == btnPropertyLoss) {
 
@@ -449,8 +482,23 @@ public class ResultTabFragment extends Fragment {
                 String sSceneInvestID = null;
                 if (CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations() != null) {
                     sceneinvestsize = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().size();
-                    sSceneInvestID = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(sceneinvestsize - 1).getSceneInvestID();
-                    Log.i(TAG, "sSceneInvestID " + sSceneInvestID);
+                    if (sceneinvestsize == 0) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, "กรุณาระบุวันเวลาออกตรวจสถานที่เกิดเหตุ", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    } else {
+
+                        sSceneInvestID = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(sceneinvestsize - 1).getSceneInvestID();
+                        Log.i(TAG, "sSceneInvestID " + sSceneInvestID);
+                    }
                 }
                 Log.i(TAG, "sSceneInvestID " + sSceneInvestID);
                 Bundle i = new Bundle();
@@ -544,8 +592,8 @@ public class ResultTabFragment extends Fragment {
         Log.i("Check", "onStart Result");
 
 
-//        ShowSelectedGatewayCriminal(reportID, "gatewaycriminal");
-//        ShowSelectedClueShown(reportID, "clueshown");
+        ShowSelectedGatewayCriminal();
+        ShowSelectedClueShown();
         ShowSelectedPropertyloss();
         ShowSelectedFindEvidence();
     }
@@ -559,51 +607,14 @@ public class ResultTabFragment extends Fragment {
 
     }
 
-    public void saveDataGatewayCriminal(String sReportID, String sRSTypeID,
-                                        String sRSDetail) {
+
+    public void ShowSelectedGatewayCriminal() {
         // TODO Auto-generated method stub
-        String sRSID = null;
-        String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-
-        if (sRSTypeID == "clueshown") {
-            sRSID = "CS_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-
-        }
-        if (sRSTypeID == "gatewaycriminal") {
-            sRSID = "GC_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-        }
-
-        long saveStatus = mDbHelper.SaveResultScene(sReportID, sRSID,
-                sRSTypeID, sRSDetail);
-        if (saveStatus <= 0) {
-            Log.i("Recieve", "Error!! ");
-        } else {
-            if (sRSTypeID == "clueshown") {
-
-                listViewClueShown.setVisibility(View.VISIBLE);
-                ShowSelectedClueShown(reportID, sRSTypeID);
-
-            }
-            if (sRSTypeID == "gatewaycriminal") {
-                listViewGatewayCriminal.setVisibility(View.VISIBLE);
-                ShowSelectedGatewayCriminal(reportID, sRSTypeID);
-            }
-            Log.i("saveData ResultScene", sRSID + " " + sRSTypeID + " "
-                    + sRSDetail);
-        }
-
-    }
-
-    public void ShowSelectedGatewayCriminal(String sReportID, String sRSTypeID) {
-        // TODO Auto-generated method stub
-        Log.i("show sRSTypeID", sReportID + " " + sRSTypeID);
-        gatewaycriminalList = mDbHelper.SelectAllResultScene(sReportID,
-                sRSTypeID);
 
 
-        if (gatewaycriminalList != null) {
+        if (CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals() != null) {
             setListViewHeightBasedOnItems(listViewGatewayCriminal);
-            Log.i("show sRSTypeID", String.valueOf(gatewaycriminalList.size()));
+            Log.i(TAG, "show getTbGatewayCriminals" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
             listViewGatewayCriminal.setVisibility(View.VISIBLE);
             listViewGatewayCriminal.setAdapter(new GatewayFoundClueAdapter(
                     getActivity()));
@@ -626,7 +637,7 @@ public class ResultTabFragment extends Fragment {
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return gatewaycriminalList.size();
+            return CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size();
         }
 
         public Object getItem(int position) {
@@ -652,47 +663,31 @@ public class ResultTabFragment extends Fragment {
 
             }
 
-            final String sRSTypeID = gatewaycriminalList.get(position).get(
-                    "RSTypeID");
-            final String sRSID = gatewaycriminalList.get(position).get("RSID");
-            final String sRSDetail = gatewaycriminalList.get(position).get(
-                    "RSDetail");
+            final String sRSTypeID = CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().get(position).getRSTypeID();
+            final String sRSID = CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().get(position).getRSID();
+            final String sRSDetail = CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().get(position).getRSDetail();
             Log.i("sRSDetail", sRSID + " " + sRSTypeID + " " + sRSDetail);
 
             // ColCode
             TextView txtGatewayCriminalDetails = (TextView) convertView.findViewById(R.id.txtDetails);
-            txtGatewayCriminalDetails.setText(gatewaycriminalList.get(position)
-                    .get("RSDetail"));
-            /*final AutoCompleteTextView editGatewayCriminalDetail = (AutoCompleteTextView) convertView
-                    .findViewById(R.id.editGatewayCriminalDetail);
+            txtGatewayCriminalDetails.setText(String.valueOf(position + 1) + ") " + CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().get(position).getRSDetail());
 
-            String[] mGateClueArray;
-            mGateClueArray = getResources().getStringArray(R.array.gate_clue);
-            ArrayAdapter<String> adapterGateClue = new ArrayAdapter<String>(
-                    getActivity(), android.R.layout.simple_dropdown_item_1line,
-                    mGateClueArray);
-
-            editGatewayCriminalDetail.setThreshold(1);
-            editGatewayCriminalDetail.setAdapter(adapterGateClue);
-            if (sRSTypeID == "clueshown") {
-                editGatewayCriminalDetail.setHint("อธิบายการรื้อค้น/งัดเเงะ");
-            }*/
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
 
-            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachResultScene(reportID, sRSID, "photo");
-
-            if (arrDataPhoto2 != null) {
-                Log.i("arrDataPhoto_gateway", sRSID + " " + String.valueOf(arrDataPhoto2.length));
-                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-
-            } else {
-
-                txtPhoto.setText("รูปภาพ (0)");
-
-                Log.i("photo_gateway", sRSID + " Null!! ");
-
-            }
+//            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachResultScene(reportID, sRSID, "photo");
+//
+//            if (arrDataPhoto2 != null) {
+//                Log.i("arrDataPhoto_gateway", sRSID + " " + String.valueOf(arrDataPhoto2.length));
+//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
+//
+//            } else {
+//
+//                txtPhoto.setText("รูปภาพ (0)");
+//
+//                Log.i("photo_gateway", sRSID + " Null!! ");
+//
+//            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -700,38 +695,17 @@ public class ResultTabFragment extends Fragment {
                     getActivity());
             imgEdit.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent showActivity = new Intent(getActivity(), GatewayCriminalActivity.class);
-                    showActivity.putExtra("sGatewayCriminalID", sRSID);
-                    showActivity.putExtra("type", "update");
-                    startActivity(showActivity);
-/*
-                    adbEdit.setTitle("ยืนยันการเเก้ไขข้อมูล");
-                    adbEdit.setNegativeButton("Cancel", null);
-                    adbEdit.setPositiveButton("Ok",
-                            new AlertDialog.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-
-                                    long saveStatus = mDbHelper
-                                            .updateDataSelectedResultScene(
-                                                    sRSID, reportID,
-                                                    sRSTypeID,
-                                                    editGatewayCriminalDetail
-                                                            .getText()
-                                                            .toString());
-                                    if (saveStatus <= 0) {
-                                        Log.i("Recieve GatewayCriminal",
-                                                "Error!! ");
-                                    } else {
-                                        Log.i("Recieve GatewayCriminal", "OK");
-                                        Toast.makeText(getActivity(),
-                                                "แก้ไขเรียบร้อยเเล้ว",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-
-                            });
-                    adbEdit.show();*/
+                    Log.i(TAG, " sRSID " + sRSID);
+                    Log.i(TAG, " sRSTypeID " + sRSTypeID);
+                    final TbGatewayCriminal tbGatewayCriminal = CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().get(position);
+                    Bundle i = new Bundle();
+                    i.putString(Bundle_ID, sRSID);
+                    i.putString(Bundle_mode, "edit");
+                    i.putInt(Bundle_Index, position);
+                    i.putString(Bundle_RSType, sRSTypeID);
+                    i.putSerializable(Bundle_TB, tbGatewayCriminal);
+                    addGatewayFragment.setArguments(i);
+                    MainActivity.setFragment(addGatewayFragment, 1);
                 }
             });
             // imgDelete
@@ -750,28 +724,50 @@ public class ResultTabFragment extends Fragment {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
 
-                                    long flg = mDbHelper
-                                            .DeleteSelectedResultScene(gatewaycriminalList
-                                                    .get(position).get("RSID"));
-                                    if (flg > 0) {
-                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllResultScene(sRSID);
-                                        if (saveStatus2 <= 0) {
-                                            Log.i("DeletePhotoOf gateway", "Cannot delete!! ");
 
-                                        } else {
-                                            Toast.makeText(getActivity(),
-                                                    "ลบข้อมูลเรียบรอยแล้ว",
-                                                    Toast.LENGTH_LONG).show();
-                                            ShowSelectedGatewayCriminal(reportID,
-                                                    sRSTypeID);
+                                    CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().remove(position);
+                                    long flg = dbHelper.DeleteSelectedData("resultscene", "RSID", sRSID);
+//
+                                    if (flg > 0) {
+                                        Log.i(TAG, "resultscene getTbGatewayCriminals" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
+                                        ShowSelectedGatewayCriminal();
+                                        if (snackbar == null || !snackbar.isShown()) {
+                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+                                                    , Snackbar.LENGTH_INDEFINITE)
+                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            ShowSelectedGatewayCriminal();
+                                                        }
+                                                    });
+                                            snackbar.show();
                                         }
+//                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllResultScene(sRSID);
+//                                        if (saveStatus2 <= 0) {
+//                                            Log.i("DeletePhotoOf gateway", "Cannot delete!! ");
+//
+//                                        } else {
+//                                            Toast.makeText(getActivity(),
+//                                                    "ลบข้อมูลเรียบรอยแล้ว",
+//                                                    Toast.LENGTH_LONG).show();
+////                                            ShowSelectedGatewayCriminal(reportID,
+////                                                    sRSTypeID);
+//                                        }
+
 
                                     } else {
-                                        Toast.makeText(getActivity(),
-                                                "เกิดการผิดพลาด",
-                                                Toast.LENGTH_LONG).show();
+                                        if (snackbar == null || !snackbar.isShown()) {
+                                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                                    , Snackbar.LENGTH_INDEFINITE)
+                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            ShowSelectedGatewayCriminal();
+                                                        }
+                                                    });
+                                            snackbar.show();
+                                        }
                                     }
-
                                 }
 
                             });
@@ -785,15 +781,15 @@ public class ResultTabFragment extends Fragment {
 
     }
 
-    public void ShowSelectedClueShown(String sReportID, String sRSTypeID) {
+    public void ShowSelectedClueShown() {
         // TODO Auto-generated method stub
-        Log.i("show sRSTypeID", sReportID + " " + sRSTypeID);
-        clueShownList = mDbHelper.SelectAllResultScene(sReportID, sRSTypeID);
+//        Log.i("show sRSTypeID", sReportID + " " + sRSTypeID);
+//        clueShownList = mDbHelper.SelectAllResultScene(sReportID, sRSTypeID);
 
 
-        if (clueShownList != null) {
+        if (CSIDataTabFragment.apiCaseScene.getTbClueShowns() != null) {
             setListViewHeightBasedOnItems(listViewClueShown);
-            Log.i("show sRSTypeID", String.valueOf(clueShownList.size()));
+            Log.i(TAG, "show getTbClueShowns " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbClueShowns().size()));
             listViewClueShown.setVisibility(View.VISIBLE);
             listViewClueShown.setAdapter(new ClueShownAdapter(getActivity()));
         } else {
@@ -813,7 +809,7 @@ public class ResultTabFragment extends Fragment {
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return clueShownList.size();
+            return CSIDataTabFragment.apiCaseScene.getTbClueShowns().size();
         }
 
         public Object getItem(int position) {
@@ -839,47 +835,29 @@ public class ResultTabFragment extends Fragment {
 
             }
 
-            final String sRSTypeID = clueShownList.get(position)
-                    .get("RSTypeID");
-            final String sRSID = clueShownList.get(position).get("RSID");
-            final String sRSDetail = clueShownList.get(position)
-                    .get("RSDetail");
+            final String sRSTypeID = CSIDataTabFragment.apiCaseScene.getTbClueShowns().get(position).getRSTypeID();
+            final String sRSID = CSIDataTabFragment.apiCaseScene.getTbClueShowns().get(position).getRSID();
+            final String sRSDetail = CSIDataTabFragment.apiCaseScene.getTbClueShowns().get(position).getRSDetail();
             Log.i("sRSDetail", sRSID + " " + sRSTypeID + " " + sRSDetail);
             TextView txtDetails = (TextView) convertView.findViewById(R.id.txtDetails);
-            txtDetails.setText(clueShownList.get(position)
-                    .get("RSDetail"));
-            /*/ ColCode
-            final AutoCompleteTextView editGatewayCriminalDetail = (AutoCompleteTextView) convertView
-                    .findViewById(R.id.editGatewayCriminalDetail);
-            editGatewayCriminalDetail.setText(clueShownList.get(position).get(
-                    "RSDetail"));
-            String[] mGateClueArray;
-            mGateClueArray = getResources().getStringArray(R.array.gate_clue);
-            ArrayAdapter<String> adapterGateClue = new ArrayAdapter<String>(
-                    getActivity(), android.R.layout.simple_dropdown_item_1line,
-                    mGateClueArray);
+            txtDetails.setText(String.valueOf(position + 1) + ") " + CSIDataTabFragment.apiCaseScene.getTbClueShowns().get(position).getRSDetail());
 
-            editGatewayCriminalDetail.setThreshold(1);
-            editGatewayCriminalDetail.setAdapter(adapterGateClue);
-
-            editGatewayCriminalDetail.setHint("อธิบายการรื้อค้น/งัดเเงะ");
-*/
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
 
-            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachResultScene(reportID, sRSID, "photo");
-
-            if (arrDataPhoto2 != null) {
-                Log.i("arrDataPhoto_clueShown", sRSID + " " + String.valueOf(arrDataPhoto2.length));
-                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-
-            } else {
-
-                txtPhoto.setText("รูปภาพ (0)");
-
-                Log.i("Recieve_clueShown", sRSID + " Null!! ");
-
-            }
+//            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachResultScene(reportID, sRSID, "photo");
+//
+//            if (arrDataPhoto2 != null) {
+//                Log.i("arrDataPhoto_clueShown", sRSID + " " + String.valueOf(arrDataPhoto2.length));
+//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
+//
+//            } else {
+//
+//                txtPhoto.setText("รูปภาพ (0)");
+//
+//                Log.i("Recieve_clueShown", sRSID + " Null!! ");
+//
+//            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -887,37 +865,17 @@ public class ResultTabFragment extends Fragment {
             //       getActivity());
             imgEdit.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent showActivity = new Intent(getActivity(), ClueShownActivity.class);
-                    showActivity.putExtra("sClueShownID", sRSID);
-                    showActivity.putExtra("type", "update");
-                    startActivity(showActivity);
-/*
-                    adbEdit.setTitle("ยืนยันการเเก้ไขข้อมูล");
-                    adbEdit.setNegativeButton("Cancel", null);
-                    adbEdit.setPositiveButton("Ok",
-                            new AlertDialog.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-
-                                    long saveStatus = mDbHelper
-                                            .updateDataSelectedResultScene(
-                                                    sRSID, reportID,
-                                                    sRSTypeID,
-                                                    editGatewayCriminalDetail
-                                                            .getText()
-                                                            .toString());
-                                    if (saveStatus <= 0) {
-                                        Log.i("Recieve clueShown ", "Error!! ");
-                                    } else {
-                                        Log.i("Recieve clueShown", "OK");
-                                        Toast.makeText(getActivity(),
-                                                "แก้ไขเรียบร้อยเเล้ว",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-
-                            });
-                    adbEdit.show();*/
+                    Log.i(TAG, " sRSID " + sRSID);
+                    Log.i(TAG, " sRSTypeID " + sRSTypeID);
+                    final TbClueShown tbClueShown = CSIDataTabFragment.apiCaseScene.getTbClueShowns().get(position);
+                    Bundle i = new Bundle();
+                    i.putString(Bundle_ID, sRSID);
+                    i.putString(Bundle_mode, "edit");
+                    i.putString(Bundle_RSType, sRSTypeID);
+                    i.putInt(Bundle_Index, position);
+                    i.putSerializable(Bundle_TB, tbClueShown);
+                    addClueShownFragment.setArguments(i);
+                    MainActivity.setFragment(addClueShownFragment, 1);
                 }
             });
             // imgDelete
@@ -936,25 +894,35 @@ public class ResultTabFragment extends Fragment {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
 
-                                    long flg = mDbHelper
-                                            .DeleteSelectedResultScene(sRSID);
+                                    CSIDataTabFragment.apiCaseScene.getTbClueShowns().remove(position);
+                                    long flg = dbHelper.DeleteSelectedData("resultscene", "RSID", sRSID);
+//
                                     if (flg > 0) {
-                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllResultScene(sRSID);
-                                        if (saveStatus2 <= 0) {
-                                            Log.i("DeletePhotoOf ClueShown", "Cannot delete!! ");
-
-                                        } else {
-                                            Toast.makeText(getActivity(),
-                                                    "ลบข้อมูลเรียบรอยแล้ว",
-                                                    Toast.LENGTH_LONG).show();
-                                            ShowSelectedClueShown(reportID,
-                                                    sRSTypeID);
+                                        Log.i(TAG, "resultscene getTbClueShowns" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbClueShowns().size()));
+                                        ShowSelectedClueShown();
+                                        if (snackbar == null || !snackbar.isShown()) {
+                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+                                                    , Snackbar.LENGTH_INDEFINITE)
+                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            ShowSelectedClueShown();
+                                                        }
+                                                    });
+                                            snackbar.show();
                                         }
-
                                     } else {
-                                        Toast.makeText(getActivity(),
-                                                "เกิดการผิดพลาด",
-                                                Toast.LENGTH_LONG).show();
+                                        if (snackbar == null || !snackbar.isShown()) {
+                                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                                    , Snackbar.LENGTH_INDEFINITE)
+                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            ShowSelectedClueShown();
+                                                        }
+                                                    });
+                                            snackbar.show();
+                                        }
                                     }
 
                                 }
@@ -1071,6 +1039,7 @@ public class ResultTabFragment extends Fragment {
                     Bundle i = new Bundle();
                     i.putString(Bundle_ID, sPropertyLossID);
                     i.putString(Bundle_mode, "edit");
+                    i.putInt(Bundle_Index, position);
                     i.putSerializable(Bundle_TB, tbPropertyLoss);
                     addPropertyLossFragment.setArguments(i);
                     MainActivity.setFragment(addPropertyLossFragment, 1);
@@ -1092,10 +1061,11 @@ public class ResultTabFragment extends Fragment {
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
-
+                                    CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("propertyloss", "PropertyLossID", sPropertyLossID);
 //
                                     if (flg > 0) {
+                                        Log.i(TAG, "propertyloss " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().size()));
                                         ShowSelectedPropertyloss();
                                         if (snackbar == null || !snackbar.isShown()) {
                                             snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
@@ -1200,8 +1170,25 @@ public class ResultTabFragment extends Fragment {
             final String sSceneInvestID = CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getSceneInvestID();
             final TextView txtEvidenceType = (TextView) convertView
                     .findViewById(R.id.txtEvidenceType);
-            Log.i(TAG, "getEvidenceTypeName" + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceTypeName());
-            txtEvidenceType.setText(String.valueOf(position + 1) + ") " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceTypeName());
+            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceTypeID() != null) {
+                Log.i(TAG, "getEvidenceTypeID" + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceTypeID());
+                String[][] evidenceTypeArray = dbHelper.SelectAllEvidenceType();
+                if (evidenceTypeArray != null) {
+
+                    for (int i = 0; i < evidenceTypeArray.length; i++) {
+                        if (String.valueOf(evidenceTypeArray[i][0]).equals(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).EvidenceTypeID)) {
+                            txtEvidenceType.setText(String.valueOf(position + 1) + ") " + String.valueOf(evidenceTypeArray[i][2]));
+
+                            break;
+                        }
+                    }
+
+
+                } else {
+                    Log.i(TAG + " show evidenceTypeArray", "null");
+                }
+            }
+
             final TextView txtEvidenceNumber = (TextView) convertView
                     .findViewById(R.id.txtEvidenceNumber);
             txtEvidenceNumber.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceNumber());
@@ -1248,6 +1235,7 @@ public class ResultTabFragment extends Fragment {
                     Bundle i = new Bundle();
                     i.putString(Bundle_ID, sFindEvidenceID);
                     i.putString(Bundle_mode, "edit");
+                    i.putInt(Bundle_Index, position);
                     i.putSerializable(Bundle_TB, tbFindEvidence);
                     addFindEvidenceFragment.setArguments(i);
                     MainActivity.setFragment(addFindEvidenceFragment, 1);
@@ -1268,9 +1256,11 @@ public class ResultTabFragment extends Fragment {
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
-
+                                    CSIDataTabFragment.apiCaseScene.getTbFindEvidences().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("findevidence", "FindEvidenceID", sFindEvidenceID);
+
                                     if (flg > 0) {
+                                        Log.i(TAG, "findevidence " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().size()));
                                         ShowSelectedFindEvidence();
                                         if (snackbar == null || !snackbar.isShown()) {
                                             snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)

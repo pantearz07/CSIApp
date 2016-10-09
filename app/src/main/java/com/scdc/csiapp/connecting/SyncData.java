@@ -37,6 +37,7 @@ public class SyncData extends AsyncTask<Void, Void, Void> {
                 WelcomeActivity.api.syncDataFromServer("scdcagency");
                 WelcomeActivity.api.syncDataFromServer("scdccenter");
                 WelcomeActivity.api.syncDataFromServer("subcasescenetype");
+                WelcomeActivity.api.syncDataFromServer("evidencetype");
             } else {
                 Log.d("TEST", "Connect error!");
             }

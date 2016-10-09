@@ -12,8 +12,11 @@ public class TbResultSceneType implements Serializable {
     public String COL_RSTypeID = "RSTypeID";
     public String RSTypeID = "";
 
-    // From Table resultscenetype field name RSTypeName
-    public String COL_RSTypeName = "RSTypeName";
-    public String RSTypeName = "";
+    // From Table resultscenetype field name RSTypeNameEN
+    public String COL_RSTypeNameEN = "RSTypeNameEN";
+    public String RSTypeNameEN = "";
 
+    // From Table resultscenetype field name RSTypeNameTH
+    public String COL_RSTypeNameTH = "RSTypeNameTH";
+    public String RSTypeNameTH = "";
 }

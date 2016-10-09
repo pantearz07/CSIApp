@@ -3,8 +3,10 @@ package com.scdc.csiapp.apimodel;
 import com.scdc.csiapp.tablemodel.TbAmphur;
 import com.scdc.csiapp.tablemodel.TbCaseScene;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
+import com.scdc.csiapp.tablemodel.TbClueShown;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
+import com.scdc.csiapp.tablemodel.TbGatewayCriminal;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
@@ -72,7 +74,10 @@ public class ApiCaseScene implements Serializable {
 
     // สภาพที่เกิดเหตุ
     List<TbResultScene> tbResultScenes;
-
+    // tbGatewayCriminals
+    List<TbGatewayCriminal> tbGatewayCriminals;
+    // tbClueShowns
+    List<TbClueShown> tbClueShowns;
     // ทรัพย์สินที่สูญหาย
     List<TbPropertyLoss> tbPropertyLosses;
 
@@ -226,6 +231,22 @@ public class ApiCaseScene implements Serializable {
 
     public void setTbResultScenes(List<TbResultScene> tbResultScenes) {
         this.tbResultScenes = tbResultScenes;
+    }
+
+    public List<TbGatewayCriminal> getTbGatewayCriminals() {
+        return tbGatewayCriminals;
+    }
+
+    public void setTbGatewayCriminals(List<TbGatewayCriminal> tbGatewayCriminals) {
+        this.tbGatewayCriminals = tbGatewayCriminals;
+    }
+
+    public List<TbClueShown> getTbClueShowns() {
+        return tbClueShowns;
+    }
+
+    public void setTbClueShowns(List<TbClueShown> tbClueShowns) {
+        this.tbClueShowns = tbClueShowns;
     }
 
     public String getMode() {

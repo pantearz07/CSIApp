@@ -27,7 +27,7 @@ public class TbMultimediaFile implements Serializable {
     public String COL_FileDescription = "FileDescription";
     public String FileDescription = "";
 
-    // From Table multimediafile field name Timestamp
+    // From Table multimediafile field name Timestamp 2016-10-26 06:16:00
     public String COL_Timestamp = "Timestamp";
     public String Timestamp = "";
 

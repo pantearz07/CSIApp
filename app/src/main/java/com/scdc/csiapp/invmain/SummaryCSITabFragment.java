@@ -306,7 +306,7 @@ public class SummaryCSITabFragment extends Fragment {
             if (fabBtn != null || fabBtn.isShown()) {
                 fabBtn.setVisibility(View.GONE);
             }
-
+            edtReportNo.setEnabled(false);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
             // btnNoticecase.setEnabled(false);
