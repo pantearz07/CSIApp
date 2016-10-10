@@ -284,8 +284,8 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                             tbMultimediaFile.FilePath = sDiagramID + ".jpg";
                             tbMultimediaFile.Timestamp = timeStamp;
                              DiagramTabFragment.tbMultimediaFileList.add(tbMultimediaFile);
-                            CSIDataTabFragment.apiCaseScene.setTbMultimediaFiles(DiagramTabFragment.tbMultimediaFileList);
-                            Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+//                            CSIDataTabFragment.apiCaseScene.setTbMultimediaFiles(DiagramTabFragment.tbMultimediaFileList);
+//                            Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
                             String fname = sDiagramID + ".jpg";
                             File file = new File(myDir, fname);
                             if (file.exists())

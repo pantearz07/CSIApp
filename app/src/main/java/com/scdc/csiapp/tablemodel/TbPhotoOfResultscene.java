@@ -15,4 +15,19 @@ public class TbPhotoOfResultscene implements Serializable {
     public String COL_FileID = "FileID";
     public String FileID = "";
 
+    public String getRSID() {
+        return RSID;
+    }
+
+    public void setRSID(String RSID) {
+        this.RSID = RSID;
+    }
+
+    public String getFileID() {
+        return FileID;
+    }
+
+    public void setFileID(String fileID) {
+        FileID = fileID;
+    }
 }

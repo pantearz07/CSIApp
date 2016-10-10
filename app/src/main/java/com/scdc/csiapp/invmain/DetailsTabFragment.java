@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -46,14 +45,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
+import com.scdc.csiapp.tablemodel.TbPhotoOfOutside;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureOutside;
 import com.squareup.otto.Subscribe;
@@ -109,7 +111,7 @@ public class DetailsTabFragment extends Fragment {
     private String mCurrentPhotoPath;
     Uri uri;
     static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
-    String sPhotoID;
+    String sPhotoID, timeStamp;
     String arrDataPhoto[][], arrDataPhoto2[][], arrDataVideo[][];
 
     GridView horizontal_gridView_Inside_photo, horizontal_gridView_Inside_video;
@@ -129,6 +131,8 @@ public class DetailsTabFragment extends Fragment {
     ListView listViewAddFeatureInside;
     AddFeatureInsideFragment addFeatureInsideFragment;
     public static List<TbMultimediaFile> tbMultimediaFiles = null;
+    List<TbMultimediaFile> tbPhotoList;
+    List<TbPhotoOfOutside> tbPhotoOfOutsideList;
 
     @Nullable
     @Override
@@ -146,7 +150,7 @@ public class DetailsTabFragment extends Fragment {
         getDateTime = new GetDateTime();
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         ////
-        reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
+        reportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().getCaseReportID();
         networkConnectivity = cd.isNetworkAvailable();
         isConnectingToInternet = cd.isConnectingToInternet();
         ////
@@ -319,6 +323,8 @@ public class DetailsTabFragment extends Fragment {
         editFeatureAtTheScene.addTextChangedListener(new DetailTextWatcher(editFeatureAtTheScene));
 
         horizontal_gridView_Outside = (GridView) viewDetails.findViewById(R.id.horizontal_gridView_Outside);
+
+
         showAllPhoto();
         btn_camera = (ImageButton) viewDetails.findViewById(R.id.btn_camera);
         btn_camera.setOnClickListener(new DetailsOnClickListener());
@@ -376,8 +382,33 @@ public class DetailsTabFragment extends Fragment {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
 
-                    Log.i("REQUEST_Photo", "Photo save");
-                    showAllPhoto();
+                    Log.i(TAG,"Photo save");
+                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+                    tbMultimediaFile.FileID = sPhotoID;
+                    tbMultimediaFile.FileDescription = "";
+                    tbMultimediaFile.FileType = "photo";
+                    tbMultimediaFile.FilePath = sPhotoID + ".jpg";
+                    tbMultimediaFile.Timestamp = timeStamp;
+                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+                    TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
+                    tbPhotoOfOutside.CaseReportID = reportID;
+                    tbPhotoOfOutside.FileID = sPhotoID;
+                    apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
+
+                    apiMultimediaList.add(apiMultimedia);
+                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+
+                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                    if (isSuccess) {
+//                        Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+                        Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");
+                        showAllPhoto();
+                    }
+
                     //showAllVideo();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -385,83 +416,44 @@ public class DetailsTabFragment extends Fragment {
 
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 //data.getData();
-                Log.i("REQUEST_Photo", "media recording cancelled." + sPhotoID);
-                File photosfile = new File(mCurrentPhotoPath);
-                if (photosfile.exists()) {
-                    photosfile.delete();
-                    long saveStatus = mDbHelper.DeleteMediaFile(reportID, sPhotoID);
-                    if (saveStatus <= 0) {
-                        Log.i("deletephoto", "Cannot delete!! ");
-
-                    } else {
-                        long saveStatus2 = mDbHelper.DeletePhotoOfOutside(reportID, sPhotoID);
-                        if (saveStatus2 <= 0) {
-                            Log.i("deletephoto", "Cannot delete!! ");
-
-                        } else {
-                            Log.i("deletephoto", "ok");
-                            showAllPhoto();
-                        }
-                    }
-                }
+                Log.i(TAG,  "media recording cancelled." + sPhotoID);
+//                File photosfile = new File(mCurrentPhotoPath);
+//                if (photosfile.exists()) {
+//                    photosfile.delete();
+//                    long saveStatus = mDbHelper.DeleteMediaFile(reportID, sPhotoID);
+//                    if (saveStatus <= 0) {
+//                        Log.i("deletephoto", "Cannot delete!! ");
+//
+//                    } else {
+//                        long saveStatus2 = mDbHelper.DeletePhotoOfOutside(reportID, sPhotoID);
+//                        if (saveStatus2 <= 0) {
+//                            Log.i("deletephoto", "Cannot delete!! ");
+//
+//                        } else {
+//                            Log.i("deletephoto", "ok");
+//                            showAllPhoto();
+//                        }
+//                    }
+//                }
             } else {
-                Log.i("REQUEST_Photo", "Failed to record media");
+                Log.i(TAG,  "Failed to record media");
             }
         }
     }
 
-    class saveDataMedia extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String arrData = "";
-
-
-            long saveStatus = mDbHelper.saveDataMultimediaifile(params[0], params[1], params[5], params[2],
-                    params[3], params[4]);
-            if (saveStatus <= 0) {
-                arrData = "error";
-                Log.i("saveData " + params[5], "Error!! ");
-            } else {
-
-                long saveStatus2 = mDbHelper.saveDataPhotoOfOutside(params[0], params[1]);
-                if (saveStatus2 <= 0) {
-                    arrData = "error";
-                    Log.i("saveData " + params[5], "Error!! ");
-                } else {
-                    arrData = "save";
-                    Log.i("saveData " + params[5], params[2]);
-                }
-            }
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String arrData) {
-            if (arrData == "save") {
-                Log.i("saveData", "save");
-                //showAllPhoto();
-                //showAllVideo();
-
-            } else {
-                Log.i("saveData", "error");
-
-            }
-        }
-    }
 
     public void showAllPhoto() {
         // TODO Auto-generated method stub
+        tbPhotoList = new ArrayList<>();
+        tbPhotoList = dbHelper.SelectDataPhotoOfOutside(reportID, "photo");
         int photolength = 0;
-        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID, "photo");
+
+//        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID, "photo");
         //Log.i("arrDataPhoto_Outside",arrDataPhoto[0][0]);
-        if (arrDataPhoto != null) {
-            Log.i("arrDataPhoto_Outside", String.valueOf(arrDataPhoto.length));
-            photolength = arrDataPhoto.length;
+        if (tbPhotoList != null) {
+            Log.i(TAG, "arrDataPhoto_Outside " + String.valueOf(tbPhotoList.size()));
+//            photolength = arrDataPhoto.length;
+            photolength = tbPhotoList.size();
             //int size=list.size();
             // Calculated single Item Layout Width for each grid element ....
             int width = 70;
@@ -482,14 +474,14 @@ public class DetailsTabFragment extends Fragment {
             horizontal_gridView_Outside.setNumColumns(photolength);
 
             horizontal_gridView_Outside.setVisibility(View.VISIBLE);
-            horizontal_gridView_Outside.setAdapter(new PhotoAdapter(getActivity(), arrDataPhoto));
+            horizontal_gridView_Outside.setAdapter(new PhotoAdapter(getActivity()));
             registerForContextMenu(horizontal_gridView_Outside);
             // OnClick
             horizontal_gridView_Outside.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-                    showViewPic(arrDataPhoto[position][3].toString());
+                    showViewPic(tbPhotoList.get(position).FilePath.toString());
                 }
             });
         } else {
@@ -523,17 +515,17 @@ public class DetailsTabFragment extends Fragment {
 
     public class PhotoAdapter extends BaseAdapter {
         private Context context;
-        private String[][] lis;
 
-        public PhotoAdapter(Context c, String[][] li) {
+
+        public PhotoAdapter(Context c) {
             // TODO Auto-generated method stub
             context = c;
-            lis = li;
+
         }
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return lis.length;
+            return tbPhotoList.size();
         }
 
         public Object getItem(int position) {
@@ -562,15 +554,15 @@ public class DetailsTabFragment extends Fragment {
             String root = Environment.getExternalStorageDirectory().toString();
 
             String strPath = root + "/CSIFiles/Pictures/"
-                    + lis[position][3].toString();
+                    + tbPhotoList.get(position).FilePath.toString();
 
-            Log.i("list photo", "/CSIFiles/Pictures/" + lis[position][3].toString());
+            Log.i("list photo", "/CSIFiles/Pictures/" + tbPhotoList.get(position).FilePath.toString());
             // "file:///android_asset/DvpvklR.png"
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            String imgPath = "file:///CSIFiles/Pictures/"
-                    + lis[position][3].toString();
+//            String imgPath = "file:///CSIFiles/Pictures/"
+//                    + tbPhotoList.get(position).FilePath.toString();
             //Picasso.with(getActivity()).load(f).into(imageView);
            /* Picasso.with(getContext())
                     .load("file:///1234.jpg")
@@ -664,14 +656,15 @@ public class DetailsTabFragment extends Fragment {
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btn_camera) {
-                String timeStamp = "";
+
                 File newfile;
                 createFolder("Pictures");
 
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                timeStamp = updateDT[0] + " " + updateDT[1];
+                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+                sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                sPhotoID = "IMG_" + datetime[2] + "" + datetime[1] + "" + datetime[0] + "_" + datetime[3] + "" + datetime[4] + "" + datetime[5];
                 String sPhotoPath = sPhotoID + ".jpg";
                 newfile = new File(strSDCardPathName, "Pictures/" + sPhotoPath);
                 if (newfile.exists())
@@ -687,10 +680,32 @@ public class DetailsTabFragment extends Fragment {
                     getActivity().startActivityForResult(Intent.createChooser(cameraIntent
                             , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
 
-                    String sPhotoDescription = "";
-                    new saveDataMedia().execute(reportID, sPhotoID, sPhotoPath, sPhotoDescription, timeStamp, "photo");
 
-                    Log.i("show", "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoPath);
+//                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+//                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+//                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+//                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+//                    tbMultimediaFile.FileID = sPhotoID;
+//                    tbMultimediaFile.FileDescription = "";
+//                    tbMultimediaFile.FileType = "photo";
+//                    tbMultimediaFile.FilePath = sPhotoID + ".jpg";
+//                    tbMultimediaFile.Timestamp = timeStamp;
+//                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+//
+//                    TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
+//                    tbPhotoOfOutside.CaseReportID = reportID;
+//                    tbPhotoOfOutside.FileID = sPhotoID;
+//                    apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
+//
+//                    apiMultimediaList.add(apiMultimedia);
+//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+//
+//                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+//                    if (isSuccess) {
+//                        Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+//                        Log.i("show", "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoPath);
+//                    }
+
                 }
             }
             if (v == checkBoxHaveFence) {
@@ -863,7 +878,7 @@ public class DetailsTabFragment extends Fragment {
                     Bundle i = new Bundle();
                     i.putString(Bundle_InsideID, sFeatureInsideID);
                     i.putString(Bundle_Inside_mode, "edit");
-                    i.putInt(Bundle_Index,position);
+                    i.putInt(Bundle_Index, position);
                     i.putSerializable(Bundle_InsideTB, tbSceneFeatureInSide);
                     addFeatureInsideFragment.setArguments(i);
                     MainActivity.setFragment(addFeatureInsideFragment, 1);
@@ -1013,8 +1028,9 @@ public class DetailsTabFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.i(TAG, "onStart detailscase ");
+        showAllPhoto();
         ShowSelectedFeatureInside();
-//        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
+        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
     }
 
     @Override
@@ -1022,7 +1038,7 @@ public class DetailsTabFragment extends Fragment {
         super.onStop();
         Log.i(TAG, "onStop detailscase");
 
-//        ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
+        ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
 
     @Override

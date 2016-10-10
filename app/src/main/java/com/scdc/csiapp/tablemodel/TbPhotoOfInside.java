@@ -15,4 +15,19 @@ public class TbPhotoOfInside implements Serializable {
     public String COL_FeatureInsideID = "FeatureInsideID";
     public String FeatureInsideID = "";
 
+    public String getFileID() {
+        return FileID;
+    }
+
+    public void setFileID(String fileID) {
+        FileID = fileID;
+    }
+
+    public String getFeatureInsideID() {
+        return FeatureInsideID;
+    }
+
+    public void setFeatureInsideID(String featureInsideID) {
+        FeatureInsideID = featureInsideID;
+    }
 }

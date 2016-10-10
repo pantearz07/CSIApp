@@ -16,4 +16,19 @@ public class TbPhotoOfOutside implements Serializable {
     public String COL_FileID = "FileID";
     public String FileID = "";
 
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
+
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getFileID() {
+        return FileID;
+    }
+
+    public void setFileID(String fileID) {
+        FileID = fileID;
+    }
 }

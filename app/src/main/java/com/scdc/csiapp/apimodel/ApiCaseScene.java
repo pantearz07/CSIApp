@@ -66,9 +66,6 @@ public class ApiCaseScene implements Serializable {
 
     List<TbSceneFeatureInSide> tbSceneFeatureInSide;
 
-    // ตือ มิเดีย เฉพาะ photo outside
-    List<TbMultimediaFile> tbMultimediaFiles;
-
     // วัตถุพยานในคดีนั้นๆ รอยนิ้วมือ รอยเท้า
     List<TbFindEvidence> tbFindEvidences;
 
@@ -80,6 +77,18 @@ public class ApiCaseScene implements Serializable {
     List<TbClueShown> tbClueShowns;
     // ทรัพย์สินที่สูญหาย
     List<TbPropertyLoss> tbPropertyLosses;
+    // ตือ มิเดีย เฉพาะ photo outside
+    List<TbMultimediaFile> tbMultimediaFiles;
+
+    List<ApiMultimedia> apiMultimedia;
+
+    public List<ApiMultimedia> getApiMultimedia() {
+        return apiMultimedia;
+    }
+
+    public void setApiMultimedia(List<ApiMultimedia> apiMultimedia) {
+        this.apiMultimedia = apiMultimedia;
+    }
 
     public TbCaseScene getTbCaseScene() {
         return tbCaseScene;

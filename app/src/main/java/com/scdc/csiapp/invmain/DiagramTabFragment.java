@@ -83,14 +83,14 @@ public class DiagramTabFragment extends Fragment {
         gViewPic = (GridView) viewDiagramTab.findViewById(R.id.gridViewShowMedia);
         rootLayout = (CoordinatorLayout) viewDiagramTab.findViewById(R.id.rootLayout);
 
-        if (CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles() == null) {
-            tbMultimediaFileList = new ArrayList<>();
-            Log.i(TAG, "getTbMultimediaFiles null");
-        } else {
-            tbMultimediaFileList = CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles();
-            Log.i(TAG, "getTbMultimediaFiles not null");
-            Log.i(TAG, "tbMultimediaFileList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
-        }
+//        if (CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles() == null) {
+//            tbMultimediaFileList = new ArrayList<>();
+//            Log.i(TAG, "getTbMultimediaFiles null");
+//        } else {
+//            tbMultimediaFileList = CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles();
+//            Log.i(TAG, "getTbMultimediaFiles not null");
+//            Log.i(TAG, "tbMultimediaFileList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+//        }
         showAllPic();
 
         fabBtn = (FloatingActionButton) viewDiagramTab.findViewById(R.id.fabBtn);

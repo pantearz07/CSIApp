@@ -15,4 +15,19 @@ public class TbPhotoOfEvidence implements Serializable {
     public String COL_FileID = "FileID";
     public String FileID = "";
 
+    public String getFindEvidenceID() {
+        return FindEvidenceID;
+    }
+
+    public void setFindEvidenceID(String findEvidenceID) {
+        FindEvidenceID = findEvidenceID;
+    }
+
+    public String getFileID() {
+        return FileID;
+    }
+
+    public void setFileID(String fileID) {
+        FileID = fileID;
+    }
 }
