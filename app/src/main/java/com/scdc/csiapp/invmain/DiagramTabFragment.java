@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
@@ -58,6 +59,7 @@ public class DiagramTabFragment extends Fragment {
     GetDateTime getDateTime;
     String[] updateDT, datetime;
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
+    public static List<ApiMultimedia> apiMultimediaList = null;
     String sDiagramID;
     public static String Bundle_ID = "dataid";
     public static String Bundle_TB = "datatb";
@@ -83,14 +85,14 @@ public class DiagramTabFragment extends Fragment {
         gViewPic = (GridView) viewDiagramTab.findViewById(R.id.gridViewShowMedia);
         rootLayout = (CoordinatorLayout) viewDiagramTab.findViewById(R.id.rootLayout);
 
-//        if (CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles() == null) {
-//            tbMultimediaFileList = new ArrayList<>();
-//            Log.i(TAG, "getTbMultimediaFiles null");
-//        } else {
-//            tbMultimediaFileList = CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles();
-//            Log.i(TAG, "getTbMultimediaFiles not null");
-//            Log.i(TAG, "tbMultimediaFileList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
-//        }
+        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia() == null) {
+            apiMultimediaList = new ArrayList<>();
+            Log.i(TAG, "apiMultimediaList null");
+        } else {
+            apiMultimediaList = CSIDataTabFragment.apiCaseScene.getApiMultimedia();
+            Log.i(TAG, "apiMultimediaList not null");
+            Log.i(TAG, "apiMultimediaList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+        }
         showAllPic();
 
         fabBtn = (FloatingActionButton) viewDiagramTab.findViewById(R.id.fabBtn);

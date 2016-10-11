@@ -7,10 +7,12 @@ import com.scdc.csiapp.tablemodel.TbPhotoOfOutside;
 import com.scdc.csiapp.tablemodel.TbPhotoOfPropertyless;
 import com.scdc.csiapp.tablemodel.TbPhotoOfResultscene;
 
+import java.io.Serializable;
+
 /**
  * Created by cbnuke on 9/16/16.
  */
-public class ApiMultimedia {
+public class ApiMultimedia  implements Serializable {
     // ตารางหลัก
     TbMultimediaFile tbMultimediaFile;
     TbPhotoOfOutside tbPhotoOfOutside;

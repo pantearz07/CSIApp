@@ -404,12 +404,12 @@ public class DetailsTabFragment extends Fragment {
 
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
-//                        Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+                        Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                         Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");
-                        showAllPhoto();
-                    }
 
-                    //showAllVideo();
+                    }
+                    showAllPhoto();
+//                    showAllVideo();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -417,24 +417,6 @@ public class DetailsTabFragment extends Fragment {
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 //data.getData();
                 Log.i(TAG,  "media recording cancelled." + sPhotoID);
-//                File photosfile = new File(mCurrentPhotoPath);
-//                if (photosfile.exists()) {
-//                    photosfile.delete();
-//                    long saveStatus = mDbHelper.DeleteMediaFile(reportID, sPhotoID);
-//                    if (saveStatus <= 0) {
-//                        Log.i("deletephoto", "Cannot delete!! ");
-//
-//                    } else {
-//                        long saveStatus2 = mDbHelper.DeletePhotoOfOutside(reportID, sPhotoID);
-//                        if (saveStatus2 <= 0) {
-//                            Log.i("deletephoto", "Cannot delete!! ");
-//
-//                        } else {
-//                            Log.i("deletephoto", "ok");
-//                            showAllPhoto();
-//                        }
-//                    }
-//                }
             } else {
                 Log.i(TAG,  "Failed to record media");
             }
@@ -679,33 +661,6 @@ public class DetailsTabFragment extends Fragment {
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                     getActivity().startActivityForResult(Intent.createChooser(cameraIntent
                             , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
-
-
-//                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
-//                    ApiMultimedia apiMultimedia = new ApiMultimedia();
-//                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
-//                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
-//                    tbMultimediaFile.FileID = sPhotoID;
-//                    tbMultimediaFile.FileDescription = "";
-//                    tbMultimediaFile.FileType = "photo";
-//                    tbMultimediaFile.FilePath = sPhotoID + ".jpg";
-//                    tbMultimediaFile.Timestamp = timeStamp;
-//                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
-//
-//                    TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
-//                    tbPhotoOfOutside.CaseReportID = reportID;
-//                    tbPhotoOfOutside.FileID = sPhotoID;
-//                    apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
-//
-//                    apiMultimediaList.add(apiMultimedia);
-//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
-//
-//                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-//                    if (isSuccess) {
-//                        Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
-//                        Log.i("show", "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoPath);
-//                    }
-
                 }
             }
             if (v == checkBoxHaveFence) {

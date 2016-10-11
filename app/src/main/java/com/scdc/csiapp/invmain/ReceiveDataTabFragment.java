@@ -648,7 +648,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
             }
             if (v == btnButtonSearchMap) {
-
+                lat = "16.438052";
+                lng = "102.799998";
                 if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
@@ -667,7 +668,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             }
             if (v == btnButtonSearchLatLong) {
                 lat = String.valueOf(mLastLocation.getLatitude());
+                lat = "16.438052";
                 lng = String.valueOf(mLastLocation.getLongitude());
+                lng = "102.799998";
                 Log.d(TAG, "Go to Google map " + lat + " " + lng);
                 valueLat.setText(lat);
                 valueLong.setText(lng);

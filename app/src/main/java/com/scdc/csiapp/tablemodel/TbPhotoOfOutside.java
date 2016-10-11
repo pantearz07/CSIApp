@@ -8,13 +8,20 @@ import java.io.Serializable;
 public class TbPhotoOfOutside implements Serializable {
 
     public String TB_PhotoOfOutside = "photoofoutside";
+    // From Table photoofoutside field name FileID
+    public String COL_FileID = "FileID";
+    public String FileID = "";
     // From Table photoofoutside field name CaseReportID
     public String COL_CaseReportID = "CaseReportID";
     public String CaseReportID = "";
 
-    // From Table photoofoutside field name FileID
-    public String COL_FileID = "FileID";
-    public String FileID = "";
+    public String getFileID() {
+        return FileID;
+    }
+
+    public void setFileID(String fileID) {
+        FileID = fileID;
+    }
 
     public String getCaseReportID() {
         return CaseReportID;
@@ -24,11 +31,5 @@ public class TbPhotoOfOutside implements Serializable {
         CaseReportID = caseReportID;
     }
 
-    public String getFileID() {
-        return FileID;
-    }
 
-    public void setFileID(String fileID) {
-        FileID = fileID;
-    }
 }

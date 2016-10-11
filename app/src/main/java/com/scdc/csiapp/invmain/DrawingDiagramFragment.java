@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.GetDateTime;
@@ -26,6 +27,8 @@ import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Pantearz07 on 25/12/2558.
@@ -244,7 +247,7 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                     getActivity());
             newDialog.setTitle("New drawing");
             newDialog
-                    .setMessage("Start new drawing (you will lose the current drawing)?");
+                    .setMessage("ต้องการสร้างภาพวาดใหม่? (ภาพวาดเดิมจะถูกลบ)");
             newDialog.setPositiveButton("Yes",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -264,8 +267,8 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(
                     getActivity());
             saveDialog.setTitle("บันทึกภาพวาด");
-            saveDialog.setMessage("Save drawing to device Gallery?");
-            saveDialog.setPositiveButton("Yes",
+            saveDialog.setMessage("บันทึกภาพลงหน่วยความจำเครื่องหรือไม่");
+            saveDialog.setPositiveButton("ใช่",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // save drawing
@@ -277,15 +280,30 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                             myDir.mkdirs();
                             String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                             String timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+                            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+                            ApiMultimedia apiMultimedia = new ApiMultimedia();
                             tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
                             tbMultimediaFile.FileID = sDiagramID;
                             tbMultimediaFile.FileDescription = FileDescription;
                             tbMultimediaFile.FileType = "diagram";
                             tbMultimediaFile.FilePath = sDiagramID + ".jpg";
                             tbMultimediaFile.Timestamp = timeStamp;
-                             DiagramTabFragment.tbMultimediaFileList.add(tbMultimediaFile);
-//                            CSIDataTabFragment.apiCaseScene.setTbMultimediaFiles(DiagramTabFragment.tbMultimediaFileList);
-//                            Log.i(TAG, "tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbMultimediaFiles().size()));
+                            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+                            apiMultimedia.setTbPhotoOfOutside(null);
+                            apiMultimedia.setTbPhotoOfInside(null);
+                            apiMultimedia.setTbPhotoOfEvidence(null);
+                            apiMultimedia.setTbPhotoOfResultscene(null);
+                            apiMultimedia.setTbPhotoOfPropertyless(null);
+//
+//                            TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
+//                            tbPhotoOfOutside.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+//                            tbPhotoOfOutside.FileID = sDiagramID;
+//                            apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
+
+                            apiMultimediaList.add(apiMultimedia);
+                            CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+
+                            Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                             String fname = sDiagramID + ".jpg";
                             File file = new File(myDir, fname);
                             if (file.exists())
@@ -302,7 +320,7 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                                 if (isSuccess) {
                                     Toast savedToast = Toast.makeText(getActivity()
                                                     .getApplicationContext(),
-                                            "Drawing saved to Gallery!" + myDir
+                                            "บันทึกภาพลงอัลบั้มเรียบร้อย :" + myDir
                                                     + " : " + fname,
                                             Toast.LENGTH_SHORT);
                                     savedToast.show();
@@ -315,7 +333,7 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
 
                         }
                     });
-            saveDialog.setNegativeButton("Cancel",
+            saveDialog.setNegativeButton("ยกลเิก",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();

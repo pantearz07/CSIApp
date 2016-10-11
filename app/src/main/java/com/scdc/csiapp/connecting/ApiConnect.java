@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
@@ -53,9 +54,8 @@ import okhttp3.Response;
  */
 public class ApiConnect {
 
-    private String urlMobileIP = "http://192.168.4.100/mCSI/C_mobile/";
-    private String defaultIP = "192.168.4.100";
-    // private String URL = "http://192.168.0.89/mCSI/C_mobile/";
+    private String urlMobileIP = "http://180.183.251.32/mcsi/C_mobile/";
+    private String defaultIP = "180.183.251.32/mcsi";
     private String TAG = "DEBUG-ApiConnect";
     private Context mContext;
     private OkHttpClient okHttpClient = new OkHttpClient();
@@ -84,10 +84,24 @@ public class ApiConnect {
             if (response.isSuccessful()) {
                 Log.d(TAG, "checkConnect success");
                 Gson gson = new GsonBuilder().create();
-                return gson.fromJson(response.body().string(), ApiStatus.class);
+                // check form ApiStatus ถ้าค่าที่ส่งกลับมาไม่ตรงกับ apistatus ให้ เเจ้งเออเร่อ
+                try {
+                    return gson.fromJson(response.body().string(), ApiStatus.class);
+                } catch (JsonParseException e) {
+                    Log.d(TAG, "checkConnect fail format");
+                    ApiStatus apiStatus = new ApiStatus();
+                    apiStatus.setStatus("fail");
+                    apiStatus.getData().setAction("checkConnect");
+                    apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
+                    return apiStatus;
+                }
             } else {
                 Log.d(TAG, "checkConnect fail");
-                return null;
+                ApiStatus apiStatus = new ApiStatus();
+                apiStatus.setStatus("fail");
+                apiStatus.getData().setAction("checkConnect");
+                apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
+                return apiStatus;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,7 +114,7 @@ public class ApiConnect {
     private void updateApiConnect() {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
-        urlMobileIP = "http://" + defaultIP + "/mCSI/C_mobile/";
+        urlMobileIP = "http://" + defaultIP + "/C_mobile/";
         Log.d(TAG, "update Api Connect " + urlMobileIP);
     }
 
@@ -387,9 +401,9 @@ public class ApiConnect {
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListCaseSceneServer.getData().getResult().size();
                 int sql_size;
-                if(apiListCaseSceneSQLite.getData() == null){
+                if (apiListCaseSceneSQLite.getData() == null) {
                     sql_size = 0;
-                }else {
+                } else {
                     sql_size = apiListCaseSceneSQLite.getData().getResult().size();
                 }
                 for (int i = 0; i < ser_size; i++) {
@@ -453,6 +467,7 @@ public class ApiConnect {
             return null;
         }
     }
+
     public ApiStatus updateStatusCase(ApiCaseScene apiCaseScene) {
         RequestBody formBody = new FormBody.Builder()
                 .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
@@ -467,7 +482,7 @@ public class ApiConnect {
                 .add("CaseReportID", apiCaseScene.getTbCaseScene().getCaseReportID())
                 .add("ReportStatus", apiCaseScene.getTbCaseScene().getReportStatus())
                 .build();
-        Log.d(TAG, "Not User " +  WelcomeActivity.profile.getTbUsers().id_users);
+        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
         Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
         Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
         Request.Builder builder = new Request.Builder();
@@ -491,6 +506,7 @@ public class ApiConnect {
             return null;
         }
     }
+
     //sendNewNoticeCase
     public ApiStatusResult sendNewNoticeCase(TbNoticeCase tbNoticeCase) {
         RequestBody formBody = new FormBody.Builder()
@@ -531,8 +547,8 @@ public class ApiConnect {
                 .add("LastUpdateDate", tbNoticeCase.getLastUpdateDate())
                 .add("LastUpdateTime", tbNoticeCase.getLastUpdateTime())
                 .build();
-        Log.d(TAG, "NoticeCaseID " +  tbNoticeCase.getNoticeCaseID());
-        Log.d(TAG, "Not User " +  WelcomeActivity.profile.getTbUsers().id_users);
+        Log.d(TAG, "NoticeCaseID " + tbNoticeCase.getNoticeCaseID());
+        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
         Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
         Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
         Request.Builder builder = new Request.Builder();

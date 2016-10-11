@@ -7,13 +7,21 @@ import java.io.Serializable;
  */
 public class TbPhotoOfResultscene implements Serializable {
     public String TB_PhotoOfResultscene = "photoofresultscene";
+    // From Table photoofresultscene field name FileID
+    public String COL_FileID = "FileID";
+    public String FileID = "";
+
     // From Table photoofresultscene field name RSID
     public String COL_RSID = "RSID";
     public String RSID = "";
 
-    // From Table photoofresultscene field name FileID
-    public String COL_FileID = "FileID";
-    public String FileID = "";
+    public String getFileID() {
+        return FileID;
+    }
+
+    public void setFileID(String fileID) {
+        FileID = fileID;
+    }
 
     public String getRSID() {
         return RSID;
@@ -23,11 +31,5 @@ public class TbPhotoOfResultscene implements Serializable {
         this.RSID = RSID;
     }
 
-    public String getFileID() {
-        return FileID;
-    }
 
-    public void setFileID(String fileID) {
-        FileID = fileID;
-    }
 }

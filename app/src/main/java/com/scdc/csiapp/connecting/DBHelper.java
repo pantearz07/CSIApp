@@ -1727,26 +1727,121 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
             }
             // บันทึกข้อมูลลง tbMultimediaFiles
-            if (apiCaseScene.getTbMultimediaFiles() != null) {
-                for (int i = 0; i < apiCaseScene.getTbMultimediaFiles().size(); i++) {
+            if (apiCaseScene.getApiMultimedia() != null) {
+                for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
                     strSQL = "SELECT * FROM multimediaFile "
-                            + " WHERE FileID = '" + apiCaseScene.getTbMultimediaFiles().get(i).FileID + "' " +
+                            + " WHERE FileID = '" + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
                         TbMultimediaFile temp = new TbMultimediaFile();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_FileID, apiCaseScene.getTbMultimediaFiles().get(i).FileID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbMultimediaFiles().get(i).CaseReportID);
-                        Val.put(temp.COL_FileType, apiCaseScene.getTbMultimediaFiles().get(i).FileType);
-                        Val.put(temp.COL_FilePath, apiCaseScene.getTbMultimediaFiles().get(i).FilePath);
-                        Val.put(temp.COL_FileDescription, apiCaseScene.getTbMultimediaFiles().get(i).FileDescription);
-                        Val.put(temp.COL_Timestamp, apiCaseScene.getTbMultimediaFiles().get(i).Timestamp);
+                        Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
+                        Val.put(temp.COL_CaseReportID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID);
+                        Val.put(temp.COL_FileType, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType);
+                        Val.put(temp.COL_FilePath, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                        Val.put(temp.COL_FileDescription, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileDescription);
+                        Val.put(temp.COL_Timestamp, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().Timestamp);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                            db.insert("MultimediaFile", null, Val);
+                            db.insert("multimediaFile", null, Val);
                             Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                            db.update("MultimediaFile", Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getTbMultimediaFiles().get(i).FileID)});
-                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Update ");
+                            db.update("multimediaFile", Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)});
+                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
+                        }
+                    }
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null) {
+                        strSQL = "SELECT * FROM " + oPhotoOfOutside.TB_PhotoOfOutside
+                                + " WHERE " + oPhotoOfOutside.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID + "' "
+                                + "AND CaseReportID = '" + sCaseReportID + "'";
+                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                            TbPhotoOfOutside temp = new TbPhotoOfOutside();
+                            ContentValues Val = new ContentValues();
+                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
+                            Val.put(temp.COL_CaseReportID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().CaseReportID);
+
+                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                db.insert(oPhotoOfOutside.TB_PhotoOfOutside, null, Val);
+                                Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Insert ");
+                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                db.update(oPhotoOfOutside.TB_PhotoOfOutside, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID)});
+                                Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
+                            }
+                        }
+                    }
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null) {
+                        strSQL = "SELECT * FROM " + oPhotoOfInside.TB_PhotoOfInside
+                                + " WHERE " + oPhotoOfInside.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID + "' "
+                                + "AND FeatureInsideID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID + "'";
+                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                            TbPhotoOfInside temp = new TbPhotoOfInside();
+                            ContentValues Val = new ContentValues();
+                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
+                            Val.put(temp.COL_FeatureInsideID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID);
+
+                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                db.insert(oPhotoOfInside.TB_PhotoOfInside, null, Val);
+                                Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Insert ");
+                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                db.update(oPhotoOfInside.TB_PhotoOfInside, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID)});
+                                Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
+                            }
+                        }
+                    }
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null) {
+                        strSQL = "SELECT * FROM " + oPhotoOfEvidence.TB_PhotoOfEvidence
+                                + " WHERE " + oPhotoOfEvidence.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID + "' "
+                                + "AND FindEvidenceID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID + "'";
+                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                            TbPhotoOfEvidence temp = new TbPhotoOfEvidence();
+                            ContentValues Val = new ContentValues();
+                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
+                            Val.put(temp.COL_FindEvidenceID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID);
+
+                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                db.insert(oPhotoOfEvidence.TB_PhotoOfEvidence, null, Val);
+                                Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Insert ");
+                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                db.update(oPhotoOfEvidence.TB_PhotoOfEvidence, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID)});
+                                Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
+                            }
+                        }
+                    }
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
+                        strSQL = "SELECT * FROM " + oPhotoOfResultscene.TB_PhotoOfResultscene
+                                + " WHERE " + oPhotoOfResultscene.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID + "' "
+                                + "AND RSID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID + "'";
+                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                            TbPhotoOfResultscene temp = new TbPhotoOfResultscene();
+                            ContentValues Val = new ContentValues();
+                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
+                            Val.put(temp.COL_RSID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID);
+
+                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                db.insert(oPhotoOfResultscene.TB_PhotoOfResultscene, null, Val);
+                                Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Insert ");
+                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                db.update(oPhotoOfResultscene.TB_PhotoOfResultscene, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID)});
+                                Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
+                            }
+                        }
+                    }
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null) {
+                        strSQL = "SELECT * FROM " + oPhotoOfPropertyless.TB_PhotoOfPropertyless
+                                + " WHERE " + oPhotoOfPropertyless.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID + "' "
+                                + "AND RSID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID + "'";
+                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                            TbPhotoOfPropertyless temp = new TbPhotoOfPropertyless();
+                            ContentValues Val = new ContentValues();
+                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
+                            Val.put(temp.COL_PropertyLessID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID);
+
+                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                db.insert(oPhotoOfPropertyless.TB_PhotoOfPropertyless, null, Val);
+                                Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Insert ");
+                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                db.update(oPhotoOfPropertyless.TB_PhotoOfPropertyless, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID)});
+                                Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
+                            }
                         }
                     }
                 }
@@ -2489,33 +2584,7 @@ public class DBHelper extends SQLiteAssetHelper {
                         apiCaseSceneCase.setTbSceneFeatureInSide(tbSceneFeatureInSides);
 
                     }
-                    // Index tbMultimediaFiles ดึงจากตาราง multimediafile ใช้ค่าจาก Index tbCaseScene
-                    if (temp.CaseReportID != null) {
-                        strSQL = "SELECT * FROM multimediafile "
-                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
-                        List<TbMultimediaFile> tbMultimediaFiles = null;
-                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                            if (tbMultimediaFiles == null) {
-                                tbMultimediaFiles = new ArrayList<>(cursor2.getCount());
-                            }
-                            if (cursor2.getCount() > 0) {
-                                cursor2.moveToPosition(-1);
-                                while (cursor2.moveToNext()) {
-                                    TbMultimediaFile temp15 = new TbMultimediaFile();
-                                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
-                                    tbMultimediaFiles.add(temp15);
 
-                                }
-                            }
-                        }
-                        apiCaseSceneCase.setTbMultimediaFiles(tbMultimediaFiles);
-
-                    }
                     //  ApiMultimedia
                     if (temp.CaseReportID != null) {
                         List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
@@ -2625,7 +2694,7 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfPropertyless.COL_FileID));
                                                 tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfPropertyless.COL_PropertyLessID));
                                                 apiMultimedia.setTbPhotoOfPropertyless(tbPhotoOfPropertyless);
-                                                Log.i(TAG, "tbPhotoOfPropertyless " + temp15.FileID + " "+ String.valueOf(apiMultimedia.getTbPhotoOfPropertyless().FileID));
+                                                Log.i(TAG, "tbPhotoOfPropertyless " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfPropertyless().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfPropertyless(null);
                                             }

@@ -7,7 +7,6 @@ import com.scdc.csiapp.tablemodel.TbClueShown;
 import com.scdc.csiapp.tablemodel.TbDistrict;
 import com.scdc.csiapp.tablemodel.TbFindEvidence;
 import com.scdc.csiapp.tablemodel.TbGatewayCriminal;
-import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbPoliceAgency;
@@ -78,7 +77,6 @@ public class ApiCaseScene implements Serializable {
     // ทรัพย์สินที่สูญหาย
     List<TbPropertyLoss> tbPropertyLosses;
     // ตือ มิเดีย เฉพาะ photo outside
-    List<TbMultimediaFile> tbMultimediaFiles;
 
     List<ApiMultimedia> apiMultimedia;
 
@@ -218,13 +216,6 @@ public class ApiCaseScene implements Serializable {
         this.tbSceneFeatureInSide = tbSceneFeatureInSide;
     }
 
-    public List<TbMultimediaFile> getTbMultimediaFiles() {
-        return tbMultimediaFiles;
-    }
-
-    public void setTbMultimediaFiles(List<TbMultimediaFile> tbMultimediaFiles) {
-        this.tbMultimediaFiles = tbMultimediaFiles;
-    }
 
     public List<TbFindEvidence> getTbFindEvidences() {
         return tbFindEvidences;

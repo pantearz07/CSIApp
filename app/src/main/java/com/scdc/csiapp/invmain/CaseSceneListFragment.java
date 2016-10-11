@@ -63,6 +63,7 @@ public class CaseSceneListFragment extends Fragment {
     String officialID;
     private static final String TAG = "DEBUG-CaseSceneListFragment";
     public static final String LIST_INSTANCE_STATE = "datastate";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,8 +78,6 @@ public class CaseSceneListFragment extends Fragment {
         rootLayout = (CoordinatorLayout) viewlayout.findViewById(R.id.rootLayout);
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         cd = new ConnectionDetector(context);
-        // networkConnectivity = cd.isNetworkAvailable();
-        //networkConnectivity = false;
         getDateTime = new GetDateTime();
 
         final CSIDataTabFragment fCSIDataTabFragment = new CSIDataTabFragment();
@@ -209,30 +208,16 @@ public class CaseSceneListFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (mode.equals("online")) {
-                            boolean isSuccess = mDbHelper.saveCaseScene(apiNoticeCase.getTbCaseScene());
-                            if (isSuccess) {
-                                boolean isSuccess1 = mDbHelper.saveNoticeCase(apiNoticeCase.getTbNoticeCase());
-                                if (isSuccess1) {
-                                    Bundle i = new Bundle();
-                                    i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
-                                    i.putString(csiDataTabFragment.Bundle_mode, "edit");
-                                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                                    csiDataTabFragment.setArguments(i);
-                                    fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
 
-                                } else {
-                                    if (snackbar == null || !snackbar.isShown()) {
-                                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiNoticeCase.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
+                            boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
+                            if (isSuccess1) {
+                                Bundle i = new Bundle();
+                                i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
+                                i.putString(csiDataTabFragment.Bundle_mode, "edit");
+                                FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                csiDataTabFragment.setArguments(i);
+                                fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
 
-
-                                                    }
-                                                });
-                                        snackbar.show();
-                                    }
-                                }
                             } else {
                                 if (snackbar == null || !snackbar.isShown()) {
                                     snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiNoticeCase.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
@@ -246,6 +231,7 @@ public class CaseSceneListFragment extends Fragment {
                                     snackbar.show();
                                 }
                             }
+
                         } else {
                             Bundle i = new Bundle();
                             i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
@@ -329,14 +315,6 @@ public class CaseSceneListFragment extends Fragment {
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListCaseScene.getData().getResult();
 
-                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase ปิดไว้ก่อน เพราะไม่ต้องดึงมาทั้งหมดไม่งั้นจะหนักเครื่องเฉยๆ
-                //int size = caseList.size();
-                //List<TbCaseScene> tbNoticeCases = new ArrayList<>(size);
-                //for (int i = 0; i < size; i++) {
-                //    tbNoticeCases.add(caseList.get(i).getTbCaseScene());
-                //}
-                //mDbHelper.syncNoticeCase(tbNoticeCases);
-
                 // เอาข้อมูลไปแสดงใน RV
                 apiCaseSceneListAdapter.notifyDataSetChanged();
                 Log.d(TAG, "Update apiNoticeCaseListAdapter");
@@ -350,32 +328,5 @@ public class CaseSceneListFragment extends Fragment {
             }
         }
     }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//
-//        outState.putParcelable(LIST_INSTANCE_STATE, caseList);
-//        super.onSaveInstanceState(outState);
-//    }
-//
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        if(savedInstanceState != null){
-//            caseList = (List<ApiCaseScene>) savedInstanceState.getSerializable("caselist");
-//        }
-//    }
-//
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        caseList = (List<ApiCaseScene>) savedInstanceState.getSerializable("caselist");
-//    }
-//
-//    @Override
-//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-//        super.onViewStateRestored(savedInstanceState);
-//        caseList = (List<ApiCaseScene>) savedInstanceState.getSerializable("caselist");
-//    }
 
 }
