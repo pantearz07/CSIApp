@@ -110,8 +110,13 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         if (apiNoticeCase.getTbProvince() != null) {
             PROVINCE_NAME = apiNoticeCase.getTbProvince().PROVINCE_NAME;
         }
-        String positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
-                + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+        String positioncase = "";
+        if (apiNoticeCase.getTbNoticeCase().LocaleName != null) {
+            positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
+                    + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+        } else {
+            positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+        }
         csidataholder.positioncase.setText("เกิดที่: " + positioncase);
 
         if (apiNoticeCase.getTbNoticeCase().PoliceStationID.equalsIgnoreCase("")) {
@@ -124,28 +129,21 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " + apiNoticeCase.getTbNoticeCase().ReceivingCaseDate + " เวลา " + apiNoticeCase.getTbNoticeCase().ReceivingCaseTime + " น.");
 
         if (apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != null || apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != "") {
-                if(apiNoticeCase.getTbOfficial() == null){
-                    csidataholder.inqInfo.setVisibility(View.GONE);
-                }else {
+            if (apiNoticeCase.getTbOfficial() == null) {
+                csidataholder.inqInfo.setVisibility(View.GONE);
+            } else {
 
-             csidataholder.inqInfo.setVisibility(View.VISIBLE);
-                    csidataholder.inqInfo.setText(apiNoticeCase.getTbOfficial().Rank + " " +apiNoticeCase.getTbOfficial().FirstName+ " " + apiNoticeCase.getTbOfficial().LastName
+                csidataholder.inqInfo.setVisibility(View.VISIBLE);
+                csidataholder.inqInfo.setText(apiNoticeCase.getTbOfficial().Rank + " " + apiNoticeCase.getTbOfficial().FirstName + " " + apiNoticeCase.getTbOfficial().LastName
                         + " (" + apiNoticeCase.getTbOfficial().Position
                         + ") โทร. " + apiNoticeCase.getTbOfficial().PhoneNumber);
-                }
+            }
 
-//            if(apiNoticeCase.getTbOfficial().Rank !=null) {
-//                csidataholder.inqInfo.setVisibility(View.VISIBLE);
-//                csidataholder.inqInfo.setText(apiNoticeCase.getTbOfficial().Rank + " " + apiNoticeCase.getTbOfficial().FirstName + " " + apiNoticeCase.getTbOfficial().LastName
-//                        + " (" + apiNoticeCase.getTbOfficial().Position
-//                        + ") โทร. " + apiNoticeCase.getTbOfficial().PhoneNumber);
-//            }
-//            csidataholder.inqInfo.setVisibility(View.GONE);
-        }else{
+        } else {
             csidataholder.inqInfo.setVisibility(View.GONE);
         }
         String SuffererPrename = "", SuffererName = "", SuffererPhoneNum = "";
-        if (apiNoticeCase.getTbNoticeCase().SuffererName == null || apiNoticeCase.getTbNoticeCase().SuffererName.equals("") ) {
+        if (apiNoticeCase.getTbNoticeCase().SuffererName == null || apiNoticeCase.getTbNoticeCase().SuffererName.equals("")) {
             csidataholder.sufferrerInfo.setVisibility(View.GONE);
         } else {
             if (apiNoticeCase.getTbNoticeCase().SuffererPrename != null) {

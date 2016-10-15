@@ -89,11 +89,17 @@ public class MainActivity extends AppCompatActivity {
         mManager = new PreferenceData(this);
         mContext = getApplicationContext();
         // PreferenceData member id
-        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-        username = WelcomeActivity.profile.getTbUsers().id_users;
-        password = WelcomeActivity.profile.getTbUsers().pass;
-        accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+        if(WelcomeActivity.profile.getTbOfficial() != null) {
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+            username = WelcomeActivity.profile.getTbUsers().id_users;
+            password = WelcomeActivity.profile.getTbUsers().pass;
+            accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+        }else{
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            finish();
+            startActivity(gotoWelcomeActivity);
 
+        }
         cd = new ConnectionDetector(getApplicationContext());
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
@@ -131,20 +137,11 @@ public class MainActivity extends AppCompatActivity {
 
         mFragmentManager = getSupportFragmentManager();
         setFragment(caseSceneListFragment,1);
-//        FragmentTransaction fthome = mFragmentManager.beginTransaction();
-//        fthome.replace(R.id.containerView, caseSceneListFragment);
-//        fthome.addToBackStack(null);
-//        fthome.commit();
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("caseSceneListFragment")) {
                 setFragment(caseSceneListFragment,1);
-//                FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-//                fthome2.replace(R.id.containerView, caseSceneListFragment);
-//                fthome2.addToBackStack(null);
-//                fthome2.commit();
-
             }
         }
 
@@ -177,31 +174,16 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
                     setFragment(caseSceneListFragment,1);
-//                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-//                      fthome2.replace(R.id.containerView, caseSceneListFragment);
-//                    fthome2.addToBackStack(null);
-//                    fthome2.commit();
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_schedule) {
-//                    FragmentTransaction ftschedule = mFragmentManager.beginTransaction();
-//                    ftschedule.replace(R.id.containerView, scheduleInvestigatorsFragment);
-//                    ftschedule.addToBackStack(null);
-//                    ftschedule.commit();
                 }
                 if (menuItem.getItemId() == R.id.nav_item_police) {
-//                    FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
-//                    ftpolice.replace(R.id.containerView, policeListFragment);
-//                    ftpolice.addToBackStack(null);
-//                    ftpolice.commit();
+                    setFragment(policeListFragment,1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
                     setFragment(settingFragment,1);
-//                    FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-//                    ftsetting.replace(R.id.containerView, settingFragment);
-//                    ftsetting.addToBackStack(null);
-//                    ftsetting.commit();
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
@@ -320,10 +302,6 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             setFragment(settingFragment,1);
-//            FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-//            ftsetting.replace(R.id.containerView, settingFragment);
-//            ftsetting.addToBackStack(null);
-//            ftsetting.commit();
         }
 
         return super.onOptionsItemSelected(item);
@@ -357,7 +335,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void setFragment(Fragment fragment, int backstackyes) {
-//        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         if (backstackyes==1) {fragmentTransaction.addToBackStack(null);}
         fragmentTransaction.replace(R.id.containerView, fragment);

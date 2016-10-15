@@ -32,7 +32,6 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
@@ -43,7 +42,6 @@ import java.util.List;
 
 public class DiagramTabFragment extends Fragment {
     private static final String TAG = "DEBUG-DiagramTabFragment";
-    SQLiteDBHelper mDbHelper;
     DBHelper dbHelper;
     SQLiteDatabase mDb;
     FragmentManager mFragmentManager;
@@ -57,7 +55,7 @@ public class DiagramTabFragment extends Fragment {
     String arrDataPic[][];
     DrawingDiagramFragment drawingDiagramFragment = new DrawingDiagramFragment();
     GetDateTime getDateTime;
-    String[] updateDT, datetime;
+
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     public static List<ApiMultimedia> apiMultimediaList = null;
     String sDiagramID;
@@ -71,15 +69,10 @@ public class DiagramTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mManager = new PreferenceData(getActivity());
-//        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
         mFragmentManager = getActivity().getSupportFragmentManager();
-        mDbHelper = new SQLiteDBHelper(getActivity());
         dbHelper = new DBHelper(getActivity());
-//        mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
-        updateDT = getDateTime.getDateTimeNow();
-        datetime = getDateTime.getDateTimeCurrent();
         View viewDiagramTab = inflater.inflate(R.layout.diagram_tab_layout, container, false);
 
         gViewPic = (GridView) viewDiagramTab.findViewById(R.id.gridViewShowMedia);

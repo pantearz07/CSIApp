@@ -111,7 +111,16 @@
                     android:text=""
                     android:freezesText="true"
                     android:textSize="@dimen/small_text" />
-
+                <TextView
+                    android:id="@+id/edtInqTel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="โทร."
+                    android:textColor="@color/ocean"
+                    android:freezesText="true"
+                    android:textSize="@dimen/small_text" />
                 <TextView
                     android:id="@+id/txtInvInfo"
                     android:layout_width="wrap_content"
@@ -129,7 +138,16 @@
                     android:freezesText="true"
                     android:text="-"
                     android:textSize="@dimen/small_text" />
-
+                <TextView
+                    android:id="@+id/edtInvTel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:text="โทร."
+                    android:textColor="@color/ocean"
+                    android:freezesText="true"
+                    android:textSize="@dimen/small_text" />
                 <TextView
                     android:id="@+id/txtPoliceStation"
                     android:layout_width="wrap_content"

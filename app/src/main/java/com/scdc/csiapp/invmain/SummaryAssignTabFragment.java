@@ -1,8 +1,11 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -56,7 +59,8 @@ public class SummaryAssignTabFragment extends Fragment {
 
     Spinner spnCaseType, spnSubCaseType;
     String selectedCaseType, selectedSubCaseType, sCaseTypeID, sSubCaseTypeID;
-    TextView edtUpdateDateTime2, edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation;
+    TextView edtUpdateDateTime2, edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo,
+            edtInvTel,edtInqTel,edtPoliceStation;
     String[] updateDT;
     String message = "";
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
@@ -72,7 +76,7 @@ public class SummaryAssignTabFragment extends Fragment {
     View layoutButton, layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
     CSIDataTabFragment csiDataTabFragment;
     TextView editSceneNoticeDate, editSceneNoticeTime;
-
+    String InqTel,InvTel;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,6 +113,8 @@ public class SummaryAssignTabFragment extends Fragment {
         layoutButton.setVisibility(View.GONE);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
+        edtInqTel= (TextView) viewSummaryCSI.findViewById(R.id.edtInqTel);
+        edtInvTel= (TextView) viewSummaryCSI.findViewById(R.id.edtInvTel);
         edtPoliceStation = (TextView) viewSummaryCSI.findViewById(R.id.edtPoliceStation);
 //สถานะคดี
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
@@ -156,16 +162,18 @@ public class SummaryAssignTabFragment extends Fragment {
         }
 
         //เเสดงค่าเดิม
-        if (sCaseTypeID == null || sCaseTypeID.equals("") || sCaseTypeID.equals("null")) {
-            spnCaseType.setSelection(0);
+
+        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
+            spnSubCaseType.setSelection(0);
         } else {
+            String SelectCaseTypeID = dbHelper.SelectCaseTypeID(sSubCaseTypeID);
             for (int i = 0; i < mCaseTypeArray.length; i++) {
-                if (sCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
+                if (SelectCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
                     spnCaseType.setSelection(i);
                     break;
                 }
             }
-            mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(sCaseTypeID);
+            mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(SelectCaseTypeID);
             if (mSubCaseTypeArray != null) {
                 mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
                 for (int i = 0; i < mSubCaseTypeArray.length; i++) {
@@ -175,33 +183,29 @@ public class SummaryAssignTabFragment extends Fragment {
                 ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
                 spnSubCaseType.setAdapter(adapterSubCaseType);
+                for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                    if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+                        spnSubCaseType.setSelection(i);
+                        break;
+                    }
+                }
             } else {
                 spnSubCaseType.setAdapter(null);
-                selectedSubCaseType = null;
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SubCaseTypeID = selectedSubCaseType;
-                Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
-            }
-        }
-        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
-            spnSubCaseType.setSelection(0);
-        } else {
-            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
-                    spnSubCaseType.setSelection(i);
-                    break;
-                }
+
             }
         }
 
         edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
                 + WelcomeActivity.profile.getTbOfficial().LastName + " ("
-                + WelcomeActivity.profile.getTbOfficial().Position + ") โทร." +
-                "" + WelcomeActivity.profile.getTbOfficial().PhoneNumber + " ");
+                + WelcomeActivity.profile.getTbOfficial().Position + ")");
+        edtInvTel.setText("โทร."+ WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+        edtInvTel.setOnClickListener(new SummaryOnClickListener());
 
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID.equals("") || AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID.equals("null")) {
             edtInqInfo.setText("");
+            edtInqTel.setText("");
         } else {
             String InquiryOfficialID = AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID;
             Log.i(TAG, "InquiryOfficialID : " + InquiryOfficialID);
@@ -209,10 +213,15 @@ public class SummaryAssignTabFragment extends Fragment {
             String mInvOfficialArray[] = dbHelper.SelectInvOfficial(InquiryOfficialID);
             if (mInvOfficialArray != null) {
                 edtInqInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
-                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") โทร." +
-                        mInvOfficialArray[7].toString());
+                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ")");
+                if ( mInvOfficialArray[7] != null || mInvOfficialArray[7].equals("")) {
+                    edtInqTel.setText("โทร." + mInvOfficialArray[7].toString());
+                    InqTel = mInvOfficialArray[7].toString();
+                    edtInqTel.setOnClickListener(new SummaryOnClickListener());
+                }
             } else {
                 edtInqInfo.setText("");
+                edtInqTel.setText("");
             }
 
         }
@@ -368,26 +377,26 @@ public class SummaryAssignTabFragment extends Fragment {
                 //save ลงมือถือ
 //                boolean isSuccess1 = dbHelper.saveCaseScene(AssignTabFragment.apiCaseScene.getTbCaseScene());
 //                if (isSuccess1) {
-                    boolean isSuccess = dbHelper.updateAlldataCase(AssignTabFragment.apiCaseScene);
-                    if (isSuccess) {
-                        //แก้ไขตารางในเซิฟก่อน แล้วเด้งไปหน้าใหม่
-                        UpdateStatusCase statusCase = new UpdateStatusCase();
-                        statusCase.execute(AssignTabFragment.apiCaseScene);
+                boolean isSuccess = dbHelper.updateAlldataCase(AssignTabFragment.apiCaseScene);
+                if (isSuccess) {
+                    //แก้ไขตารางในเซิฟก่อน แล้วเด้งไปหน้าใหม่
+                    UpdateStatusCase statusCase = new UpdateStatusCase();
+                    statusCase.execute(AssignTabFragment.apiCaseScene);
 
 
-                    } else {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
+                } else {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
 
 
-                                        }
-                                    });
-                            snackbar.show();
-                        }
+                                    }
+                                });
+                        snackbar.show();
                     }
+                }
 //                } else {
 //                    if (snackbar == null || !snackbar.isShown()) {
 //                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
@@ -419,6 +428,26 @@ public class SummaryAssignTabFragment extends Fragment {
                 Log.i("Click SceneNoticeTime", editSceneNoticeTime.getText().toString());
                 TimeDialog dialogKnowCaseTime = new TimeDialog(v);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
+            }
+            if( v == edtInqTel){
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + InqTel));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+            }
+            if( v == edtInvTel){
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + InvTel));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
             }
         }
     }

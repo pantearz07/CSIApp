@@ -8,10 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -28,96 +26,64 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Pantearz07 on 14/3/2559.
  */
-public class PhotoTabFragment  extends Fragment {
+public class PhotoTabFragment extends Fragment {
+    private static final String TAG = "DEBUG-PhotoTabFragment";
     public static final int REQUEST_CAMERA = 111;
     private String mCurrentPhotoPath;
     TextView txtPhotoNum;
     static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
-    String sPhotoID;
-    SQLiteDBHelper mDbHelper;
+    String sPhotoID, timeStamp;
+    DBHelper dbHelper;
     SQLiteDatabase mDb;
     private GridView gViewPhoto;
     Uri uri;
     private PreferenceData mManager;
-    String officialID, reportID;
+    String officialID, caseReportID;
     String arrDataPhoto[][];
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     GetDateTime getDateTime;
-    String[] updateDT,datetime;
+    String[] updateDT, datetime;
+    public static List<TbMultimediaFile> tbMultimediaFileList = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mManager = new PreferenceData(getActivity());
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
-        mDbHelper = new SQLiteDBHelper(getActivity());
-        mDb = mDbHelper.getWritableDatabase();
+        dbHelper = new DBHelper(getActivity());
         View viewPhotosTab = inflater.inflate(R.layout.photo_tab_layout, container, false);
-        // Permission StrictMode
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+        caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
         getDateTime = new GetDateTime();
         updateDT = getDateTime.getDateTimeNow();
-        datetime= getDateTime.getDateTimeCurrent();
+        datetime = getDateTime.getDateTimeCurrent();
+
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewPhoto = (GridView) viewPhotosTab.findViewById(R.id.gridViewPhoto);
-
         txtPhotoNum = (TextView) viewPhotosTab.findViewById(R.id.txtPhotoNum);
+
         showAllPhoto();
 
 
         fabBtn = (FloatingActionButton) viewPhotosTab.findViewById(R.id.fabBtn);
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-
-                String timeStamp = "";
-                File newfile;
-                createFolder("Pictures");
-
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                timeStamp = updateDT[0]+" "+updateDT[1];
-                sPhotoID = "IMG_" + datetime[2]+""+datetime[1]+""+datetime[0]+"_"+ datetime[3]+""+datetime[4]+""+datetime[5];
-                String sPhotoPath = sPhotoID + ".jpg";
-                newfile = new File(strSDCardPathName, "Pictures/" + sPhotoPath);
-                if (newfile.exists())
-                    newfile.delete();
-                try {
-                    newfile.createNewFile();
-                    mCurrentPhotoPath = newfile.getAbsolutePath();
-                } catch (IOException e) {
-                }
-                if (newfile != null) {
-                    uri = Uri.fromFile(newfile);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                    getActivity().startActivityForResult(Intent.createChooser(cameraIntent
-                            , "Take a picture with"), REQUEST_CAMERA);
-
-                    String sPhotoDescription = "";
-                    new saveDataMedia().execute(reportID, sPhotoID, sPhotoPath, sPhotoDescription, timeStamp, "photo");
-
-                    Log.i("show", "PHOTO saved to Gallery!" + strSDCardPathName + "Pictures/" + " : " + sPhotoPath);
-                }
-
-            }
-        });
+        fabBtn.setOnClickListener(new PhotoOnClickListener());
 
         return viewPhotosTab;
     }
@@ -128,8 +94,8 @@ public class PhotoTabFragment  extends Fragment {
             // Create folder
             if (!folder.exists()) {
                 folder.mkdir();
-                Log.i("mkdir",Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
-            }else {
+                Log.i("mkdir", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+            } else {
                 Log.i("folder.exists", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
 
             }
@@ -137,46 +103,20 @@ public class PhotoTabFragment  extends Fragment {
         }
 
     }
-    class saveDataMedia extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
 
-        @Override
-        protected String doInBackground(String... params) {
-            String arrData = "";
-
-
-            long saveStatus = mDbHelper.saveDataMultimediaifile(params[0], params[1], params[5], params[2],
-                    params[3], params[4]);
-            if (saveStatus <= 0) {
-                arrData = "error";
-                Log.i("saveData " + params[5], "Error!! ");
-            } else {
-                arrData = "save";
-                Log.i("saveData " + params[5], params[2]);
-
-
-            }
-
-            return arrData;
-        }
-    }
 
     public class PhotoAdapter extends BaseAdapter {
         private Context context;
-        private String[][] lis;
 
-        public PhotoAdapter(Context c, String[][] li) {
+        public PhotoAdapter(Context c) {
             // TODO Auto-generated method stub
             context = c;
-            lis = li;
+
         }
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return lis.length;
+            return tbMultimediaFileList.size();
         }
 
         public Object getItem(int position) {
@@ -207,14 +147,14 @@ public class PhotoTabFragment  extends Fragment {
   */
             String root = Environment.getExternalStorageDirectory().toString();
             String strPath = root + "/CSIFiles/Pictures/"
-                    + lis[position][3].toString();
+                    + tbMultimediaFileList.get(position).FilePath.toString();
             Log.i("strPath ", strPath);
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
             //load image by piccaso
-           // String imgPath = "file:///CSIFiles/Pictures/"
-           ///         + lis[position][3].toString();
+            // String imgPath = "file:///CSIFiles/Pictures/"
+            ///         + lis[position][3].toString();
             //file:///1234.jpg
            /* Picasso.with(getActivity())
                     .load("file:///1234.jpg")
@@ -224,7 +164,7 @@ public class PhotoTabFragment  extends Fragment {
                     //.error(R.drawable.user_placeholder_error)
                     .into(imageView);
 */
-           Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
+            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
 
             int width1 = bmpSelectedImage.getWidth();
             int height1 = bmpSelectedImage.getHeight();
@@ -243,6 +183,7 @@ public class PhotoTabFragment  extends Fragment {
 
         }
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
@@ -252,10 +193,27 @@ public class PhotoTabFragment  extends Fragment {
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
+                    Log.i(TAG, "Photo save " + sPhotoID);
+                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+                    tbMultimediaFile.FileID = sPhotoID;
+                    tbMultimediaFile.FileDescription = "";
+                    tbMultimediaFile.FileType = "photo";
+                    tbMultimediaFile.FilePath = sPhotoID + ".jpg";
+                    tbMultimediaFile.Timestamp = timeStamp;
+                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
 
-                    Log.i("REQUEST_Photo", "Photo save");
+                    apiMultimediaList.add(apiMultimedia);
+                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                    if (isSuccess) {
+                        Log.i(TAG, "PHOTO saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");
+
+                    }
                     showAllPhoto();
-                    //showAllVideo();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -263,38 +221,29 @@ public class PhotoTabFragment  extends Fragment {
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 //data.getData();
                 Log.i("REQUEST_Photo", "media recording cancelled." + sPhotoID);
-                File photosfile = new File(mCurrentPhotoPath);
-                if (photosfile.exists()) {
-                    photosfile.delete();
-                    long saveStatus = mDbHelper.DeleteMediaFile(reportID, sPhotoID);
-                    if (saveStatus <= 0) {
-                        Log.i("deletephoto", "Cannot delete!! ");
 
-                    } else {
-                        Log.i("deletephoto", "ok");
-                        showAllPhoto();
-                    }
-                }
             } else {
                 Log.i("REQUEST_Photo", "Failed to record media");
             }
         }
     }
+
     public void showAllPhoto() {
         // TODO Auto-generated method stub
-        arrDataPhoto = mDbHelper.SelectDataMultimediaFile(reportID, "photo");
-        if (arrDataPhoto != null) {
-            Log.i("arrDataPhoto", String.valueOf(arrDataPhoto.length));
-            txtPhotoNum.setText(String.valueOf(arrDataPhoto.length));
+        tbMultimediaFileList = new ArrayList<>();
+        tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "photo");
+        if (tbMultimediaFileList != null) {
+            Log.i("tbMultimediaFileList", String.valueOf(tbMultimediaFileList.size()));
+            txtPhotoNum.setText(String.valueOf(tbMultimediaFileList.size()));
             gViewPhoto.setVisibility(View.VISIBLE);
-            gViewPhoto.setAdapter(new PhotoAdapter(getActivity(), arrDataPhoto));
+            gViewPhoto.setAdapter(new PhotoAdapter(getActivity()));
             registerForContextMenu(gViewPhoto);
             // OnClick
             gViewPhoto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-                    showViewPic(arrDataPhoto[position][3].toString());
+                    showViewPic(tbMultimediaFileList.get(position).FilePath.toString());
                 }
             });
 
@@ -327,6 +276,7 @@ public class PhotoTabFragment  extends Fragment {
         imageView.setImageBitmap(resizedBitmap);
         dialog.show();
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -354,5 +304,36 @@ public class PhotoTabFragment  extends Fragment {
         super.onResume();
         Log.i("onResume photo", "resume");
 
+    }
+
+    private class PhotoOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (v == fabBtn) {
+                File newfile;
+                createFolder("Pictures");
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+                sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+
+                String sPhotoPath = sPhotoID + ".jpg";
+                newfile = new File(ResultTabFragment.strSDCardPathName, "Pictures/" + sPhotoPath);
+                if (newfile.exists())
+                    newfile.delete();
+                try {
+                    newfile.createNewFile();
+                    mCurrentPhotoPath = newfile.getAbsolutePath();
+                } catch (IOException e) {
+                }
+                if (newfile != null) {
+                    uri = Uri.fromFile(newfile);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                    getActivity().startActivityForResult(Intent.createChooser(cameraIntent
+                            , "Take a picture with"), REQUEST_CAMERA);
+                }
+            }
+        }
     }
 }

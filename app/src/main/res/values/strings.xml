@@ -6,6 +6,7 @@
 
     <string name="network_unavailable">กรุณาเชื่อมต่ออินเตอร์เน็ตก่อนใช้งาน</string>
     <string name="cannot_connect_server">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองเปลี่ยน IP</string>
+    <string name="cannot_connect_server_offline">โหมดออฟไลน์ ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองเปลี่ยน IP ใหม่</string>
     <string name="offline_mode">โหมดออฟไลน์ กรุณาตรวจสอบการเชื่อมต่อ</string>
     <string name="please_input_data">กรุณาป้อนข้อมูล</string>
     <string name="save">บันทึก</string>

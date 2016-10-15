@@ -11,9 +11,11 @@ import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
+import com.scdc.csiapp.apimodel.ApiListOfficial;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
+import com.scdc.csiapp.apimodel.ApiOfficial;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
@@ -91,23 +93,26 @@ public class ApiConnect {
                     Log.d(TAG, "checkConnect fail format");
                     ApiStatus apiStatus = new ApiStatus();
                     apiStatus.setStatus("fail");
-                    apiStatus.getData().setAction("checkConnect");
-                    apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
+//                    apiStatus.getData().setAction("checkConnect");
+//                    apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
                     return apiStatus;
                 }
             } else {
                 Log.d(TAG, "checkConnect fail");
                 ApiStatus apiStatus = new ApiStatus();
                 apiStatus.setStatus("fail");
-                apiStatus.getData().setAction("checkConnect");
-                apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
+//                apiStatus.getData().setAction("checkConnect");
+//                apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
                 return apiStatus;
             }
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in checkConnect : " + e.getMessage());
+            ApiStatus apiStatus = new ApiStatus();
+            apiStatus.setStatus("fail");
+            return apiStatus;
         }
-        return null;
+//        return null;
     }
 
     // ส่วนการทำงาน Update ผ่านในคลาส เพื่อดึงค่า IP ล่าสุด และอัพเดทลิงค์การเชื่อม
@@ -568,6 +573,63 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
+
+    public ApiListOfficial listOfficial(String AccessType) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("AccessType", AccessType)
+                .build();
+
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "listOfficial")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                // ข้อมูลจากเซิร์ฟเวอร์
+                ApiListOfficial apiListOfficialServer = gson.fromJson(response.body().string(), ApiListOfficial.class);
+                // ข้อมูลจาก SQLite
+                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+                ApiListOfficial apiListOfficialSQLite = mDbHelper.selectApiOfficial(AccessType);
+                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+                int ser_size = apiListOfficialServer.getData().getResult().size();
+                int sql_size;
+                if (apiListOfficialSQLite.getData() == null) {
+                    sql_size = 0;
+                } else {
+                    sql_size = apiListOfficialSQLite.getData().getResult().size();
+                }
+                for (int i = 0; i < ser_size; i++) {
+                    ApiOfficial temp_ser = apiListOfficialServer.getData().getResult().get(i);
+                    ApiOfficial temp_sql;
+                    boolean flag_have = false;
+                    for (int j = 0; j < sql_size; j++) {
+                        temp_sql = apiListOfficialSQLite.getData().getResult().get(j);
+                        if (temp_ser.getTbOfficial().OfficialID.equalsIgnoreCase(temp_sql.getTbOfficial().OfficialID)) {
+                            flag_have = true;
+                            break;
+                        }
+                    }
+                    if (flag_have == false) {
+                        temp_ser.setMode("online");
+                        apiListOfficialSQLite.getData().getResult().add(temp_ser);
+                    }
+                }
+                return apiListOfficialSQLite;
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in listOfficial : " + e.getMessage());
 
             return null;
         }

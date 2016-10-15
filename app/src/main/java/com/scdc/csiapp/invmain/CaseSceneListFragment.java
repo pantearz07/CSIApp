@@ -2,9 +2,11 @@ package com.scdc.csiapp.invmain;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -21,15 +23,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
+import com.scdc.csiapp.tablemodel.TbOfficial;
+import com.scdc.csiapp.tablemodel.TbUsers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +70,10 @@ public class CaseSceneListFragment extends Fragment {
     String officialID;
     private static final String TAG = "DEBUG-CaseSceneListFragment";
     public static final String LIST_INSTANCE_STATE = "datastate";
-
+    TbOfficial tbOfficial;
+    TbUsers tbUsers;
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 20; //20 second
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,7 +86,13 @@ public class CaseSceneListFragment extends Fragment {
         context = viewlayout.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
         rootLayout = (CoordinatorLayout) viewlayout.findViewById(R.id.rootLayout);
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+        if (WelcomeActivity.profile.getTbOfficial() != null) {
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+        } else {
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
+        }
         cd = new ConnectionDetector(context);
         getDateTime = new GetDateTime();
 
@@ -91,6 +107,7 @@ public class CaseSceneListFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rvDraft.setLayoutManager(llm);
         rvDraft.setHasFixedSize(true);
+
         swipeContainer = (SwipeRefreshLayout) viewlayout.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -99,14 +116,14 @@ public class CaseSceneListFragment extends Fragment {
             public void onRefresh() {
                 if (cd.isNetworkAvailable()) {
                     Log.i("log_show draft", "Refreshing!! ");
-
                     swipeContainer.setRefreshing(true);
-                    new ConnectlistCasescene().execute();
+                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
 
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    //selectApiNoticeCaseFromSQLite();
+                    selectApiCaseSceneFromSQLite();
 
                     snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
@@ -137,7 +154,11 @@ public class CaseSceneListFragment extends Fragment {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
-                    new ConnectlistCasescene().execute();
+                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
+//                    new ConnectlistCasescene().execute();
+
                     //  initializeData();
                 } else {
                     swipeContainer.setRefreshing(true);
@@ -162,7 +183,10 @@ public class CaseSceneListFragment extends Fragment {
 
         // ตรวจสอบการเชื่อมต่ออินเตอร์แล้วแยกการทำงานกัน
         if (cd.isNetworkAvailable()) {
-            new ConnectlistCasescene().execute();
+//            new ConnectlistCasescene().execute();
+            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
         } else {
             selectApiCaseSceneFromSQLite();
         }
@@ -285,7 +309,7 @@ public class CaseSceneListFragment extends Fragment {
     }
 
     public void selectApiCaseSceneFromSQLite() {
-        ApiListCaseScene apiListNoticeCase = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+        ApiListCaseScene apiListNoticeCase = mDbHelper.selectApiCaseScene(officialID);
         caseList = apiListNoticeCase.getData().getResult();
         Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
 
@@ -328,5 +352,84 @@ public class CaseSceneListFragment extends Fragment {
             }
         }
     }
+    Runnable mHandlerTaskcheckConnect = new Runnable() {
+        @Override
+        public void run() {
+            ConnectApiCheckConnect connectApi = new ConnectApiCheckConnect();
+            connectApi.execute();
+            mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
+        }
+    };
+    class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
 
+        @Override
+        protected ApiStatus doInBackground(ApiStatus... apiStatuses) {
+            return WelcomeActivity.api.checkConnect();
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
+                mHandler.removeCallbacks(mHandlerTaskcheckConnect);
+                new ConnectlistCasescene().execute();
+            } else {
+                selectApiCaseSceneFromSQLite();
+//                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (snackbar != null) {
+                                        snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                    }
+                                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                    AlertDialog.Builder builder =
+                                            new AlertDialog.Builder(getActivity());
+                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+
+                                    view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                                    builder.setView(view);
+                                    final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+
+                                    builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (ipvalueEdt.getText().equals("")) {
+                                                Toast.makeText(getActivity(),
+                                                        getString(R.string.please_input_data),
+                                                        Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                String ipvalue = ipvalueEdt.getText().toString();
+                                                WelcomeActivity.api.updateIP(ipvalue);
+
+                                                if (snackbar != null) {
+                                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                                }
+                                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                                mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
+                                                Toast.makeText(getActivity(),
+                                                        getString(R.string.save_complete),
+                                                        Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                    });
+
+                                    builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+
+                                    builder.show();
+                                }
+                            });
+                    snackbar.show();
+//                }
+            }
+        }
+    }
 }

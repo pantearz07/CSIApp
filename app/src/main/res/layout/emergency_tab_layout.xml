@@ -36,8 +36,8 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="@dimen/margin_line"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:textSize="@dimen/ssmall_text"
-                    android:freezesText="true"/>
+                    android:freezesText="true"
+                    android:textSize="@dimen/ssmall_text" />
 
 
                 <TableRow
@@ -81,6 +81,13 @@
                             android:textSize="@dimen/small_text" />
                     </android.support.design.widget.TextInputLayout>
 
+                    <ImageButton
+                        android:id="@+id/ic_telphone1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_phone_android_black_24dp" />
 
                 </LinearLayout>
 
@@ -391,9 +398,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:gravity="left"
                             android:text="0"
-                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -415,9 +422,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:freezesText="true"
                             android:gravity="left"
                             android:text="0"
-                            android:freezesText="true"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -454,8 +461,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
-                            android:layout_weight="0.3"
-                            />
+                            android:layout_weight="0.3" />
 
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/txtSuffererName"
@@ -510,9 +516,17 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="โทรศัพท์ติดต่อ"
-                                android:textSize="@dimen/small_text"
-                                android:inputType="phone"/>
+                                android:inputType="phone"
+                                android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
+
+                        <ImageButton
+                            android:id="@+id/ic_telphone2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_phone_android_black_24dp" />
                     </TableRow>
 
 

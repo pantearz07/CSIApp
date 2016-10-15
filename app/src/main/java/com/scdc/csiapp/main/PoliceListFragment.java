@@ -13,9 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.policetabs.InquiryOfficialListTabFragment;
-import com.scdc.csiapp.policetabs.InvestigatorListTabFragment;
-import com.scdc.csiapp.policetabs.SubInvestigatorListTabFragment;
+import com.scdc.csiapp.policetabs.InquiryOfficialListFragment;
+import com.scdc.csiapp.policetabs.InvestigatorListFragment;
+import com.scdc.csiapp.policetabs.SubInvestigatorListFragment;
 
 /**
  * Created by Pantearz07 on 23/9/2558.
@@ -72,11 +72,11 @@ public class PoliceListFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new InvestigatorListTabFragment();
+                    return new InvestigatorListFragment();
                 case 1:
-                    return new SubInvestigatorListTabFragment();
+                    return new SubInvestigatorListFragment();
                 case 2:
-                    return new InquiryOfficialListTabFragment();
+                    return new InquiryOfficialListFragment();
 
             }
             return null;
@@ -102,7 +102,7 @@ public class PoliceListFragment extends Fragment {
                 case 1:
                     return "สิบเวร";
                 case 2:
-                    return "พนักงานสอบสวน";
+                    return "พงส.";
             }
             return null;
         }

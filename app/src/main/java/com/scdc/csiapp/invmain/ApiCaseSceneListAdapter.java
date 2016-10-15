@@ -110,9 +110,13 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
         if (apiNoticeCase.getTbProvince() != null) {
             PROVINCE_NAME = apiNoticeCase.getTbProvince().PROVINCE_NAME;
         }
-        String positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
-                + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
-
+        String positioncase = "";
+        if (apiNoticeCase.getTbNoticeCase().LocaleName != null) {
+            positioncase = apiNoticeCase.getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
+                    + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+        } else {
+            positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+        }
         csidataholder.positioncase.setText("เกิดที่: " + positioncase);
 
         if (apiNoticeCase.getTbNoticeCase().PoliceStationID == "") {

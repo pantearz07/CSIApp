@@ -2,8 +2,10 @@ package com.scdc.csiapp.inqmain;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -22,11 +24,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -64,7 +69,8 @@ public class NoticeCaseListFragment extends Fragment {
     private static final String TAG = "DEBUG-NoticeCaseListFragment";
     private static final String Bundle_Key = "noticecase";
     Snackbar snackbar;
-
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 20; //20 second
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,8 +82,13 @@ public class NoticeCaseListFragment extends Fragment {
         context = view.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
-        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-
+        if (WelcomeActivity.profile.getTbOfficial() != null) {
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+        } else {
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
+        }
         cd = new ConnectionDetector(context);
         //networkConnectivity = cd.isNetworkAvailable();
         getDateTime = new GetDateTime();
@@ -236,7 +247,9 @@ public class NoticeCaseListFragment extends Fragment {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
-                    new ConnectlistNoticecase().execute();
+                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
 
                 } else {
                     swipeContainer.setRefreshing(true);
@@ -272,8 +285,9 @@ public class NoticeCaseListFragment extends Fragment {
                     Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
-                    new ConnectlistNoticecase().execute();
-                    //  initializeData();
+                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
@@ -297,7 +311,9 @@ public class NoticeCaseListFragment extends Fragment {
 
         // ตรวจสอบการเชื่อมต่ออินเตอร์แล้วแยกการทำงานกัน
         if (cd.isNetworkAvailable()) {
-            new ConnectlistNoticecase().execute();
+            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
         } else {
             selectApiNoticeCaseFromSQLite();
         }
@@ -433,6 +449,86 @@ public class NoticeCaseListFragment extends Fragment {
                 apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
                 rvDraft.setAdapter(apiNoticeCaseListAdapter);
                 apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+            }
+        }
+    }
+    Runnable mHandlerTaskcheckConnect = new Runnable() {
+        @Override
+        public void run() {
+            ConnectApiCheckConnect connectApi = new ConnectApiCheckConnect();
+            connectApi.execute();
+            mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
+        }
+    };
+    class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
+
+        @Override
+        protected ApiStatus doInBackground(ApiStatus... apiStatuses) {
+            return WelcomeActivity.api.checkConnect();
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
+                mHandler.removeCallbacks(mHandlerTaskcheckConnect);
+                new ConnectlistNoticecase().execute();
+            } else {
+                selectApiNoticeCaseFromSQLite();
+//                if (snackbar == null || !snackbar.isShown()) {
+                snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (snackbar != null) {
+                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                }
+                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(getActivity());
+                                LayoutInflater inflater = getActivity().getLayoutInflater();
+
+                                view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                                builder.setView(view);
+                                final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+
+                                builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (ipvalueEdt.getText().equals("")) {
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.please_input_data),
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String ipvalue = ipvalueEdt.getText().toString();
+                                            WelcomeActivity.api.updateIP(ipvalue);
+
+                                            if (snackbar != null) {
+                                                snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                            }
+                                            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.save_complete),
+                                                    Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+                                });
+
+                                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+
+                                builder.show();
+                            }
+                        });
+                snackbar.show();
+//                }
             }
         }
     }

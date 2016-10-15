@@ -127,7 +127,7 @@
                     android:background="@color/ocean"
                     android:gravity="center_horizontal">
 
-                    <ImageButton
+                    <Button
                         android:id="@+id/btnTakePhotoPL"
                         android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"
@@ -136,7 +136,7 @@
                         android:background="@drawable/ic_camera_wh"
                         android:gravity="center|center_horizontal" />
 
-                    <ImageButton
+                    <Button
                         android:id="@+id/btnVideoPL"
                         android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"

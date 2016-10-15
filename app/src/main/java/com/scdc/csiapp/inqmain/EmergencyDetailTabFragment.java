@@ -1,6 +1,7 @@
 package com.scdc.csiapp.inqmain;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -84,6 +86,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     String[] mDistrictArray2;
 
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, editTextSuffererPhone;
+    ImageButton ic_telphone1, ic_telphone2;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
     String lat, lng;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
@@ -140,14 +143,23 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
 
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
-        if (EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
+
+        if (EmergencyTabFragment.tbNoticeCase.CaseTel == null || EmergencyTabFragment.tbNoticeCase.CaseTel.equals("")) {
+            editTextPhone1.setText("");
+        } else {
             editTextPhone1.setText(EmergencyTabFragment.tbNoticeCase.CaseTel);
         }
         editTextPhone1.addTextChangedListener(new EmerTextWatcher(editTextPhone1));
-
+        ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone1);
+        ic_telphone1.setOnClickListener(new EmergencyDetailTabFragment());
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
         if (EmergencyTabFragment.tbNoticeCase.LocaleName != "") {
+            editAddrDetail.setText(EmergencyTabFragment.tbNoticeCase.LocaleName);
+        }
+        if (EmergencyTabFragment.tbNoticeCase.LocaleName == null || EmergencyTabFragment.tbNoticeCase.LocaleName.equals("")) {
+            editAddrDetail.setText("");
+        } else {
             editAddrDetail.setText(EmergencyTabFragment.tbNoticeCase.LocaleName);
         }
         editAddrDetail.addTextChangedListener(new EmerTextWatcher(editAddrDetail));
@@ -199,43 +211,6 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 spinnerAmphur.setAdapter(null);
                 selectedAmphur = null;
                 Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
-            }
-        }
-        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
-            spinnerAmphur.setSelection(0);
-        } else {
-            for (int i = 0; i < mAmphurArray.length; i++) {
-                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
-                    spinnerAmphur.setSelection(i);
-//                    oldAmphur = true;
-                    break;
-                }
-            }
-            mDistrictArray = dbHelper.SelectDistrict(amphurid);
-            if (mDistrictArray != null) {
-                String[] mDistrictArray2 = new String[mDistrictArray.length];
-                for (int i = 0; i < mDistrictArray.length; i++) {
-                    mDistrictArray2[i] = mDistrictArray[i][2];
-                    Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
-                }
-                ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-                spinnerDistrict.setAdapter(adapterDistrict);
-            } else {
-                spinnerDistrict.setAdapter(null);
-                selectedDistrict = null;
-                Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
-            }
-        }
-        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
-            spinnerDistrict.setSelection(0);
-        } else {
-            for (int i = 0; i < mDistrictArray.length; i++) {
-                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
-                    spinnerDistrict.setSelection(i);
-//                    oldDistrict = true;
-                    break;
-                }
             }
         }
         spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
@@ -309,12 +284,13 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             valueLat.setText("");
         } else {
             valueLat.setText(EmergencyTabFragment.tbNoticeCase.Latitude);
+            lat = EmergencyTabFragment.tbNoticeCase.Latitude;
         }
         if (EmergencyTabFragment.tbNoticeCase.Longitude == null || EmergencyTabFragment.tbNoticeCase.Longitude.equals("")) {
             valueLong.setText("");
         } else {
             valueLong.setText(EmergencyTabFragment.tbNoticeCase.Longitude);
-
+            lng = EmergencyTabFragment.tbNoticeCase.Longitude;
         }
 
         btnButtonSearchMap = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchMap);
@@ -356,8 +332,6 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             editSuffererName.setText("");
         } else {
             editSuffererName.setText(EmergencyTabFragment.tbNoticeCase.SuffererName);
-
-
         }
         editSuffererName.addTextChangedListener(new EmerTextWatcher(editSuffererName));
 
@@ -380,7 +354,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             editTextSuffererPhone.setText(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
         }
         editTextSuffererPhone.addTextChangedListener(new EmerTextWatcher(editTextSuffererPhone));
-
+        ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
+        ic_telphone2.setOnClickListener(new EmergencyDetailTabFragment());
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (emergencyTabFragment.mode == "view") {
             fabBtnRec.setVisibility(View.GONE);
@@ -502,8 +477,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchMap:
-                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
+//                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
+//                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
                 if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
@@ -513,7 +488,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     startActivity(mapIntent);
                 } else {
                     //Searches for 'Locale name' province amphur district
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + editAddrDetail.getText().toString() + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q="
+                            + EmergencyTabFragment.tbNoticeCase.LocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
@@ -525,8 +501,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 Log.d(TAG, "Go to Google map " + lat + " " + lng);
                 valueLat.setText(lat);
                 valueLong.setText(lng);
-                EmergencyTabFragment.tbNoticeCase.Latitude = valueLat.getText().toString();
-                EmergencyTabFragment.tbNoticeCase.Longitude = valueLong.getText().toString();
+                EmergencyTabFragment.tbNoticeCase.Latitude = lat;
+                EmergencyTabFragment.tbNoticeCase.Longitude = lng;
                 break;
             case R.id.editReceiveCaseDate:
                 Log.i("Click ReceiveCaseDate", "null");
@@ -558,7 +534,26 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 TimeDialog dialogKnowCaseTime = new TimeDialog(view);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
                 break;
-
+            case R.id.ic_telphone1:
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + editTextPhone1.getText().toString()));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+                break;
+            case R.id.ic_telphone2:
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+                break;
         }
     }
 
@@ -616,24 +611,48 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             switch (parent.getId()) {
 
                 case R.id.spinnerDistrict:
-
-                    selectedDistrict = mDistrictArray[pos][0];
-                    sDistrictName = mDistrictArray[pos][2].toString();
-                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
-                    EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
-
+                    if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+                        selectedDistrict = mDistrictArray[pos][0];
+                        sDistrictName = mDistrictArray[pos][2].toString();
+                        Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+                        EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
+                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                    } else {
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
+                                sDistrictName = mDistrictArray[i][2].toString();
+                                selectedDistrict = mDistrictArray[i][0];
+                                spinnerDistrict.setSelection(i);
+                                EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
+                                EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
+                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                                break;
+                            }
+                        }
+                    }
                     break;
                 case R.id.spinnerAmphur:
-
-                    selectedAmphur = mAmphurArray[pos][0];
-                    sAmphurName = mAmphurArray[pos][2].toString();
-                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
-                    EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
-                    //   EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur[0];
+                    if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+//                            spinnerAmphur.setSelection(0);
+                        selectedAmphur = mAmphurArray[pos][0];
+                        sAmphurName = mAmphurArray[pos][2].toString();
+                        Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+                        EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
+                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                    } else {
+                        for (int i = 0; i < mAmphurArray.length; i++) {
+                            if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
+                                spinnerAmphur.setSelection(i);
+                                selectedAmphur = mAmphurArray[i][0];
+                                sAmphurName = mAmphurArray[i][2].toString();
+                                Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
+                                EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
+                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                                break;
+                            }
+                        }
+                    }
                     //ดึงค่า District
-
                     mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
                     if (mDistrictArray != null) {
                         String[] mDistrictArray2 = new String[mDistrictArray.length];
@@ -720,10 +739,12 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
     private class EmerTextWatcher implements TextWatcher {
         private EditText mEditText;
+
         public EmerTextWatcher(EditText editText) {
 
-                mEditText = editText;
+            mEditText = editText;
         }
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 

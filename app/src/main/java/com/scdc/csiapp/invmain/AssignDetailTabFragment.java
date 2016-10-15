@@ -1,6 +1,7 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -77,13 +79,14 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     String[] mAmphurArray2;
     String[][] mDistrictArray;
     String[] mDistrictArray2;
-    boolean oldAntecedent, oldProvince, oldAmphur,oldDistrict = false;
+    boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
     Spinner spinnerAntecedent;
     String[] Antecedent;
-    private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail,editSuffererName;
+    private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail, editSuffererName, editTextSuffererPhone;
     AutoCompleteTextView autoCompleteSuffererStatus;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
     String lat, lng;
+    ImageButton ic_telphone1, ic_telphone2;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
 
     private TextView editReceiveCaseDate, editReceiveCaseTime;
@@ -153,29 +156,14 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                 AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel = editTextPhone1.getText().toString();
             }
         });
+        ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone1);
+        ic_telphone1.setOnClickListener(new AssignDetailTabFragment());
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LocaleName != "") {
             editAddrDetail.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().LocaleName);
         }
-        editAddrDetail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // btn_clear_txt_1.setVisibility(View.GONE);
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                //btn_clear_txt_1.setVisibility(View.VISIBLE);
-                //btn_clear_txt_1.setOnClickListener(new ReceiveOnClickListener());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                AssignTabFragment.apiCaseScene.getTbNoticeCase().LocaleName = editAddrDetail.getText().toString();
-            }
-        });
 
 // /show spinner
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
@@ -317,14 +305,14 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
-        if(AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude.equals("")){
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude.equals("")) {
             valueLat.setText("");
-        }else {
+        } else {
             valueLat.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude);
         }
-        if(AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude.equals("")){
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude.equals("")) {
             valueLong.setText("");
-        }else {
+        } else {
             valueLong.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude);
 
         }
@@ -380,7 +368,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             }
         }
 
-        editSuffererName  = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
+        editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererName != "") {
             editSuffererName.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererName);
         }
@@ -388,8 +376,6 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             editSuffererName.setText("");
         } else {
             editSuffererName.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererName);
-
-
         }
 
         autoCompleteSuffererStatus = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteSuffererStatus);
@@ -403,13 +389,14 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             autoCompleteSuffererStatus.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus);
         }
 
-        final EditText editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
+        editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum.equals("")) {
             editTextSuffererPhone.setText("");
         } else {
             editTextSuffererPhone.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
         }
-
+        ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
+        ic_telphone2.setOnClickListener(new AssignDetailTabFragment());
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (AssignTabFragment.mode == "view") {
 
@@ -500,6 +487,26 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.btnButtonSearchLatLong:
 
+                break;
+            case R.id.ic_telphone1:
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + editTextPhone1.getText().toString()));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+                break;
+            case R.id.ic_telphone2:
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
                 break;
         }
     }

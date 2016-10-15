@@ -110,7 +110,7 @@ public class DetailsTabFragment extends Fragment {
     public static final int REQUEST_CAMERA_OUTSIDE = 333;
     private String mCurrentPhotoPath;
     Uri uri;
-    static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
+    public static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     String sPhotoID, timeStamp;
     String arrDataPhoto[][], arrDataPhoto2[][], arrDataVideo[][];
 
@@ -324,7 +324,6 @@ public class DetailsTabFragment extends Fragment {
 
         horizontal_gridView_Outside = (GridView) viewDetails.findViewById(R.id.horizontal_gridView_Outside);
 
-
         showAllPhoto();
         btn_camera = (ImageButton) viewDetails.findViewById(R.id.btn_camera);
         btn_camera.setOnClickListener(new DetailsOnClickListener());
@@ -382,7 +381,7 @@ public class DetailsTabFragment extends Fragment {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
 
-                    Log.i(TAG,"Photo save");
+                    Log.i(TAG, "Photo save");
                     List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
                     ApiMultimedia apiMultimedia = new ApiMultimedia();
                     TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
@@ -416,9 +415,9 @@ public class DetailsTabFragment extends Fragment {
 
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 //data.getData();
-                Log.i(TAG,  "media recording cancelled." + sPhotoID);
+                Log.i(TAG, "media recording cancelled." + sPhotoID);
             } else {
-                Log.i(TAG,  "Failed to record media");
+                Log.i(TAG, "Failed to record media");
             }
         }
     }
@@ -808,19 +807,19 @@ public class DetailsTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
 
-//            arrDataPhoto2 = mDbHelper.SelectDataPhotoOfInside(reportID, sFeatureInsideID, "photo");
-//
-//            if (arrDataPhoto2 != null) {
-//                Log.i("arrDataPhoto_Inside", sFeatureInsideID + " " + String.valueOf(arrDataPhoto2.length));
-//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-//
-//            } else {
-//
-//                txtPhoto.setText("รูปภาพ (0)");
-//
-//                Log.i("Recieve_inside", sFeatureInsideID + " Null!! ");
-//
-//            }
+            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
+
+            if (apiMultimediaList != null) {
+                Log.i(TAG, "apiMultimediaList Inside " + sFeatureInsideID + " " + String.valueOf(apiMultimediaList.size()));
+                txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
+
+            } else {
+
+                txtPhoto.setText("รูปภาพ (0)");
+
+                Log.i(TAG, "apiMultimediaList Inside " + sFeatureInsideID + " Null!! ");
+
+            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -1115,157 +1114,4 @@ public class DetailsTabFragment extends Fragment {
         }
 
     }
-/*
-    public void showAllPhoto2(String sFeatureInsideID) {
-        // TODO Auto-generated method stub
-        int photolength=0;
-        arrDataPhoto2 = mDbHelper.SelectDataPhotoOfInside(reportID,sFeatureInsideID, "photo");
-
-        if (arrDataPhoto2 != null) {
-            Log.i("arrDataPhoto_Inside", sFeatureInsideID+" "+String.valueOf(arrDataPhoto2.length));
-            txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length)+")");
-            photolength = arrDataPhoto2.length;
-            //int size=list.size();
-            // Calculated single Item Layout Width for each grid element ....
-            int width = 70 ;
-
-            DisplayMetrics dm = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-            float density = dm.density;
-
-            int totalWidth = (int) (width * photolength * density);
-            int singleItemWidth = (int) (width * density);
-            Log.i("inside gridlayout", String.valueOf(totalWidth)+" "+String.valueOf(singleItemWidth));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    totalWidth, singleItemWidth);
-
-            horizontal_gridView_Inside_photo.setLayoutParams(params);
-            // horizontal_gridView_Outside.setHorizontalSpacing(2);
-            horizontal_gridView_Inside_photo.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-            horizontal_gridView_Inside_photo.setNumColumns(photolength);
-
-            horizontal_gridView_Inside_photo.setVisibility(View.VISIBLE);
-            horizontal_gridView_Inside_photo.setAdapter(new PhotoAdapter2(getActivity(), arrDataPhoto2));
-            registerForContextMenu(horizontal_gridView_Inside_photo);
-            // OnClick
-            horizontal_gridView_Inside_photo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
-                    Log.i("showViewPic2_inside",arrDataPhoto2[position][3].toString());
-                    showViewPic2(arrDataPhoto2[position][3].toString());
-                }
-            });
-        } else {
-            horizontal_gridView_Inside_photo.setVisibility(View.GONE);
-            txtPhoto.setText("รูปภาพ (0)");
-
-            Log.i("Recieve_inside", sFeatureInsideID+" Null!! ");
-
-        }
-    }
-    public void showViewPic2(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String root = Environment.getExternalStorageDirectory().toString();
-        String strPath = root + "/CSIFiles/Pictures/" + sPicPath;
-
-        // Image Resource
-        ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-                width, height, matrix, true);
-        imageView.setImageBitmap(resizedBitmap);
-        dialog.show();
-    }
-    public class PhotoAdapter2 extends BaseAdapter {
-        private Context context;
-        private String[][] lis;
-
-        public PhotoAdapter2(Context c, String[][] li) {
-            // TODO Auto-generated method stub
-            context = c;
-            lis = li;
-        }
-
-        public int getCount() {
-            // TODO Auto-generated method stub
-            return lis.length;
-        }
-
-        public Object getItem(int position) {
-            // TODO Auto-generated method stub
-            return position;
-        }
-
-        public long getItemId(int position) {
-            // TODO Auto-generated method stub
-            return position;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // TODO Auto-generated method stub
-
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.show_photos, null);
-            }
-
-            TextView textView = (TextView) convertView
-                    .findViewById(R.id.txtDescPhoto);
-            textView.setVisibility(View.GONE);
-            String root = Environment.getExternalStorageDirectory().toString();
-
-            String strPath = root + "/CSIFiles/Pictures/"
-                    + lis[position][3].toString();
-
-            Log.i("list photo", "/CSIFiles/Pictures/" + lis[position][3].toString());
-
-            // Image Resource
-            ImageView imageView = (ImageView) convertView
-                    .findViewById(R.id.imgPhoto);
-
-            textView.setText(lis[position][3].toString() + "\n"
-                    + lis[position][4].toString());
-            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-
-            int width1 = bmpSelectedImage.getWidth();
-            int height1 = bmpSelectedImage.getHeight();
-            Log.i("size", width1 + " " + height1);
-            int width = width1 / 13;
-            int height = height1 / 13;
-            Log.i("resize", width + " " + height);
-            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
-                    width, height, true);
-            imageView.setImageBitmap(resizedbitmap);
-
-
-            // imageView.setImageBitmap(bmpSelectedImage);
-
-            return convertView;
-
-        }
-    }
-
-*/
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putSerializable(CSIDataTabFragment.Bundle_Key,CSIDataTabFragment.apiCaseScene);
-//    }
-//
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        CSIDataTabFragment.apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable(CSIDataTabFragment.Bundle_Key);
-//    }
 }

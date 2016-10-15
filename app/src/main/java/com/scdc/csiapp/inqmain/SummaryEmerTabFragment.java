@@ -1,9 +1,12 @@
 package com.scdc.csiapp.inqmain;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -58,13 +61,14 @@ public class SummaryEmerTabFragment extends Fragment {
 
     Spinner spnCaseType, spnSubCaseType;
     String selectedCaseType, selectedSubCaseType, sCaseTypeID, sSubCaseTypeID;
-    TextView edtUpdateDateTime2, edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation;
+    TextView edtUpdateDateTime2, edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation,
+            edtInvTel, edtInqTel;
     String[] updateDT;
     String message = "";
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
     String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
-    boolean oldselectedCT = false;
+    boolean oldselectedCT, oldselectedSubCT = false;
     Button btnNoticecase, btnDownloadfile;
     String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
@@ -73,6 +77,7 @@ public class SummaryEmerTabFragment extends Fragment {
     String selectedCenter, selectedAgencyCode;
     View layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
     NoticeCaseListFragment noticeCaseListFragment;
+    String InqTel, InvTel;
 
     @Nullable
     @Override
@@ -160,52 +165,54 @@ public class SummaryEmerTabFragment extends Fragment {
 
         //เเสดงค่าเดิม
 
-        if (sCaseTypeID == null || sCaseTypeID.equals("") || sCaseTypeID.equals("null")) {
-            spnCaseType.setSelection(0);
+
+        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
+            spnSubCaseType.setSelection(0);
         } else {
+            String SelectCaseTypeID = dbHelper.SelectCaseTypeID(sSubCaseTypeID);
             for (int i = 0; i < mCaseTypeArray.length; i++) {
                 if (sCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
                     spnCaseType.setSelection(i);
                     oldselectedCT = true;
                     break;
                 }
+
             }
-            mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(sCaseTypeID);
+            mSubCaseTypeArray = dbHelper.SelectSubCaseTypeByCaseType(SelectCaseTypeID);
             if (mSubCaseTypeArray != null) {
                 mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
                 for (int i = 0; i < mSubCaseTypeArray.length; i++) {
                     mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                    Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                    // Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
                 }
                 ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
                 spnSubCaseType.setAdapter(adapterSubCaseType);
+                for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                    if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
+                        spnSubCaseType.setSelection(i);
+                        oldselectedSubCT = true;
+                        break;
+                    }
+                }
             } else {
                 spnSubCaseType.setAdapter(null);
-                selectedSubCaseType = null;
-                EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
-                Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
+
             }
         }
-        if (sSubCaseTypeID == null || sSubCaseTypeID.equals("") || sSubCaseTypeID.equals("null")) {
-            spnSubCaseType.setSelection(0);
-        } else {
-            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                if (sSubCaseTypeID.trim().equals(mSubCaseTypeArray[i][0].toString())) {
-                    spnSubCaseType.setSelection(i);
-                    break;
-                }
-            }
-        }
+
 
         edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
                 + WelcomeActivity.profile.getTbOfficial().LastName + " ("
-                + WelcomeActivity.profile.getTbOfficial().Position + ") โทร." +
-                "" + WelcomeActivity.profile.getTbOfficial().PhoneNumber + " ");
+                + WelcomeActivity.profile.getTbOfficial().Position + ")");
+        edtInqTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        InqTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+        edtInqTel.setOnClickListener(new SummaryOnClickListener());
 
         if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID == null || EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID.equals("") || EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID.equals("null")) {
             edtInvInfo.setText("");
+            edtInvTel.setText("");
         } else {
             String InvestigatorOfficialID = EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID;
             Log.i(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
@@ -213,10 +220,16 @@ public class SummaryEmerTabFragment extends Fragment {
             String mInvOfficialArray[] = dbHelper.SelectInvOfficial(EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID);
             if (mInvOfficialArray != null) {
                 edtInvInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
-                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ") โทร." +
-                        mInvOfficialArray[7].toString());
+                        + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ")");
+                if (mInvOfficialArray[7] != null || mInvOfficialArray[7].equals("")) {
+                    edtInvTel.setText("โทร." + mInvOfficialArray[7].toString());
+                    InvTel = mInvOfficialArray[7].toString();
+                    edtInvTel.setOnClickListener(new SummaryOnClickListener());
+                }
+
             } else {
                 edtInvInfo.setText("");
+                edtInvTel.setText("");
             }
 
         }
@@ -483,6 +496,26 @@ public class SummaryEmerTabFragment extends Fragment {
                     }
                 }
             }
+            if (v == edtInqTel) {
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + InqTel));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+            }
+            if (v == edtInvTel) {
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + InvTel));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+            }
         }
     }
 
@@ -540,7 +573,10 @@ public class SummaryEmerTabFragment extends Fragment {
 
                 oldselectedCT = false;
             }
+            if (v == spnSubCaseType) {
 
+                oldselectedSubCT = false;
+            }
 
             return false;
         }
@@ -575,10 +611,11 @@ public class SummaryEmerTabFragment extends Fragment {
                     }
                     break;
                 case R.id.spnSubCaseType:
-                    selectedSubCaseType = mSubCaseTypeArray[pos][0];
-                    EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
-                    Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
-
+                    if (oldselectedSubCT == false) {
+                        selectedSubCaseType = mSubCaseTypeArray[pos][0];
+                        EmergencyTabFragment.tbNoticeCase.SubCaseTypeID = selectedSubCaseType;
+                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
+                    }
                     break;
             }
         }

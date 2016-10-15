@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -38,7 +39,7 @@ public class InqMainActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
-    FragmentManager mFragmentManager;
+    static FragmentManager mFragmentManager;
 
 
     //รายการคดี อยู่ใน package/inqmain
@@ -109,20 +110,13 @@ public class InqMainActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
 
 
-
         mFragmentManager = getSupportFragmentManager();
-        FragmentTransaction fthome = mFragmentManager.beginTransaction();
-        fthome.replace(R.id.containerView, noticeCaseListFragment);
-        fthome.addToBackStack(null);
-        fthome.commit();
+        setFragment(noticeCaseListFragment, 1);
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("noticeCaseListFragment")) {
-                FragmentTransaction ftdraft = mFragmentManager.beginTransaction();
-                ftdraft.replace(R.id.containerView, noticeCaseListFragment);
-                ftdraft.addToBackStack(null);
-                ftdraft.commit();
+                setFragment(noticeCaseListFragment, 1);
             }
         }
 
@@ -154,24 +148,15 @@ public class InqMainActivity extends AppCompatActivity {
 
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
-                    FragmentTransaction fthome2 = mFragmentManager.beginTransaction();
-                    fthome2.replace(R.id.containerView, noticeCaseListFragment);
-                    fthome2.addToBackStack(null);
-                    fthome2.commit();
+                    setFragment(noticeCaseListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_police) {
-//                    FragmentTransaction ftpolice = mFragmentManager.beginTransaction();
-//                    ftpolice.replace(R.id.containerView, policeListFragment);
-//                    ftpolice.addToBackStack(null);
-//                    ftpolice.commit();
+                    setFragment(policeListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
-                    FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-                    ftsetting.replace(R.id.containerView, settingFragment);
-                    ftsetting.addToBackStack(null);
-                    ftsetting.commit();
+                    setFragment(settingFragment, 1);
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(InqMainActivity.this);
@@ -247,10 +232,7 @@ public class InqMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            FragmentTransaction ftsetting = mFragmentManager.beginTransaction();
-            ftsetting.replace(R.id.containerView, settingFragment);
-            ftsetting.addToBackStack(null);
-            ftsetting.commit();
+            setFragment(settingFragment, 1);
         }
 
         return super.onOptionsItemSelected(item);
@@ -264,6 +246,14 @@ public class InqMainActivity extends AppCompatActivity {
                 new ActivityResultEvent(requestCode, resultCode, data));
     }
 
+    public static void setFragment(Fragment fragment, int backstackyes) {
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+        if (backstackyes == 1) {
+            fragmentTransaction.addToBackStack(null);
+        }
+        fragmentTransaction.replace(R.id.containerView, fragment);
+        fragmentTransaction.commit();
+    }
 
     @Override
     protected void onResume() {

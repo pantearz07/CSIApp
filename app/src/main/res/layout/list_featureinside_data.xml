@@ -188,7 +188,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="รูปภาพ"
+                android:text="รูปภาพ (0)"
                 android:textSize="@dimen/small_text"
                 android:textStyle="bold|italic"  />
         </TableRow>

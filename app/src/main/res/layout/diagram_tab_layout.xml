@@ -90,7 +90,7 @@
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:src="@drawable/ic_camera_wh"
+            android:src="@drawable/ic_create"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"

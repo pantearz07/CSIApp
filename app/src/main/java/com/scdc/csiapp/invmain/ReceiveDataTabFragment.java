@@ -4,6 +4,7 @@ package com.scdc.csiapp.invmain;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -114,7 +115,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     private TextView editSceneInvestDate, editSceneInvestTime, txtSceneInvest;
     // ตรวจเสร็จ
     //private TextView editCompleteSceneDate, editCompleteSceneTime;
-    ImageButton btn_property;
+    ImageButton btn_property,ic_telphone1,ic_telphone2;
 
     ArrayList<Integer> mMultiSelected;
     ArrayList<Boolean> mMultiChecked;
@@ -175,7 +176,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             editTextPhone1.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel);
         }
         editTextPhone1.addTextChangedListener(new ReceiveTextWatcher(editTextPhone1));
-
+        ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone1);
+        ic_telphone1.setOnClickListener(new SummaryOnClickListener());
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName.equals("")) {
             editAddrDetail.setText("");
@@ -274,6 +276,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             for (int i = 0; i < mProvinceArray.length; i++) {
                 if (provinceid.trim().equals(mProvinceArray[i][0])) {
                     spinnerProvince.setSelection(i);
+                    sProvinceName = mProvinceArray[i][2].toString();
                     oldProvince = true;
                     break;
                 }
@@ -294,44 +297,6 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
             }
         }
-        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
-            spinnerAmphur.setSelection(0);
-        } else {
-            for (int i = 0; i < mAmphurArray.length; i++) {
-                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
-                    spinnerAmphur.setSelection(i);
-                    //oldAmphur = true;
-                    break;
-                }
-            }
-            mDistrictArray = dbHelper.SelectDistrict(amphurid);
-            if (mDistrictArray != null) {
-                String[] mDistrictArray2 = new String[mDistrictArray.length];
-                for (int i = 0; i < mDistrictArray.length; i++) {
-                    mDistrictArray2[i] = mDistrictArray[i][2];
-                    Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
-                }
-                ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-                spinnerDistrict.setAdapter(adapterDistrict);
-            } else {
-                spinnerDistrict.setAdapter(null);
-                selectedDistrict = null;
-                Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
-            }
-        }
-        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
-            spinnerDistrict.setSelection(0);
-        } else {
-            for (int i = 0; i < mDistrictArray.length; i++) {
-                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
-                    spinnerDistrict.setSelection(i);
-                    //oldDistrict = true;
-                    break;
-                }
-            }
-
-        }
         spinnerDistrict.setOnItemSelectedListener(new RecOnItemSelectedListener());
         spinnerProvince.setOnItemSelectedListener(new RecOnItemSelectedListener());
         spinnerAmphur.setOnItemSelectedListener(new RecOnItemSelectedListener());
@@ -346,12 +311,13 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             valueLat.setText("");
         } else {
             valueLat.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude);
+            lat = CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude;
         }
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude.equals("")) {
             valueLong.setText("");
         } else {
             valueLong.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude);
-
+            lng = CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude;
         }
 
 
@@ -406,7 +372,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             editTextSuffererPhone.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum);
         }
         editTextSuffererPhone.addTextChangedListener(new ReceiveTextWatcher(editTextSuffererPhone));
-
+        ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
+        ic_telphone2.setOnClickListener(new SummaryOnClickListener());
 
         editCircumstanceOfCaseDetail = (EditText) viewReceiveCSI.findViewById(R.id.editCircumstanceOfCaseDetail);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail.equals("")) {
@@ -648,8 +615,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
             }
             if (v == btnButtonSearchMap) {
-                lat = "16.438052";
-                lng = "102.799998";
+
                 if (lat != null || lng != null) {
                     Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
@@ -660,7 +626,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 } else {
                     //Searches for 'Locale name' province amphur district
 
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + sAddrDetail + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q="
+                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName
+                            + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
@@ -668,9 +636,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             }
             if (v == btnButtonSearchLatLong) {
                 lat = String.valueOf(mLastLocation.getLatitude());
-                lat = "16.438052";
+//                lat = "16.438052";
                 lng = String.valueOf(mLastLocation.getLongitude());
-                lng = "102.799998";
+//                lng = "102.799998";
                 Log.d(TAG, "Go to Google map " + lat + " " + lng);
                 valueLat.setText(lat);
                 valueLong.setText(lng);
@@ -716,6 +684,26 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 Log.i("ClickSceneInvestTime", "null");
                 TimeDialog dialogSceneInvestTime = new TimeDialog(v);
                 dialogSceneInvestTime.show(getActivity().getFragmentManager(), "Time Picker");
+            }
+            if( v == ic_telphone1){
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + editTextPhone1.getText().toString()));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
+            }
+            if( v == ic_telphone2){
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                }
             }
         }
     }
@@ -852,12 +840,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             if (view == spinnerProvince) {
                 oldProvince = false;
             }
-            if (view == spinnerAmphur) {
-                oldAmphur = false;
-            }
-            if (view == spinnerDistrict) {
-                // oldDistrict = false;
-            }
+
             return false;
         }
 
@@ -867,40 +850,75 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             switch (parent.getId()) {
 
                 case R.id.spinnerDistrict:
-                    // if (oldDistrict == false) {
-                    selectedDistrict = mDistrictArray[pos][0];
-                    sDistrictName = mDistrictArray[pos][2].toString();
-                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
-                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
-                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
-                    // }
+//                    if (oldDistrict == false) {
+
+                        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+//                            spinnerDistrict.setSelection(0);
+                            selectedDistrict = mDistrictArray[pos][0];
+                            sDistrictName = mDistrictArray[pos][2].toString();
+                            Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+                            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
+                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
+                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                        } else {
+                            for (int i = 0; i < mDistrictArray.length; i++) {
+                                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
+                                    sDistrictName = mDistrictArray[i][2].toString();
+                                    selectedDistrict = mDistrictArray[i][0];
+                                    spinnerDistrict.setSelection(i);
+                                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
+                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
+                                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
+//                                    oldDistrict = true;
+                                    break;
+                                }
+                            }
+
+                        }
+//                    }
                     break;
                 case R.id.spinnerAmphur:
 //                    if (oldAmphur == false) {
-                    selectedAmphur = mAmphurArray[pos][0];
-                    sAmphurName = mAmphurArray[pos][2].toString();
-                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
-                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
-                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
-                    //ดึงค่า District
 
-                    mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
-                    if (mDistrictArray != null) {
-                        String[] mDistrictArray2 = new String[mDistrictArray.length];
-                        for (int i = 0; i < mDistrictArray.length; i++) {
-                            mDistrictArray2[i] = mDistrictArray[i][2];
-                            // Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
+                        //ดึงค่า District
+                        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+//                            spinnerAmphur.setSelection(0);
+                            selectedAmphur = mAmphurArray[pos][0];
+                            sAmphurName = mAmphurArray[pos][2].toString();
+                            Log.i(TAG," show selectedAmphur"+ selectedAmphur + " " + sAmphurName);
+                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
+                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
+                        } else {
+                            for (int i = 0; i < mAmphurArray.length; i++) {
+                                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
+                                    spinnerAmphur.setSelection(i);
+                                    selectedAmphur = mAmphurArray[i][0];
+                                    sAmphurName = mAmphurArray[i][2].toString();
+                                    Log.i(TAG," show selectedAmphur"+ selectedAmphur + " " + sAmphurName);
+                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
+                                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
+                                    oldAmphur = true;
+                                    break;
+                                }
+                            }
                         }
-                        ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-                                android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-                        spinnerDistrict.setAdapter(adapterDistrict);
-                    } else {
-                        spinnerDistrict.setAdapter(null);
-                        selectedDistrict = null;
-                        Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
-                    }
+                        mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
+                        if (mDistrictArray != null) {
+                            String[] mDistrictArray2 = new String[mDistrictArray.length];
+                            for (int i = 0; i < mDistrictArray.length; i++) {
+                                mDistrictArray2[i] = mDistrictArray[i][2];
+                                // Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
+                            }
+                            ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
+                                    android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
+                            spinnerDistrict.setAdapter(adapterDistrict);
+                        } else {
+                            spinnerDistrict.setAdapter(null);
+                            selectedDistrict = null;
+                            Log.i(TAG , " show selectedDistrict "+ String.valueOf(selectedDistrict));
+                        }
 //                    }
                     break;
                 case R.id.spinnerProvince:

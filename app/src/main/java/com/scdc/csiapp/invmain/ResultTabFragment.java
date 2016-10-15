@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -42,6 +44,7 @@ import com.scdc.csiapp.tablemodel.TbGatewayCriminal;
 import com.scdc.csiapp.tablemodel.TbPropertyLoss;
 import com.scdc.csiapp.tablemodel.TbResultScene;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +117,7 @@ public class ResultTabFragment extends Fragment {
     ImageButton btnShowHide1, btnShowHide2, btnShowHide3, btnShowHide4;
     private boolean viewGroupIsVisible = true;
     private static final String TAG = "DEBUG-ResultTabFragment";
-
+    public static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     public static String Bundle_ID = "dataid";
     public static String Bundle_TB = "datatb";
     public static String Bundle_mode = "mode";
@@ -125,6 +128,7 @@ public class ResultTabFragment extends Fragment {
     AddPropertyLossFragment addPropertyLossFragment;
     AddGatewayFragment addGatewayFragment;
     AddClueShownFragment addClueShownFragment;
+
 
     @Nullable
     @Override
@@ -674,20 +678,19 @@ public class ResultTabFragment extends Fragment {
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
+            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
 
-//            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachResultScene(reportID, sRSID, "photo");
-//
-//            if (arrDataPhoto2 != null) {
-//                Log.i("arrDataPhoto_gateway", sRSID + " " + String.valueOf(arrDataPhoto2.length));
-//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-//
-//            } else {
-//
-//                txtPhoto.setText("รูปภาพ (0)");
-//
-//                Log.i("photo_gateway", sRSID + " Null!! ");
-//
-//            }
+            if (apiMultimediaList != null) {
+                Log.i(TAG, "apiMultimediaList GatewayCriminals " + sRSID + " " + String.valueOf(apiMultimediaList.size()));
+                txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
+
+            } else {
+
+                txtPhoto.setText("รูปภาพ (0)");
+
+                Log.i(TAG, "apiMultimediaList GatewayCriminals " + sRSID + " Null!! ");
+
+            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -844,20 +847,19 @@ public class ResultTabFragment extends Fragment {
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
+            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
 
-//            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachResultScene(reportID, sRSID, "photo");
-//
-//            if (arrDataPhoto2 != null) {
-//                Log.i("arrDataPhoto_clueShown", sRSID + " " + String.valueOf(arrDataPhoto2.length));
-//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-//
-//            } else {
-//
-//                txtPhoto.setText("รูปภาพ (0)");
-//
-//                Log.i("Recieve_clueShown", sRSID + " Null!! ");
-//
-//            }
+            if (apiMultimediaList != null) {
+                Log.i(TAG, "apiMultimediaList ClueShown " + sRSID + " " + String.valueOf(apiMultimediaList.size()));
+                txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
+
+            } else {
+
+                txtPhoto.setText("รูปภาพ (0)");
+
+                Log.i(TAG, "apiMultimediaList ClueShown " + sRSID + " Null!! ");
+
+            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -1012,19 +1014,19 @@ public class ResultTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
 
-//            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachPropertyloss(reportID, sPropertyLossID, "photo");
-//
-//            if (arrDataPhoto2 != null) {
-//                Log.i("Photo_Propertyloss", sPropertyLossID + " " + String.valueOf(arrDataPhoto2.length));
-//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-//
-//            } else {
-//
-//                txtPhoto.setText("รูปภาพ (0)");
-//
-//                Log.i("Recieve_Propertyloss", sPropertyLossID + " Null!! ");
-//
-//            }
+            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPropertyLossID, "photo");
+
+            if (apiMultimediaList != null) {
+                Log.i(TAG, "apiMultimediaList propertyloss " + sPropertyLossID + " " + String.valueOf(apiMultimediaList.size()));
+                txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
+
+            } else {
+
+                txtPhoto.setText("รูปภาพ (0)");
+
+                Log.i(TAG, "apiMultimediaList propertyloss " + sPropertyLossID + " Null!! ");
+
+            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -1208,19 +1210,19 @@ public class ResultTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
 
-//            final String[][] arrDataPhoto2 = mDbHelper.SelectDataPhotoOfEachEvidence(reportID, sFindEvidenceID, "photo");
-//
-//            if (arrDataPhoto2 != null) {
-//                Log.i("Photo_Evidence", sFindEvidenceID + " " + String.valueOf(arrDataPhoto2.length));
-//                txtPhoto.setText("รูปภาพ  (" + String.valueOf(arrDataPhoto2.length) + ")");
-//
-//            } else {
-//
-//                txtPhoto.setText("รูปภาพ (0)");
-//
-//                Log.i("Recieve_Evidence", sFindEvidenceID + " Null!! ");
-//
-//            }
+            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfEvidence(sFindEvidenceID, "photo");
+
+            if (apiMultimediaList != null) {
+                Log.i(TAG, "apiMultimediaList Evidence " + sFindEvidenceID + " " + String.valueOf(apiMultimediaList.size()));
+                txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
+
+            } else {
+
+                txtPhoto.setText("รูปภาพ (0)");
+
+                Log.i(TAG, "apiMultimediaList Evidence " + sFindEvidenceID + " Null!! ");
+
+            }
             // imgEdit
             ImageButton imgEdit = (ImageButton) convertView
                     .findViewById(R.id.imgEdit);
@@ -1464,5 +1466,21 @@ public class ResultTabFragment extends Fragment {
                 Log.i(TAG, "ConfineSufferer " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().ConfineSufferer);
             }
         }
+    }
+
+    public static void createFolder(String pathType) {
+        File folder = new File(Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+        try {
+            // Create folder
+            if (!folder.exists()) {
+                folder.mkdir();
+                Log.i("mkdir", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+            } else {
+                Log.i("folder.exists", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+
+            }
+        } catch (Exception ex) {
+        }
+
     }
 }

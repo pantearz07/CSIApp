@@ -80,7 +80,13 @@
                             android:textSize="@dimen/small_text" />
                     </android.support.design.widget.TextInputLayout>
 
-
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_phone_android_black_24dp"
+                        android:id="@+id/ic_telphone1"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/transparent"/>
                 </LinearLayout>
 
                 <TableLayout
@@ -248,30 +254,6 @@
                             android:textSize="@dimen/small_text" />
 
                     </TableRow>
-                    <!--<TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/editSceneInvestDate"
-                            style="@android:style/Widget.Holo.Light.Spinner"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_column="0"
-                            android:layout_weight="1"
-                            android:freezesText="true"
-                            android:textSize="@dimen/small_text" />
-
-                        <TextView
-                            android:id="@+id/editSceneInvestTime"
-                            style="@android:style/Widget.Holo.Light.Spinner"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_column="1"
-                            android:layout_weight="1"
-                            android:freezesText="true"
-                            android:textSize="@dimen/small_text" />
-                    </TableRow>-->
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -577,6 +559,14 @@
                                 android:hint="โทรศัพท์ติดต่อ"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
+
+                        <ImageButton
+                            android:id="@+id/ic_telphone2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_phone_android_black_24dp" />
                     </TableRow>
 
 
