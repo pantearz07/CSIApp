@@ -361,6 +361,32 @@ public class ResultTabFragment extends Fragment {
         fabBtn = (FloatingActionButton) viewDetails.findViewById(R.id.fabBtnResult);
         fabBtn.setOnClickListener(new ResultOnClickListener());
 
+        if (CSIDataTabFragment.mode == "view") {
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
+            btnAddEvidences.setVisibility(View.GONE);
+            btnPropertyLoss.setVisibility(View.GONE);
+            btnAddClueShown.setVisibility(View.GONE);
+            btnAddGatewayCriminal.setVisibility(View.GONE);
+            editCompleteSceneDate.setEnabled(false);
+            editCompleteSceneTime.setEnabled(false);
+            editCriminalMaleNum.setEnabled(false);
+            editCriminalFemaleNum.setEnabled(false);
+            editCriminalUseWeapon.setEnabled(false);
+            editAnnotation.setEnabled(false);
+            editConfineSufferer.setEnabled(false);
+            editEvidencePerformed.setEnabled(false);
+            btn_clear_txt_25.setEnabled(false);
+            btn_clear_txt_26.setEnabled(false);
+            btn_clear_txt_27.setEnabled(false);
+            btn_clear_txt_28.setEnabled(false);
+            btn_clear_txt_29.setEnabled(false);
+            btn_clear_txt_30.setEnabled(false);
+        }
         return viewDetails;
     }
 
@@ -777,7 +803,10 @@ public class ResultTabFragment extends Fragment {
                     adb.show();
                 }
             });
-
+            if (CSIDataTabFragment.mode == "view") {
+                imgDelete.setVisibility(View.GONE);
+                imgEdit.setVisibility(View.GONE);
+            }
             return convertView;
 
         }
@@ -933,7 +962,10 @@ public class ResultTabFragment extends Fragment {
                     adb.show();
                 }
             });
-
+            if (CSIDataTabFragment.mode == "view") {
+                imgDelete.setVisibility(View.GONE);
+                imgEdit.setVisibility(View.GONE);
+            }
             return convertView;
 
         }
@@ -1112,7 +1144,10 @@ public class ResultTabFragment extends Fragment {
                     adb.show();
                 }
             });
-
+            if (CSIDataTabFragment.mode == "view") {
+                imgDelete.setVisibility(View.GONE);
+                imgEdit.setVisibility(View.GONE);
+            }
             return convertView;
 
         }
@@ -1305,7 +1340,10 @@ public class ResultTabFragment extends Fragment {
                     adb.show();
                 }
             });
-
+            if (CSIDataTabFragment.mode == "view") {
+                imgDelete.setVisibility(View.GONE);
+                imgEdit.setVisibility(View.GONE);
+            }
             return convertView;
 
         }

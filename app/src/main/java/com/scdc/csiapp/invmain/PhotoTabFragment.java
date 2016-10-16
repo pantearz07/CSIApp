@@ -3,7 +3,6 @@ package com.scdc.csiapp.invmain;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -29,7 +28,6 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
@@ -52,7 +50,6 @@ public class PhotoTabFragment extends Fragment {
     static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     String sPhotoID, timeStamp;
     DBHelper dbHelper;
-    SQLiteDatabase mDb;
     private GridView gViewPhoto;
     Uri uri;
     private PreferenceData mManager;
@@ -61,7 +58,7 @@ public class PhotoTabFragment extends Fragment {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     GetDateTime getDateTime;
-    String[] updateDT, datetime;
+
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
 
     @Nullable
@@ -72,8 +69,6 @@ public class PhotoTabFragment extends Fragment {
         View viewPhotosTab = inflater.inflate(R.layout.photo_tab_layout, container, false);
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
         getDateTime = new GetDateTime();
-        updateDT = getDateTime.getDateTimeNow();
-        datetime = getDateTime.getDateTimeCurrent();
 
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewPhoto = (GridView) viewPhotosTab.findViewById(R.id.gridViewPhoto);
@@ -84,7 +79,14 @@ public class PhotoTabFragment extends Fragment {
 
         fabBtn = (FloatingActionButton) viewPhotosTab.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new PhotoOnClickListener());
-
+        if (CSIDataTabFragment.mode == "view") {
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
+        }
         return viewPhotosTab;
     }
 

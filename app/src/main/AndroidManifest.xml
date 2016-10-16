@@ -109,17 +109,11 @@
             android:label="note"
             android:theme="@style/AppThemeDarkActionBar" />
         <activity
-            android:name="com.scdc.csiapp.invmain.GatewayCriminalActivity"
-            android:label="GatewayCriminal" />
-        <activity
             android:name="com.scdc.csiapp.invmain.ClueShownActivity"
             android:label="ClueShown" />
         <activity
             android:name="com.scdc.csiapp.invmain.PropertyLossActivity"
             android:label="PropertyLoss" />
-        <activity
-            android:name="com.scdc.csiapp.invmain.EvidencesActivity"
-            android:label="Evidences" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

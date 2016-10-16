@@ -3492,6 +3492,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     + oMultimediaFile.COL_CaseReportID + " = '" + sCaseReportID + "' AND "
                     + oMultimediaFile.COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
                     + oMultimediaFile.COL_FileID + " DESC";
+            Log.i(TAG, "multimediafile " +strSQL);
             List<TbMultimediaFile> tbMultimediaFiles = null;
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                 if (tbMultimediaFiles == null) {
@@ -3841,6 +3842,27 @@ public class DBHelper extends SQLiteAssetHelper {
 
         } catch (Exception e) {
             return null;
+        }
+    }
+    public long DeleteMediaFile(String sCaseReportID,
+                                String sFileID) {
+        // TODO Auto-generated method stub
+        try {
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+
+            long rows = db.delete(oMultimediaFile.TB_MultimediaFile, oMultimediaFile.COL_CaseReportID
+                    + " =? AND " + oMultimediaFile.COL_FileID + " =?", new String[]{
+                    sCaseReportID, sFileID});
+
+            db.close();
+            Log.i("DeleteMultimediafile", String.valueOf(rows)
+                    + sCaseReportID);
+            return rows; // return rows deleted.
+
+        } catch (Exception e) {
+            return -1;
         }
     }
 }

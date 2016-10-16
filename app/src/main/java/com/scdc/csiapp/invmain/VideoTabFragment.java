@@ -6,10 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -26,100 +24,66 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Pantearz07 on 14/3/2559.
  */
 public class VideoTabFragment extends Fragment {
+    private static final String TAG = "DEBUG-VideoTabFragment";
     public static final int REQUEST_VIDEO = 222;
     private String mCurrentVideoPath;
     static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
-    String sVideoID;
-    SQLiteDBHelper mDbHelper;
+    String caseReportID, sVideoID, timeStamp;
+    DBHelper dbHelper;
     SQLiteDatabase mDb;
     GridView gViewVideo;
     Uri uri;
     private PreferenceData mManager;
-    String officialID, reportID;
-    String arrDataVideo[][];
+
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     TextView txtVideoNum;
-GetDateTime getDateTime;
-    String[] updateDT, datetime;
+    GetDateTime getDateTime;
+    public static List<TbMultimediaFile> tbMultimediaFileList = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mManager = new PreferenceData(getActivity());
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
         getDateTime = new GetDateTime();
-
-        updateDT = getDateTime.getDateTimeNow();
-        datetime = getDateTime.getDateTimeCurrent();
-        mDbHelper = new SQLiteDBHelper(getActivity());
-        mDb = mDbHelper.getWritableDatabase();
+        dbHelper = new DBHelper(getActivity());
         View viewPhotosTab = inflater.inflate(R.layout.video_tab_layout, container, false);
-        // Permission StrictMode
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+        caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
 
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewVideo = (GridView) viewPhotosTab.findViewById(R.id.gridViewVideo);
         txtVideoNum = (TextView) viewPhotosTab.findViewById(R.id.txtVideoNum);
         showAllVideo();
         fabBtn = (FloatingActionButton) viewPhotosTab.findViewById(R.id.fabBtn);
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        fabBtn.setOnClickListener(new VideoOnClickListener());
 
-                String timeStamp = "";
-                File newfile;
-                createFolder("Videoes");
-                Intent intentvideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (CSIDataTabFragment.mode == "view") {
 
-                timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-                sVideoID = "VID_"+ datetime[2]+""+datetime[1]+""+datetime[0]+"_"+ datetime[3]+""+datetime[4]+""+datetime[5];
-                String sVideoPath = sVideoID + ".mp4";
-                newfile = new File(strSDCardPathName, "Videoes/" + sVideoPath);
-                if (newfile.exists())
-                    newfile.delete();
-                try {
-                    newfile.createNewFile();
-                    mCurrentVideoPath = newfile.getAbsolutePath();
-                    Log.i("mCurrentVideoPath",mCurrentVideoPath);
-                } catch (IOException e) {
-                }
-
-                if (newfile != null) {
-                    Uri videoUri = Uri.fromFile(newfile);
-
-                    intentvideo.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
-                    getActivity().startActivityForResult(intentvideo, REQUEST_VIDEO);
-                    String sVideoDescription = "";
-                    new saveDataMedia().execute(reportID, sVideoID, sVideoPath, sVideoDescription, timeStamp, "video");
-                    Log.i("show", "Video saved to Gallery!" + strSDCardPathName + "Videoes/" + " : " + sVideoPath);
-
-                }
-            }
-        });
-
-
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
+        }
         return viewPhotosTab;
     }
 
@@ -135,58 +99,20 @@ GetDateTime getDateTime;
 
     }
 
-    class saveDataMedia extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String arrData = "";
-
-
-            long saveStatus = mDbHelper.saveDataMultimediaifile(params[0], params[1], params[5], params[2],
-                    params[3], params[4]);
-            if (saveStatus <= 0) {
-                arrData = "error";
-                Log.i("saveData " + params[5], "Error!! ");
-            } else {
-                arrData = "save";
-                Log.i("saveData " + params[5], params[2]);
-
-
-            }
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String arrData) {
-            if (arrData == "save") {
-                Log.i("saveData", "save");
-                //showAllPhoto();
-                //showAllVideo();
-
-            } else {
-                Log.i("saveData", "error");
-
-            }
-        }
-    }
 
     public class VideoAdapter extends BaseAdapter {
         private Context context;
-        private String[][] lis;
 
-        public VideoAdapter(Context c, String[][] li) {
+
+        public VideoAdapter(Context c) {
             // TODO Auto-generated method stub
             context = c;
-            lis = li;
+
         }
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return lis.length;
+            return tbMultimediaFileList.size();
         }
 
         public Object getItem(int position) {
@@ -216,8 +142,8 @@ GetDateTime getDateTime;
                     + lis[position][4].toString());
 */
             String root = Environment.getExternalStorageDirectory().toString();
-            String strPath = root + "/CSIFiles/Videoes/"
-                    + lis[position][3].toString();
+            String strPath = root + "/CSIFiles/Video/"
+                    + tbMultimediaFileList.get(position).FilePath.toString();
 
             // Image Resource
             ImageView imageView = (ImageView) convertView
@@ -235,11 +161,12 @@ GetDateTime getDateTime;
 
     public void showAllVideo() {
         // TODO Auto-generated method stub
-        arrDataVideo = mDbHelper.SelectDataMultimediaFile(reportID, "video");
-        if (arrDataVideo != null) {
-            txtVideoNum.setText(String.valueOf(arrDataVideo.length));
+        tbMultimediaFileList = new ArrayList<>();
+        tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "video");
+        if (tbMultimediaFileList != null) {
+            txtVideoNum.setText(String.valueOf(tbMultimediaFileList.size()));
             gViewVideo.setVisibility(View.VISIBLE);
-            gViewVideo.setAdapter(new VideoAdapter(getActivity(), arrDataVideo));
+            gViewVideo.setAdapter(new VideoAdapter(getActivity()));
             registerForContextMenu(gViewVideo);
             // OnClick
             gViewVideo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -248,7 +175,7 @@ GetDateTime getDateTime;
                     Intent VideoPlayActivity = new Intent(getActivity(),
                             VideoPlayerActivity.class);
                     VideoPlayActivity.putExtra("VideoPath",
-                            arrDataVideo[position][3].toString());
+                            tbMultimediaFileList.get(position).FilePath.toString());
                     startActivity(VideoPlayActivity);
 
                 }
@@ -268,7 +195,26 @@ GetDateTime getDateTime;
             if (resultCode == getActivity().RESULT_OK) {
                 try {
 
-                    Log.i("REQUEST_VIDEO", "VIDEO save");
+                    Log.i(TAG, "VIDEO save " + sVideoID);
+                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+                    tbMultimediaFile.FileID = sVideoID;
+                    tbMultimediaFile.FileDescription = "";
+                    tbMultimediaFile.FileType = "video";
+                    tbMultimediaFile.FilePath = sVideoID + ".mp4";
+                    tbMultimediaFile.Timestamp = timeStamp;
+                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+                    apiMultimediaList.add(apiMultimedia);
+                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                    if (isSuccess) {
+                        Log.i(TAG, "video saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Video/" + " : " + sVideoID + ".mp4");
+
+                    }
                     showAllVideo();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -276,18 +222,7 @@ GetDateTime getDateTime;
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 //data.getData();
                 Log.i("REQUEST_VIDEO", "media recording cancelled." + sVideoID);
-                File videosfile = new File(mCurrentVideoPath);
-                if (videosfile.exists()) {
-                    videosfile.delete();
-                    long saveStatus = mDbHelper.DeleteMediaFile(reportID, sVideoID);
-                    if (saveStatus <= 0) {
-                        Log.i("delete video", "Cannot delete!! ");
 
-                    } else {
-                        Log.i("delete video", "ok");
-                        showAllVideo();
-                    }
-                }
             } else {
                 Log.i("REQUEST_VIDEO", "Failed to record media");
             }
@@ -323,5 +258,36 @@ GetDateTime getDateTime;
         super.onResume();
         Log.i("onResume Video", "resume");
         //  showAllVideo();
+    }
+
+    private class VideoOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (v == fabBtn) {
+                File newfile;
+                createFolder("Video");
+                Intent intentvideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+                sVideoID = "VID_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+                timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+
+                String sVideoPath = sVideoID + ".mp4";
+                newfile = new File(strSDCardPathName, "Video/" + sVideoPath);
+                if (newfile.exists())
+                    newfile.delete();
+                try {
+                    newfile.createNewFile();
+                    mCurrentVideoPath = newfile.getAbsolutePath();
+                } catch (IOException e) {
+                }
+                if (newfile != null) {
+                    uri = Uri.fromFile(newfile);
+                    intentvideo.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                    getActivity().startActivityForResult(intentvideo, REQUEST_VIDEO);
+                    String sVideoDescription = "";
+                    Log.i("show", "Video saved to Gallery!" + strSDCardPathName + "Video/" + " : " + sVideoPath);
+                }
+            }
+        }
     }
 }

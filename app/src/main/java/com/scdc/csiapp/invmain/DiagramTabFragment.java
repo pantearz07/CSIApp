@@ -90,7 +90,14 @@ public class DiagramTabFragment extends Fragment {
 
         fabBtn = (FloatingActionButton) viewDiagramTab.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new DiagramOnClickListener());
-
+        if (CSIDataTabFragment.mode == "view") {
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
+        }
 
         return viewDiagramTab;
     }

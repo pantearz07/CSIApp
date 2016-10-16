@@ -400,10 +400,12 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (AssignTabFragment.mode == "view") {
 
-            fabBtnRec.setEnabled(false);
-            if (fabBtnRec != null || fabBtnRec.isShown()) {
-                fabBtnRec.setVisibility(View.GONE);
-            }
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtnRec.setLayoutParams(p);
+            fabBtnRec.hide();
             editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
             editReceiveCaseTime.setEnabled(false);

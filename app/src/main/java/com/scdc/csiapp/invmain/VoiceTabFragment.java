@@ -7,11 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -35,18 +33,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Pantearz07 on 14/3/2559.
  */
 public class VoiceTabFragment extends Fragment {
-      String arrDataVoiceRecord[][];
+    private static final String TAG = "DEBUG-VoiceTabFragment";
+    String arrDataVoiceRecord[][];
     ViewGroup viewByIdaddVoice;
     String[] Cmd = {"Play", "Delete"};
     // record
@@ -59,35 +63,28 @@ public class VoiceTabFragment extends Fragment {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     SQLiteDBHelper mDbHelper;
+    DBHelper dbHelper;
     SQLiteDatabase mDb;
     //ImageView imageView;
     //GridView gridViewVoiceRecord;
     ListView listViewVoice;
     Uri uri;
     private PreferenceData mManager;
-    String officialID, reportID;
+    String caseReportID, sVoiceRecID, timeStamp;
     TextView txtVoiceNum;
     GetDateTime getDateTime;
-    String[] updateDT,datetime;
+    List<TbMultimediaFile> tbMultimediaFileList = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mManager = new PreferenceData(getActivity());
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
-        reportID = mManager.getPreferenceData(mManager.PREF_REPORTID);
         getDateTime = new GetDateTime();
+        caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
 
-        updateDT = getDateTime.getDateTimeNow();
-        datetime = getDateTime.getDateTimeCurrent();
-        mDbHelper = new SQLiteDBHelper(getActivity());
-        mDb = mDbHelper.getWritableDatabase();
+        dbHelper = new DBHelper(getActivity());
         View viewVoiceTab = inflater.inflate(R.layout.voice_tab_layout, container, false);
-        // Permission StrictMode
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+
 
         if (mMedia != null) {
             mMedia.release();
@@ -96,21 +93,26 @@ public class VoiceTabFragment extends Fragment {
         //gridViewVoiceRecord = (GridView) viewVoiceTab.findViewById(R.id.gridViewVoiceRecord);
         txtVoiceNum = (TextView) viewVoiceTab.findViewById(R.id.txtVoiceNum);
         rootLayout = (CoordinatorLayout) viewVoiceTab.findViewById(R.id.rootLayout);
-        showListVoiceRecord();
 
         fabBtn = (FloatingActionButton) viewVoiceTab.findViewById(R.id.fabBtn);
 
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                Log.i("show", "voice");
-                viewByIdaddVoice = (ViewGroup) view.findViewById(R.id.layout_media_dialog);
-                showMediaDialog();
-            }
-        });
-      return viewVoiceTab;
+        fabBtn.setOnClickListener(new VoiceOnClickListener());
+
+        if (CSIDataTabFragment.mode == "view") {
+
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
+        }
+
+
+        return viewVoiceTab;
 
     }
+
     public void showMediaDialog() {
         // TODO Auto-generated method stub
         final AlertDialog.Builder addDialog = new AlertDialog.Builder(
@@ -123,10 +125,11 @@ public class VoiceTabFragment extends Fragment {
         addDialog.setTitle("เพิ่มไฟล์บันทึกเสียง");
         addDialog.setView(Viewlayout);
 
-        final String timeStamp =updateDT[0]+" "+updateDT[1];
+        String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+        sVoiceRecID = "VOI_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+        final String timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
 
-        String sVoiceRecID = "VOI_" + datetime[2]+""+datetime[1]+""+datetime[0]+"_"+ datetime[3]+""+datetime[4]+""+datetime[5];
         final TextView editMediaName = (TextView) Viewlayout
                 .findViewById(R.id.editMediaName);
         editMediaName.setText(sVoiceRecID);
@@ -154,7 +157,7 @@ public class VoiceTabFragment extends Fragment {
                         Log.i("show", "Voice " + sMediaName + " "
                                 + sMediaDescription);
 
-                        showVoiceRecorderDialog(reportID, sMediaName, sMediaDescription, timeStamp);
+                        showVoiceRecorderDialog(caseReportID, sMediaName, sMediaDescription, timeStamp);
 
                     }
 
@@ -217,15 +220,25 @@ public class VoiceTabFragment extends Fragment {
                         "Stop Recording", Toast.LENGTH_SHORT).show();
                 stopRecording();
 
-                new saveDataMedia().execute(reportID, sVoiceID1, sVoiceID1 + ".3gp", sVoiceDescription1, stimeStamp, "voice");
-/*
-                long saveStatus = mDbHelper.saveVoiceRecorder(sReportID1,
-                        sVoiceID1, sVoiceID1 + ".3gp", sVoiceDescription1);
-                if (saveStatus <= 0) {
-                    Log.i("Recieve", "Error!! ");
-                } else {
-                    Log.i("Recieve", "ok");
-                }*/
+                List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+                ApiMultimedia apiMultimedia = new ApiMultimedia();
+                TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+                tbMultimediaFile.CaseReportID = caseReportID;
+                tbMultimediaFile.FileID = sVoiceID1;
+                tbMultimediaFile.FileDescription = sVoiceDescription1;
+                tbMultimediaFile.FileType = "voice";
+                tbMultimediaFile.FilePath = sVoiceID1 + ".3gp";
+                tbMultimediaFile.Timestamp = stimeStamp;
+                apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+                apiMultimediaList.add(apiMultimedia);
+                CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+                Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                if (isSuccess) {
+                    Log.i(TAG, "video saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID1 + ".3gp");
+                    showListVoiceRecord();
+                }
                 dialog.dismiss();
 
             }
@@ -233,45 +246,7 @@ public class VoiceTabFragment extends Fragment {
 
         dialog.show();
     }
-    class saveDataMedia extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
 
-        @Override
-        protected String doInBackground(String... params) {
-            String arrData = "";
-
-
-            long saveStatus = mDbHelper.saveDataMultimediaifile(params[0], params[1], params[5], params[2],
-                    params[3], params[4]);
-            if (saveStatus <= 0) {
-                arrData = "error";
-                Log.i("saveData " + params[5], "Error!! ");
-            } else {
-                arrData = "save";
-                Log.i("saveData " + params[5], params[2]);
-
-
-            }
-
-            return arrData;
-        }
-
-        protected void onPostExecute(String arrData) {
-            if (arrData == "save") {
-                Log.i("saveData", "save");
-                //showAllPhoto();
-                //showAllVideo();
-                showListVoiceRecord();
-            } else {
-                Log.i("saveData", "error");
-
-            }
-
-        }
-    }
 
     private void startRecording(String sVoiceID1) {
         // TODO Auto-generated method stub
@@ -347,14 +322,18 @@ public class VoiceTabFragment extends Fragment {
 
     public void showListVoiceRecord() {
         // TODO Auto-generated method stub
-        arrDataVoiceRecord = mDbHelper.SelectDataMultimediaFile(reportID, "voice");
-        if (arrDataVoiceRecord != null) {
-            txtVoiceNum.setText(String.valueOf(arrDataVoiceRecord.length));
+        tbMultimediaFileList = new ArrayList<>();
+        tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
+        if (tbMultimediaFileList != null) {
+
+//            arrDataVoiceRecord = mDbHelper.SelectDataMultimediaFile(caseReportID, "voice");
+//        if (arrDataVoiceRecord != null) {
+            txtVoiceNum.setText(String.valueOf(tbMultimediaFileList.size()));
 
             listViewVoice.setVisibility(View.VISIBLE);
 
             listViewVoice.setAdapter(new VoiceRecordAdapter(
-                    getActivity(), arrDataVoiceRecord));
+                    getActivity()));
             //registerForContextMenu(listViewVoiceRecord);
             // OnClick
             listViewVoice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -364,9 +343,9 @@ public class VoiceTabFragment extends Fragment {
                             .getExternalStorageDirectory().toString();
                     String strPath = root
                             + "/CSIFiles/VoiceRecorder/"
-                            + arrDataVoiceRecord[position][3]
+                            + tbMultimediaFileList.get(position).FilePath
                             .toString();
-                    String sVoiceName = arrDataVoiceRecord[position][3]
+                    String sVoiceName = tbMultimediaFileList.get(position).FilePath
                             .toString();
                     Toast.makeText(getActivity(),
                             "Your selected : " + strPath,
@@ -379,7 +358,7 @@ public class VoiceTabFragment extends Fragment {
         } else {
             txtVoiceNum.setText(String.valueOf(0));
 
-            listViewVoice.setVisibility(View.INVISIBLE);
+            listViewVoice.setVisibility(View.GONE);
             Log.i("Recieve", "Null!! ");
 
         }
@@ -487,16 +466,16 @@ public class VoiceTabFragment extends Fragment {
         int menuItemIndex = item.getItemId();
         String[] menuItems = Cmd;
         String CmdName = menuItems[menuItemIndex];
-        String sVoiceRecordID = arrDataVoiceRecord[info.position][0].toString();
-        String sReportID = arrDataVoiceRecord[info.position][1].toString();
-        String sVoiceRecordPath = arrDataVoiceRecord[info.position][3]
+        String sVoiceRecordID = tbMultimediaFileList.get(info.position).FileID.toString();
+        String sReportID = tbMultimediaFileList.get(info.position).CaseReportID.toString();
+        String sVoiceRecordPath = tbMultimediaFileList.get(info.position).FilePath
                 .toString();
 
         // Check Event Command
         if ("Play".equals(CmdName)) {
             String root = Environment.getExternalStorageDirectory().toString();
 
-            String sVoiceName = arrDataVoiceRecord[info.position][3].toString();
+            String sVoiceName = tbMultimediaFileList.get(info.position).FilePath.toString();
             String strPath = root + "/CSIFiles/VoiceRecorder/"
                     + sVoiceName;
             Toast.makeText(getActivity(), "Your selected : " + strPath,
@@ -506,7 +485,7 @@ public class VoiceTabFragment extends Fragment {
         } else if ("Delete".equals(CmdName)) {
 
 
-            long saveStatus = mDbHelper.DeleteMediaFile(sReportID, sVoiceRecordID);
+            long saveStatus = dbHelper.DeleteMediaFile(sReportID, sVoiceRecordID);
             if (saveStatus <= 0) {
 
 
@@ -522,19 +501,20 @@ public class VoiceTabFragment extends Fragment {
         }
         return true;
     }
+
     public class VoiceRecordAdapter extends BaseAdapter {
         private Context context;
-        private String[][] lis;
 
-        public VoiceRecordAdapter(Context c, String[][] li) {
+
+        public VoiceRecordAdapter(Context c) {
             // TODO Auto-generated method stub
             context = c;
-            lis = li;
+
         }
 
         public int getCount() {
             // TODO Auto-generated method stub
-            return lis.length;
+            return tbMultimediaFileList.size();
         }
 
         public Object getItem(int position) {
@@ -560,17 +540,18 @@ public class VoiceTabFragment extends Fragment {
 
             TextView txtVoiceName = (TextView) convertView
                     .findViewById(R.id.txtVoiceName);
-            txtVoiceName.setText(lis[position][3].toString());
+            txtVoiceName.setText(tbMultimediaFileList.get(position).FilePath.toString());
 
             TextView txtVoiceDesc = (TextView) convertView
                     .findViewById(R.id.txtVoiceDesc);
             txtVoiceDesc.setText("คำอธิบาย: "
-                    + lis[position][4].toString());
+                    + tbMultimediaFileList.get(position).FileDescription.toString());
 
             return convertView;
 
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -585,6 +566,17 @@ public class VoiceTabFragment extends Fragment {
         super.onDestroy();
         if (mMedia != null) {
             mMedia.release();
+        }
+    }
+
+    private class VoiceOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if (view == fabBtn) {
+                Log.i("show", "voice");
+                viewByIdaddVoice = (ViewGroup) view.findViewById(R.id.layout_media_dialog);
+                showMediaDialog();
+            }
         }
     }
 }

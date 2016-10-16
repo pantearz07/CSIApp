@@ -312,11 +312,12 @@ public class SummaryCSITabFragment extends Fragment {
         fabBtn.setOnClickListener(new SummaryOnClickListener());
 
         if (CSIDataTabFragment.mode == "view") {
-            //fabBtn.setVisibility(View.GONE);
-            fabBtn.setEnabled(false);
-            if (fabBtn != null || fabBtn.isShown()) {
-                fabBtn.setVisibility(View.GONE);
-            }
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
             edtReportNo.setEnabled(false);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);

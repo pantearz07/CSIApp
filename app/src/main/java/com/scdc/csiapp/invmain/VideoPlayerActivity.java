@@ -39,7 +39,7 @@ public class VideoPlayerActivity extends Activity {
         String VideoPath = intent.getStringExtra("VideoPath"); // for String
         String root = Environment.getExternalStorageDirectory().toString();
 
-        String strPath = root + "/CSIFiles/Videoes/"+ VideoPath;
+        String strPath = root + "/CSIFiles/Video/"+ VideoPath;
 
         video_player_view = (VideoView) findViewById(R.id.video_player_view);
         media_Controller = new MediaController(this);

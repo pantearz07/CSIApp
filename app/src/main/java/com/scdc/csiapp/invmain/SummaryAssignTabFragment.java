@@ -273,10 +273,12 @@ public class SummaryAssignTabFragment extends Fragment {
         }
 
         if (AssignTabFragment.mode == "view") {
-            fabBtn.setVisibility(View.GONE);
-            if (fabBtn != null || fabBtn.isShown()) {
-                fabBtn.setVisibility(View.GONE);
-            }
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
             fabBtn.setEnabled(false);
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);

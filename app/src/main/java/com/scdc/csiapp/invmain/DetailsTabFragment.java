@@ -351,6 +351,33 @@ public class DetailsTabFragment extends Fragment {
 
         fabBtnDetails = (FloatingActionButton) viewDetails.findViewById(R.id.fabBtnDetails);
         fabBtnDetails.setOnClickListener(new DetailsOnClickListener());
+        if (CSIDataTabFragment.mode == "view") {
+
+            autoCompleteTypeOutside.setEnabled(false);
+            checkBoxHaveFence.setEnabled(false);
+            checkBoxHaveMezzanine.setEnabled(false);
+            checkBoxHaveRoofTop.setEnabled(false);
+            editDetailInside.setEnabled(false);
+            autoCompleteTypeOutside.setEnabled(false);
+            edtFloorNum.setEnabled(false);
+            edtCaveNum.setEnabled(false);
+            editDetailOutside.setEnabled(false);
+            editOutsideAroundBack.setEnabled(false);
+            editOutsideAroundLeft.setEnabled(false);
+            editOutsideAroundRight.setEnabled(false);
+            editOutsideAroundFront.setEnabled(false);
+            editFeatureAtTheScene.setEnabled(false);
+
+            btn_camera.setVisibility(View.GONE);
+            btnAddFeatureInside.setVisibility(View.GONE);
+
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtnDetails.setLayoutParams(p);
+            fabBtnDetails.hide();
+        }
         return viewDetails;
 
     }
@@ -905,7 +932,10 @@ public class DetailsTabFragment extends Fragment {
                     adb.show();
                 }
             });
-
+            if (CSIDataTabFragment.mode == "view") {
+                imgDelete.setVisibility(View.GONE);
+                imgEdit.setVisibility(View.GONE);
+            }
             return convertView;
 
         }
