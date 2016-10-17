@@ -705,7 +705,7 @@ public class ResultTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
             List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
-
+            txtVideo.setVisibility(View.GONE);
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList GatewayCriminals " + sRSID + " " + String.valueOf(apiMultimediaList.size()));
                 txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
@@ -877,7 +877,7 @@ public class ResultTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
             List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
-
+            txtVideo.setVisibility(View.GONE);
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList ClueShown " + sRSID + " " + String.valueOf(apiMultimediaList.size()));
                 txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
@@ -1045,7 +1045,7 @@ public class ResultTabFragment extends Fragment {
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
-
+            txtVideo.setVisibility(View.GONE);
             List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPropertyLossID, "photo");
 
             if (apiMultimediaList != null) {
@@ -1244,7 +1244,7 @@ public class ResultTabFragment extends Fragment {
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
-
+            txtVideo.setVisibility(View.GONE);
             List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfEvidence(sFindEvidenceID, "photo");
 
             if (apiMultimediaList != null) {

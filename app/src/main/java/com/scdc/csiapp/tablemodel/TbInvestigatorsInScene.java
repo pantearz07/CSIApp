@@ -19,4 +19,27 @@ public class TbInvestigatorsInScene implements Serializable {
     public String COL_InvType = "InvType";
     public String InvType = "";
 
+    public String getCaseReportID() {
+        return CaseReportID;
+    }
+
+    public void setCaseReportID(String caseReportID) {
+        CaseReportID = caseReportID;
+    }
+
+    public String getInvOfficialID() {
+        return InvOfficialID;
+    }
+
+    public void setInvOfficialID(String invOfficialID) {
+        InvOfficialID = invOfficialID;
+    }
+
+    public String getInvType() {
+        return InvType;
+    }
+
+    public void setInvType(String invType) {
+        InvType = invType;
+    }
 }

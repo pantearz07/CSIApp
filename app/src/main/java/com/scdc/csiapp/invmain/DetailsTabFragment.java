@@ -833,7 +833,7 @@ public class DetailsTabFragment extends Fragment {
             //horizontal_gridView_Inside_video= (GridView)convertView.findViewById(R.id.horizontal_gridView_Inside_video);
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
-
+            txtVideo.setVisibility(View.GONE);
             List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
 
             if (apiMultimediaList != null) {

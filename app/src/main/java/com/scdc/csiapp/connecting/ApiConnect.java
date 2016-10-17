@@ -634,4 +634,116 @@ public class ApiConnect {
             return null;
         }
     }
+
+    public ApiStatus saveCaseReport(ApiCaseScene apiCaseScene) {
+        Log.d(TAG, "CaseReportID " + apiCaseScene.getTbCaseScene().getCaseReportID());
+        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
+        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
+        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
+        FormBody.Builder formBuilder = new FormBody.Builder()
+                .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
+                .add("Password", WelcomeActivity.profile.getTbUsers().pass)
+                .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID);
+        //tbNoticeCase
+        formBuilder.add("NoticeCaseID", apiCaseScene.getTbNoticeCase().getNoticeCaseID())
+                .add("InquiryOfficialID", apiCaseScene.getTbNoticeCase().getInquiryOfficialID())
+                .add("CaseStatus", apiCaseScene.getTbNoticeCase().getCaseStatus())
+                .add("SceneNoticeDate", apiCaseScene.getTbNoticeCase().getSceneNoticeDate())
+                .add("SceneNoticeTime", apiCaseScene.getTbNoticeCase().getSceneNoticeTime());
+        if (apiCaseScene.getTbCaseScene().getMobile_CaseID() == null || apiCaseScene.getTbCaseScene().getMobile_CaseID().length() == 0) {
+            formBuilder.add("Mobile_CaseID", "");
+        } else {
+            formBuilder.add("Mobile_CaseID", apiCaseScene.getTbCaseScene().getMobile_CaseID());
+
+        }
+        //getTbCaseScene
+        formBuilder.add("CaseReportID", apiCaseScene.getTbCaseScene().getCaseReportID())
+                .add("NoticeCaseID", apiCaseScene.getTbCaseScene().getNoticeCaseID())
+                .add("SCDCAgencyCode", apiCaseScene.getTbCaseScene().getSCDCAgencyCode())
+                .add("InvestigatorOfficialID", apiCaseScene.getTbCaseScene().getInvestigatorOfficialID())
+                .add("CaseTypeID", apiCaseScene.getTbCaseScene().getCaseTypeID())
+                .add("SubCaseTypeID", apiCaseScene.getTbCaseScene().getSubCaseTypeID())
+                .add("ReportNo", apiCaseScene.getTbCaseScene().getReportNo())
+                .add("ReportStatus", apiCaseScene.getTbCaseScene().getReportStatus())
+                .add("PoliceStationID", apiCaseScene.getTbCaseScene().getPoliceStationID())
+                .add("CaseTel", apiCaseScene.getTbCaseScene().getCaseTel())
+                .add("AssignmentDate", apiCaseScene.getTbCaseScene().getAssignmentDate())
+                .add("AssignmentTime", apiCaseScene.getTbCaseScene().getAssignmentTime())
+                .add("ReceivingCaseDate", apiCaseScene.getTbCaseScene().getReceivingCaseDate())
+                .add("ReceivingCaseTime", apiCaseScene.getTbCaseScene().getReceivingCaseTime())
+                .add("HappenCaseDate", apiCaseScene.getTbCaseScene().getHappenCaseDate())
+                .add("HappenCaseTime", apiCaseScene.getTbCaseScene().getHappenCaseTime())
+                .add("KnowCaseDate", apiCaseScene.getTbCaseScene().getKnowCaseDate())
+                .add("KnowCaseTime", apiCaseScene.getTbCaseScene().getKnowCaseTime())
+
+                .add("LocaleName", apiCaseScene.getTbCaseScene().getLocaleName())
+                .add("DISTRICT_ID", apiCaseScene.getTbCaseScene().getDISTRICT_ID())
+                .add("AMPHUR_ID", apiCaseScene.getTbCaseScene().getAMPHUR_ID())
+                .add("PROVINCE_ID", apiCaseScene.getTbCaseScene().getPROVINCE_ID())
+                .add("Latitude", apiCaseScene.getTbCaseScene().getLatitude())
+                .add("Longitude", apiCaseScene.getTbCaseScene().getLongitude())
+                .add("FeatureInsideDetail", apiCaseScene.getTbCaseScene().getFeatureInsideDetail())
+                .add("CircumstanceOfCaseDetail", apiCaseScene.getTbCaseScene().getCircumstanceOfCaseDetail())
+                .add("FullEvidencePerformed", apiCaseScene.getTbCaseScene().getFullEvidencePerformed())
+                .add("Annotation", apiCaseScene.getTbCaseScene().getAnnotation())
+                .add("MaleCriminalNum", apiCaseScene.getTbCaseScene().getMaleCriminalNum())
+                .add("FemaleCriminalNum", apiCaseScene.getTbCaseScene().getFemaleCriminalNum())
+                .add("ConfineSufferer", apiCaseScene.getTbCaseScene().getConfineSufferer())
+                .add("SuffererPrename", apiCaseScene.getTbCaseScene().getSuffererPrename())
+                .add("SuffererName", apiCaseScene.getTbCaseScene().getSuffererName())
+                .add("SuffererStatus", apiCaseScene.getTbCaseScene().getSuffererStatus())
+                .add("SuffererPhoneNum", apiCaseScene.getTbCaseScene().getSuffererPhoneNum())
+                .add("CriminalUsedWeapon", apiCaseScene.getTbCaseScene().getCriminalUsedWeapon())
+                .add("VehicleInfo", apiCaseScene.getTbCaseScene().getVehicleInfo())
+                .add("LastUpdateDate", apiCaseScene.getTbCaseScene().getLastUpdateDate())
+                .add("LastUpdateTime", apiCaseScene.getTbCaseScene().getLastUpdateTime());
+
+        if(apiCaseScene.getTbCaseScene().getCompleteSceneDate() == null || apiCaseScene.getTbCaseScene().getCompleteSceneTime() == null){
+            formBuilder.add("CompleteSceneDate", "")
+                    .add("CompleteSceneTime", "");
+        }else{
+            formBuilder.add("CompleteSceneDate", apiCaseScene.getTbCaseScene().getCompleteSceneDate())
+                    .add("CompleteSceneTime", apiCaseScene.getTbCaseScene().getCompleteSceneTime());
+        }
+//tbSceneFeatureOutside
+        formBuilder.add("OutsideTypeName", apiCaseScene.getTbSceneFeatureOutside().getOutsideTypeName())
+                .add("OutsideTypeDetail", apiCaseScene.getTbSceneFeatureOutside().getOutsideTypeDetail())
+                .add("FloorNum", apiCaseScene.getTbSceneFeatureOutside().getFloorNum())
+                .add("CaveNum", apiCaseScene.getTbSceneFeatureOutside().getCaveNum())
+                .add("HaveFence", apiCaseScene.getTbSceneFeatureOutside().getHaveFence())
+                .add("HaveMezzanine", apiCaseScene.getTbSceneFeatureOutside().getHaveMezzanine())
+                .add("HaveRooftop", apiCaseScene.getTbSceneFeatureOutside().getHaveRooftop())
+                .add("FrontSide", apiCaseScene.getTbSceneFeatureOutside().getFrontSide())
+                .add("LeftSide", apiCaseScene.getTbSceneFeatureOutside().getLeftSide())
+                .add("RightSide", apiCaseScene.getTbSceneFeatureOutside().getRightSide())
+                .add("BackSide", apiCaseScene.getTbSceneFeatureOutside().getBackSide())
+                .add("SceneZone", apiCaseScene.getTbSceneFeatureOutside().getSceneZone());
+
+
+//        for (int i = 0; i < apiCaseScene.getTbSceneInvestigations().size(); i++) {
+//            formBuilder.add("tbSceneInvestigations[" + i + "]", String.valueOf(apiCaseScene.getTbSceneInvestigations().get(i)));
+//        }
+        RequestBody formBody = formBuilder.build();
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "saveCaseReport")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
+
 }

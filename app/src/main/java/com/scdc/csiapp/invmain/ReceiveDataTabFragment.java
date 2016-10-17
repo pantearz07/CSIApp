@@ -394,10 +394,12 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         fabBtnRec.setOnClickListener(new SummaryOnClickListener());
         if (CSIDataTabFragment.mode == "view") {
-            fabBtnRec.setEnabled(false);
-            if (fabBtnRec != null || fabBtnRec.isShown()) {
-                fabBtnRec.setVisibility(View.GONE);
-            }
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtnRec.setLayoutParams(p);
+            fabBtnRec.hide();
 
             editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
@@ -1032,10 +1034,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
                 Log.i(TAG, "SuffererPhoneNum " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum);
-            } else if (s == editCircumstanceOfCaseDetail) {
+            } else if (s == editCircumstanceOfCaseDetail.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
                 Log.i(TAG, "CircumstanceOfCaseDetail " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
-            } else if (s == edtVehicleDetail) {
+            } else if (s == edtVehicleDetail.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo = edtVehicleDetail.getText().toString();
                 Log.i(TAG, "VehicleInfo " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo);
             }

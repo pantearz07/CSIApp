@@ -33,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiCaseScene;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -71,7 +73,7 @@ public class SummaryCSITabFragment extends Fragment {
 
     TextView edtStatus, edtUpdateDateTime2, edtSceneNoticeDateTime, edtCompleteSceneDateTime, edtCompleteSceneDateTimeTitle,
             edtUpdateDateTime, txtUpdateDateTimeTitle, edtInqInfo, edtInvInfo, edtPoliceStation,
-            edtInvTel,edtInqTel;
+            edtInvTel, edtInqTel;
     String[] updateDT;
     String message = "";
     String[][] mCaseTypeArray, mSubCaseTypeArray;
@@ -81,12 +83,12 @@ public class SummaryCSITabFragment extends Fragment {
     String selectedCaseType, selectedSubCaseType;
     String sCaseTypeID, sSubCaseTypeID = null;
 
-    String InqTel,InvTel;
+    String InqTel, InvTel;
     String caseReportID, noticeCaseID;
     Snackbar snackbar;
     Button btnNoticecase, btnDownloadfile, btnAcceptCase;
     View layoutButton1, layoutButton, layoutSceneNoticeDate;
-    boolean oldselectedCT,oldselectedSubCT = false;
+    boolean oldselectedCT, oldselectedSubCT = false;
 
     @Nullable
     @Override
@@ -146,8 +148,8 @@ public class SummaryCSITabFragment extends Fragment {
         });
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
-        edtInqTel= (TextView) viewSummaryCSI.findViewById(R.id.edtInqTel);
-        edtInvTel= (TextView) viewSummaryCSI.findViewById(R.id.edtInvTel);
+        edtInqTel = (TextView) viewSummaryCSI.findViewById(R.id.edtInqTel);
+        edtInvTel = (TextView) viewSummaryCSI.findViewById(R.id.edtInvTel);
         edtPoliceStation = (TextView) viewSummaryCSI.findViewById(R.id.edtPoliceStation);
 //สถานะคดี
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
@@ -167,7 +169,7 @@ public class SummaryCSITabFragment extends Fragment {
         btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
         btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
-        btnNoticecase.setText("ตรวจเสร็จเเล้ว");
+        btnNoticecase.setText("ส่งไปยังเซิร์ฟเวอร์");
         btnAcceptCase = (Button) viewSummaryCSI.findViewById(R.id.btnAcceptCase);
         btnAcceptCase.setVisibility(View.GONE);
 
@@ -245,7 +247,7 @@ public class SummaryCSITabFragment extends Fragment {
             if (mInvOfficialArray != null) {
                 edtInqInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
                         + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ")");
-                if ( mInvOfficialArray[7] != null || mInvOfficialArray[7].equals("")) {
+                if (mInvOfficialArray[7] != null || mInvOfficialArray[7].equals("")) {
                     edtInqTel.setText("โทร." + mInvOfficialArray[7].toString());
                     InqTel = mInvOfficialArray[7].toString();
                     edtInqTel.setOnClickListener(new SummaryOnClickListener());
@@ -262,7 +264,7 @@ public class SummaryCSITabFragment extends Fragment {
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
                 + WelcomeActivity.profile.getTbOfficial().LastName + " ("
                 + WelcomeActivity.profile.getTbOfficial().Position + ")");
-        edtInvTel.setText("โทร."+ WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        edtInvTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
         InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
         edtInvTel.setOnClickListener(new SummaryOnClickListener());
         String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().PoliceStationID);
@@ -354,21 +356,26 @@ public class SummaryCSITabFragment extends Fragment {
         public void onClick(View v) {
             if (v == btnNoticecase) {
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
 
-                //new saveFullReport().execute(reportID);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                 dialog.setMessage("อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์");
                 dialog.setPositiveButton("บันทึกแบบร่าง", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // uploadDataToServer();
+                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+                        boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                        if (isSuccess) {
+                            SaveCaseReport statusCase = new SaveCaseReport();
+                            statusCase.execute(CSIDataTabFragment.apiCaseScene);
                         Toast.makeText(getActivity(),
                                 "อัพโหลดข้อมูล บันทึกแบบร่าง เรียบร้อย", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 dialog.setCancelable(true);
@@ -382,9 +389,16 @@ public class SummaryCSITabFragment extends Fragment {
                 dialog.setNegativeButton("บันทึกเเบบสมบูรณ์", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+                        boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                        if (isSuccess) {
+                            SaveCaseReport statusCase = new SaveCaseReport();
+                            statusCase.execute(CSIDataTabFragment.apiCaseScene);
                         Toast.makeText(getActivity(),
                                 "อัพโหลดข้อมูล บันทึกเเบบสมบูรณ์ เรียบร้อย", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
                 dialog.create();
@@ -435,7 +449,7 @@ public class SummaryCSITabFragment extends Fragment {
                     }
                 }
             }
-            if( v == edtInqTel){
+            if (v == edtInqTel) {
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + InqTel));
@@ -445,7 +459,7 @@ public class SummaryCSITabFragment extends Fragment {
                     Log.e("Calling a Phone Number", "Call failed", activityException);
                 }
             }
-            if( v == edtInvTel){
+            if (v == edtInvTel) {
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + InvTel));
@@ -615,7 +629,7 @@ public class SummaryCSITabFragment extends Fragment {
                     break;
 
                 case R.id.spnSubCaseType:
-                    if(oldselectedSubCT == false) {
+                    if (oldselectedSubCT == false) {
                         selectedSubCaseType = mSubCaseTypeArray[pos][0];
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().SubCaseTypeID = selectedSubCaseType;
@@ -648,6 +662,44 @@ public class SummaryCSITabFragment extends Fragment {
 
     }
 
+    class SaveCaseReport extends AsyncTask<ApiCaseScene, Void, ApiStatus> {
+
+        @Override
+        protected ApiStatus doInBackground(ApiCaseScene... params) {
+            return WelcomeActivity.api.saveCaseReport(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+//            Log.d(TAG, apiStatus.getStatus());
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getData().getReason());
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason() + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                }
+                            });
+                    snackbar.show();
+                }
+
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason() + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+
+                                }
+                            });
+                    snackbar.show();
+                }
+            }
+        }
+    }
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
