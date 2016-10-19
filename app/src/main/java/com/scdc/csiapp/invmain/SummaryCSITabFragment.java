@@ -1,6 +1,7 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +35,7 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
-import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.apimodel.ApiStatusData;
 import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -369,12 +370,21 @@ public class SummaryCSITabFragment extends Fragment {
                         // uploadDataToServer();
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
                         boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                         if (isSuccess) {
                             SaveCaseReport statusCase = new SaveCaseReport();
                             statusCase.execute(CSIDataTabFragment.apiCaseScene);
-                        Toast.makeText(getActivity(),
-                                "อัพโหลดข้อมูล บันทึกแบบร่าง เรียบร้อย", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -389,14 +399,39 @@ public class SummaryCSITabFragment extends Fragment {
                 dialog.setNegativeButton("บันทึกเเบบสมบูรณ์", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
-                        boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                        if (isSuccess) {
-                            SaveCaseReport statusCase = new SaveCaseReport();
-                            statusCase.execute(CSIDataTabFragment.apiCaseScene);
-                        Toast.makeText(getActivity(),
-                                "อัพโหลดข้อมูล บันทึกเเบบสมบูรณ์ เรียบร้อย", Toast.LENGTH_SHORT).show();
+                        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+                            dialog.dismiss();
+                            if (snackbar == null || !snackbar.isShown()) {
+                                snackbar = Snackbar.make(rootLayout, "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ", Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+
+                                            }
+                                        });
+                                snackbar.show();
+                            }
+                        } else {
+                            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+                            if (snackbar == null || !snackbar.isShown()) {
+                                snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+
+                                            }
+                                        });
+                                snackbar.show();
+                            }
+                            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                            if (isSuccess) {
+                                SaveCaseReport statusCase = new SaveCaseReport();
+                                statusCase.execute(CSIDataTabFragment.apiCaseScene);
+
+                            }
                         }
 
                     }
@@ -662,21 +697,36 @@ public class SummaryCSITabFragment extends Fragment {
 
     }
 
-    class SaveCaseReport extends AsyncTask<ApiCaseScene, Void, ApiStatus> {
+    class SaveCaseReport extends AsyncTask<ApiCaseScene, Void, ApiStatusData> {
+        ProgressDialog progressDialog;
 
         @Override
-        protected ApiStatus doInBackground(ApiCaseScene... params) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.upload_progress));
+            progressDialog.show();
+        }
+
+        @Override
+        protected ApiStatusData doInBackground(ApiCaseScene... params) {
             return WelcomeActivity.api.saveCaseReport(params[0]);
         }
 
         @Override
-        protected void onPostExecute(ApiStatus apiStatus) {
+        protected void onPostExecute(ApiStatusData apiStatus) {
             super.onPostExecute(apiStatus);
-//            Log.d(TAG, apiStatus.getStatus());
+            progressDialog.dismiss();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason() + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -687,7 +737,7 @@ public class SummaryCSITabFragment extends Fragment {
 
             } else {
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason() + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -698,6 +748,7 @@ public class SummaryCSITabFragment extends Fragment {
                     snackbar.show();
                 }
             }
+
         }
     }
 //    @Override

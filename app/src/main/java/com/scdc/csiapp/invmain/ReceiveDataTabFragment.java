@@ -242,6 +242,14 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         //วันเวลาตรวจสถานที่เกิดเหตุ
         btn_property = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_property);
         btn_property.setOnClickListener(new SummaryOnClickListener());
+
+        if (CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations() == null) {
+            tbSceneInvestigations = new ArrayList<>();
+            Log.i(TAG, "getTbSceneInvestigations null");
+        } else {
+            tbSceneInvestigations = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations();
+            Log.i(TAG, "getTbSceneInvestigations not null");
+        }
         listViewAddSceneInvestDateTime = (ListView) viewReceiveCSI
                 .findViewById(R.id.listViewAddSceneInvestDateTime);
         listViewAddSceneInvestDateTime.setOnTouchListener(new ListviewSetOnTouchListener());
@@ -491,7 +499,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             mGoogleApiClient.connect();
         }
         Log.i("Check", "onStart recieve");
-
+        showListSceneInvestigation();
     }
 
 
@@ -520,6 +528,11 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         //saveAllReceiveData();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        showListSceneInvestigation();
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -674,7 +687,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             if (v == btn_property) {
                 viewAddSceneInvestigation = (ViewGroup) v.findViewById(R.id.layout_addsceneinvestigation_dialog);
                 createdDialog(DIALOG_AddSceneInvestigation).show();
-                Log.i(TAG, "tbSceneInvestigations num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().size()));
+                Log.i(TAG, "tbSceneInvestigations num1:" + String.valueOf(tbSceneInvestigations.size()));
 
             }
             if (v == editSceneInvestDate) {
@@ -744,9 +757,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                                                 int which) {
                                 Log.i(TAG, "Click SceneInvestDate " + editSceneInvestDate.getText().toString());
                                 Log.i(TAG, "Click SceneInvestTime " + editSceneInvestTime.getText().toString());
-                                if (tbSceneInvestigations == null) {
-                                    tbSceneInvestigations = new ArrayList<>();
-                                }
+
                                 TbSceneInvestigation tbSceneInvestigation = new TbSceneInvestigation();
                                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                                 final String saveDataTime = dateTimeCurrent[2] + dateTimeCurrent[1] + dateTimeCurrent[0] + "_" + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];

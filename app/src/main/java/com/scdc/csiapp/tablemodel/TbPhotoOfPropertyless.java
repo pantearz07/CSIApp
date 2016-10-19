@@ -6,12 +6,9 @@ import java.io.Serializable;
  * Created by Pantearz07 on 16/9/2559.
  */
 public class TbPhotoOfPropertyless implements Serializable {
-    public String TB_PhotoOfPropertyless = "photoofpropertyless";
     // From Table photoofpropertyless field name FileID
-    public String COL_FileID = "FileID";
     public String FileID = "";
     // From Table photoofpropertyless field name PropertyLessID
-    public String COL_PropertyLessID = "PropertyLessID";
     public String PropertyLessID = "";
 
 

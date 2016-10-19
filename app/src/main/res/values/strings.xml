@@ -23,6 +23,7 @@
     <string name="update_database">อัพเดทฐานข้อมูล...</string>
     <string name="delete_noticecase">ยืนยันเพื่อลบคดีนี้</string>
     <string name="send_noticecase">ส่งเรื่องเเจ้งเหตุไปยัง...</string>
+    <string name="upload_progress">กำลังอัพเดตข้อมูล...</string>
     <string name="save_error">บันทึกข้อมูลไม่สำเร็จ</string>
     <string name="edit">แก้ไข</string>
     <string name="txt_yo_yo">CSI Management System</string>

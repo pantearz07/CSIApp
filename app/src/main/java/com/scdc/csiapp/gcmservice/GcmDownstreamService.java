@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.R;
 import com.google.android.gms.gcm.GcmListenerService;
@@ -29,14 +30,15 @@ public class GcmDownstreamService extends GcmListenerService {
     private static NotificationManager mNotificationManager;
     Context context;
     TbOfficial tbOfficial = new TbOfficial();
-
+    DBHelper dbHelper;
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        dbHelper = new DBHelper(context);
         mManager = new PreferenceData(context);
-        officialID = mManager.getPreferenceData(tbOfficial.COL_OfficialID);
-        accesstype = mManager.getPreferenceData(tbOfficial.COL_AccessType);
+        officialID = mManager.getPreferenceData(dbHelper.COL_OfficialID);
+        accesstype = mManager.getPreferenceData(dbHelper.COL_AccessType);
         Log.i("GcmDownstreamService", officialID + " " + accesstype);
     }
 

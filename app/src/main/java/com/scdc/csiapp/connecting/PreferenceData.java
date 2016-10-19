@@ -36,14 +36,14 @@ public class PreferenceData {
 
     TbOfficial tbOfficial = new TbOfficial();
     TbUsers tbUsers = new TbUsers();
-
-
+    DBHelper dbHelper;
 // SharedPreferences mPrefs; mPrefs = getSharedPreferences("pref_ip", MODE_PRIVATE);
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
 
     public PreferenceData(Context context) {
+        dbHelper = new DBHelper(context);
         mPrefs = context.getSharedPreferences(KEY_PREFS, Context.MODE_PRIVATE);
         mEditor = mPrefs.edit();
     }
@@ -67,31 +67,31 @@ public class PreferenceData {
         }
 
         // pref ของ TbUser
-        mEditor.putString(tbUsers.COL_id_users, users.id_users);
-        mEditor.putString(tbUsers.COL_id_permission, users.id_permission);
-        mEditor.putString(tbUsers.COL_pass, users.pass);
-        mEditor.putString(tbUsers.COL_id_system, users.id_system);
-        mEditor.putString(tbUsers.COL_title, users.title);
-        mEditor.putString(tbUsers.COL_name, users.name);
-        mEditor.putString(tbUsers.COL_surname, users.surname);
-        mEditor.putString(tbUsers.COL_position, users.position);
-        mEditor.putString(tbUsers.COL_picture, users.picture);
-        mEditor.putString(tbUsers.COL_last_login, users.last_login);
+        mEditor.putString(dbHelper.COL_id_users, users.id_users);
+        mEditor.putString(dbHelper.COL_id_permission, users.id_permission);
+        mEditor.putString(dbHelper.COL_pass, users.pass);
+        mEditor.putString(dbHelper.COL_id_system, users.id_system);
+        mEditor.putString(dbHelper.COL_title, users.title);
+        mEditor.putString(dbHelper.COL_name, users.name);
+        mEditor.putString(dbHelper.COL_surname, users.surname);
+        mEditor.putString(dbHelper.COL_position, users.position);
+        mEditor.putString(dbHelper.COL_picture, users.picture);
+        mEditor.putString(dbHelper.COL_last_login, users.last_login);
         // pref ของ TbOfficial
-        mEditor.putString(tbOfficial.COL_OfficialID, official.OfficialID);
-        mEditor.putString(tbOfficial.COL_FirstName, official.FirstName);
-        mEditor.putString(tbOfficial.COL_LastName, official.LastName);
-        mEditor.putString(tbOfficial.COL_Alias, official.Alias);
-        mEditor.putString(tbOfficial.COL_Rank, official.Rank);
-        mEditor.putString(tbOfficial.COL_Position, official.Position);
-        mEditor.putString(tbOfficial.COL_SubPossition, official.SubPossition);
-        mEditor.putString(tbOfficial.COL_PhoneNumber, official.PhoneNumber);
-        mEditor.putString(tbOfficial.COL_OfficialEmail, official.OfficialEmail);
-        mEditor.putString(tbOfficial.COL_OfficialDisplayPic, official.OfficialDisplayPic);
-        mEditor.putString(tbOfficial.COL_AccessType, official.AccessType);
-        mEditor.putString(tbOfficial.COL_SCDCAgencyCode, official.SCDCAgencyCode);
-        mEditor.putString(tbOfficial.COL_PoliceStationID, official.PoliceStationID);
-        mEditor.putString(tbOfficial.COL_id_users, official.id_users);
+        mEditor.putString(dbHelper.COL_OfficialID, official.OfficialID);
+        mEditor.putString(dbHelper.COL_FirstName, official.FirstName);
+        mEditor.putString(dbHelper.COL_LastName, official.LastName);
+        mEditor.putString(dbHelper.COL_Alias, official.Alias);
+        mEditor.putString(dbHelper.COL_Rank, official.Rank);
+        mEditor.putString(dbHelper.COL_Position, official.Position);
+        mEditor.putString(dbHelper.COL_SubPossition, official.SubPossition);
+        mEditor.putString(dbHelper.COL_PhoneNumber, official.PhoneNumber);
+        mEditor.putString(dbHelper.COL_OfficialEmail, official.OfficialEmail);
+        mEditor.putString(dbHelper.COL_OfficialDisplayPic, official.OfficialDisplayPic);
+        mEditor.putString(dbHelper.COL_AccessType, official.AccessType);
+        mEditor.putString(dbHelper.COL_SCDCAgencyCode, official.SCDCAgencyCode);
+        mEditor.putString(dbHelper.COL_PoliceStationID, official.PoliceStationID);
+        mEditor.putString(dbHelper.COL_id_users, official.id_users);
 
         return mEditor.commit();
     }

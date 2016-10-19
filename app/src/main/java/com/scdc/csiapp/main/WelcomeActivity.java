@@ -3,8 +3,6 @@ package com.scdc.csiapp.main;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +15,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiProfile;
@@ -28,11 +24,11 @@ import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
-import static com.google.android.gms.location.LocationServices.*;
+import static com.google.android.gms.location.LocationServices.API;
+import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 /**
  * Created by Pantearz07 on 24/9/2558.
@@ -62,6 +58,7 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
     String officialID, username, password, accestype = "";
     boolean userlogin = false;
     String ipvalue;
+    DBHelper dbHelper;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     // private boolean isReceiverRegistered;
     private static final String TAG = "DEBUG-WelcomeActivity";
@@ -74,7 +71,7 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
         mContext = this;
         userlogin = mManager.getPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS);
         ipvalue = mManager.getPreferenceData(mManager.KEY_IP);
-
+        dbHelper = new DBHelper(mContext);
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         dbHelper.SelectSubCaseType();
 
@@ -146,38 +143,38 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
         }
         // สร้าง TbUsers จาก pref โดยชื่ออิงจาก TbUsers เอง
         TbUsers users = new TbUsers();
-        users.id_users = mManager.getPreferenceData(users.COL_id_users);
-        users.id_permission = mManager.getPreferenceData(users.COL_id_permission);
-        users.pass = mManager.getPreferenceData(users.COL_pass);
-        users.id_system = mManager.getPreferenceData(users.COL_id_system);
-        users.title = mManager.getPreferenceData(users.COL_title);
-        users.name = mManager.getPreferenceData(users.COL_name);
-        users.surname = mManager.getPreferenceData(users.COL_surname);
-        users.position = mManager.getPreferenceData(users.COL_position);
-        users.picture = mManager.getPreferenceData(users.COL_picture);
-        users.last_login = mManager.getPreferenceData(users.COL_last_login);
+        users.id_users = mManager.getPreferenceData(dbHelper.COL_id_users);
+        users.id_permission = mManager.getPreferenceData(dbHelper.COL_id_permission);
+        users.pass = mManager.getPreferenceData(dbHelper.COL_pass);
+        users.id_system = mManager.getPreferenceData(dbHelper.COL_id_system);
+        users.title = mManager.getPreferenceData(dbHelper.COL_title);
+        users.name = mManager.getPreferenceData(dbHelper.COL_name);
+        users.surname = mManager.getPreferenceData(dbHelper.COL_surname);
+        users.position = mManager.getPreferenceData(dbHelper.COL_position);
+        users.picture = mManager.getPreferenceData(dbHelper.COL_picture);
+        users.last_login = mManager.getPreferenceData(dbHelper.COL_last_login);
         // สร้าง TbOfficial จาก pref โดยชื่ออิงจาก TbOfficial เอง
         TbOfficial official = new TbOfficial();
-        official.OfficialID = mManager.getPreferenceData(official.COL_OfficialID);
-        official.FirstName = mManager.getPreferenceData(official.COL_FirstName);
-        official.LastName = mManager.getPreferenceData(official.COL_LastName);
-        official.Alias = mManager.getPreferenceData(official.COL_Alias);
-        official.Rank = mManager.getPreferenceData(official.COL_Rank);
-        official.Position = mManager.getPreferenceData(official.COL_Position);
-        official.SubPossition = mManager.getPreferenceData(official.COL_SubPossition);
-        official.PhoneNumber = mManager.getPreferenceData(official.COL_PhoneNumber);
-        official.OfficialEmail = mManager.getPreferenceData(official.COL_OfficialEmail);
-        official.OfficialDisplayPic = mManager.getPreferenceData(official.COL_OfficialDisplayPic);
-        official.AccessType = mManager.getPreferenceData(official.COL_AccessType);
-        official.SCDCAgencyCode = mManager.getPreferenceData(official.COL_SCDCAgencyCode);
-        official.PoliceStationID = mManager.getPreferenceData(official.COL_PoliceStationID);
-        official.id_users = mManager.getPreferenceData(official.COL_id_users);
+        official.OfficialID = mManager.getPreferenceData(dbHelper.COL_OfficialID);
+        official.FirstName = mManager.getPreferenceData(dbHelper.COL_FirstName);
+        official.LastName = mManager.getPreferenceData(dbHelper.COL_LastName);
+        official.Alias = mManager.getPreferenceData(dbHelper.COL_Alias);
+        official.Rank = mManager.getPreferenceData(dbHelper.COL_Rank);
+        official.Position = mManager.getPreferenceData(dbHelper.COL_Position);
+        official.SubPossition = mManager.getPreferenceData(dbHelper.COL_SubPossition);
+        official.PhoneNumber = mManager.getPreferenceData(dbHelper.COL_PhoneNumber);
+        official.OfficialEmail = mManager.getPreferenceData(dbHelper.COL_OfficialEmail);
+        official.OfficialDisplayPic = mManager.getPreferenceData(dbHelper.COL_OfficialDisplayPic);
+        official.AccessType = mManager.getPreferenceData(dbHelper.COL_AccessType);
+        official.SCDCAgencyCode = mManager.getPreferenceData(dbHelper.COL_SCDCAgencyCode);
+        official.PoliceStationID = mManager.getPreferenceData(dbHelper.COL_PoliceStationID);
+        official.id_users = mManager.getPreferenceData(dbHelper.COL_id_users);
         // นำค่าที่สร้างไปใช้ในการสร้าง ApiProfile ต่อ
         profile.setTbOfficial(official);
         if (official.AccessType.equalsIgnoreCase("inquiryofficial")) {
-            profile.setPoliceStationID(mManager.getPreferenceData(official.COL_PoliceStationID));
+            profile.setPoliceStationID(mManager.getPreferenceData(dbHelper.COL_PoliceStationID));
         } else if (official.AccessType.equalsIgnoreCase("investigator")) {
-            profile.setSCDCAgencyCode(mManager.getPreferenceData(official.COL_SCDCAgencyCode));
+            profile.setSCDCAgencyCode(mManager.getPreferenceData(dbHelper.COL_SCDCAgencyCode));
         }
         profile.setTbUsers(users);
     }

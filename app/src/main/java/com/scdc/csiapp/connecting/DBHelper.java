@@ -70,45 +70,292 @@ public class DBHelper extends SQLiteAssetHelper {
     private static final int DB_VERSION = 1;
     private static final String TAG = "DEBUG-DBHelper";
     // สร้าง object เปล่าไว้ใช้เรียกชื่อฟิว
+//
     TbAmphur oAmphur = new TbAmphur();
+    public String TB_amphur = "amphur";
+    public String COL_AMPHUR_ID = "AMPHUR_ID";
+    public String COL_AMPHUR_CODE = "AMPHUR_CODE";
+    public String COL_AMPHUR_NAME = "AMPHUR_NAME";
+    public String COL_POSTCODE = "POSTCODE";
+    public String COL_amphur_polygon = "amphur_polygon";
+    //
     TbCaseScene oCaseScene = new TbCaseScene();
+    public String TB_CaseScene = "casescene";
+    public String COL_CaseReportID = "CaseReportID";
+    public String COL_ReportNo = "ReportNo";
+    public String COL_ReportStatus = "ReportStatus";
+    public String COL_AssignmentDate = "AssignmentDate";
+    public String COL_AssignmentTime = "AssignmentTime";
+    public String COL_FeatureInsideDetail = "FeatureInsideDetail";
+    public String COL_FullEvidencePerformed = "FullEvidencePerformed";
+    public String COL_Annotation = "Annotation";
+    public String COL_MaleCriminalNum = "MaleCriminalNum";
+    public String COL_FemaleCriminalNum = "FemaleCriminalNum";
+    public String COL_ConfineSufferer = "ConfineSufferer";
+    public String COL_CriminalUsedWeapon = "CriminalUsedWeapon";
+    public String COL_VehicleInfo = "VehicleInfo";
+    //
     TbCaseSceneType oCaseSceneType = new TbCaseSceneType();
+    public String TB_CaseSceneType = "casescenetype";
+    public String COL_CaseTypeID = "CaseTypeID";
+    public String COL_CaseTypeName = "CaseTypeName";
+    public String COL_casetype_min = "casetype_min";
+    public String COL_casetype_max = "casetype_max";
+    public String COL_casetype_icon = "casetype_icon";
+    public String COL_casetype_colormin = "casetype_colormin";
+    public String COL_casetype_colormedium = "casetype_colormedium";
+    public String COL_casetype_colorhigh = "casetype_colorhigh";
+    public String COL_casetype_status = "casetype_status";
+
+    //
     TbComPosition oComPosition = new TbComPosition();
+    public String TB_composition = "composition";
+    public String COL_ComPosID = "ComPosID";
+    public String COL_ComPosName = "ComPosName";
+    public String COL_ComPosAbbr = "ComPosAbbr";
+    //
     TbDistrict oDistrict = new TbDistrict();
+    public String TB_district = "district";
+    public String COL_DISTRICT_ID = "DISTRICT_ID";
+    public String COL_DISTRICT_CODE = "DISTRICT_CODE";
+    public String COL_DISTRICT_NAME = "DISTRICT_NAME";
+    //
     TbFindEvidence oFindEvidence = new TbFindEvidence();
+    public String TB_findevidence = "findevidence";
+    public String COL_FindEvidenceID = "FindEvidenceID";
+    public String COL_EvidenceNumber = "EvidenceNumber";
+    public String COL_FindEvidenceZone = "FindEvidenceZone";
+    public String COL_FindEvidencecol = "FindEvidencecol";
+    public String COL_Marking = "Marking";
+    public String COL_Parceling = "Parceling";
+    public String COL_EvidencePerformed = "EvidencePerformed";
+    //
     TbGeography oGeography = new TbGeography();
+    public String TB_geography = "geography";
+    public String COL_GEO_ID = "GEO_ID";
+    public String COL_GEO_NAME = "GEO_NAME";
+    //
     TbInqPosition oInqPosition = new TbInqPosition();
+    public String TB_inqposition = "inqposition";
+    public String COL_InqPosID = "InqPosID";
+    public String COL_InqPosName = "InqPosName";
+    public String COL_InqPosAbbr = "InqPosAbbr";
+    //
     TbInvestigatorsInScene oInvestigatorsInScene = new TbInvestigatorsInScene();
+    public String TB_investigatorsinscene = "investigatorsinscene";
+    public String COL_InvOfficialID = "InvOfficialID";
+    public String COL_InvType = "InvType";
+    //
     TbInvPosition oInvPosition = new TbInvPosition();
+    public String TB_invposition = "invposition";
+    public String COL_InvPosID = "InvPosID";
+    public String COL_InvPosName = "InvPosName";
+    public String COL_InvPosAbbr = "InvPosAbbr";
+    //
     TbMultimediaFile oMultimediaFile = new TbMultimediaFile();
+    public String TB_MultimediaFile = "multimediafile";
+    public String COL_FileID = "FileID";
+    public String COL_FileType = "FileType";
+    public String COL_FilePath = "FilePath";
+    public String COL_FileDescription = "FileDescription";
+    public String COL_Timestamp = "Timestamp";
+    //
     TbNoticeCase oNoticeCase = new TbNoticeCase();
+    public String TB_NoticeCase = "noticecase";
+    public String COL_NoticeCaseID = "NoticeCaseID";
+    public String COL_Mobile_CaseID = "Mobile_CaseID";
+    public String COL_InquiryOfficialID = "InquiryOfficialID";
+    public String COL_InvestigatorOfficialID = "InvestigatorOfficialID";
+    public String COL_CaseStatus = "CaseStatus";
+    public String COL_CaseTel = "CaseTel";
+    public String COL_ReceivingCaseDate = "ReceivingCaseDate";
+    public String COL_ReceivingCaseTime = "ReceivingCaseTime";
+    public String COL_HappenCaseDate = "HappenCaseDate";
+    public String COL_HappenCaseTime = "HappenCaseTime";
+    public String COL_KnowCaseDate = "KnowCaseDate";
+    public String COL_KnowCaseTime = "KnowCaseTime";
+    public String COL_SceneNoticeDate = "SceneNoticeDate";
+    public String COL_SceneNoticeTime = "SceneNoticeTime";
+    public String COL_CompleteSceneDate = "CompleteSceneDate";
+    public String COL_CompleteSceneTime = "CompleteSceneTime";
+    public String COL_LocaleName = "LocaleName";
+    public String COL_Latitude = "Latitude";
+    public String COL_Longitude = "Longitude";
+    public String COL_SuffererPrename = "SuffererPrename";
+    public String COL_SuffererName = "SuffererName";
+    public String COL_SuffererStatus = "SuffererStatus";
+    public String COL_SuffererPhoneNum = "SuffererPhoneNum";
+    public String COL_CircumstanceOfCaseDetail = "CircumstanceOfCaseDetail";
+    public String COL_LastUpdateDate = "LastUpdateDate";
+    public String COL_LastUpdateTime = "LastUpdateTime";
+    //
     TbOfficial oOfficial = new TbOfficial();
+    public String TB_official = "official";
+    public String COL_OfficialID = "OfficialID";
+    public String COL_FirstName = "FirstName";
+    public String COL_LastName = "LastName";
+    public String COL_Alias = "Alias";
+    public String COL_Rank = "Rank";
+    public String COL_Position = "Position";
+    public String COL_SubPossition = "SubPossition";
+    public String COL_PhoneNumber = "PhoneNumber";
+    public String COL_OfficialEmail = "OfficialEmail";
+    public String COL_OfficialDisplayPic = "OfficialDisplayPic";
+    public String COL_AccessType = "AccessType";
+    //
     TbPermission oPermission = new TbPermission();
+    public String TB_permission = "permission";
+    public String COL_id_permission = "id_permission";
+    public String COL_per_name = "per_name";
+    public String COL_per_value = "per_value";
+    //
     TbPhotoOfEvidence oPhotoOfEvidence = new TbPhotoOfEvidence();
+    public String TB_photoofevidence = "photoofevidence";
+    //
     TbPhotoOfInside oPhotoOfInside = new TbPhotoOfInside();
+    public String TB_photoofinside = "photoofinside";
+    //
     TbPhotoOfOutside oPhotoOfOutside = new TbPhotoOfOutside();
+    public String TB_photoofoutside = "photoofoutside";
+    //
     TbPhotoOfResultscene oPhotoOfResultscene = new TbPhotoOfResultscene();
+    public String TB_photoofresultscene = "photoofresultscene";
+    //
     TbPhotoOfPropertyless oPhotoOfPropertyless = new TbPhotoOfPropertyless();
+    public String TB_photoofpropertyless = "photoofpropertyless";
+    public String COL_PropertyLessID = "PropertyLessID";
+    //
     TbPoliceAgency oPoliceAgency = new TbPoliceAgency();
+    public String TB_policeagency = "policeagency";
+    public String COL_PoliceAgencyID = "PoliceAgencyID";
+    public String COL_PoliceAgencyName = "PoliceAgencyName";
+    //
     TbPoliceCenter oPoliceCenter = new TbPoliceCenter();
+    public String TB_policecenter = "policecenter";
+    public String COL_PoliceCenterID = "PoliceCenterID";
+    public String COL_PoliceName = "PoliceName";
+    //
     TbPolicePosition oPolicePosition = new TbPolicePosition();
+    public String TB_policeposition = "policeposition";
+    public String COL_PolicePosID = "PolicePosID";
+    //    public String COL_PoliceName = "PoliceName";
+    public String COL_PoliceAbbr = "PoliceAbbr";
+    //
     TbPoliceRank oPoliceRank = new TbPoliceRank();
+    public String TB_policerank = "policerank";
+    public String COL_RankID = "RankID";
+    public String COL_RankName = "RankName";
+    public String COL_RankAbbr = "RankAbbr";
+    //
     TbPoliceStation oPoliceStation = new TbPoliceStation();
+    public String TB_policestation = "policestation";
+    public String COL_PoliceStationID = "PoliceStationID";
+    public String COL_PoliceStationName = "PoliceStationName";
+    //
     TbPropertyLoss oPropertyLoss = new TbPropertyLoss();
+    public String TB_propertyloss = "propertyloss";
+    public String COL_PropertyLossID = "PropertyLossID";
+    public String COL_PropertyLossName = "PropertyLossName";
+    public String COL_PropertyLossNumber = "PropertyLossNumber";
+    public String COL_PropertyLossUnit = "PropertyLossUnit";
+    public String COL_PropertyLossPosition = "PropertyLossPosition";
+    public String COL_PropInsurance = "PropInsurance";
+    //
     TbProvince oProvince = new TbProvince();
+    public String TB_province = "province";
+    public String COL_PROVINCE_ID = "PROVINCE_ID";
+    public String COL_PROVINCE_CODE = "PROVINCE_CODE";
+    public String COL_PROVINCE_NAME = "PROVINCE_NAME";
+    public String COL_province_status = "province_status";
+    //
     TbRegistrationGCM oRegistrationGCM = new TbRegistrationGCM();
     TbResultScene oResultScene = new TbResultScene();
+    public String TB_resultscene = "resultscene";
+    public String COL_RSID = "RSID";
+    public String COL_RSDetail = "RSDetail";
+    //
     TbResultSceneType oResultSceneType = new TbResultSceneType();
+    public String TB_resultscenetype = "resultscenetype";
+    public String COL_RSTypeID = "RSTypeID";
+    public String COL_RSTypeNameEN = "RSTypeNameEN";
+    public String COL_RSTypeNameTH = "RSTypeNameTH";
+    //
     TbSCDCagency oScdCagency = new TbSCDCagency();
+    public String TB_scdcagency = "scdcagency";
+    public String COL_SCDCAgencyCode = "SCDCAgencyCode";
+    public String COL_SCDCAgencyName = "SCDCAgencyName";
+    //
     TbSCDCcenter oScdCcenter = new TbSCDCcenter();
+    public String TB_scdccenter = "scdccenter";
+    public String COL_SCDCCenterID = "SCDCCenterID";
+    public String COL_SCDCCenterName = "SCDCCenterName";
+    public String COL_SCDCCenterProvince = "SCDCCenterProvince";
+    //
     TbSceneFeatureInSide oSceneFeatureInSide = new TbSceneFeatureInSide();
+    public String TB_SceneFeatureInside = "scenefeatureinside";
+    public String COL_FeatureInsideID = "FeatureInsideID";
+    public String COL_FloorNo = "FloorNo";
+    public String COL_CaveNo = "CaveNo";
+    public String COL_FrontInside = "FrontInside";
+    public String COL_LeftInside = "LeftInside";
+    public String COL_RightInside = "RightInside";
+    public String COL_BackInside = "BackInside";
+    public String COL_CenterInside = "CenterInside";
+    //
     TbSceneFeatureOutside oSceneFeatureOutside = new TbSceneFeatureOutside();
+    public String TB_scenefeatureoutside = "scenefeatureoutside";
+    public String COL_OutsideTypeName = "OutsideTypeName";
+    public String COL_OutsideTypeDetail = "OutsideTypeDetail";
+    public String COL_FloorNum = "FloorNum";
+    public String COL_CaveNum = "CaveNum";
+    public String COL_HaveFence = "HaveFence";
+    public String COL_HaveMezzanine = "HaveMezzanine";
+    public String COL_HaveRooftop = "HaveRooftop";
+    public String COL_FrontSide = "FrontSide";
+    public String COL_LeftSide = "LeftSide";
+    public String COL_RightSide = "RightSide";
+    public String COL_BackSide = "BackSide";
+    public String COL_SceneZone = "SceneZone";
+    //
     TbSceneInvestigation oSceneInvestigation = new TbSceneInvestigation();
+    public String TB_sceneinvestigation = "sceneinvestigation";
+    public String COL_SceneInvestID = "SceneInvestID";
+    public String COL_SceneInvestDate = "SceneInvestDate";
+    public String COL_SceneInvestTime = "SceneInvestTime";
+    //
     TbScheduleGroup oScheduleGroup = new TbScheduleGroup();
+    public String TB_schedulegroup = "schedulegroup";
+    public String COL_ScheduleGroupID = "ScheduleGroupID";
+    //
     TbScheduleInvestigates oScheduleInvestigates = new TbScheduleInvestigates();
+    public String TB_scheduleinvestigates = "scheduleinvestigates";
+    public String COL_ScheduleInvestigateID = "ScheduleInvestigateID";
+    public String COL_ScheduleDate = "ScheduleDate";
+    public String COL_ScheduleMonth = "ScheduleMonth";
+    //
     TbSubcaseSceneType oSubcaseSceneType = new TbSubcaseSceneType();
+    public String TB_subcasescenetype = "subcasescenetype";
+    public String COL_SubCaseTypeID = "SubCaseTypeID";
+    public String COL_SubCaseTypeName = "SubCaseTypeName";
+    //
     TbEvidenceType oEvidenceType = new TbEvidenceType();
+    public String TB_evidencetype = "evidencetype";
+    public String COL_EvidenceTypeID = "EvidenceTypeID";
+    public String COL_EvidenceTypeNameEN = "EvidenceTypeNameEN";
+    public String COL_EvidenceTypeNameTH = "EvidenceTypeNameTH";
+    //
     TbUsers oUsers = new TbUsers();
+    public String TB_users = "users";
+    public String COL_id_users = "id_users";
+    public String COL_pass = "pass";
+    public String COL_id_system = "id_system";
+    public String COL_title = "title";
+    public String COL_name = "name";
+    public String COL_surname = "surname";
+    public String COL_position = "position";
+    public String COL_picture = "picture";
+    public String COL_last_login = "last_login";
+
 
     public DBHelper(Context context) {
         //super(context, DB_NAME, null, DB_VERSION);
@@ -141,13 +388,13 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbAmphur temp = new TbAmphur();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_AMPHUR_ID, tbAmphurList.get(i).AMPHUR_ID);
-                Val.put(temp.COL_AMPHUR_CODE, tbAmphurList.get(i).AMPHUR_CODE);
-                Val.put(temp.COL_AMPHUR_NAME, tbAmphurList.get(i).AMPHUR_NAME);
-                Val.put(temp.COL_POSTCODE, tbAmphurList.get(i).POSTCODE);
-                Val.put(temp.COL_GEO_ID, tbAmphurList.get(i).GEO_ID);
-                Val.put(temp.COL_PROVINCE_ID, tbAmphurList.get(i).PROVINCE_ID);
-                Val.put(temp.COL_amphur_polygon, tbAmphurList.get(i).amphur_polygon);
+                Val.put(COL_AMPHUR_ID, tbAmphurList.get(i).AMPHUR_ID);
+                Val.put(COL_AMPHUR_CODE, tbAmphurList.get(i).AMPHUR_CODE);
+                Val.put(COL_AMPHUR_NAME, tbAmphurList.get(i).AMPHUR_NAME);
+                Val.put(COL_POSTCODE, tbAmphurList.get(i).POSTCODE);
+                Val.put(COL_GEO_ID, tbAmphurList.get(i).GEO_ID);
+                Val.put(COL_PROVINCE_ID, tbAmphurList.get(i).PROVINCE_ID);
+                Val.put(COL_amphur_polygon, tbAmphurList.get(i).amphur_polygon);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("amphur", null, Val);
@@ -191,15 +438,15 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbCaseSceneType temp = new TbCaseSceneType();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_CaseTypeID, tbCaseSceneTypes.get(i).CaseTypeID);
-                Val.put(temp.COL_CaseTypeName, tbCaseSceneTypes.get(i).CaseTypeName);
-                Val.put(temp.COL_casetype_min, tbCaseSceneTypes.get(i).casetype_min);
-                Val.put(temp.COL_casetype_max, tbCaseSceneTypes.get(i).casetype_max);
-                Val.put(temp.COL_casetype_icon, tbCaseSceneTypes.get(i).casetype_icon);
-                Val.put(temp.COL_casetype_colormin, tbCaseSceneTypes.get(i).casetype_colormin);
-                Val.put(temp.COL_casetype_colormedium, tbCaseSceneTypes.get(i).casetype_colormedium);
-                Val.put(temp.COL_casetype_colorhigh, tbCaseSceneTypes.get(i).casetype_colorhigh);
-                Val.put(temp.COL_casetype_status, tbCaseSceneTypes.get(i).casetype_status);
+                Val.put(COL_CaseTypeID, tbCaseSceneTypes.get(i).CaseTypeID);
+                Val.put(COL_CaseTypeName, tbCaseSceneTypes.get(i).CaseTypeName);
+                Val.put(COL_casetype_min, tbCaseSceneTypes.get(i).casetype_min);
+                Val.put(COL_casetype_max, tbCaseSceneTypes.get(i).casetype_max);
+                Val.put(COL_casetype_icon, tbCaseSceneTypes.get(i).casetype_icon);
+                Val.put(COL_casetype_colormin, tbCaseSceneTypes.get(i).casetype_colormin);
+                Val.put(COL_casetype_colormedium, tbCaseSceneTypes.get(i).casetype_colormedium);
+                Val.put(COL_casetype_colorhigh, tbCaseSceneTypes.get(i).casetype_colorhigh);
+                Val.put(COL_casetype_status, tbCaseSceneTypes.get(i).casetype_status);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("casescenetype", null, Val);
@@ -242,9 +489,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oComPosition.COL_ComPosID, tbComPositions.get(i).ComPosID);
-                Val.put(oComPosition.COL_ComPosName, tbComPositions.get(i).ComPosName);
-                Val.put(oComPosition.COL_ComPosAbbr, tbComPositions.get(i).ComPosAbbr);
+                Val.put(COL_ComPosID, tbComPositions.get(i).ComPosID);
+                Val.put(COL_ComPosName, tbComPositions.get(i).ComPosName);
+                Val.put(COL_ComPosAbbr, tbComPositions.get(i).ComPosAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("composition", null, Val);
@@ -288,10 +535,10 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbDistrict temp = new TbDistrict();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_DISTRICT_ID, tbDistricts.get(i).DISTRICT_ID);
-                Val.put(temp.COL_DISTRICT_CODE, tbDistricts.get(i).DISTRICT_CODE);
-                Val.put(temp.COL_DISTRICT_NAME, tbDistricts.get(i).DISTRICT_NAME);
-                Val.put(temp.COL_AMPHUR_ID, tbDistricts.get(i).AMPHUR_ID);
+                Val.put(COL_DISTRICT_ID, tbDistricts.get(i).DISTRICT_ID);
+                Val.put(COL_DISTRICT_CODE, tbDistricts.get(i).DISTRICT_CODE);
+                Val.put(COL_DISTRICT_NAME, tbDistricts.get(i).DISTRICT_NAME);
+                Val.put(COL_AMPHUR_ID, tbDistricts.get(i).AMPHUR_ID);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("district", null, Val);
@@ -334,8 +581,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oGeography.COL_GEO_ID, tbGeographies.get(i).GEO_ID);
-                Val.put(oGeography.COL_GEO_NAME, tbGeographies.get(i).GEO_NAME);
+                Val.put(COL_GEO_ID, tbGeographies.get(i).GEO_ID);
+                Val.put(COL_GEO_NAME, tbGeographies.get(i).GEO_NAME);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("geography", null, Val);
@@ -378,9 +625,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oInqPosition.COL_InqPosID, tbInqPositions.get(i).InqPosID);
-                Val.put(oInqPosition.COL_InqPosName, tbInqPositions.get(i).InqPosName);
-                Val.put(oInqPosition.COL_InqPosAbbr, tbInqPositions.get(i).InqPosAbbr);
+                Val.put(COL_InqPosID, tbInqPositions.get(i).InqPosID);
+                Val.put(COL_InqPosName, tbInqPositions.get(i).InqPosName);
+                Val.put(COL_InqPosAbbr, tbInqPositions.get(i).InqPosAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("inqposition", null, Val);
@@ -423,9 +670,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oInvPosition.COL_InvPosID, tbInvPositions.get(i).InvPosID);
-                Val.put(oInvPosition.COL_InvPosName, tbInvPositions.get(i).InvPosName);
-                Val.put(oInvPosition.COL_InvPosAbbr, tbInvPositions.get(i).InvPosAbbr);
+                Val.put(COL_InvPosID, tbInvPositions.get(i).InvPosID);
+                Val.put(COL_InvPosName, tbInvPositions.get(i).InvPosName);
+                Val.put(COL_InvPosAbbr, tbInvPositions.get(i).InvPosAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("invposition", null, Val);
@@ -470,20 +717,20 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbOfficial temp = new TbOfficial();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_OfficialID, tbOfficials.get(i).OfficialID);
-                Val.put(temp.COL_FirstName, tbOfficials.get(i).FirstName);
-                Val.put(temp.COL_LastName, tbOfficials.get(i).LastName);
-                Val.put(temp.COL_Alias, tbOfficials.get(i).Alias);
-                Val.put(temp.COL_Rank, tbOfficials.get(i).Rank);
-                Val.put(temp.COL_Position, tbOfficials.get(i).Position);
-                Val.put(temp.COL_SubPossition, tbOfficials.get(i).SubPossition);
-                Val.put(temp.COL_PhoneNumber, tbOfficials.get(i).PhoneNumber);
-                Val.put(temp.COL_OfficialEmail, tbOfficials.get(i).OfficialEmail);
-                Val.put(temp.COL_OfficialDisplayPic, tbOfficials.get(i).OfficialDisplayPic);
-                Val.put(temp.COL_AccessType, tbOfficials.get(i).AccessType);
-                Val.put(temp.COL_SCDCAgencyCode, tbOfficials.get(i).SCDCAgencyCode);
-                Val.put(temp.COL_PoliceStationID, tbOfficials.get(i).PoliceStationID);
-                Val.put(temp.COL_id_users, tbOfficials.get(i).id_users);
+                Val.put(COL_OfficialID, tbOfficials.get(i).OfficialID);
+                Val.put(COL_FirstName, tbOfficials.get(i).FirstName);
+                Val.put(COL_LastName, tbOfficials.get(i).LastName);
+                Val.put(COL_Alias, tbOfficials.get(i).Alias);
+                Val.put(COL_Rank, tbOfficials.get(i).Rank);
+                Val.put(COL_Position, tbOfficials.get(i).Position);
+                Val.put(COL_SubPossition, tbOfficials.get(i).SubPossition);
+                Val.put(COL_PhoneNumber, tbOfficials.get(i).PhoneNumber);
+                Val.put(COL_OfficialEmail, tbOfficials.get(i).OfficialEmail);
+                Val.put(COL_OfficialDisplayPic, tbOfficials.get(i).OfficialDisplayPic);
+                Val.put(COL_AccessType, tbOfficials.get(i).AccessType);
+                Val.put(COL_SCDCAgencyCode, tbOfficials.get(i).SCDCAgencyCode);
+                Val.put(COL_PoliceStationID, tbOfficials.get(i).PoliceStationID);
+                Val.put(COL_id_users, tbOfficials.get(i).id_users);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("official", null, Val);
@@ -526,9 +773,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oPermission.COL_id_permission, tbPermissions.get(i).id_permission);
-                Val.put(oPermission.COL_per_name, tbPermissions.get(i).per_name);
-                Val.put(oPermission.COL_per_value, tbPermissions.get(i).per_value);
+                Val.put(COL_id_permission, tbPermissions.get(i).id_permission);
+                Val.put(COL_per_name, tbPermissions.get(i).per_name);
+                Val.put(COL_per_value, tbPermissions.get(i).per_value);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("permission", null, Val);
@@ -573,9 +820,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbPoliceAgency temp = new TbPoliceAgency();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_PoliceAgencyID, tbPoliceAgencies.get(i).PoliceAgencyID);
-                Val.put(temp.COL_PoliceCenterID, tbPoliceAgencies.get(i).PoliceCenterID);
-                Val.put(temp.COL_PoliceAgencyName, tbPoliceAgencies.get(i).PoliceAgencyName);
+                Val.put(COL_PoliceAgencyID, tbPoliceAgencies.get(i).PoliceAgencyID);
+                Val.put(COL_PoliceCenterID, tbPoliceAgencies.get(i).PoliceCenterID);
+                Val.put(COL_PoliceAgencyName, tbPoliceAgencies.get(i).PoliceAgencyName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policeagency", null, Val);
@@ -618,8 +865,8 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oPoliceCenter.COL_PoliceCenterID, tbPoliceCenters.get(i).PoliceCenterID);
-                Val.put(oPoliceCenter.COL_PoliceName, tbPoliceCenters.get(i).PoliceName);
+                Val.put(COL_PoliceCenterID, tbPoliceCenters.get(i).PoliceCenterID);
+                Val.put(COL_PoliceName, tbPoliceCenters.get(i).PoliceName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policecenter", null, Val);
@@ -662,9 +909,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oPolicePosition.COL_PolicePosID, tbPolicePositions.get(i).PolicePosID);
-                Val.put(oPolicePosition.COL_PoliceName, tbPolicePositions.get(i).PoliceName);
-                Val.put(oPolicePosition.COL_PoliceAbbr, tbPolicePositions.get(i).PoliceAbbr);
+                Val.put(COL_PolicePosID, tbPolicePositions.get(i).PolicePosID);
+                Val.put(COL_PoliceName, tbPolicePositions.get(i).PoliceName);
+                Val.put(COL_PoliceAbbr, tbPolicePositions.get(i).PoliceAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policeposition", null, Val);
@@ -707,9 +954,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oPoliceRank.COL_RankID, tbPoliceRanks.get(i).RankID);
-                Val.put(oPoliceRank.COL_RankName, tbPoliceRanks.get(i).RankName);
-                Val.put(oPoliceRank.COL_RankAbbr, tbPoliceRanks.get(i).RankAbbr);
+                Val.put(COL_RankID, tbPoliceRanks.get(i).RankID);
+                Val.put(COL_RankName, tbPoliceRanks.get(i).RankName);
+                Val.put(COL_RankAbbr, tbPoliceRanks.get(i).RankAbbr);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policerank", null, Val);
@@ -753,9 +1000,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbPoliceStation temp = new TbPoliceStation();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_PoliceStationID, tbPoliceStations.get(i).PoliceStationID);
-                Val.put(temp.COL_PoliceAgencyID, tbPoliceStations.get(i).PoliceAgencyID);
-                Val.put(temp.COL_PoliceStationName, tbPoliceStations.get(i).PoliceStationName);
+                Val.put(COL_PoliceStationID, tbPoliceStations.get(i).PoliceStationID);
+                Val.put(COL_PoliceAgencyID, tbPoliceStations.get(i).PoliceAgencyID);
+                Val.put(COL_PoliceStationName, tbPoliceStations.get(i).PoliceStationName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("policestation", null, Val);
@@ -799,11 +1046,11 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbProvince temp = new TbProvince();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_PROVINCE_ID, tbProvinces.get(i).PROVINCE_ID);
-                Val.put(temp.COL_PROVINCE_CODE, tbProvinces.get(i).PROVINCE_CODE);
-                Val.put(temp.COL_PROVINCE_NAME, tbProvinces.get(i).PROVINCE_NAME);
-                Val.put(temp.COL_GEO_ID, tbProvinces.get(i).GEO_ID);
-                Val.put(temp.COL_province_status, tbProvinces.get(i).province_status);
+                Val.put(COL_PROVINCE_ID, tbProvinces.get(i).PROVINCE_ID);
+                Val.put(COL_PROVINCE_CODE, tbProvinces.get(i).PROVINCE_CODE);
+                Val.put(COL_PROVINCE_NAME, tbProvinces.get(i).PROVINCE_NAME);
+                Val.put(COL_GEO_ID, tbProvinces.get(i).GEO_ID);
+                Val.put(COL_province_status, tbProvinces.get(i).province_status);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("province", null, Val);
                     insert++;
@@ -845,9 +1092,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oResultSceneType.COL_RSTypeID, tbResultSceneTypes.get(i).RSTypeID);
-                Val.put(oResultSceneType.COL_RSTypeNameEN, tbResultSceneTypes.get(i).RSTypeNameEN);
-                Val.put(oResultSceneType.COL_RSTypeNameTH, tbResultSceneTypes.get(i).RSTypeNameTH);
+                Val.put(COL_RSTypeID, tbResultSceneTypes.get(i).RSTypeID);
+                Val.put(COL_RSTypeNameEN, tbResultSceneTypes.get(i).RSTypeNameEN);
+                Val.put(COL_RSTypeNameTH, tbResultSceneTypes.get(i).RSTypeNameTH);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("resultscenetype", null, Val);
                     insert++;
@@ -891,9 +1138,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbSCDCagency temp = new TbSCDCagency();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_SCDCAgencyCode, tbSCDCagencies.get(i).SCDCAgencyCode);
-                Val.put(temp.COL_SCDCCenterID, tbSCDCagencies.get(i).SCDCCenterID);
-                Val.put(temp.COL_SCDCAgencyName, tbSCDCagencies.get(i).SCDCAgencyName);
+                Val.put(COL_SCDCAgencyCode, tbSCDCagencies.get(i).SCDCAgencyCode);
+                Val.put(COL_SCDCCenterID, tbSCDCagencies.get(i).SCDCCenterID);
+                Val.put(COL_SCDCAgencyName, tbSCDCagencies.get(i).SCDCAgencyName);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("scdcagency", null, Val);
                     insert++;
@@ -937,9 +1184,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbSCDCcenter temp = new TbSCDCcenter();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_SCDCCenterID, tbSCDCcenters.get(i).SCDCCenterID);
-                Val.put(temp.COL_SCDCCenterName, tbSCDCcenters.get(i).SCDCCenterName);
-                Val.put(temp.COL_SCDCCenterProvince, tbSCDCcenters.get(i).SCDCCenterProvince);
+                Val.put(COL_SCDCCenterID, tbSCDCcenters.get(i).SCDCCenterID);
+                Val.put(COL_SCDCCenterName, tbSCDCcenters.get(i).SCDCCenterName);
+                Val.put(COL_SCDCCenterProvince, tbSCDCcenters.get(i).SCDCCenterProvince);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("scdccenter", null, Val);
                     insert++;
@@ -983,9 +1230,9 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbSubcaseSceneType temp = new TbSubcaseSceneType();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_SubCaseTypeID, tbSubcaseSceneTypes.get(i).SubCaseTypeID);
-                Val.put(temp.COL_CaseTypeID, tbSubcaseSceneTypes.get(i).CaseTypeID);
-                Val.put(temp.COL_SubCaseTypeName, tbSubcaseSceneTypes.get(i).SubCaseTypeName);
+                Val.put(COL_SubCaseTypeID, tbSubcaseSceneTypes.get(i).SubCaseTypeID);
+                Val.put(COL_CaseTypeID, tbSubcaseSceneTypes.get(i).CaseTypeID);
+                Val.put(COL_SubCaseTypeName, tbSubcaseSceneTypes.get(i).SubCaseTypeName);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("subcasescenetype", null, Val);
@@ -1028,9 +1275,9 @@ public class DBHelper extends SQLiteAssetHelper {
                 Cursor cursor = mDb.rawQuery(strSQL, null);
 
                 ContentValues Val = new ContentValues();
-                Val.put(oEvidenceType.COL_EvidenceTypeID, tbEvidenceTypes.get(i).EvidenceTypeID);
-                Val.put(oEvidenceType.COL_EvidenceTypeNameEN, tbEvidenceTypes.get(i).EvidenceTypeNameEN);
-                Val.put(oEvidenceType.COL_EvidenceTypeNameTH, tbEvidenceTypes.get(i).EvidenceTypeNameTH);
+                Val.put(COL_EvidenceTypeID, tbEvidenceTypes.get(i).EvidenceTypeID);
+                Val.put(COL_EvidenceTypeNameEN, tbEvidenceTypes.get(i).EvidenceTypeNameEN);
+                Val.put(COL_EvidenceTypeNameTH, tbEvidenceTypes.get(i).EvidenceTypeNameTH);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("evidencetype", null, Val);
                     insert++;
@@ -1074,39 +1321,39 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 TbNoticeCase temp = new TbNoticeCase();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_NoticeCaseID, tbNoticeCases.get(i).NoticeCaseID);
-                Val.put(temp.COL_Mobile_CaseID, tbNoticeCases.get(i).Mobile_CaseID);
-                Val.put(temp.COL_InquiryOfficialID, tbNoticeCases.get(i).InquiryOfficialID);
-                Val.put(temp.COL_InvestigatorOfficialID, tbNoticeCases.get(i).InvestigatorOfficialID);
-                Val.put(temp.COL_SCDCAgencyCode, tbNoticeCases.get(i).SCDCAgencyCode);
-                Val.put(temp.COL_CaseTypeID, tbNoticeCases.get(i).CaseTypeID);
-                Val.put(temp.COL_SubCaseTypeID, tbNoticeCases.get(i).SubCaseTypeID);
-                Val.put(temp.COL_CaseStatus, tbNoticeCases.get(i).CaseStatus);
-                Val.put(temp.COL_PoliceStationID, tbNoticeCases.get(i).PoliceStationID);
-                Val.put(temp.COL_CaseTel, tbNoticeCases.get(i).CaseTel);
-                Val.put(temp.COL_ReceivingCaseDate, tbNoticeCases.get(i).ReceivingCaseDate);
-                Val.put(temp.COL_ReceivingCaseTime, tbNoticeCases.get(i).ReceivingCaseTime);
-                Val.put(temp.COL_HappenCaseDate, tbNoticeCases.get(i).HappenCaseDate);
-                Val.put(temp.COL_HappenCaseTime, tbNoticeCases.get(i).HappenCaseTime);
-                Val.put(temp.COL_KnowCaseDate, tbNoticeCases.get(i).KnowCaseDate);
-                Val.put(temp.COL_KnowCaseTime, tbNoticeCases.get(i).KnowCaseTime);
-                Val.put(temp.COL_SceneNoticeDate, tbNoticeCases.get(i).SceneNoticeDate);
-                Val.put(temp.COL_SceneNoticeTime, tbNoticeCases.get(i).SceneNoticeTime);
-                Val.put(temp.COL_CompleteSceneDate, tbNoticeCases.get(i).CompleteSceneDate);
-                Val.put(temp.COL_CompleteSceneTime, tbNoticeCases.get(i).CompleteSceneTime);
-                Val.put(temp.COL_LocaleName, tbNoticeCases.get(i).LocaleName);
-                Val.put(temp.COL_DISTRICT_ID, tbNoticeCases.get(i).DISTRICT_ID);
-                Val.put(temp.COL_AMPHUR_ID, tbNoticeCases.get(i).AMPHUR_ID);
-                Val.put(temp.COL_PROVINCE_ID, tbNoticeCases.get(i).PROVINCE_ID);
-                Val.put(temp.COL_Latitude, tbNoticeCases.get(i).Latitude);
-                Val.put(temp.COL_Longitude, tbNoticeCases.get(i).Longitude);
-                Val.put(temp.COL_SuffererPrename, tbNoticeCases.get(i).SuffererPrename);
-                Val.put(temp.COL_SuffererName, tbNoticeCases.get(i).SuffererName);
-                Val.put(temp.COL_SuffererStatus, tbNoticeCases.get(i).SuffererStatus);
-                Val.put(temp.COL_SuffererPhoneNum, tbNoticeCases.get(i).SuffererPhoneNum);
-                Val.put(temp.COL_CircumstanceOfCaseDetail, tbNoticeCases.get(i).CircumstanceOfCaseDetail);
-                Val.put(temp.COL_LastUpdateDate, tbNoticeCases.get(i).LastUpdateDate);
-                Val.put(temp.COL_LastUpdateTime, tbNoticeCases.get(i).LastUpdateTime);
+                Val.put(COL_NoticeCaseID, tbNoticeCases.get(i).NoticeCaseID);
+                Val.put(COL_Mobile_CaseID, tbNoticeCases.get(i).Mobile_CaseID);
+                Val.put(COL_InquiryOfficialID, tbNoticeCases.get(i).InquiryOfficialID);
+                Val.put(COL_InvestigatorOfficialID, tbNoticeCases.get(i).InvestigatorOfficialID);
+                Val.put(COL_SCDCAgencyCode, tbNoticeCases.get(i).SCDCAgencyCode);
+                Val.put(COL_CaseTypeID, tbNoticeCases.get(i).CaseTypeID);
+                Val.put(COL_SubCaseTypeID, tbNoticeCases.get(i).SubCaseTypeID);
+                Val.put(COL_CaseStatus, tbNoticeCases.get(i).CaseStatus);
+                Val.put(COL_PoliceStationID, tbNoticeCases.get(i).PoliceStationID);
+                Val.put(COL_CaseTel, tbNoticeCases.get(i).CaseTel);
+                Val.put(COL_ReceivingCaseDate, tbNoticeCases.get(i).ReceivingCaseDate);
+                Val.put(COL_ReceivingCaseTime, tbNoticeCases.get(i).ReceivingCaseTime);
+                Val.put(COL_HappenCaseDate, tbNoticeCases.get(i).HappenCaseDate);
+                Val.put(COL_HappenCaseTime, tbNoticeCases.get(i).HappenCaseTime);
+                Val.put(COL_KnowCaseDate, tbNoticeCases.get(i).KnowCaseDate);
+                Val.put(COL_KnowCaseTime, tbNoticeCases.get(i).KnowCaseTime);
+                Val.put(COL_SceneNoticeDate, tbNoticeCases.get(i).SceneNoticeDate);
+                Val.put(COL_SceneNoticeTime, tbNoticeCases.get(i).SceneNoticeTime);
+                Val.put(COL_CompleteSceneDate, tbNoticeCases.get(i).CompleteSceneDate);
+                Val.put(COL_CompleteSceneTime, tbNoticeCases.get(i).CompleteSceneTime);
+                Val.put(COL_LocaleName, tbNoticeCases.get(i).LocaleName);
+                Val.put(COL_DISTRICT_ID, tbNoticeCases.get(i).DISTRICT_ID);
+                Val.put(COL_AMPHUR_ID, tbNoticeCases.get(i).AMPHUR_ID);
+                Val.put(COL_PROVINCE_ID, tbNoticeCases.get(i).PROVINCE_ID);
+                Val.put(COL_Latitude, tbNoticeCases.get(i).Latitude);
+                Val.put(COL_Longitude, tbNoticeCases.get(i).Longitude);
+                Val.put(COL_SuffererPrename, tbNoticeCases.get(i).SuffererPrename);
+                Val.put(COL_SuffererName, tbNoticeCases.get(i).SuffererName);
+                Val.put(COL_SuffererStatus, tbNoticeCases.get(i).SuffererStatus);
+                Val.put(COL_SuffererPhoneNum, tbNoticeCases.get(i).SuffererPhoneNum);
+                Val.put(COL_CircumstanceOfCaseDetail, tbNoticeCases.get(i).CircumstanceOfCaseDetail);
+                Val.put(COL_LastUpdateDate, tbNoticeCases.get(i).LastUpdateDate);
+                Val.put(COL_LastUpdateTime, tbNoticeCases.get(i).LastUpdateTime);
 
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("noticecase", null, Val);
@@ -1176,8 +1423,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             mDb = this.getReadableDatabase(); // Read Data
 
-            TbSubcaseSceneType temp = new TbSubcaseSceneType();
-            String strSQL = "SELECT * FROM subcasescenetype WHERE " + temp.COL_CaseTypeID + " = '" + CaseTypeID + "'";
+            String strSQL = "SELECT * FROM subcasescenetype WHERE " + COL_CaseTypeID + " = '" + CaseTypeID + "'";
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
@@ -1288,8 +1534,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             mDb = this.getReadableDatabase(); // Read Data
 
-            TbCaseSceneType temp = new TbCaseSceneType();
-            String strSQL = "SELECT * FROM " + temp.TB_CaseSceneType;
+            String strSQL = "SELECT * FROM " + TB_CaseSceneType;
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
@@ -1416,39 +1661,39 @@ public class DBHelper extends SQLiteAssetHelper {
 
             TbNoticeCase temp = new TbNoticeCase();
             ContentValues Val = new ContentValues();
-            Val.put(temp.COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
-            Val.put(temp.COL_Mobile_CaseID, tbNoticeCases.Mobile_CaseID);
-            Val.put(temp.COL_InquiryOfficialID, tbNoticeCases.InquiryOfficialID);
-            Val.put(temp.COL_InvestigatorOfficialID, tbNoticeCases.InvestigatorOfficialID);
-            Val.put(temp.COL_SCDCAgencyCode, tbNoticeCases.SCDCAgencyCode);
-            Val.put(temp.COL_CaseTypeID, tbNoticeCases.CaseTypeID);
-            Val.put(temp.COL_SubCaseTypeID, tbNoticeCases.SubCaseTypeID);
-            Val.put(temp.COL_CaseStatus, tbNoticeCases.CaseStatus);
-            Val.put(temp.COL_PoliceStationID, tbNoticeCases.PoliceStationID);
-            Val.put(temp.COL_CaseTel, tbNoticeCases.CaseTel);
-            Val.put(temp.COL_ReceivingCaseDate, tbNoticeCases.ReceivingCaseDate);
-            Val.put(temp.COL_ReceivingCaseTime, tbNoticeCases.ReceivingCaseTime);
-            Val.put(temp.COL_HappenCaseDate, tbNoticeCases.HappenCaseDate);
-            Val.put(temp.COL_HappenCaseTime, tbNoticeCases.HappenCaseTime);
-            Val.put(temp.COL_KnowCaseDate, tbNoticeCases.KnowCaseDate);
-            Val.put(temp.COL_KnowCaseTime, tbNoticeCases.KnowCaseTime);
-            Val.put(temp.COL_SceneNoticeDate, tbNoticeCases.SceneNoticeDate);
-            Val.put(temp.COL_SceneNoticeTime, tbNoticeCases.SceneNoticeTime);
-            Val.put(temp.COL_CompleteSceneDate, tbNoticeCases.CompleteSceneDate);
-            Val.put(temp.COL_CompleteSceneTime, tbNoticeCases.CompleteSceneTime);
-            Val.put(temp.COL_LocaleName, tbNoticeCases.LocaleName);
-            Val.put(temp.COL_DISTRICT_ID, tbNoticeCases.DISTRICT_ID);
-            Val.put(temp.COL_AMPHUR_ID, tbNoticeCases.AMPHUR_ID);
-            Val.put(temp.COL_PROVINCE_ID, tbNoticeCases.PROVINCE_ID);
-            Val.put(temp.COL_Latitude, tbNoticeCases.Latitude);
-            Val.put(temp.COL_Longitude, tbNoticeCases.Longitude);
-            Val.put(temp.COL_SuffererPrename, tbNoticeCases.SuffererPrename);
-            Val.put(temp.COL_SuffererName, tbNoticeCases.SuffererName);
-            Val.put(temp.COL_SuffererStatus, tbNoticeCases.SuffererStatus);
-            Val.put(temp.COL_SuffererPhoneNum, tbNoticeCases.SuffererPhoneNum);
-            Val.put(temp.COL_CircumstanceOfCaseDetail, tbNoticeCases.CircumstanceOfCaseDetail);
-            Val.put(temp.COL_LastUpdateDate, tbNoticeCases.LastUpdateDate);
-            Val.put(temp.COL_LastUpdateTime, tbNoticeCases.LastUpdateTime);
+            Val.put(COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
+            Val.put(COL_Mobile_CaseID, tbNoticeCases.Mobile_CaseID);
+            Val.put(COL_InquiryOfficialID, tbNoticeCases.InquiryOfficialID);
+            Val.put(COL_InvestigatorOfficialID, tbNoticeCases.InvestigatorOfficialID);
+            Val.put(COL_SCDCAgencyCode, tbNoticeCases.SCDCAgencyCode);
+            Val.put(COL_CaseTypeID, tbNoticeCases.CaseTypeID);
+            Val.put(COL_SubCaseTypeID, tbNoticeCases.SubCaseTypeID);
+            Val.put(COL_CaseStatus, tbNoticeCases.CaseStatus);
+            Val.put(COL_PoliceStationID, tbNoticeCases.PoliceStationID);
+            Val.put(COL_CaseTel, tbNoticeCases.CaseTel);
+            Val.put(COL_ReceivingCaseDate, tbNoticeCases.ReceivingCaseDate);
+            Val.put(COL_ReceivingCaseTime, tbNoticeCases.ReceivingCaseTime);
+            Val.put(COL_HappenCaseDate, tbNoticeCases.HappenCaseDate);
+            Val.put(COL_HappenCaseTime, tbNoticeCases.HappenCaseTime);
+            Val.put(COL_KnowCaseDate, tbNoticeCases.KnowCaseDate);
+            Val.put(COL_KnowCaseTime, tbNoticeCases.KnowCaseTime);
+            Val.put(COL_SceneNoticeDate, tbNoticeCases.SceneNoticeDate);
+            Val.put(COL_SceneNoticeTime, tbNoticeCases.SceneNoticeTime);
+            Val.put(COL_CompleteSceneDate, tbNoticeCases.CompleteSceneDate);
+            Val.put(COL_CompleteSceneTime, tbNoticeCases.CompleteSceneTime);
+            Val.put(COL_LocaleName, tbNoticeCases.LocaleName);
+            Val.put(COL_DISTRICT_ID, tbNoticeCases.DISTRICT_ID);
+            Val.put(COL_AMPHUR_ID, tbNoticeCases.AMPHUR_ID);
+            Val.put(COL_PROVINCE_ID, tbNoticeCases.PROVINCE_ID);
+            Val.put(COL_Latitude, tbNoticeCases.Latitude);
+            Val.put(COL_Longitude, tbNoticeCases.Longitude);
+            Val.put(COL_SuffererPrename, tbNoticeCases.SuffererPrename);
+            Val.put(COL_SuffererName, tbNoticeCases.SuffererName);
+            Val.put(COL_SuffererStatus, tbNoticeCases.SuffererStatus);
+            Val.put(COL_SuffererPhoneNum, tbNoticeCases.SuffererPhoneNum);
+            Val.put(COL_CircumstanceOfCaseDetail, tbNoticeCases.CircumstanceOfCaseDetail);
+            Val.put(COL_LastUpdateDate, tbNoticeCases.LastUpdateDate);
+            Val.put(COL_LastUpdateTime, tbNoticeCases.LastUpdateTime);
 
             if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                 db.insert("noticecase", null, Val);
@@ -1482,9 +1727,8 @@ public class DBHelper extends SQLiteAssetHelper {
             db.beginTransaction();
             PRIMARY_KEY = tbNoticeCases.Mobile_CaseID;
 
-            TbNoticeCase temp = new TbNoticeCase();
             ContentValues Val = new ContentValues();
-            Val.put(temp.COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
+            Val.put(COL_NoticeCaseID, tbNoticeCases.NoticeCaseID);
 
             db.update("noticecase", Val, " Mobile_CaseID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
 
@@ -1540,50 +1784,49 @@ public class DBHelper extends SQLiteAssetHelper {
                     + "CaseReportID = '" + PRIMARY_KEY + "'";
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
-            TbCaseScene temp = new TbCaseScene();
             ContentValues Val = new ContentValues();
-            Val.put(temp.COL_CaseReportID, tbCaseScene.CaseReportID);
-            Val.put(temp.COL_NoticeCaseID, tbCaseScene.NoticeCaseID);
-            Val.put(temp.COL_Mobile_CaseID, tbCaseScene.Mobile_CaseID);
-            Val.put(temp.COL_SCDCAgencyCode, tbCaseScene.SCDCAgencyCode);
-            Val.put(temp.COL_InvestigatorOfficialID, tbCaseScene.InvestigatorOfficialID);
-            Val.put(temp.COL_CaseTypeID, tbCaseScene.CaseTypeID);
-            Val.put(temp.COL_SubCaseTypeID, tbCaseScene.SubCaseTypeID);
-            Val.put(temp.COL_ReportNo, tbCaseScene.ReportNo);
-            Val.put(temp.COL_ReportStatus, tbCaseScene.ReportStatus);
-            Val.put(temp.COL_PoliceStationID, tbCaseScene.PoliceStationID);
-            Val.put(temp.COL_CaseTel, tbCaseScene.CaseTel);
-            Val.put(temp.COL_AssignmentDate, tbCaseScene.AssignmentDate);
-            Val.put(temp.COL_AssignmentTime, tbCaseScene.AssignmentTime);
-            Val.put(temp.COL_ReceivingCaseDate, tbCaseScene.ReceivingCaseDate);
-            Val.put(temp.COL_ReceivingCaseTime, tbCaseScene.ReceivingCaseTime);
-            Val.put(temp.COL_HappenCaseDate, tbCaseScene.HappenCaseDate);
-            Val.put(temp.COL_HappenCaseTime, tbCaseScene.HappenCaseTime);
-            Val.put(temp.COL_KnowCaseDate, tbCaseScene.KnowCaseDate);
-            Val.put(temp.COL_KnowCaseTime, tbCaseScene.KnowCaseTime);
-            Val.put(temp.COL_CompleteSceneDate, tbCaseScene.CompleteSceneDate);
-            Val.put(temp.COL_CompleteSceneTime, tbCaseScene.CompleteSceneTime);
-            Val.put(temp.COL_LocaleName, tbCaseScene.LocaleName);
-            Val.put(temp.COL_DISTRICT_ID, tbCaseScene.DISTRICT_ID);
-            Val.put(temp.COL_AMPHUR_ID, tbCaseScene.AMPHUR_ID);
-            Val.put(temp.COL_PROVINCE_ID, tbCaseScene.PROVINCE_ID);
-            Val.put(temp.COL_Latitude, tbCaseScene.Latitude);
-            Val.put(temp.COL_Longitude, tbCaseScene.Longitude);
-            Val.put(temp.COL_FeatureInsideDetail, tbCaseScene.FeatureInsideDetail);
-            Val.put(temp.COL_CircumstanceOfCaseDetail, tbCaseScene.CircumstanceOfCaseDetail);
-            Val.put(temp.COL_FullEvidencePerformed, tbCaseScene.FullEvidencePerformed);
-            Val.put(temp.COL_Annotation, tbCaseScene.Annotation);
-            Val.put(temp.COL_MaleCriminalNum, tbCaseScene.MaleCriminalNum);
-            Val.put(temp.COL_FemaleCriminalNum, tbCaseScene.FemaleCriminalNum);
-            Val.put(temp.COL_ConfineSufferer, tbCaseScene.ConfineSufferer);
-            Val.put(temp.COL_SuffererPrename, tbCaseScene.SuffererPrename);
-            Val.put(temp.COL_SuffererName, tbCaseScene.SuffererName);
-            Val.put(temp.COL_SuffererStatus, tbCaseScene.SuffererStatus);
-            Val.put(temp.COL_SuffererPhoneNum, tbCaseScene.SuffererPhoneNum);
-            Val.put(temp.COL_CriminalUsedWeapon, tbCaseScene.CriminalUsedWeapon);
-            Val.put(temp.COL_VehicleInfo, tbCaseScene.VehicleInfo);
-            Val.put(temp.COL_LastUpdateDate, tbCaseScene.LastUpdateDate);
-            Val.put(temp.COL_LastUpdateTime, tbCaseScene.LastUpdateTime);
+            Val.put(COL_CaseReportID, tbCaseScene.CaseReportID);
+            Val.put(COL_NoticeCaseID, tbCaseScene.NoticeCaseID);
+            Val.put(COL_Mobile_CaseID, tbCaseScene.Mobile_CaseID);
+            Val.put(COL_SCDCAgencyCode, tbCaseScene.SCDCAgencyCode);
+            Val.put(COL_InvestigatorOfficialID, tbCaseScene.InvestigatorOfficialID);
+            Val.put(COL_CaseTypeID, tbCaseScene.CaseTypeID);
+            Val.put(COL_SubCaseTypeID, tbCaseScene.SubCaseTypeID);
+            Val.put(COL_ReportNo, tbCaseScene.ReportNo);
+            Val.put(COL_ReportStatus, tbCaseScene.ReportStatus);
+            Val.put(COL_PoliceStationID, tbCaseScene.PoliceStationID);
+            Val.put(COL_CaseTel, tbCaseScene.CaseTel);
+            Val.put(COL_AssignmentDate, tbCaseScene.AssignmentDate);
+            Val.put(COL_AssignmentTime, tbCaseScene.AssignmentTime);
+            Val.put(COL_ReceivingCaseDate, tbCaseScene.ReceivingCaseDate);
+            Val.put(COL_ReceivingCaseTime, tbCaseScene.ReceivingCaseTime);
+            Val.put(COL_HappenCaseDate, tbCaseScene.HappenCaseDate);
+            Val.put(COL_HappenCaseTime, tbCaseScene.HappenCaseTime);
+            Val.put(COL_KnowCaseDate, tbCaseScene.KnowCaseDate);
+            Val.put(COL_KnowCaseTime, tbCaseScene.KnowCaseTime);
+            Val.put(COL_CompleteSceneDate, tbCaseScene.CompleteSceneDate);
+            Val.put(COL_CompleteSceneTime, tbCaseScene.CompleteSceneTime);
+            Val.put(COL_LocaleName, tbCaseScene.LocaleName);
+            Val.put(COL_DISTRICT_ID, tbCaseScene.DISTRICT_ID);
+            Val.put(COL_AMPHUR_ID, tbCaseScene.AMPHUR_ID);
+            Val.put(COL_PROVINCE_ID, tbCaseScene.PROVINCE_ID);
+            Val.put(COL_Latitude, tbCaseScene.Latitude);
+            Val.put(COL_Longitude, tbCaseScene.Longitude);
+            Val.put(COL_FeatureInsideDetail, tbCaseScene.FeatureInsideDetail);
+            Val.put(COL_CircumstanceOfCaseDetail, tbCaseScene.CircumstanceOfCaseDetail);
+            Val.put(COL_FullEvidencePerformed, tbCaseScene.FullEvidencePerformed);
+            Val.put(COL_Annotation, tbCaseScene.Annotation);
+            Val.put(COL_MaleCriminalNum, tbCaseScene.MaleCriminalNum);
+            Val.put(COL_FemaleCriminalNum, tbCaseScene.FemaleCriminalNum);
+            Val.put(COL_ConfineSufferer, tbCaseScene.ConfineSufferer);
+            Val.put(COL_SuffererPrename, tbCaseScene.SuffererPrename);
+            Val.put(COL_SuffererName, tbCaseScene.SuffererName);
+            Val.put(COL_SuffererStatus, tbCaseScene.SuffererStatus);
+            Val.put(COL_SuffererPhoneNum, tbCaseScene.SuffererPhoneNum);
+            Val.put(COL_CriminalUsedWeapon, tbCaseScene.CriminalUsedWeapon);
+            Val.put(COL_VehicleInfo, tbCaseScene.VehicleInfo);
+            Val.put(COL_LastUpdateDate, tbCaseScene.LastUpdateDate);
+            Val.put(COL_LastUpdateTime, tbCaseScene.LastUpdateTime);
 
             if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                 db.insert("casescene", null, Val);
@@ -1622,50 +1865,49 @@ public class DBHelper extends SQLiteAssetHelper {
             strSQL = "SELECT * FROM casescene WHERE "
                     + "CaseReportID = '" + sCaseReportID + "'";
             try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                TbCaseScene temp = new TbCaseScene();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_CaseReportID, apiCaseScene.getTbCaseScene().CaseReportID);
-                Val.put(temp.COL_NoticeCaseID, apiCaseScene.getTbCaseScene().NoticeCaseID);
-                Val.put(temp.COL_Mobile_CaseID, apiCaseScene.getTbCaseScene().Mobile_CaseID);
-                Val.put(temp.COL_SCDCAgencyCode, apiCaseScene.getTbCaseScene().SCDCAgencyCode);
-                Val.put(temp.COL_InvestigatorOfficialID, apiCaseScene.getTbCaseScene().InvestigatorOfficialID);
-                Val.put(temp.COL_CaseTypeID, apiCaseScene.getTbCaseScene().CaseTypeID);
-                Val.put(temp.COL_SubCaseTypeID, apiCaseScene.getTbCaseScene().SubCaseTypeID);
-                Val.put(temp.COL_ReportNo, apiCaseScene.getTbCaseScene().ReportNo);
-                Val.put(temp.COL_ReportStatus, apiCaseScene.getTbCaseScene().ReportStatus);
-                Val.put(temp.COL_PoliceStationID, apiCaseScene.getTbCaseScene().PoliceStationID);
-                Val.put(temp.COL_CaseTel, apiCaseScene.getTbCaseScene().CaseTel);
-                Val.put(temp.COL_AssignmentDate, apiCaseScene.getTbCaseScene().AssignmentDate);
-                Val.put(temp.COL_AssignmentTime, apiCaseScene.getTbCaseScene().AssignmentTime);
-                Val.put(temp.COL_ReceivingCaseDate, apiCaseScene.getTbCaseScene().ReceivingCaseDate);
-                Val.put(temp.COL_ReceivingCaseTime, apiCaseScene.getTbCaseScene().ReceivingCaseTime);
-                Val.put(temp.COL_HappenCaseDate, apiCaseScene.getTbCaseScene().HappenCaseDate);
-                Val.put(temp.COL_HappenCaseTime, apiCaseScene.getTbCaseScene().HappenCaseTime);
-                Val.put(temp.COL_KnowCaseDate, apiCaseScene.getTbCaseScene().KnowCaseDate);
-                Val.put(temp.COL_KnowCaseTime, apiCaseScene.getTbCaseScene().KnowCaseTime);
-                Val.put(temp.COL_CompleteSceneDate, apiCaseScene.getTbCaseScene().CompleteSceneDate);
-                Val.put(temp.COL_CompleteSceneTime, apiCaseScene.getTbCaseScene().CompleteSceneTime);
-                Val.put(temp.COL_LocaleName, apiCaseScene.getTbCaseScene().LocaleName);
-                Val.put(temp.COL_DISTRICT_ID, apiCaseScene.getTbCaseScene().DISTRICT_ID);
-                Val.put(temp.COL_AMPHUR_ID, apiCaseScene.getTbCaseScene().AMPHUR_ID);
-                Val.put(temp.COL_PROVINCE_ID, apiCaseScene.getTbCaseScene().PROVINCE_ID);
-                Val.put(temp.COL_Latitude, apiCaseScene.getTbCaseScene().Latitude);
-                Val.put(temp.COL_Longitude, apiCaseScene.getTbCaseScene().Longitude);
-                Val.put(temp.COL_FeatureInsideDetail, apiCaseScene.getTbCaseScene().FeatureInsideDetail);
-                Val.put(temp.COL_CircumstanceOfCaseDetail, apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
-                Val.put(temp.COL_FullEvidencePerformed, apiCaseScene.getTbCaseScene().FullEvidencePerformed);
-                Val.put(temp.COL_Annotation, apiCaseScene.getTbCaseScene().Annotation);
-                Val.put(temp.COL_MaleCriminalNum, apiCaseScene.getTbCaseScene().MaleCriminalNum);
-                Val.put(temp.COL_FemaleCriminalNum, apiCaseScene.getTbCaseScene().FemaleCriminalNum);
-                Val.put(temp.COL_ConfineSufferer, apiCaseScene.getTbCaseScene().ConfineSufferer);
-                Val.put(temp.COL_SuffererPrename, apiCaseScene.getTbCaseScene().SuffererPrename);
-                Val.put(temp.COL_SuffererName, apiCaseScene.getTbCaseScene().SuffererName);
-                Val.put(temp.COL_SuffererStatus, apiCaseScene.getTbCaseScene().SuffererStatus);
-                Val.put(temp.COL_SuffererPhoneNum, apiCaseScene.getTbCaseScene().SuffererPhoneNum);
-                Val.put(temp.COL_CriminalUsedWeapon, apiCaseScene.getTbCaseScene().CriminalUsedWeapon);
-                Val.put(temp.COL_VehicleInfo, apiCaseScene.getTbCaseScene().VehicleInfo);
-                Val.put(temp.COL_LastUpdateDate, apiCaseScene.getTbCaseScene().LastUpdateDate);
-                Val.put(temp.COL_LastUpdateTime, apiCaseScene.getTbCaseScene().LastUpdateTime);
+                Val.put(COL_CaseReportID, apiCaseScene.getTbCaseScene().CaseReportID);
+                Val.put(COL_NoticeCaseID, apiCaseScene.getTbCaseScene().NoticeCaseID);
+                Val.put(COL_Mobile_CaseID, apiCaseScene.getTbCaseScene().Mobile_CaseID);
+                Val.put(COL_SCDCAgencyCode, apiCaseScene.getTbCaseScene().SCDCAgencyCode);
+                Val.put(COL_InvestigatorOfficialID, apiCaseScene.getTbCaseScene().InvestigatorOfficialID);
+                Val.put(COL_CaseTypeID, apiCaseScene.getTbCaseScene().CaseTypeID);
+                Val.put(COL_SubCaseTypeID, apiCaseScene.getTbCaseScene().SubCaseTypeID);
+                Val.put(COL_ReportNo, apiCaseScene.getTbCaseScene().ReportNo);
+                Val.put(COL_ReportStatus, apiCaseScene.getTbCaseScene().ReportStatus);
+                Val.put(COL_PoliceStationID, apiCaseScene.getTbCaseScene().PoliceStationID);
+                Val.put(COL_CaseTel, apiCaseScene.getTbCaseScene().CaseTel);
+                Val.put(COL_AssignmentDate, apiCaseScene.getTbCaseScene().AssignmentDate);
+                Val.put(COL_AssignmentTime, apiCaseScene.getTbCaseScene().AssignmentTime);
+                Val.put(COL_ReceivingCaseDate, apiCaseScene.getTbCaseScene().ReceivingCaseDate);
+                Val.put(COL_ReceivingCaseTime, apiCaseScene.getTbCaseScene().ReceivingCaseTime);
+                Val.put(COL_HappenCaseDate, apiCaseScene.getTbCaseScene().HappenCaseDate);
+                Val.put(COL_HappenCaseTime, apiCaseScene.getTbCaseScene().HappenCaseTime);
+                Val.put(COL_KnowCaseDate, apiCaseScene.getTbCaseScene().KnowCaseDate);
+                Val.put(COL_KnowCaseTime, apiCaseScene.getTbCaseScene().KnowCaseTime);
+                Val.put(COL_CompleteSceneDate, apiCaseScene.getTbCaseScene().CompleteSceneDate);
+                Val.put(COL_CompleteSceneTime, apiCaseScene.getTbCaseScene().CompleteSceneTime);
+                Val.put(COL_LocaleName, apiCaseScene.getTbCaseScene().LocaleName);
+                Val.put(COL_DISTRICT_ID, apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                Val.put(COL_AMPHUR_ID, apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                Val.put(COL_PROVINCE_ID, apiCaseScene.getTbCaseScene().PROVINCE_ID);
+                Val.put(COL_Latitude, apiCaseScene.getTbCaseScene().Latitude);
+                Val.put(COL_Longitude, apiCaseScene.getTbCaseScene().Longitude);
+                Val.put(COL_FeatureInsideDetail, apiCaseScene.getTbCaseScene().FeatureInsideDetail);
+                Val.put(COL_CircumstanceOfCaseDetail, apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
+                Val.put(COL_FullEvidencePerformed, apiCaseScene.getTbCaseScene().FullEvidencePerformed);
+                Val.put(COL_Annotation, apiCaseScene.getTbCaseScene().Annotation);
+                Val.put(COL_MaleCriminalNum, apiCaseScene.getTbCaseScene().MaleCriminalNum);
+                Val.put(COL_FemaleCriminalNum, apiCaseScene.getTbCaseScene().FemaleCriminalNum);
+                Val.put(COL_ConfineSufferer, apiCaseScene.getTbCaseScene().ConfineSufferer);
+                Val.put(COL_SuffererPrename, apiCaseScene.getTbCaseScene().SuffererPrename);
+                Val.put(COL_SuffererName, apiCaseScene.getTbCaseScene().SuffererName);
+                Val.put(COL_SuffererStatus, apiCaseScene.getTbCaseScene().SuffererStatus);
+                Val.put(COL_SuffererPhoneNum, apiCaseScene.getTbCaseScene().SuffererPhoneNum);
+                Val.put(COL_CriminalUsedWeapon, apiCaseScene.getTbCaseScene().CriminalUsedWeapon);
+                Val.put(COL_VehicleInfo, apiCaseScene.getTbCaseScene().VehicleInfo);
+                Val.put(COL_LastUpdateDate, apiCaseScene.getTbCaseScene().LastUpdateDate);
+                Val.put(COL_LastUpdateTime, apiCaseScene.getTbCaseScene().LastUpdateTime);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("casescene", null, Val);
                     Log.d(TAG, "Sync Table casescene: Insert ");
@@ -1678,41 +1920,40 @@ public class DBHelper extends SQLiteAssetHelper {
             strSQL = "SELECT * FROM noticecase WHERE "
                     + "NoticeCaseID = '" + apiCaseScene.getTbCaseScene().NoticeCaseID + "'";
             try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                TbNoticeCase temp = new TbNoticeCase();
                 ContentValues Val = new ContentValues();
-                Val.put(temp.COL_NoticeCaseID, apiCaseScene.getTbNoticeCase().NoticeCaseID);
-                Val.put(temp.COL_Mobile_CaseID, apiCaseScene.getTbNoticeCase().Mobile_CaseID);
-                Val.put(temp.COL_InquiryOfficialID, apiCaseScene.getTbNoticeCase().InquiryOfficialID);
-                Val.put(temp.COL_InvestigatorOfficialID, apiCaseScene.getTbNoticeCase().InvestigatorOfficialID);
-                Val.put(temp.COL_SCDCAgencyCode, apiCaseScene.getTbNoticeCase().SCDCAgencyCode);
-                Val.put(temp.COL_CaseTypeID, apiCaseScene.getTbNoticeCase().CaseTypeID);
-                Val.put(temp.COL_SubCaseTypeID, apiCaseScene.getTbNoticeCase().SubCaseTypeID);
-                Val.put(temp.COL_CaseStatus, apiCaseScene.getTbNoticeCase().CaseStatus);
-                Val.put(temp.COL_PoliceStationID, apiCaseScene.getTbNoticeCase().PoliceStationID);
-                Val.put(temp.COL_CaseTel, apiCaseScene.getTbNoticeCase().CaseTel);
-                Val.put(temp.COL_ReceivingCaseDate, apiCaseScene.getTbNoticeCase().ReceivingCaseDate);
-                Val.put(temp.COL_ReceivingCaseTime, apiCaseScene.getTbNoticeCase().ReceivingCaseTime);
-                Val.put(temp.COL_HappenCaseDate, apiCaseScene.getTbNoticeCase().HappenCaseDate);
-                Val.put(temp.COL_HappenCaseTime, apiCaseScene.getTbNoticeCase().HappenCaseTime);
-                Val.put(temp.COL_KnowCaseDate, apiCaseScene.getTbNoticeCase().KnowCaseDate);
-                Val.put(temp.COL_KnowCaseTime, apiCaseScene.getTbNoticeCase().KnowCaseTime);
-                Val.put(temp.COL_SceneNoticeDate, apiCaseScene.getTbNoticeCase().SceneNoticeDate);
-                Val.put(temp.COL_SceneNoticeTime, apiCaseScene.getTbNoticeCase().SceneNoticeTime);
-                Val.put(temp.COL_CompleteSceneDate, apiCaseScene.getTbNoticeCase().CompleteSceneDate);
-                Val.put(temp.COL_CompleteSceneTime, apiCaseScene.getTbNoticeCase().CompleteSceneTime);
-                Val.put(temp.COL_LocaleName, apiCaseScene.getTbNoticeCase().LocaleName);
-                Val.put(temp.COL_DISTRICT_ID, apiCaseScene.getTbNoticeCase().DISTRICT_ID);
-                Val.put(temp.COL_AMPHUR_ID, apiCaseScene.getTbNoticeCase().AMPHUR_ID);
-                Val.put(temp.COL_PROVINCE_ID, apiCaseScene.getTbNoticeCase().PROVINCE_ID);
-                Val.put(temp.COL_Latitude, apiCaseScene.getTbNoticeCase().Latitude);
-                Val.put(temp.COL_Longitude, apiCaseScene.getTbNoticeCase().Longitude);
-                Val.put(temp.COL_SuffererPrename, apiCaseScene.getTbNoticeCase().SuffererPrename);
-                Val.put(temp.COL_SuffererName, apiCaseScene.getTbNoticeCase().SuffererName);
-                Val.put(temp.COL_SuffererStatus, apiCaseScene.getTbNoticeCase().SuffererStatus);
-                Val.put(temp.COL_SuffererPhoneNum, apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
-                Val.put(temp.COL_CircumstanceOfCaseDetail, apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail);
-                Val.put(temp.COL_LastUpdateDate, apiCaseScene.getTbNoticeCase().LastUpdateDate);
-                Val.put(temp.COL_LastUpdateTime, apiCaseScene.getTbNoticeCase().LastUpdateTime);
+                Val.put(COL_NoticeCaseID, apiCaseScene.getTbNoticeCase().NoticeCaseID);
+                Val.put(COL_Mobile_CaseID, apiCaseScene.getTbNoticeCase().Mobile_CaseID);
+                Val.put(COL_InquiryOfficialID, apiCaseScene.getTbNoticeCase().InquiryOfficialID);
+                Val.put(COL_InvestigatorOfficialID, apiCaseScene.getTbNoticeCase().InvestigatorOfficialID);
+                Val.put(COL_SCDCAgencyCode, apiCaseScene.getTbNoticeCase().SCDCAgencyCode);
+                Val.put(COL_CaseTypeID, apiCaseScene.getTbNoticeCase().CaseTypeID);
+                Val.put(COL_SubCaseTypeID, apiCaseScene.getTbNoticeCase().SubCaseTypeID);
+                Val.put(COL_CaseStatus, apiCaseScene.getTbNoticeCase().CaseStatus);
+                Val.put(COL_PoliceStationID, apiCaseScene.getTbNoticeCase().PoliceStationID);
+                Val.put(COL_CaseTel, apiCaseScene.getTbNoticeCase().CaseTel);
+                Val.put(COL_ReceivingCaseDate, apiCaseScene.getTbNoticeCase().ReceivingCaseDate);
+                Val.put(COL_ReceivingCaseTime, apiCaseScene.getTbNoticeCase().ReceivingCaseTime);
+                Val.put(COL_HappenCaseDate, apiCaseScene.getTbNoticeCase().HappenCaseDate);
+                Val.put(COL_HappenCaseTime, apiCaseScene.getTbNoticeCase().HappenCaseTime);
+                Val.put(COL_KnowCaseDate, apiCaseScene.getTbNoticeCase().KnowCaseDate);
+                Val.put(COL_KnowCaseTime, apiCaseScene.getTbNoticeCase().KnowCaseTime);
+                Val.put(COL_SceneNoticeDate, apiCaseScene.getTbNoticeCase().SceneNoticeDate);
+                Val.put(COL_SceneNoticeTime, apiCaseScene.getTbNoticeCase().SceneNoticeTime);
+                Val.put(COL_CompleteSceneDate, apiCaseScene.getTbNoticeCase().CompleteSceneDate);
+                Val.put(COL_CompleteSceneTime, apiCaseScene.getTbNoticeCase().CompleteSceneTime);
+                Val.put(COL_LocaleName, apiCaseScene.getTbNoticeCase().LocaleName);
+                Val.put(COL_DISTRICT_ID, apiCaseScene.getTbNoticeCase().DISTRICT_ID);
+                Val.put(COL_AMPHUR_ID, apiCaseScene.getTbNoticeCase().AMPHUR_ID);
+                Val.put(COL_PROVINCE_ID, apiCaseScene.getTbNoticeCase().PROVINCE_ID);
+                Val.put(COL_Latitude, apiCaseScene.getTbNoticeCase().Latitude);
+                Val.put(COL_Longitude, apiCaseScene.getTbNoticeCase().Longitude);
+                Val.put(COL_SuffererPrename, apiCaseScene.getTbNoticeCase().SuffererPrename);
+                Val.put(COL_SuffererName, apiCaseScene.getTbNoticeCase().SuffererName);
+                Val.put(COL_SuffererStatus, apiCaseScene.getTbNoticeCase().SuffererStatus);
+                Val.put(COL_SuffererPhoneNum, apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
+                Val.put(COL_CircumstanceOfCaseDetail, apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail);
+                Val.put(COL_LastUpdateDate, apiCaseScene.getTbNoticeCase().LastUpdateDate);
+                Val.put(COL_LastUpdateTime, apiCaseScene.getTbNoticeCase().LastUpdateTime);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("noticecase", null, Val);
                     Log.d(TAG, "Sync Table noticecase: Insert ");
@@ -1728,12 +1969,11 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE SceneInvestID = '" + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbSceneInvestigation temp = new TbSceneInvestigation();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_SceneInvestID, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbSceneInvestigations().get(i).CaseReportID);
-                        Val.put(temp.COL_SceneInvestDate, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestDate);
-                        Val.put(temp.COL_SceneInvestTime, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestTime);
+                        Val.put(COL_SceneInvestID, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbSceneInvestigations().get(i).CaseReportID);
+                        Val.put(COL_SceneInvestDate, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestDate);
+                        Val.put(COL_SceneInvestTime, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestTime);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("sceneinvestigation", null, Val);
                             Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Insert " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
@@ -1749,21 +1989,20 @@ public class DBHelper extends SQLiteAssetHelper {
                 strSQL = "SELECT * FROM scenefeatureoutside "
                         + " WHERE CaseReportID = '" + sCaseReportID + "'";
                 try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                    TbSceneFeatureOutside temp = new TbSceneFeatureOutside();
                     ContentValues Val = new ContentValues();
-                    Val.put(temp.COL_CaseReportID, apiCaseScene.getTbSceneFeatureOutside().CaseReportID);
-                    Val.put(temp.COL_OutsideTypeName, apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName);
-                    Val.put(temp.COL_OutsideTypeDetail, apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
-                    Val.put(temp.COL_FloorNum, apiCaseScene.getTbSceneFeatureOutside().FloorNum);
-                    Val.put(temp.COL_CaveNum, apiCaseScene.getTbSceneFeatureOutside().CaveNum);
-                    Val.put(temp.COL_HaveFence, apiCaseScene.getTbSceneFeatureOutside().HaveFence);
-                    Val.put(temp.COL_HaveMezzanine, apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine);
-                    Val.put(temp.COL_HaveRooftop, apiCaseScene.getTbSceneFeatureOutside().HaveRooftop);
-                    Val.put(temp.COL_FrontSide, apiCaseScene.getTbSceneFeatureOutside().FrontSide);
-                    Val.put(temp.COL_LeftSide, apiCaseScene.getTbSceneFeatureOutside().LeftSide);
-                    Val.put(temp.COL_RightSide, apiCaseScene.getTbSceneFeatureOutside().RightSide);
-                    Val.put(temp.COL_BackSide, apiCaseScene.getTbSceneFeatureOutside().BackSide);
-                    Val.put(temp.COL_SceneZone, apiCaseScene.getTbSceneFeatureOutside().SceneZone);
+                    Val.put(COL_CaseReportID, apiCaseScene.getTbSceneFeatureOutside().CaseReportID);
+                    Val.put(COL_OutsideTypeName, apiCaseScene.getTbSceneFeatureOutside().OutsideTypeName);
+                    Val.put(COL_OutsideTypeDetail, apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
+                    Val.put(COL_FloorNum, apiCaseScene.getTbSceneFeatureOutside().FloorNum);
+                    Val.put(COL_CaveNum, apiCaseScene.getTbSceneFeatureOutside().CaveNum);
+                    Val.put(COL_HaveFence, apiCaseScene.getTbSceneFeatureOutside().HaveFence);
+                    Val.put(COL_HaveMezzanine, apiCaseScene.getTbSceneFeatureOutside().HaveMezzanine);
+                    Val.put(COL_HaveRooftop, apiCaseScene.getTbSceneFeatureOutside().HaveRooftop);
+                    Val.put(COL_FrontSide, apiCaseScene.getTbSceneFeatureOutside().FrontSide);
+                    Val.put(COL_LeftSide, apiCaseScene.getTbSceneFeatureOutside().LeftSide);
+                    Val.put(COL_RightSide, apiCaseScene.getTbSceneFeatureOutside().RightSide);
+                    Val.put(COL_BackSide, apiCaseScene.getTbSceneFeatureOutside().BackSide);
+                    Val.put(COL_SceneZone, apiCaseScene.getTbSceneFeatureOutside().SceneZone);
                     if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                         db.insert("scenefeatureoutside", null, Val);
                         Log.d(TAG, "Sync Table scenefeatureoutside: Insert ");
@@ -1780,17 +2019,16 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE FeatureInsideID = '" + apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbSceneFeatureInSide temp = new TbSceneFeatureInSide();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_FeatureInsideID, apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbSceneFeatureInSide().get(i).CaseReportID);
-                        Val.put(temp.COL_FloorNo, apiCaseScene.getTbSceneFeatureInSide().get(i).FloorNo);
-                        Val.put(temp.COL_CaveNo, apiCaseScene.getTbSceneFeatureInSide().get(i).CaveNo);
-                        Val.put(temp.COL_FrontInside, apiCaseScene.getTbSceneFeatureInSide().get(i).FrontInside);
-                        Val.put(temp.COL_LeftInside, apiCaseScene.getTbSceneFeatureInSide().get(i).LeftInside);
-                        Val.put(temp.COL_RightInside, apiCaseScene.getTbSceneFeatureInSide().get(i).RightInside);
-                        Val.put(temp.COL_BackInside, apiCaseScene.getTbSceneFeatureInSide().get(i).BackInside);
-                        Val.put(temp.COL_CenterInside, apiCaseScene.getTbSceneFeatureInSide().get(i).CenterInside);
+                        Val.put(COL_FeatureInsideID, apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbSceneFeatureInSide().get(i).CaseReportID);
+                        Val.put(COL_FloorNo, apiCaseScene.getTbSceneFeatureInSide().get(i).FloorNo);
+                        Val.put(COL_CaveNo, apiCaseScene.getTbSceneFeatureInSide().get(i).CaveNo);
+                        Val.put(COL_FrontInside, apiCaseScene.getTbSceneFeatureInSide().get(i).FrontInside);
+                        Val.put(COL_LeftInside, apiCaseScene.getTbSceneFeatureInSide().get(i).LeftInside);
+                        Val.put(COL_RightInside, apiCaseScene.getTbSceneFeatureInSide().get(i).RightInside);
+                        Val.put(COL_BackInside, apiCaseScene.getTbSceneFeatureInSide().get(i).BackInside);
+                        Val.put(COL_CenterInside, apiCaseScene.getTbSceneFeatureInSide().get(i).CenterInside);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("scenefeatureinside", null, Val);
                             Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Insert ");
@@ -1807,15 +2045,15 @@ public class DBHelper extends SQLiteAssetHelper {
                     strSQL = "SELECT * FROM multimediaFile "
                             + " WHERE FileID = '" + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
+                    Log.d(TAG, "บันทึกข้อมูลลง tbMultimediaFiles " + strSQL);
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbMultimediaFile temp = new TbMultimediaFile();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID);
-                        Val.put(temp.COL_FileType, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType);
-                        Val.put(temp.COL_FilePath, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-                        Val.put(temp.COL_FileDescription, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileDescription);
-                        Val.put(temp.COL_Timestamp, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().Timestamp);
+                        Val.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID);
+                        Val.put(COL_FileType, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType);
+                        Val.put(COL_FilePath, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                        Val.put(COL_FileDescription, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileDescription);
+                        Val.put(COL_Timestamp, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().Timestamp);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("multimediaFile", null, Val);
                             Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Insert ");
@@ -1823,99 +2061,96 @@ public class DBHelper extends SQLiteAssetHelper {
                             db.update("multimediaFile", Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)});
                             Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
                         }
-                    }
-                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null) {
-                        strSQL = "SELECT * FROM " + oPhotoOfOutside.TB_PhotoOfOutside
-                                + " WHERE " + oPhotoOfOutside.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID + "' "
-                                + "AND CaseReportID = '" + sCaseReportID + "'";
-                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
-                            TbPhotoOfOutside temp = new TbPhotoOfOutside();
-                            ContentValues Val = new ContentValues();
-                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
-                            Val.put(temp.COL_CaseReportID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().CaseReportID);
 
-                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                                db.insert(oPhotoOfOutside.TB_PhotoOfOutside, null, Val);
-                                Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Insert ");
-                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                                db.update(oPhotoOfOutside.TB_PhotoOfOutside, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID)});
-                                Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
+                        if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null) {
+                            strSQL = "SELECT * FROM " + TB_photoofoutside
+                                    + " WHERE " + COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID + "' "
+                                    + "AND CaseReportID = '" + sCaseReportID + "'";
+                            try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                                ContentValues Val2 = new ContentValues();
+                                Val2.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
+                                Val2.put(COL_CaseReportID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().CaseReportID);
+
+                                if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                    db.insert(TB_photoofoutside, null, Val2);
+                                    Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Insert ");
+                                } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                    db.update(TB_photoofoutside, Val2, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID)});
+                                    Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
+                                }
                             }
                         }
-                    }
-                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null) {
-                        strSQL = "SELECT * FROM " + oPhotoOfInside.TB_PhotoOfInside
-                                + " WHERE " + oPhotoOfInside.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID + "' "
-                                + "AND FeatureInsideID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID + "'";
-                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
-                            TbPhotoOfInside temp = new TbPhotoOfInside();
-                            ContentValues Val = new ContentValues();
-                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
-                            Val.put(temp.COL_FeatureInsideID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID);
+                        if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null) {
+                            strSQL = "SELECT * FROM " + TB_photoofinside
+                                    + " WHERE " + COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID + "' "
+                                    + "AND FeatureInsideID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID + "'";
+                            try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
 
-                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                                db.insert(oPhotoOfInside.TB_PhotoOfInside, null, Val);
-                                Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Insert ");
-                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                                db.update(oPhotoOfInside.TB_PhotoOfInside, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID)});
-                                Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
+                                ContentValues Val3 = new ContentValues();
+                                Val3.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
+                                Val3.put(COL_FeatureInsideID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID);
+
+                                if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                    db.insert(TB_photoofinside, null, Val3);
+                                    Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Insert ");
+                                } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                    db.update(TB_photoofinside, Val3, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID)});
+                                    Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
+                                }
                             }
                         }
-                    }
-                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null) {
-                        strSQL = "SELECT * FROM " + oPhotoOfEvidence.TB_PhotoOfEvidence
-                                + " WHERE " + oPhotoOfEvidence.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID + "' "
-                                + "AND FindEvidenceID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID + "'";
-                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
-                            TbPhotoOfEvidence temp = new TbPhotoOfEvidence();
-                            ContentValues Val = new ContentValues();
-                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
-                            Val.put(temp.COL_FindEvidenceID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID);
+                        if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null) {
+                            strSQL = "SELECT * FROM " + TB_photoofevidence
+                                    + " WHERE " + COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID + "' "
+                                    + "AND FindEvidenceID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID + "'";
+                            try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                                ContentValues Val4 = new ContentValues();
+                                Val4.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
+                                Val4.put(COL_FindEvidenceID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID);
 
-                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                                db.insert(oPhotoOfEvidence.TB_PhotoOfEvidence, null, Val);
-                                Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Insert ");
-                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                                db.update(oPhotoOfEvidence.TB_PhotoOfEvidence, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID)});
-                                Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
+                                if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                    db.insert(TB_photoofevidence, null, Val4);
+                                    Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Insert ");
+                                } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                    db.update(TB_photoofevidence, Val4, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID)});
+                                    Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
+                                }
                             }
                         }
-                    }
-                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
-                        strSQL = "SELECT * FROM " + oPhotoOfResultscene.TB_PhotoOfResultscene
-                                + " WHERE " + oPhotoOfResultscene.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID + "' "
-                                + "AND RSID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID + "'";
-                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
-                            TbPhotoOfResultscene temp = new TbPhotoOfResultscene();
-                            ContentValues Val = new ContentValues();
-                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
-                            Val.put(temp.COL_RSID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID);
+                        if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
+                            strSQL = "SELECT * FROM " + TB_photoofresultscene
+                                    + " WHERE " + COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID + "' "
+                                    + "AND RSID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID + "'";
+                            try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                                ContentValues Val5 = new ContentValues();
+                                Val5.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
+                                Val5.put(COL_RSID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID);
 
-                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                                db.insert(oPhotoOfResultscene.TB_PhotoOfResultscene, null, Val);
-                                Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Insert ");
-                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                                db.update(oPhotoOfResultscene.TB_PhotoOfResultscene, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID)});
-                                Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
+                                if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                    db.insert(TB_photoofresultscene, null, Val5);
+                                    Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Insert ");
+                                } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                    db.update(TB_photoofresultscene, Val5, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID)});
+                                    Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
+                                }
                             }
                         }
-                    }
-                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null) {
-                        strSQL = "SELECT * FROM " + oPhotoOfPropertyless.TB_PhotoOfPropertyless
-                                + " WHERE " + oPhotoOfPropertyless.COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID + "' "
-                                + "AND PropertyLessID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID + "'";
-                        try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
-                            TbPhotoOfPropertyless temp = new TbPhotoOfPropertyless();
-                            ContentValues Val = new ContentValues();
-                            Val.put(temp.COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
-                            Val.put(temp.COL_PropertyLessID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID);
+                        if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null) {
+                            strSQL = "SELECT * FROM " + TB_photoofpropertyless
+                                    + " WHERE " + COL_FileID + " = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID + "' "
+                                    + "AND PropertyLessID = '" + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID + "'";
+                            try (Cursor cursor2 = mDb.rawQuery(strSQL, null)) {
+                                ContentValues Val6 = new ContentValues();
+                                Val6.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
+                                Val6.put(COL_PropertyLessID, apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID);
 
-                            if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                                db.insert(oPhotoOfPropertyless.TB_PhotoOfPropertyless, null, Val);
-                                Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Insert ");
-                            } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                                db.update(oPhotoOfPropertyless.TB_PhotoOfPropertyless, Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID)});
-                                Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
+                                if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                    db.insert(TB_photoofpropertyless, null, Val6);
+                                    Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Insert ");
+                                } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                    db.update(TB_photoofpropertyless, Val6, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID)});
+                                    Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
+                                }
                             }
                         }
                     }
@@ -1928,18 +2163,17 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE FindEvidenceID = '" + apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbFindEvidence temp = new TbFindEvidence();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_FindEvidenceID, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbFindEvidences().get(i).CaseReportID);
-                        Val.put(temp.COL_SceneInvestID, apiCaseScene.getTbFindEvidences().get(i).SceneInvestID);
-                        Val.put(temp.COL_EvidenceTypeID, apiCaseScene.getTbFindEvidences().get(i).EvidenceTypeID);
-                        Val.put(temp.COL_EvidenceNumber, apiCaseScene.getTbFindEvidences().get(i).EvidenceNumber);
-                        Val.put(temp.COL_FindEvidenceZone, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceZone);
-                        Val.put(temp.COL_FindEvidencecol, apiCaseScene.getTbFindEvidences().get(i).FindEvidencecol);
-                        Val.put(temp.COL_Marking, apiCaseScene.getTbFindEvidences().get(i).Marking);
-                        Val.put(temp.COL_Parceling, apiCaseScene.getTbFindEvidences().get(i).Parceling);
-                        Val.put(temp.COL_EvidencePerformed, apiCaseScene.getTbFindEvidences().get(i).EvidencePerformed);
+                        Val.put(COL_FindEvidenceID, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID);
+                        Val.put(COL_EvidenceTypeID, apiCaseScene.getTbFindEvidences().get(i).EvidenceTypeID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbFindEvidences().get(i).CaseReportID);
+                        Val.put(COL_SceneInvestID, apiCaseScene.getTbFindEvidences().get(i).SceneInvestID);
+                        Val.put(COL_EvidenceNumber, apiCaseScene.getTbFindEvidences().get(i).EvidenceNumber);
+                        Val.put(COL_FindEvidenceZone, apiCaseScene.getTbFindEvidences().get(i).FindEvidenceZone);
+                        Val.put(COL_FindEvidencecol, apiCaseScene.getTbFindEvidences().get(i).FindEvidencecol);
+                        Val.put(COL_Marking, apiCaseScene.getTbFindEvidences().get(i).Marking);
+                        Val.put(COL_Parceling, apiCaseScene.getTbFindEvidences().get(i).Parceling);
+                        Val.put(COL_EvidencePerformed, apiCaseScene.getTbFindEvidences().get(i).EvidencePerformed);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("FindEvidence", null, Val);
                             Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Insert ");
@@ -1957,12 +2191,11 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE RSID = '" + apiCaseScene.getTbResultScenes().get(i).RSID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbResultScene temp = new TbResultScene();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_RSID, apiCaseScene.getTbResultScenes().get(i).RSID);
-                        Val.put(temp.COL_RSTypeID, apiCaseScene.getTbResultScenes().get(i).RSTypeID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbResultScenes().get(i).CaseReportID);
-                        Val.put(temp.COL_RSDetail, apiCaseScene.getTbResultScenes().get(i).RSDetail);
+                        Val.put(COL_RSID, apiCaseScene.getTbResultScenes().get(i).RSID);
+                        Val.put(COL_RSTypeID, apiCaseScene.getTbResultScenes().get(i).RSTypeID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbResultScenes().get(i).CaseReportID);
+                        Val.put(COL_RSDetail, apiCaseScene.getTbResultScenes().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
                             Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
@@ -1980,12 +2213,11 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE RSID = '" + apiCaseScene.getTbGatewayCriminals().get(i).RSID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbResultScene temp = new TbResultScene();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_RSID, apiCaseScene.getTbGatewayCriminals().get(i).RSID);
-                        Val.put(temp.COL_RSTypeID, apiCaseScene.getTbGatewayCriminals().get(i).RSTypeID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbGatewayCriminals().get(i).CaseReportID);
-                        Val.put(temp.COL_RSDetail, apiCaseScene.getTbGatewayCriminals().get(i).RSDetail);
+                        Val.put(COL_RSID, apiCaseScene.getTbGatewayCriminals().get(i).RSID);
+                        Val.put(COL_RSTypeID, apiCaseScene.getTbGatewayCriminals().get(i).RSTypeID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbGatewayCriminals().get(i).CaseReportID);
+                        Val.put(COL_RSDetail, apiCaseScene.getTbGatewayCriminals().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
                             Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Insert ");
@@ -2003,12 +2235,11 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE RSID = '" + apiCaseScene.getTbClueShowns().get(i).RSID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbResultScene temp = new TbResultScene();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_RSID, apiCaseScene.getTbClueShowns().get(i).RSID);
-                        Val.put(temp.COL_RSTypeID, apiCaseScene.getTbClueShowns().get(i).RSTypeID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbClueShowns().get(i).CaseReportID);
-                        Val.put(temp.COL_RSDetail, apiCaseScene.getTbClueShowns().get(i).RSDetail);
+                        Val.put(COL_RSID, apiCaseScene.getTbClueShowns().get(i).RSID);
+                        Val.put(COL_RSTypeID, apiCaseScene.getTbClueShowns().get(i).RSTypeID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbClueShowns().get(i).CaseReportID);
+                        Val.put(COL_RSDetail, apiCaseScene.getTbClueShowns().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
                             Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Insert ");
@@ -2026,15 +2257,14 @@ public class DBHelper extends SQLiteAssetHelper {
                             + " WHERE PropertyLossID = '" + apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                        TbPropertyLoss temp = new TbPropertyLoss();
                         ContentValues Val = new ContentValues();
-                        Val.put(temp.COL_PropertyLossID, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID);
-                        Val.put(temp.COL_CaseReportID, apiCaseScene.getTbPropertyLosses().get(i).CaseReportID);
-                        Val.put(temp.COL_PropertyLossName, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossName);
-                        Val.put(temp.COL_PropertyLossNumber, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossNumber);
-                        Val.put(temp.COL_PropertyLossUnit, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossUnit);
-                        Val.put(temp.COL_PropertyLossPosition, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossPosition);
-                        Val.put(temp.COL_PropInsurance, apiCaseScene.getTbPropertyLosses().get(i).PropInsurance);
+                        Val.put(COL_PropertyLossID, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID);
+                        Val.put(COL_CaseReportID, apiCaseScene.getTbPropertyLosses().get(i).CaseReportID);
+                        Val.put(COL_PropertyLossName, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossName);
+                        Val.put(COL_PropertyLossNumber, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossNumber);
+                        Val.put(COL_PropertyLossUnit, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossUnit);
+                        Val.put(COL_PropertyLossPosition, apiCaseScene.getTbPropertyLosses().get(i).PropertyLossPosition);
+                        Val.put(COL_PropInsurance, apiCaseScene.getTbPropertyLosses().get(i).PropInsurance);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("propertyloss", null, Val);
                             Log.d(TAG, "Sync Table propertyloss [" + i + "]: Insert ");
@@ -2081,39 +2311,39 @@ public class DBHelper extends SQLiteAssetHelper {
                     ApiNoticeCase apiNoticeCase = new ApiNoticeCase();
 
                     TbNoticeCase temp = new TbNoticeCase();
-                    temp.NoticeCaseID = cursor.getString(cursor.getColumnIndex(temp.COL_NoticeCaseID));
-                    temp.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(temp.COL_Mobile_CaseID));
-                    temp.InquiryOfficialID = cursor.getString(cursor.getColumnIndex(temp.COL_InquiryOfficialID));
-                    temp.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(temp.COL_InvestigatorOfficialID));
-                    temp.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp.COL_SCDCAgencyCode));
-                    temp.CaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTypeID));
-                    temp.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_SubCaseTypeID));
-                    temp.CaseStatus = cursor.getString(cursor.getColumnIndex(temp.COL_CaseStatus));
-                    temp.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp.COL_PoliceStationID));
-                    temp.CaseTel = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTel));
-                    temp.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseDate));
-                    temp.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseTime));
-                    temp.HappenCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseDate));
-                    temp.HappenCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseTime));
-                    temp.KnowCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseDate));
-                    temp.KnowCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseTime));
-                    temp.SceneNoticeDate = cursor.getString(cursor.getColumnIndex(temp.COL_SceneNoticeDate));
-                    temp.SceneNoticeTime = cursor.getString(cursor.getColumnIndex(temp.COL_SceneNoticeTime));
-                    temp.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneDate));
-                    temp.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneTime));
-                    temp.LocaleName = cursor.getString(cursor.getColumnIndex(temp.COL_LocaleName));
-                    temp.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(temp.COL_DISTRICT_ID));
-                    temp.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(temp.COL_AMPHUR_ID));
-                    temp.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(temp.COL_PROVINCE_ID));
-                    temp.Latitude = cursor.getString(cursor.getColumnIndex(temp.COL_Latitude));
-                    temp.Longitude = cursor.getString(cursor.getColumnIndex(temp.COL_Longitude));
-                    temp.SuffererPrename = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPrename));
-                    temp.SuffererName = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererName));
-                    temp.SuffererStatus = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererStatus));
-                    temp.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPhoneNum));
-                    temp.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp.COL_CircumstanceOfCaseDetail));
-                    temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateDate));
-                    temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateTime));
+                    temp.NoticeCaseID = cursor.getString(cursor.getColumnIndex(COL_NoticeCaseID));
+                    temp.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(COL_Mobile_CaseID));
+                    temp.InquiryOfficialID = cursor.getString(cursor.getColumnIndex(COL_InquiryOfficialID));
+                    temp.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(COL_InvestigatorOfficialID));
+                    temp.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(COL_SCDCAgencyCode));
+                    temp.CaseTypeID = cursor.getString(cursor.getColumnIndex(COL_CaseTypeID));
+                    temp.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(COL_SubCaseTypeID));
+                    temp.CaseStatus = cursor.getString(cursor.getColumnIndex(COL_CaseStatus));
+                    temp.PoliceStationID = cursor.getString(cursor.getColumnIndex(COL_PoliceStationID));
+                    temp.CaseTel = cursor.getString(cursor.getColumnIndex(COL_CaseTel));
+                    temp.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(COL_ReceivingCaseDate));
+                    temp.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(COL_ReceivingCaseTime));
+                    temp.HappenCaseDate = cursor.getString(cursor.getColumnIndex(COL_HappenCaseDate));
+                    temp.HappenCaseTime = cursor.getString(cursor.getColumnIndex(COL_HappenCaseTime));
+                    temp.KnowCaseDate = cursor.getString(cursor.getColumnIndex(COL_KnowCaseDate));
+                    temp.KnowCaseTime = cursor.getString(cursor.getColumnIndex(COL_KnowCaseTime));
+                    temp.SceneNoticeDate = cursor.getString(cursor.getColumnIndex(COL_SceneNoticeDate));
+                    temp.SceneNoticeTime = cursor.getString(cursor.getColumnIndex(COL_SceneNoticeTime));
+                    temp.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(COL_CompleteSceneDate));
+                    temp.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(COL_CompleteSceneTime));
+                    temp.LocaleName = cursor.getString(cursor.getColumnIndex(COL_LocaleName));
+                    temp.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(COL_DISTRICT_ID));
+                    temp.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(COL_AMPHUR_ID));
+                    temp.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(COL_PROVINCE_ID));
+                    temp.Latitude = cursor.getString(cursor.getColumnIndex(COL_Latitude));
+                    temp.Longitude = cursor.getString(cursor.getColumnIndex(COL_Longitude));
+                    temp.SuffererPrename = cursor.getString(cursor.getColumnIndex(COL_SuffererPrename));
+                    temp.SuffererName = cursor.getString(cursor.getColumnIndex(COL_SuffererName));
+                    temp.SuffererStatus = cursor.getString(cursor.getColumnIndex(COL_SuffererStatus));
+                    temp.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(COL_SuffererPhoneNum));
+                    temp.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(COL_CircumstanceOfCaseDetail));
+                    temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(COL_LastUpdateDate));
+                    temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(COL_LastUpdateTime));
                     apiNoticeCase.setTbNoticeCase(temp);
 
                     // Index tbOfficial ดึงจากตาราง official
@@ -2123,20 +2353,20 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbOfficial temp2 = new TbOfficial();
-                            temp2.OfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialID));
-                            temp2.FirstName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_FirstName));
-                            temp2.LastName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastName));
-                            temp2.Alias = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Alias));
-                            temp2.Rank = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Rank));
-                            temp2.Position = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Position));
-                            temp2.SubPossition = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SubPossition));
-                            temp2.PhoneNumber = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PhoneNumber));
-                            temp2.OfficialEmail = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialEmail));
-                            temp2.OfficialDisplayPic = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialDisplayPic));
-                            temp2.AccessType = cursor2.getString(cursor2.getColumnIndex(temp2.COL_AccessType));
-                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SCDCAgencyCode));
-                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PoliceStationID));
-                            temp2.id_users = cursor2.getString(cursor2.getColumnIndex(temp2.COL_id_users));
+                            temp2.OfficialID = cursor2.getString(cursor2.getColumnIndex(COL_OfficialID));
+                            temp2.FirstName = cursor2.getString(cursor2.getColumnIndex(COL_FirstName));
+                            temp2.LastName = cursor2.getString(cursor2.getColumnIndex(COL_LastName));
+                            temp2.Alias = cursor2.getString(cursor2.getColumnIndex(COL_Alias));
+                            temp2.Rank = cursor2.getString(cursor2.getColumnIndex(COL_Rank));
+                            temp2.Position = cursor2.getString(cursor2.getColumnIndex(COL_Position));
+                            temp2.SubPossition = cursor2.getString(cursor2.getColumnIndex(COL_SubPossition));
+                            temp2.PhoneNumber = cursor2.getString(cursor2.getColumnIndex(COL_PhoneNumber));
+                            temp2.OfficialEmail = cursor2.getString(cursor2.getColumnIndex(COL_OfficialEmail));
+                            temp2.OfficialDisplayPic = cursor2.getString(cursor2.getColumnIndex(COL_OfficialDisplayPic));
+                            temp2.AccessType = cursor2.getString(cursor2.getColumnIndex(COL_AccessType));
+                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyCode));
+                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationID));
+                            temp2.id_users = cursor2.getString(cursor2.getColumnIndex(COL_id_users));
                             apiNoticeCase.setTbOfficial(temp2);
                         }
                     }
@@ -2149,15 +2379,15 @@ public class DBHelper extends SQLiteAssetHelper {
                             cursor2.moveToFirst();
 
                             TbCaseSceneType temp3 = new TbCaseSceneType();
-                            temp3.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeID));
-                            temp3.CaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeName));
-                            temp3.casetype_min = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_min));
-                            temp3.casetype_max = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_max));
-                            temp3.casetype_icon = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_icon));
-                            temp3.casetype_colormin = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormin));
-                            temp3.casetype_colormedium = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormedium));
-                            temp3.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colorhigh));
-                            temp3.casetype_status = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_status));
+                            temp3.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp3.CaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeName));
+                            temp3.casetype_min = cursor2.getString(cursor2.getColumnIndex(COL_casetype_min));
+                            temp3.casetype_max = cursor2.getString(cursor2.getColumnIndex(COL_casetype_max));
+                            temp3.casetype_icon = cursor2.getString(cursor2.getColumnIndex(COL_casetype_icon));
+                            temp3.casetype_colormin = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colormin));
+                            temp3.casetype_colormedium = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colormedium));
+                            temp3.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colorhigh));
+                            temp3.casetype_status = cursor2.getString(cursor2.getColumnIndex(COL_casetype_status));
                             apiNoticeCase.setTbCaseSceneType(temp3);
                         }
                     }
@@ -2169,9 +2399,9 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
-                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeID));
-                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_CaseTypeID));
-                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeName));
+                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
+                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeName));
                             apiNoticeCase.setTbSubcaseSceneType(temp4);
                         }
                     }
@@ -2183,9 +2413,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
-                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationID));
-                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceAgencyID));
-                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationName));
+                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationID));
+                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyID));
+                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationName));
                             apiNoticeCase.setTbPoliceStation(temp5);
                         }
                     }
@@ -2198,9 +2428,9 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() == 1) {
                                 cursor2.moveToFirst();
                                 TbPoliceAgency temp6 = new TbPoliceAgency();
-                                temp6.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyID));
-                                temp6.PoliceCenterID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceCenterID));
-                                temp6.PoliceAgencyName = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyName));
+                                temp6.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyID));
+                                temp6.PoliceCenterID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceCenterID));
+                                temp6.PoliceAgencyName = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyName));
                                 apiNoticeCase.setTbPoliceAgency(temp6);
                             }
                         }
@@ -2213,10 +2443,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbDistrict temp7 = new TbDistrict();
-                            temp7.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_ID));
-                            temp7.DISTRICT_CODE = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_CODE));
-                            temp7.DISTRICT_NAME = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_NAME));
-                            temp7.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_AMPHUR_ID));
+                            temp7.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_ID));
+                            temp7.DISTRICT_CODE = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_CODE));
+                            temp7.DISTRICT_NAME = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_NAME));
+                            temp7.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_ID));
                             apiNoticeCase.setTbDistrict(temp7);
                         }
                     }
@@ -2228,11 +2458,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbProvince temp8 = new TbProvince();
-                            temp8.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_ID));
-                            temp8.PROVINCE_CODE = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_CODE));
-                            temp8.PROVINCE_NAME = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_NAME));
-                            temp8.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_GEO_ID));
-                            temp8.province_status = cursor2.getString(cursor2.getColumnIndex(temp8.COL_province_status));
+                            temp8.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_ID));
+                            temp8.PROVINCE_CODE = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_CODE));
+                            temp8.PROVINCE_NAME = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_NAME));
+                            temp8.GEO_ID = cursor2.getString(cursor2.getColumnIndex(COL_GEO_ID));
+                            temp8.province_status = cursor2.getString(cursor2.getColumnIndex(COL_province_status));
                             apiNoticeCase.setTbProvince(temp8);
                         }
                     }
@@ -2244,13 +2474,13 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbAmphur temp9 = new TbAmphur();
-                            temp9.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_ID));
-                            temp9.AMPHUR_CODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_CODE));
-                            temp9.AMPHUR_NAME = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_NAME));
-                            temp9.POSTCODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_POSTCODE));
-                            temp9.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_GEO_ID));
-                            temp9.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_PROVINCE_ID));
-                            temp9.amphur_polygon = cursor2.getString(cursor2.getColumnIndex(temp9.COL_amphur_polygon));
+                            temp9.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_ID));
+                            temp9.AMPHUR_CODE = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_CODE));
+                            temp9.AMPHUR_NAME = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_NAME));
+                            temp9.POSTCODE = cursor2.getString(cursor2.getColumnIndex(COL_POSTCODE));
+                            temp9.GEO_ID = cursor2.getString(cursor2.getColumnIndex(COL_GEO_ID));
+                            temp9.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_ID));
+                            temp9.amphur_polygon = cursor2.getString(cursor2.getColumnIndex(COL_amphur_polygon));
                             apiNoticeCase.setTbAmphur(temp9);
                         }
                     }
@@ -2262,9 +2492,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
-                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyCode));
-                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCCenterID));
-                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyName));
+                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyCode));
+                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterID));
+                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyName));
                             apiNoticeCase.setTbSCDCagency(temp10);
                         }
                     }
@@ -2277,9 +2507,9 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() == 1) {
                                 cursor2.moveToFirst();
                                 TbSCDCcenter temp11 = new TbSCDCcenter();
-                                temp11.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterID));
-                                temp11.SCDCCenterName = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterName));
-                                temp11.SCDCCenterProvince = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterProvince));
+                                temp11.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterID));
+                                temp11.SCDCCenterName = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterName));
+                                temp11.SCDCCenterProvince = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterProvince));
                                 apiNoticeCase.setTbSCDCcenter(temp11);
                             }
                         }
@@ -2325,20 +2555,20 @@ public class DBHelper extends SQLiteAssetHelper {
                     ApiOfficial apiOfficial = new ApiOfficial();
 
                     TbOfficial temp2 = new TbOfficial();
-                    temp2.OfficialID = cursor.getString(cursor.getColumnIndex(temp2.COL_OfficialID));
-                    temp2.FirstName = cursor.getString(cursor.getColumnIndex(temp2.COL_FirstName));
-                    temp2.LastName = cursor.getString(cursor.getColumnIndex(temp2.COL_LastName));
-                    temp2.Alias = cursor.getString(cursor.getColumnIndex(temp2.COL_Alias));
-                    temp2.Rank = cursor.getString(cursor.getColumnIndex(temp2.COL_Rank));
-                    temp2.Position = cursor.getString(cursor.getColumnIndex(temp2.COL_Position));
-                    temp2.SubPossition = cursor.getString(cursor.getColumnIndex(temp2.COL_SubPossition));
-                    temp2.PhoneNumber = cursor.getString(cursor.getColumnIndex(temp2.COL_PhoneNumber));
-                    temp2.OfficialEmail = cursor.getString(cursor.getColumnIndex(temp2.COL_OfficialEmail));
-                    temp2.OfficialDisplayPic = cursor.getString(cursor.getColumnIndex(temp2.COL_OfficialDisplayPic));
-                    temp2.AccessType = cursor.getString(cursor.getColumnIndex(temp2.COL_AccessType));
-                    temp2.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp2.COL_SCDCAgencyCode));
-                    temp2.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp2.COL_PoliceStationID));
-                    temp2.id_users = cursor.getString(cursor.getColumnIndex(temp2.COL_id_users));
+                    temp2.OfficialID = cursor.getString(cursor.getColumnIndex(COL_OfficialID));
+                    temp2.FirstName = cursor.getString(cursor.getColumnIndex(COL_FirstName));
+                    temp2.LastName = cursor.getString(cursor.getColumnIndex(COL_LastName));
+                    temp2.Alias = cursor.getString(cursor.getColumnIndex(COL_Alias));
+                    temp2.Rank = cursor.getString(cursor.getColumnIndex(COL_Rank));
+                    temp2.Position = cursor.getString(cursor.getColumnIndex(COL_Position));
+                    temp2.SubPossition = cursor.getString(cursor.getColumnIndex(COL_SubPossition));
+                    temp2.PhoneNumber = cursor.getString(cursor.getColumnIndex(COL_PhoneNumber));
+                    temp2.OfficialEmail = cursor.getString(cursor.getColumnIndex(COL_OfficialEmail));
+                    temp2.OfficialDisplayPic = cursor.getString(cursor.getColumnIndex(COL_OfficialDisplayPic));
+                    temp2.AccessType = cursor.getString(cursor.getColumnIndex(COL_AccessType));
+                    temp2.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(COL_SCDCAgencyCode));
+                    temp2.PoliceStationID = cursor.getString(cursor.getColumnIndex(COL_PoliceStationID));
+                    temp2.id_users = cursor.getString(cursor.getColumnIndex(COL_id_users));
                     apiOfficial.setTbOfficial(temp2);
                     // Index tbPoliceStation ดึงจากตาราง policestation ใช้ค่าจาก Index tbNoticeCase
                     TbPoliceStation temp5 = new TbPoliceStation();
@@ -2347,9 +2577,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
-                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationID));
-                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceAgencyID));
-                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationName));
+                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationID));
+                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyID));
+                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationName));
                             apiOfficial.setTbPoliceStation(temp5);
                         } else {
                             apiOfficial.setTbPoliceStation(null);
@@ -2363,9 +2593,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
-                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyCode));
-                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCCenterID));
-                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyName));
+                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyCode));
+                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterID));
+                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyName));
                             apiOfficial.setTbSCDCagency(temp10);
                         } else {
                             apiOfficial.setTbSCDCagency(null);
@@ -2417,48 +2647,48 @@ public class DBHelper extends SQLiteAssetHelper {
                     ApiCaseScene apiCaseSceneCase = new ApiCaseScene();
 
                     TbCaseScene temp = new TbCaseScene();
-                    temp.CaseReportID = cursor.getString(cursor.getColumnIndex(temp.COL_CaseReportID));
-                    temp.NoticeCaseID = cursor.getString(cursor.getColumnIndex(temp.COL_NoticeCaseID));
-                    temp.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(temp.COL_Mobile_CaseID));
-                    temp.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(temp.COL_SCDCAgencyCode));
-                    temp.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(temp.COL_InvestigatorOfficialID));
-                    temp.CaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTypeID));
-                    temp.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(temp.COL_SubCaseTypeID));
-                    temp.ReportNo = cursor.getString(cursor.getColumnIndex(temp.COL_ReportNo));
-                    temp.ReportStatus = cursor.getString(cursor.getColumnIndex(temp.COL_ReportStatus));
-                    temp.PoliceStationID = cursor.getString(cursor.getColumnIndex(temp.COL_PoliceStationID));
-                    temp.CaseTel = cursor.getString(cursor.getColumnIndex(temp.COL_CaseTel));
-                    temp.AssignmentDate = cursor.getString(cursor.getColumnIndex(temp.COL_AssignmentDate));
-                    temp.AssignmentTime = cursor.getString(cursor.getColumnIndex(temp.COL_AssignmentTime));
-                    temp.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseDate));
-                    temp.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_ReceivingCaseTime));
-                    temp.HappenCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseDate));
-                    temp.HappenCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_HappenCaseTime));
-                    temp.KnowCaseDate = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseDate));
-                    temp.KnowCaseTime = cursor.getString(cursor.getColumnIndex(temp.COL_KnowCaseTime));
-                    temp.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneDate));
-                    temp.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(temp.COL_CompleteSceneTime));
-                    temp.LocaleName = cursor.getString(cursor.getColumnIndex(temp.COL_LocaleName));
-                    temp.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(temp.COL_DISTRICT_ID));
-                    temp.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(temp.COL_AMPHUR_ID));
-                    temp.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(temp.COL_PROVINCE_ID));
-                    temp.Latitude = cursor.getString(cursor.getColumnIndex(temp.COL_Latitude));
-                    temp.Longitude = cursor.getString(cursor.getColumnIndex(temp.COL_Longitude));
-                    temp.FeatureInsideDetail = cursor.getString(cursor.getColumnIndex(temp.COL_FeatureInsideDetail));
-                    temp.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(temp.COL_CircumstanceOfCaseDetail));
-                    temp.FullEvidencePerformed = cursor.getString(cursor.getColumnIndex(temp.COL_FullEvidencePerformed));
-                    temp.Annotation = cursor.getString(cursor.getColumnIndex(temp.COL_Annotation));
-                    temp.MaleCriminalNum = cursor.getString(cursor.getColumnIndex(temp.COL_MaleCriminalNum));
-                    temp.FemaleCriminalNum = cursor.getString(cursor.getColumnIndex(temp.COL_FemaleCriminalNum));
-                    temp.ConfineSufferer = cursor.getString(cursor.getColumnIndex(temp.COL_ConfineSufferer));
-                    temp.SuffererPrename = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPrename));
-                    temp.SuffererName = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererName));
-                    temp.SuffererStatus = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererStatus));
-                    temp.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(temp.COL_SuffererPhoneNum));
-                    temp.CriminalUsedWeapon = cursor.getString(cursor.getColumnIndex(temp.COL_CriminalUsedWeapon));
-                    temp.VehicleInfo = cursor.getString(cursor.getColumnIndex(temp.COL_VehicleInfo));
-                    temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateDate));
-                    temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(temp.COL_LastUpdateTime));
+                    temp.CaseReportID = cursor.getString(cursor.getColumnIndex(COL_CaseReportID));
+                    temp.NoticeCaseID = cursor.getString(cursor.getColumnIndex(COL_NoticeCaseID));
+                    temp.Mobile_CaseID = cursor.getString(cursor.getColumnIndex(COL_Mobile_CaseID));
+                    temp.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(COL_SCDCAgencyCode));
+                    temp.InvestigatorOfficialID = cursor.getString(cursor.getColumnIndex(COL_InvestigatorOfficialID));
+                    temp.CaseTypeID = cursor.getString(cursor.getColumnIndex(COL_CaseTypeID));
+                    temp.SubCaseTypeID = cursor.getString(cursor.getColumnIndex(COL_SubCaseTypeID));
+                    temp.ReportNo = cursor.getString(cursor.getColumnIndex(COL_ReportNo));
+                    temp.ReportStatus = cursor.getString(cursor.getColumnIndex(COL_ReportStatus));
+                    temp.PoliceStationID = cursor.getString(cursor.getColumnIndex(COL_PoliceStationID));
+                    temp.CaseTel = cursor.getString(cursor.getColumnIndex(COL_CaseTel));
+                    temp.AssignmentDate = cursor.getString(cursor.getColumnIndex(COL_AssignmentDate));
+                    temp.AssignmentTime = cursor.getString(cursor.getColumnIndex(COL_AssignmentTime));
+                    temp.ReceivingCaseDate = cursor.getString(cursor.getColumnIndex(COL_ReceivingCaseDate));
+                    temp.ReceivingCaseTime = cursor.getString(cursor.getColumnIndex(COL_ReceivingCaseTime));
+                    temp.HappenCaseDate = cursor.getString(cursor.getColumnIndex(COL_HappenCaseDate));
+                    temp.HappenCaseTime = cursor.getString(cursor.getColumnIndex(COL_HappenCaseTime));
+                    temp.KnowCaseDate = cursor.getString(cursor.getColumnIndex(COL_KnowCaseDate));
+                    temp.KnowCaseTime = cursor.getString(cursor.getColumnIndex(COL_KnowCaseTime));
+                    temp.CompleteSceneDate = cursor.getString(cursor.getColumnIndex(COL_CompleteSceneDate));
+                    temp.CompleteSceneTime = cursor.getString(cursor.getColumnIndex(COL_CompleteSceneTime));
+                    temp.LocaleName = cursor.getString(cursor.getColumnIndex(COL_LocaleName));
+                    temp.DISTRICT_ID = cursor.getString(cursor.getColumnIndex(COL_DISTRICT_ID));
+                    temp.AMPHUR_ID = cursor.getString(cursor.getColumnIndex(COL_AMPHUR_ID));
+                    temp.PROVINCE_ID = cursor.getString(cursor.getColumnIndex(COL_PROVINCE_ID));
+                    temp.Latitude = cursor.getString(cursor.getColumnIndex(COL_Latitude));
+                    temp.Longitude = cursor.getString(cursor.getColumnIndex(COL_Longitude));
+                    temp.FeatureInsideDetail = cursor.getString(cursor.getColumnIndex(COL_FeatureInsideDetail));
+                    temp.CircumstanceOfCaseDetail = cursor.getString(cursor.getColumnIndex(COL_CircumstanceOfCaseDetail));
+                    temp.FullEvidencePerformed = cursor.getString(cursor.getColumnIndex(COL_FullEvidencePerformed));
+                    temp.Annotation = cursor.getString(cursor.getColumnIndex(COL_Annotation));
+                    temp.MaleCriminalNum = cursor.getString(cursor.getColumnIndex(COL_MaleCriminalNum));
+                    temp.FemaleCriminalNum = cursor.getString(cursor.getColumnIndex(COL_FemaleCriminalNum));
+                    temp.ConfineSufferer = cursor.getString(cursor.getColumnIndex(COL_ConfineSufferer));
+                    temp.SuffererPrename = cursor.getString(cursor.getColumnIndex(COL_SuffererPrename));
+                    temp.SuffererName = cursor.getString(cursor.getColumnIndex(COL_SuffererName));
+                    temp.SuffererStatus = cursor.getString(cursor.getColumnIndex(COL_SuffererStatus));
+                    temp.SuffererPhoneNum = cursor.getString(cursor.getColumnIndex(COL_SuffererPhoneNum));
+                    temp.CriminalUsedWeapon = cursor.getString(cursor.getColumnIndex(COL_CriminalUsedWeapon));
+                    temp.VehicleInfo = cursor.getString(cursor.getColumnIndex(COL_VehicleInfo));
+                    temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(COL_LastUpdateDate));
+                    temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(COL_LastUpdateTime));
                     apiCaseSceneCase.setTbCaseScene(temp);
                     Log.d(TAG, "NoticeCaseID " + temp.NoticeCaseID.toString());
                     // Index TbCaseScene ดึงจากตาราง noticecase
@@ -2468,39 +2698,39 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbNoticeCase temp2 = new TbNoticeCase();
-                            temp2.NoticeCaseID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_NoticeCaseID));
-                            temp2.Mobile_CaseID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Mobile_CaseID));
-                            temp2.InquiryOfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_InquiryOfficialID));
-                            temp2.InvestigatorOfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_InvestigatorOfficialID));
-                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SCDCAgencyCode));
-                            temp2.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CaseTypeID));
-                            temp2.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SubCaseTypeID));
-                            temp2.CaseStatus = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CaseStatus));
-                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PoliceStationID));
-                            temp2.CaseTel = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CaseTel));
-                            temp2.ReceivingCaseDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_ReceivingCaseDate));
-                            temp2.ReceivingCaseTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_ReceivingCaseTime));
-                            temp2.HappenCaseDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_HappenCaseDate));
-                            temp2.HappenCaseTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_HappenCaseTime));
-                            temp2.KnowCaseDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_KnowCaseDate));
-                            temp2.KnowCaseTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_KnowCaseTime));
-                            temp2.SceneNoticeDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SceneNoticeDate));
-                            temp2.SceneNoticeTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SceneNoticeTime));
-                            temp2.CompleteSceneDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CompleteSceneDate));
-                            temp2.CompleteSceneTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CompleteSceneTime));
-                            temp2.LocaleName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LocaleName));
-                            temp2.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_DISTRICT_ID));
-                            temp2.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_AMPHUR_ID));
-                            temp2.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PROVINCE_ID));
-                            temp2.Latitude = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Latitude));
-                            temp2.Longitude = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Longitude));
-                            temp2.SuffererPrename = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererPrename));
-                            temp2.SuffererName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererName));
-                            temp2.SuffererStatus = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererStatus));
-                            temp2.SuffererPhoneNum = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SuffererPhoneNum));
-                            temp2.CircumstanceOfCaseDetail = cursor2.getString(cursor2.getColumnIndex(temp2.COL_CircumstanceOfCaseDetail));
-                            temp2.LastUpdateDate = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastUpdateDate));
-                            temp2.LastUpdateTime = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastUpdateTime));
+                            temp2.NoticeCaseID = cursor2.getString(cursor2.getColumnIndex(COL_NoticeCaseID));
+                            temp2.Mobile_CaseID = cursor2.getString(cursor2.getColumnIndex(COL_Mobile_CaseID));
+                            temp2.InquiryOfficialID = cursor2.getString(cursor2.getColumnIndex(COL_InquiryOfficialID));
+                            temp2.InvestigatorOfficialID = cursor2.getString(cursor2.getColumnIndex(COL_InvestigatorOfficialID));
+                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyCode));
+                            temp2.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp2.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
+                            temp2.CaseStatus = cursor2.getString(cursor2.getColumnIndex(COL_CaseStatus));
+                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationID));
+                            temp2.CaseTel = cursor2.getString(cursor2.getColumnIndex(COL_CaseTel));
+                            temp2.ReceivingCaseDate = cursor2.getString(cursor2.getColumnIndex(COL_ReceivingCaseDate));
+                            temp2.ReceivingCaseTime = cursor2.getString(cursor2.getColumnIndex(COL_ReceivingCaseTime));
+                            temp2.HappenCaseDate = cursor2.getString(cursor2.getColumnIndex(COL_HappenCaseDate));
+                            temp2.HappenCaseTime = cursor2.getString(cursor2.getColumnIndex(COL_HappenCaseTime));
+                            temp2.KnowCaseDate = cursor2.getString(cursor2.getColumnIndex(COL_KnowCaseDate));
+                            temp2.KnowCaseTime = cursor2.getString(cursor2.getColumnIndex(COL_KnowCaseTime));
+                            temp2.SceneNoticeDate = cursor2.getString(cursor2.getColumnIndex(COL_SceneNoticeDate));
+                            temp2.SceneNoticeTime = cursor2.getString(cursor2.getColumnIndex(COL_SceneNoticeTime));
+                            temp2.CompleteSceneDate = cursor2.getString(cursor2.getColumnIndex(COL_CompleteSceneDate));
+                            temp2.CompleteSceneTime = cursor2.getString(cursor2.getColumnIndex(COL_CompleteSceneTime));
+                            temp2.LocaleName = cursor2.getString(cursor2.getColumnIndex(COL_LocaleName));
+                            temp2.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_ID));
+                            temp2.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_ID));
+                            temp2.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_ID));
+                            temp2.Latitude = cursor2.getString(cursor2.getColumnIndex(COL_Latitude));
+                            temp2.Longitude = cursor2.getString(cursor2.getColumnIndex(COL_Longitude));
+                            temp2.SuffererPrename = cursor2.getString(cursor2.getColumnIndex(COL_SuffererPrename));
+                            temp2.SuffererName = cursor2.getString(cursor2.getColumnIndex(COL_SuffererName));
+                            temp2.SuffererStatus = cursor2.getString(cursor2.getColumnIndex(COL_SuffererStatus));
+                            temp2.SuffererPhoneNum = cursor2.getString(cursor2.getColumnIndex(COL_SuffererPhoneNum));
+                            temp2.CircumstanceOfCaseDetail = cursor2.getString(cursor2.getColumnIndex(COL_CircumstanceOfCaseDetail));
+                            temp2.LastUpdateDate = cursor2.getString(cursor2.getColumnIndex(COL_LastUpdateDate));
+                            temp2.LastUpdateTime = cursor2.getString(cursor2.getColumnIndex(COL_LastUpdateTime));
                             apiCaseSceneCase.setTbNoticeCase(temp2);
                         }
                     }
@@ -2512,20 +2742,20 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbOfficial temp2 = new TbOfficial();
-                            temp2.OfficialID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialID));
-                            temp2.FirstName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_FirstName));
-                            temp2.LastName = cursor2.getString(cursor2.getColumnIndex(temp2.COL_LastName));
-                            temp2.Alias = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Alias));
-                            temp2.Rank = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Rank));
-                            temp2.Position = cursor2.getString(cursor2.getColumnIndex(temp2.COL_Position));
-                            temp2.SubPossition = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SubPossition));
-                            temp2.PhoneNumber = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PhoneNumber));
-                            temp2.OfficialEmail = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialEmail));
-                            temp2.OfficialDisplayPic = cursor2.getString(cursor2.getColumnIndex(temp2.COL_OfficialDisplayPic));
-                            temp2.AccessType = cursor2.getString(cursor2.getColumnIndex(temp2.COL_AccessType));
-                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp2.COL_SCDCAgencyCode));
-                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp2.COL_PoliceStationID));
-                            temp2.id_users = cursor2.getString(cursor2.getColumnIndex(temp2.COL_id_users));
+                            temp2.OfficialID = cursor2.getString(cursor2.getColumnIndex(COL_OfficialID));
+                            temp2.FirstName = cursor2.getString(cursor2.getColumnIndex(COL_FirstName));
+                            temp2.LastName = cursor2.getString(cursor2.getColumnIndex(COL_LastName));
+                            temp2.Alias = cursor2.getString(cursor2.getColumnIndex(COL_Alias));
+                            temp2.Rank = cursor2.getString(cursor2.getColumnIndex(COL_Rank));
+                            temp2.Position = cursor2.getString(cursor2.getColumnIndex(COL_Position));
+                            temp2.SubPossition = cursor2.getString(cursor2.getColumnIndex(COL_SubPossition));
+                            temp2.PhoneNumber = cursor2.getString(cursor2.getColumnIndex(COL_PhoneNumber));
+                            temp2.OfficialEmail = cursor2.getString(cursor2.getColumnIndex(COL_OfficialEmail));
+                            temp2.OfficialDisplayPic = cursor2.getString(cursor2.getColumnIndex(COL_OfficialDisplayPic));
+                            temp2.AccessType = cursor2.getString(cursor2.getColumnIndex(COL_AccessType));
+                            temp2.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyCode));
+                            temp2.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationID));
+                            temp2.id_users = cursor2.getString(cursor2.getColumnIndex(COL_id_users));
                             apiCaseSceneCase.setTbOfficial(temp2);
                         }
                     }
@@ -2538,15 +2768,15 @@ public class DBHelper extends SQLiteAssetHelper {
                             cursor2.moveToFirst();
 
                             TbCaseSceneType temp3 = new TbCaseSceneType();
-                            temp3.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeID));
-                            temp3.CaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp3.COL_CaseTypeName));
-                            temp3.casetype_min = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_min));
-                            temp3.casetype_max = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_max));
-                            temp3.casetype_icon = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_icon));
-                            temp3.casetype_colormin = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormin));
-                            temp3.casetype_colormedium = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colormedium));
-                            temp3.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_colorhigh));
-                            temp3.casetype_status = cursor2.getString(cursor2.getColumnIndex(temp3.COL_casetype_status));
+                            temp3.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp3.CaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeName));
+                            temp3.casetype_min = cursor2.getString(cursor2.getColumnIndex(COL_casetype_min));
+                            temp3.casetype_max = cursor2.getString(cursor2.getColumnIndex(COL_casetype_max));
+                            temp3.casetype_icon = cursor2.getString(cursor2.getColumnIndex(COL_casetype_icon));
+                            temp3.casetype_colormin = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colormin));
+                            temp3.casetype_colormedium = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colormedium));
+                            temp3.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colorhigh));
+                            temp3.casetype_status = cursor2.getString(cursor2.getColumnIndex(COL_casetype_status));
                             apiCaseSceneCase.setTbCaseSceneType(temp3);
                         }
                     }
@@ -2558,9 +2788,9 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
-                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeID));
-                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(temp4.COL_CaseTypeID));
-                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(temp4.COL_SubCaseTypeName));
+                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
+                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeName));
                             apiCaseSceneCase.setTbSubcaseSceneType(temp4);
                         }
                     }
@@ -2572,9 +2802,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
-                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationID));
-                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceAgencyID));
-                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(temp5.COL_PoliceStationName));
+                            temp5.PoliceStationID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationID));
+                            temp5.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyID));
+                            temp5.PoliceStationName = cursor2.getString(cursor2.getColumnIndex(COL_PoliceStationName));
                             apiCaseSceneCase.setTbPoliceStation(temp5);
                         }
                     }
@@ -2587,9 +2817,9 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() == 1) {
                                 cursor2.moveToFirst();
                                 TbPoliceAgency temp6 = new TbPoliceAgency();
-                                temp6.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyID));
-                                temp6.PoliceCenterID = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceCenterID));
-                                temp6.PoliceAgencyName = cursor2.getString(cursor2.getColumnIndex(temp6.COL_PoliceAgencyName));
+                                temp6.PoliceAgencyID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyID));
+                                temp6.PoliceCenterID = cursor2.getString(cursor2.getColumnIndex(COL_PoliceCenterID));
+                                temp6.PoliceAgencyName = cursor2.getString(cursor2.getColumnIndex(COL_PoliceAgencyName));
                                 apiCaseSceneCase.setTbPoliceAgency(temp6);
                             }
                         }
@@ -2602,10 +2832,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbDistrict temp7 = new TbDistrict();
-                            temp7.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_ID));
-                            temp7.DISTRICT_CODE = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_CODE));
-                            temp7.DISTRICT_NAME = cursor2.getString(cursor2.getColumnIndex(temp7.COL_DISTRICT_NAME));
-                            temp7.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp7.COL_AMPHUR_ID));
+                            temp7.DISTRICT_ID = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_ID));
+                            temp7.DISTRICT_CODE = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_CODE));
+                            temp7.DISTRICT_NAME = cursor2.getString(cursor2.getColumnIndex(COL_DISTRICT_NAME));
+                            temp7.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_ID));
                             apiCaseSceneCase.setTbDistrict(temp7);
                         }
                     }
@@ -2617,11 +2847,11 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbProvince temp8 = new TbProvince();
-                            temp8.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_ID));
-                            temp8.PROVINCE_CODE = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_CODE));
-                            temp8.PROVINCE_NAME = cursor2.getString(cursor2.getColumnIndex(temp8.COL_PROVINCE_NAME));
-                            temp8.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp8.COL_GEO_ID));
-                            temp8.province_status = cursor2.getString(cursor2.getColumnIndex(temp8.COL_province_status));
+                            temp8.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_ID));
+                            temp8.PROVINCE_CODE = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_CODE));
+                            temp8.PROVINCE_NAME = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_NAME));
+                            temp8.GEO_ID = cursor2.getString(cursor2.getColumnIndex(COL_GEO_ID));
+                            temp8.province_status = cursor2.getString(cursor2.getColumnIndex(COL_province_status));
                             apiCaseSceneCase.setTbProvince(temp8);
                         }
                     }
@@ -2633,13 +2863,13 @@ public class DBHelper extends SQLiteAssetHelper {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
                             TbAmphur temp9 = new TbAmphur();
-                            temp9.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_ID));
-                            temp9.AMPHUR_CODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_CODE));
-                            temp9.AMPHUR_NAME = cursor2.getString(cursor2.getColumnIndex(temp9.COL_AMPHUR_NAME));
-                            temp9.POSTCODE = cursor2.getString(cursor2.getColumnIndex(temp9.COL_POSTCODE));
-                            temp9.GEO_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_GEO_ID));
-                            temp9.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(temp9.COL_PROVINCE_ID));
-                            temp9.amphur_polygon = cursor2.getString(cursor2.getColumnIndex(temp9.COL_amphur_polygon));
+                            temp9.AMPHUR_ID = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_ID));
+                            temp9.AMPHUR_CODE = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_CODE));
+                            temp9.AMPHUR_NAME = cursor2.getString(cursor2.getColumnIndex(COL_AMPHUR_NAME));
+                            temp9.POSTCODE = cursor2.getString(cursor2.getColumnIndex(COL_POSTCODE));
+                            temp9.GEO_ID = cursor2.getString(cursor2.getColumnIndex(COL_GEO_ID));
+                            temp9.PROVINCE_ID = cursor2.getString(cursor2.getColumnIndex(COL_PROVINCE_ID));
+                            temp9.amphur_polygon = cursor2.getString(cursor2.getColumnIndex(COL_amphur_polygon));
                             apiCaseSceneCase.setTbAmphur(temp9);
                         }
                     }
@@ -2651,9 +2881,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
-                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyCode));
-                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCCenterID));
-                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(temp10.COL_SCDCAgencyName));
+                            temp10.SCDCAgencyCode = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyCode));
+                            temp10.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterID));
+                            temp10.SCDCAgencyName = cursor2.getString(cursor2.getColumnIndex(COL_SCDCAgencyName));
                             apiCaseSceneCase.setTbSCDCagency(temp10);
                         }
                     }
@@ -2666,9 +2896,9 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() == 1) {
                                 cursor2.moveToFirst();
                                 TbSCDCcenter temp11 = new TbSCDCcenter();
-                                temp11.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterID));
-                                temp11.SCDCCenterName = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterName));
-                                temp11.SCDCCenterProvince = cursor2.getString(cursor2.getColumnIndex(temp11.COL_SCDCCenterProvince));
+                                temp11.SCDCCenterID = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterID));
+                                temp11.SCDCCenterName = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterName));
+                                temp11.SCDCCenterProvince = cursor2.getString(cursor2.getColumnIndex(COL_SCDCCenterProvince));
                                 apiCaseSceneCase.setTbSCDCcenter(temp11);
                             }
                         }
@@ -2686,10 +2916,10 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbSceneInvestigation temp12 = new TbSceneInvestigation();
-                                    temp12.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(temp12.COL_SceneInvestID));
-                                    temp12.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp12.COL_CaseReportID));
-                                    temp12.SceneInvestDate = cursor2.getString(cursor2.getColumnIndex(temp12.COL_SceneInvestDate));
-                                    temp12.SceneInvestTime = cursor2.getString(cursor2.getColumnIndex(temp12.COL_SceneInvestTime));
+                                    temp12.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(COL_SceneInvestID));
+                                    temp12.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp12.SceneInvestDate = cursor2.getString(cursor2.getColumnIndex(COL_SceneInvestDate));
+                                    temp12.SceneInvestTime = cursor2.getString(cursor2.getColumnIndex(COL_SceneInvestTime));
                                     tbSceneInvestigations.add(temp12);
                                 }
                             }
@@ -2705,19 +2935,19 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() == 1) {
                                 cursor2.moveToFirst();
                                 TbSceneFeatureOutside temp13 = new TbSceneFeatureOutside();
-                                temp13.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp13.COL_CaseReportID));
-                                temp13.OutsideTypeName = cursor2.getString(cursor2.getColumnIndex(temp13.COL_OutsideTypeName));
-                                temp13.OutsideTypeDetail = cursor2.getString(cursor2.getColumnIndex(temp13.COL_OutsideTypeDetail));
-                                temp13.FloorNum = cursor2.getString(cursor2.getColumnIndex(temp13.COL_FloorNum));
-                                temp13.CaveNum = cursor2.getString(cursor2.getColumnIndex(temp13.COL_CaveNum));
-                                temp13.HaveFence = cursor2.getString(cursor2.getColumnIndex(temp13.COL_HaveFence));
-                                temp13.HaveMezzanine = cursor2.getString(cursor2.getColumnIndex(temp13.COL_HaveMezzanine));
-                                temp13.HaveRooftop = cursor2.getString(cursor2.getColumnIndex(temp13.COL_HaveRooftop));
-                                temp13.FrontSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_FrontSide));
-                                temp13.LeftSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_LeftSide));
-                                temp13.RightSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_RightSide));
-                                temp13.BackSide = cursor2.getString(cursor2.getColumnIndex(temp13.COL_BackSide));
-                                temp13.SceneZone = cursor2.getString(cursor2.getColumnIndex(temp13.COL_SceneZone));
+                                temp13.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                temp13.OutsideTypeName = cursor2.getString(cursor2.getColumnIndex(COL_OutsideTypeName));
+                                temp13.OutsideTypeDetail = cursor2.getString(cursor2.getColumnIndex(COL_OutsideTypeDetail));
+                                temp13.FloorNum = cursor2.getString(cursor2.getColumnIndex(COL_FloorNum));
+                                temp13.CaveNum = cursor2.getString(cursor2.getColumnIndex(COL_CaveNum));
+                                temp13.HaveFence = cursor2.getString(cursor2.getColumnIndex(COL_HaveFence));
+                                temp13.HaveMezzanine = cursor2.getString(cursor2.getColumnIndex(COL_HaveMezzanine));
+                                temp13.HaveRooftop = cursor2.getString(cursor2.getColumnIndex(COL_HaveRooftop));
+                                temp13.FrontSide = cursor2.getString(cursor2.getColumnIndex(COL_FrontSide));
+                                temp13.LeftSide = cursor2.getString(cursor2.getColumnIndex(COL_LeftSide));
+                                temp13.RightSide = cursor2.getString(cursor2.getColumnIndex(COL_RightSide));
+                                temp13.BackSide = cursor2.getString(cursor2.getColumnIndex(COL_BackSide));
+                                temp13.SceneZone = cursor2.getString(cursor2.getColumnIndex(COL_SceneZone));
                                 apiCaseSceneCase.setTbSceneFeatureOutside(temp13);
                             }
                         }
@@ -2735,15 +2965,15 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbSceneFeatureInSide temp14 = new TbSceneFeatureInSide();
-                                    temp14.FeatureInsideID = cursor2.getString(cursor2.getColumnIndex(temp14.COL_FeatureInsideID));
-                                    temp14.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp14.COL_CaseReportID));
-                                    temp14.FloorNo = cursor2.getString(cursor2.getColumnIndex(temp14.COL_FloorNo));
-                                    temp14.CaveNo = cursor2.getString(cursor2.getColumnIndex(temp14.COL_CaveNo));
-                                    temp14.FrontInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_FrontInside));
-                                    temp14.LeftInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_LeftInside));
-                                    temp14.RightInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_RightInside));
-                                    temp14.BackInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_BackInside));
-                                    temp14.CenterInside = cursor2.getString(cursor2.getColumnIndex(temp14.COL_CenterInside));
+                                    temp14.FeatureInsideID = cursor2.getString(cursor2.getColumnIndex(COL_FeatureInsideID));
+                                    temp14.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp14.FloorNo = cursor2.getString(cursor2.getColumnIndex(COL_FloorNo));
+                                    temp14.CaveNo = cursor2.getString(cursor2.getColumnIndex(COL_CaveNo));
+                                    temp14.FrontInside = cursor2.getString(cursor2.getColumnIndex(COL_FrontInside));
+                                    temp14.LeftInside = cursor2.getString(cursor2.getColumnIndex(COL_LeftInside));
+                                    temp14.RightInside = cursor2.getString(cursor2.getColumnIndex(COL_RightInside));
+                                    temp14.BackInside = cursor2.getString(cursor2.getColumnIndex(COL_BackInside));
+                                    temp14.CenterInside = cursor2.getString(cursor2.getColumnIndex(COL_CenterInside));
                                     tbSceneFeatureInSides.add(temp14);
                                 }
                             }
@@ -2759,34 +2989,34 @@ public class DBHelper extends SQLiteAssetHelper {
                         strSQL = "SELECT * FROM multimediafile "
                                 + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
                         Log.i(TAG, strSQL);
-                        ApiMultimedia apiMultimedia = new ApiMultimedia();
                         try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                            if (apiMultimediaList == null) {
-                                apiMultimediaList = new ArrayList<>(cursor2.getCount());
-                            }
+
+                            Log.i(TAG, "multimediafile " + String.valueOf(cursor2.getCount()));
                             if (cursor2.getCount() > 0) {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
-                                    TbMultimediaFile temp15 = new TbMultimediaFile();
-                                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
-                                    apiMultimedia.setTbMultimediaFile(temp15);
+                                    ApiMultimedia apiMultimedia = new ApiMultimedia();
 
+                                    TbMultimediaFile temp15 = new TbMultimediaFile();
+                                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
+                                    apiMultimedia.setTbMultimediaFile(temp15);
+                                    Log.i(TAG, "multimediafile " + String.valueOf(apiMultimedia.getTbMultimediaFile().FileID));
                                     if (temp15.FileID != null) {
-                                        strSQL = "SELECT * FROM " + oPhotoOfOutside.TB_PhotoOfOutside
-                                                + " WHERE " + oPhotoOfOutside.COL_FileID + " = '" + temp15.FileID + "'";
+                                        strSQL = "SELECT * FROM " + TB_photoofoutside
+                                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                                         try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                             if (cursor3.getCount() == 1) {
                                                 cursor3.moveToFirst();
                                                 TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
-                                                tbPhotoOfOutside.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfOutside.COL_FileID));
-                                                tbPhotoOfOutside.CaseReportID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfOutside.COL_CaseReportID));
+                                                tbPhotoOfOutside.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                                tbPhotoOfOutside.CaseReportID = cursor3.getString(cursor3.getColumnIndex(COL_CaseReportID));
                                                 apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
 
                                                 Log.i(TAG, "tbPhotoOfOutside " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfOutside().FileID));
@@ -2796,85 +3026,91 @@ public class DBHelper extends SQLiteAssetHelper {
                                         }
                                     }
                                     if (temp15.FileID != null) {
-                                        strSQL = "SELECT * FROM " + oPhotoOfInside.TB_PhotoOfInside
-                                                + " WHERE " + oPhotoOfInside.COL_FileID + " = '" + temp15.FileID + "'";
+                                        strSQL = "SELECT * FROM " + TB_photoofinside
+                                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                                         try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                             if (cursor3.getCount() == 1) {
                                                 cursor3.moveToFirst();
                                                 TbPhotoOfInside tbPhotoOfInside = new TbPhotoOfInside();
-                                                tbPhotoOfInside.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfInside.COL_FileID));
-                                                tbPhotoOfInside.FeatureInsideID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfInside.COL_FeatureInsideID));
+                                                tbPhotoOfInside.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                                tbPhotoOfInside.FeatureInsideID = cursor3.getString(cursor3.getColumnIndex(COL_FeatureInsideID));
                                                 apiMultimedia.setTbPhotoOfInside(tbPhotoOfInside);
                                                 Log.i(TAG, "tbPhotoOfInside " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfInside().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfInside(null);
                                             }
                                         }
+
                                     }
                                     if (temp15.FileID != null) {
-                                        strSQL = "SELECT * FROM " + oPhotoOfEvidence.TB_PhotoOfEvidence
-                                                + " WHERE " + oPhotoOfEvidence.COL_FileID + " = '" + temp15.FileID + "'";
+                                        strSQL = "SELECT * FROM " + TB_photoofevidence
+                                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                                         try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                             if (cursor3.getCount() == 1) {
                                                 cursor3.moveToFirst();
                                                 TbPhotoOfEvidence tbPhotoOfEvidence = new TbPhotoOfEvidence();
-                                                tbPhotoOfEvidence.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfEvidence.COL_FileID));
-                                                tbPhotoOfEvidence.FindEvidenceID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfEvidence.COL_FindEvidenceID));
+                                                tbPhotoOfEvidence.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                                tbPhotoOfEvidence.FindEvidenceID = cursor3.getString(cursor3.getColumnIndex(COL_FindEvidenceID));
                                                 apiMultimedia.setTbPhotoOfEvidence(tbPhotoOfEvidence);
                                                 Log.i(TAG, "tbPhotoOfEvidence " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfEvidence().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfEvidence(null);
                                             }
                                         }
+
                                     }
                                     if (temp15.FileID != null) {
-                                        strSQL = "SELECT * FROM " + oPhotoOfResultscene.TB_PhotoOfResultscene
-                                                + " WHERE " + oPhotoOfResultscene.COL_FileID + " = '" + temp15.FileID + "'";
+                                        strSQL = "SELECT * FROM " + TB_photoofresultscene
+                                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                                         try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                             if (cursor3.getCount() == 1) {
                                                 cursor3.moveToFirst();
                                                 TbPhotoOfResultscene tbPhotoOfResultscene = new TbPhotoOfResultscene();
-                                                tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfResultscene.COL_FileID));
-                                                tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfResultscene.COL_RSID));
+                                                tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                                tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
                                                 apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
                                                 Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfResultscene(null);
                                             }
                                         }
+
                                     }
                                     if (temp15.FileID != null) {
-                                        strSQL = "SELECT * FROM " + oPhotoOfPropertyless.TB_PhotoOfPropertyless
-                                                + " WHERE " + oPhotoOfPropertyless.COL_FileID + " = '" + temp15.FileID + "'";
-                                        Log.i(TAG, strSQL);
+                                        strSQL = "SELECT * FROM " + TB_photoofpropertyless
+                                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
                                         try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                             if (cursor3.getCount() == 1) {
                                                 cursor3.moveToFirst();
                                                 TbPhotoOfPropertyless tbPhotoOfPropertyless = new TbPhotoOfPropertyless();
-                                                tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfPropertyless.COL_FileID));
-                                                tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfPropertyless.COL_PropertyLessID));
+                                                tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                                tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(COL_PropertyLessID));
                                                 apiMultimedia.setTbPhotoOfPropertyless(tbPhotoOfPropertyless);
                                                 Log.i(TAG, "tbPhotoOfPropertyless " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfPropertyless().FileID));
+//
                                             } else {
                                                 apiMultimedia.setTbPhotoOfPropertyless(null);
                                             }
                                         }
                                     }
                                     apiMultimediaList.add(apiMultimedia);
+
                                 }
                             }
 
                         }
                         apiCaseSceneCase.setApiMultimedia(apiMultimediaList);
                         Log.i(TAG, "apiMultimediaList :" + String.valueOf(apiCaseSceneCase.getApiMultimedia().size()));
-
+                        for (int i = 0; i < apiCaseSceneCase.getApiMultimedia().size(); i++) {
+                            Log.i(TAG, apiCaseSceneCase.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                        }
                     }
 
                     // Index tbFindEvidences ดึงจากตาราง findevidence ใช้ค่าจาก Index tbCaseScene
@@ -2890,16 +3126,16 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbFindEvidence temp16 = new TbFindEvidence();
-                                    temp16.FindEvidenceID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidenceID));
-                                    temp16.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_CaseReportID));
-                                    temp16.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_SceneInvestID));
-                                    temp16.EvidenceTypeID = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceTypeID));
-                                    temp16.EvidenceNumber = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidenceNumber));
-                                    temp16.FindEvidenceZone = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidenceZone));
-                                    temp16.FindEvidencecol = cursor2.getString(cursor2.getColumnIndex(temp16.COL_FindEvidencecol));
-                                    temp16.Marking = cursor2.getString(cursor2.getColumnIndex(temp16.COL_Marking));
-                                    temp16.Parceling = cursor2.getString(cursor2.getColumnIndex(temp16.COL_Parceling));
-                                    temp16.EvidencePerformed = cursor2.getString(cursor2.getColumnIndex(temp16.COL_EvidencePerformed));
+                                    temp16.FindEvidenceID = cursor2.getString(cursor2.getColumnIndex(COL_FindEvidenceID));
+                                    temp16.EvidenceTypeID = cursor2.getString(cursor2.getColumnIndex(COL_EvidenceTypeID));
+                                    temp16.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp16.SceneInvestID = cursor2.getString(cursor2.getColumnIndex(COL_SceneInvestID));
+                                    temp16.EvidenceNumber = cursor2.getString(cursor2.getColumnIndex(COL_EvidenceNumber));
+                                    temp16.FindEvidenceZone = cursor2.getString(cursor2.getColumnIndex(COL_FindEvidenceZone));
+                                    temp16.FindEvidencecol = cursor2.getString(cursor2.getColumnIndex(COL_FindEvidencecol));
+                                    temp16.Marking = cursor2.getString(cursor2.getColumnIndex(COL_Marking));
+                                    temp16.Parceling = cursor2.getString(cursor2.getColumnIndex(COL_Parceling));
+                                    temp16.EvidencePerformed = cursor2.getString(cursor2.getColumnIndex(COL_EvidencePerformed));
                                     tbFindEvidences.add(temp16);
                                 }
                             }
@@ -2920,10 +3156,10 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbResultScene temp17 = new TbResultScene();
-                                    temp17.RSID = cursor2.getString(cursor2.getColumnIndex(temp17.COL_RSID));
-                                    temp17.RSTypeID = cursor2.getString(cursor2.getColumnIndex(temp17.COL_RSTypeID));
-                                    temp17.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp17.COL_CaseReportID));
-                                    temp17.RSDetail = cursor2.getString(cursor2.getColumnIndex(temp17.COL_RSDetail));
+                                    temp17.RSID = cursor2.getString(cursor2.getColumnIndex(COL_RSID));
+                                    temp17.RSTypeID = cursor2.getString(cursor2.getColumnIndex(COL_RSTypeID));
+                                    temp17.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp17.RSDetail = cursor2.getString(cursor2.getColumnIndex(COL_RSDetail));
                                     tbResultScenes.add(temp17);
                                 }
                             }
@@ -2945,10 +3181,10 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbGatewayCriminal temp18 = new TbGatewayCriminal();
-                                    temp18.RSID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_RSID));
-                                    temp18.RSTypeID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_RSTypeID));
-                                    temp18.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp18.COL_CaseReportID));
-                                    temp18.RSDetail = cursor2.getString(cursor2.getColumnIndex(temp18.COL_RSDetail));
+                                    temp18.RSID = cursor2.getString(cursor2.getColumnIndex(COL_RSID));
+                                    temp18.RSTypeID = cursor2.getString(cursor2.getColumnIndex(COL_RSTypeID));
+                                    temp18.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp18.RSDetail = cursor2.getString(cursor2.getColumnIndex(COL_RSDetail));
                                     tbGatewayCriminals.add(temp18);
                                 }
                             }
@@ -2970,10 +3206,10 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbClueShown temp19 = new TbClueShown();
-                                    temp19.RSID = cursor2.getString(cursor2.getColumnIndex(temp19.COL_RSID));
-                                    temp19.RSTypeID = cursor2.getString(cursor2.getColumnIndex(temp19.COL_RSTypeID));
-                                    temp19.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp19.COL_CaseReportID));
-                                    temp19.RSDetail = cursor2.getString(cursor2.getColumnIndex(temp19.COL_RSDetail));
+                                    temp19.RSID = cursor2.getString(cursor2.getColumnIndex(COL_RSID));
+                                    temp19.RSTypeID = cursor2.getString(cursor2.getColumnIndex(COL_RSTypeID));
+                                    temp19.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp19.RSDetail = cursor2.getString(cursor2.getColumnIndex(COL_RSDetail));
                                     tbClueShowns.add(temp19);
                                 }
                             }
@@ -2994,13 +3230,13 @@ public class DBHelper extends SQLiteAssetHelper {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     TbPropertyLoss temp20 = new TbPropertyLoss();
-                                    temp20.PropertyLossID = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossID));
-                                    temp20.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp20.COL_CaseReportID));
-                                    temp20.PropertyLossName = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossName));
-                                    temp20.PropertyLossNumber = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossNumber));
-                                    temp20.PropertyLossUnit = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossUnit));
-                                    temp20.PropertyLossPosition = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropertyLossPosition));
-                                    temp20.PropInsurance = cursor2.getString(cursor2.getColumnIndex(temp20.COL_PropInsurance));
+                                    temp20.PropertyLossID = cursor2.getString(cursor2.getColumnIndex(COL_PropertyLossID));
+                                    temp20.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    temp20.PropertyLossName = cursor2.getString(cursor2.getColumnIndex(COL_PropertyLossName));
+                                    temp20.PropertyLossNumber = cursor2.getString(cursor2.getColumnIndex(COL_PropertyLossNumber));
+                                    temp20.PropertyLossUnit = cursor2.getString(cursor2.getColumnIndex(COL_PropertyLossUnit));
+                                    temp20.PropertyLossPosition = cursor2.getString(cursor2.getColumnIndex(COL_PropertyLossPosition));
+                                    temp20.PropInsurance = cursor2.getString(cursor2.getColumnIndex(COL_PropInsurance));
                                     tbPropertyLosses.add(temp20);
                                 }
                             }
@@ -3447,8 +3683,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM multimediafile WHERE "
                     + oMultimediaFile.CaseReportID + " = '" + sCaseReportID + "' AND "
-                    + oMultimediaFile.COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
-                    + oMultimediaFile.COL_FileID + " DESC";
+                    + COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
+                    + COL_FileID + " DESC";
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
@@ -3489,10 +3725,10 @@ public class DBHelper extends SQLiteAssetHelper {
             SQLiteDatabase db;
             db = this.getReadableDatabase(); // Read Data
             String strSQL = "SELECT * FROM multimediafile WHERE "
-                    + oMultimediaFile.COL_CaseReportID + " = '" + sCaseReportID + "' AND "
-                    + oMultimediaFile.COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
-                    + oMultimediaFile.COL_FileID + " DESC";
-            Log.i(TAG, "multimediafile " +strSQL);
+                    + COL_CaseReportID + " = '" + sCaseReportID + "' AND "
+                    + COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
+                    + COL_FileID + " DESC";
+            Log.i(TAG, "multimediafile " + strSQL);
             List<TbMultimediaFile> tbMultimediaFiles = null;
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                 if (tbMultimediaFiles == null) {
@@ -3502,17 +3738,17 @@ public class DBHelper extends SQLiteAssetHelper {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
                         TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                         tbMultimediaFiles.add(temp15);
                     }
                 }
             }
-            Log.i(TAG, "multimediafile " +String.valueOf(tbMultimediaFiles.size()));
+            Log.i(TAG, "multimediafile " + String.valueOf(tbMultimediaFiles.size()));
             db.close();
             return tbMultimediaFiles;
         } catch (Exception e) {
@@ -3528,19 +3764,19 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
 
             String strSQL = "SELECT " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FilePath + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileDescription + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_Timestamp +
+                    TB_MultimediaFile + "." + COL_FileID + " , " +
+                    TB_MultimediaFile + "." + COL_CaseReportID + " , " +
+                    TB_MultimediaFile + "." + COL_FileType + " , " +
+                    TB_MultimediaFile + "." + COL_FilePath + " , " +
+                    TB_MultimediaFile + "." + COL_FileDescription + " , " +
+                    TB_MultimediaFile + "." + COL_Timestamp +
                     " FROM "
-                    + oMultimediaFile.TB_MultimediaFile + "," + oPhotoOfOutside.TB_PhotoOfOutside + " WHERE "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " = '" + sCaseReportID + "' AND "
-                    + oPhotoOfOutside.TB_PhotoOfOutside + "." + oPhotoOfOutside.COL_CaseReportID + " = " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " AND "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " = " + oPhotoOfOutside.TB_PhotoOfOutside + "." + oPhotoOfOutside.COL_FileID + " AND "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " = '" + sFileType + "'"
-                    + " ORDER BY " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " DESC";
+                    + TB_MultimediaFile + "," + TB_photoofoutside + " WHERE "
+                    + TB_MultimediaFile + "." + COL_CaseReportID + " = '" + sCaseReportID + "' AND "
+                    + TB_photoofoutside + "." + COL_CaseReportID + " = " + TB_MultimediaFile + "." + COL_CaseReportID + " AND "
+                    + TB_MultimediaFile + "." + COL_FileID + " = " + TB_photoofoutside + "." + COL_FileID + " AND "
+                    + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
+                    + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i("show", strSQL);
             List<TbMultimediaFile> tbMultimediaFiles = null;
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
@@ -3551,12 +3787,12 @@ public class DBHelper extends SQLiteAssetHelper {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
                         TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                         tbMultimediaFiles.add(temp15);
                     }
                 }
@@ -3577,18 +3813,18 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
             List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FilePath + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileDescription + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_Timestamp +
+                    TB_MultimediaFile + "." + COL_FileID + " , " +
+                    TB_MultimediaFile + "." + COL_CaseReportID + " , " +
+                    TB_MultimediaFile + "." + COL_FileType + " , " +
+                    TB_MultimediaFile + "." + COL_FilePath + " , " +
+                    TB_MultimediaFile + "." + COL_FileDescription + " , " +
+                    TB_MultimediaFile + "." + COL_Timestamp +
                     " FROM "
-                    + oMultimediaFile.TB_MultimediaFile + "," + oPhotoOfInside.TB_PhotoOfInside + " WHERE "
-                    + oPhotoOfInside.TB_PhotoOfInside + "." + oPhotoOfInside.COL_FeatureInsideID + " = '" + sFeatureInsideID + "' AND "
-                    + oPhotoOfInside.TB_PhotoOfInside + "." + oPhotoOfInside.COL_FileID + " = " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " AND "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " = '" + sFileType + "'"
-                    + " ORDER BY " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " DESC";
+                    + TB_MultimediaFile + "," + TB_photoofinside + " WHERE "
+                    + TB_photoofinside + "." + COL_FeatureInsideID + " = '" + sFeatureInsideID + "' AND "
+                    + TB_photoofinside + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
+                    + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
+                    + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i(TAG, "show SelectDataPhotoOfInside" + strSQL);
             ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
@@ -3599,24 +3835,24 @@ public class DBHelper extends SQLiteAssetHelper {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
                         TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                         apiMultimedia.setTbMultimediaFile(temp15);
                         if (temp15.FileID != null) {
-                            strSQL = "SELECT * FROM " + oPhotoOfInside.TB_PhotoOfInside
-                                    + " WHERE " + oPhotoOfInside.COL_FileID + " = '" + temp15.FileID + "'";
+                            strSQL = "SELECT * FROM " + TB_photoofinside
+                                    + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                             try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                 if (cursor3.getCount() == 1) {
                                     cursor3.moveToFirst();
                                     TbPhotoOfInside tbPhotoOfInside = new TbPhotoOfInside();
-                                    tbPhotoOfInside.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfInside.COL_FileID));
-                                    tbPhotoOfInside.FeatureInsideID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfInside.COL_FeatureInsideID));
+                                    tbPhotoOfInside.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                    tbPhotoOfInside.FeatureInsideID = cursor3.getString(cursor3.getColumnIndex(COL_FeatureInsideID));
                                     apiMultimedia.setTbPhotoOfInside(tbPhotoOfInside);
                                     Log.i(TAG, "tbPhotoOfInside " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfInside().FileID));
                                 } else {
@@ -3646,18 +3882,18 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
             List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FilePath + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileDescription + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_Timestamp +
+                    TB_MultimediaFile + "." + COL_FileID + " , " +
+                    TB_MultimediaFile + "." + COL_CaseReportID + " , " +
+                    TB_MultimediaFile + "." + COL_FileType + " , " +
+                    TB_MultimediaFile + "." + COL_FilePath + " , " +
+                    TB_MultimediaFile + "." + COL_FileDescription + " , " +
+                    TB_MultimediaFile + "." + COL_Timestamp +
                     " FROM "
-                    + oMultimediaFile.TB_MultimediaFile + "," + oPhotoOfPropertyless.TB_PhotoOfPropertyless + " WHERE "
-                    + oPhotoOfPropertyless.TB_PhotoOfPropertyless + "." + oPhotoOfPropertyless.COL_PropertyLessID + " = '" + sPLID + "' AND "
-                    + oPhotoOfPropertyless.TB_PhotoOfPropertyless + "." + oPhotoOfPropertyless.COL_FileID + " = " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " AND "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " = '" + sFileType + "'"
-                    + " ORDER BY " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " DESC";
+                    + TB_MultimediaFile + "," + TB_photoofpropertyless + " WHERE "
+                    + TB_photoofpropertyless + "." + COL_PropertyLessID + " = '" + sPLID + "' AND "
+                    + TB_photoofpropertyless + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
+                    + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
+                    + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i(TAG, "SelectDataPhotoOfPropertyLoss " + strSQL);
             ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
@@ -3668,24 +3904,24 @@ public class DBHelper extends SQLiteAssetHelper {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
                         TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                         apiMultimedia.setTbMultimediaFile(temp15);
                         if (temp15.FileID != null) {
-                            strSQL = "SELECT * FROM " + oPhotoOfPropertyless.TB_PhotoOfPropertyless
-                                    + " WHERE " + oPhotoOfPropertyless.COL_FileID + " = '" + temp15.FileID + "'";
+                            strSQL = "SELECT * FROM " + TB_photoofpropertyless
+                                    + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                             try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                 if (cursor3.getCount() == 1) {
                                     cursor3.moveToFirst();
                                     TbPhotoOfPropertyless tbPhotoOfPropertyless = new TbPhotoOfPropertyless();
-                                    tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfPropertyless.COL_FileID));
-                                    tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfPropertyless.COL_PropertyLessID));
+                                    tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                    tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(COL_PropertyLessID));
                                     apiMultimedia.setTbPhotoOfPropertyless(tbPhotoOfPropertyless);
                                     Log.i(TAG, "tbPhotoOfPropertyless " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfPropertyless().FileID));
                                 } else {
@@ -3715,18 +3951,18 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
             List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FilePath + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileDescription + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_Timestamp +
+                    TB_MultimediaFile + "." + COL_FileID + " , " +
+                    TB_MultimediaFile + "." + COL_CaseReportID + " , " +
+                    TB_MultimediaFile + "." + COL_FileType + " , " +
+                    TB_MultimediaFile + "." + COL_FilePath + " , " +
+                    TB_MultimediaFile + "." + COL_FileDescription + " , " +
+                    TB_MultimediaFile + "." + COL_Timestamp +
                     " FROM "
-                    + oMultimediaFile.TB_MultimediaFile + "," + oPhotoOfEvidence.TB_PhotoOfEvidence + " WHERE "
-                    + oPhotoOfEvidence.TB_PhotoOfEvidence + "." + oPhotoOfEvidence.COL_FindEvidenceID + " = '" + sEVID + "' AND "
-                    + oPhotoOfEvidence.TB_PhotoOfEvidence + "." + oPhotoOfEvidence.COL_FileID + " = " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " AND "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " = '" + sFileType + "'"
-                    + " ORDER BY " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " DESC";
+                    + TB_MultimediaFile + "," + TB_photoofevidence + " WHERE "
+                    + TB_photoofevidence + "." + COL_FindEvidenceID + " = '" + sEVID + "' AND "
+                    + TB_photoofevidence + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
+                    + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
+                    + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i("show", strSQL);
             ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
@@ -3737,24 +3973,24 @@ public class DBHelper extends SQLiteAssetHelper {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
                         TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                         apiMultimedia.setTbMultimediaFile(temp15);
                         if (temp15.FileID != null) {
-                            strSQL = "SELECT * FROM " + oPhotoOfEvidence.TB_PhotoOfEvidence
-                                    + " WHERE " + oPhotoOfEvidence.COL_FileID + " = '" + temp15.FileID + "'";
+                            strSQL = "SELECT * FROM " + TB_photoofevidence
+                                    + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                             try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                 if (cursor3.getCount() == 1) {
                                     cursor3.moveToFirst();
                                     TbPhotoOfEvidence tbPhotoOfEvidence = new TbPhotoOfEvidence();
-                                    tbPhotoOfEvidence.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfEvidence.COL_FileID));
-                                    tbPhotoOfEvidence.FindEvidenceID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfEvidence.COL_FindEvidenceID));
+                                    tbPhotoOfEvidence.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                    tbPhotoOfEvidence.FindEvidenceID = cursor3.getString(cursor3.getColumnIndex(COL_FindEvidenceID));
                                     apiMultimedia.setTbPhotoOfEvidence(tbPhotoOfEvidence);
                                     Log.i(TAG, "tbPhotoOfEvidence " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfEvidence().FileID));
                                 } else {
@@ -3784,18 +4020,18 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
             List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_CaseReportID + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FilePath + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileDescription + " , " +
-                    oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_Timestamp +
+                    TB_MultimediaFile + "." + COL_FileID + " , " +
+                    TB_MultimediaFile + "." + COL_CaseReportID + " , " +
+                    TB_MultimediaFile + "." + COL_FileType + " , " +
+                    TB_MultimediaFile + "." + COL_FilePath + " , " +
+                    TB_MultimediaFile + "." + COL_FileDescription + " , " +
+                    TB_MultimediaFile + "." + COL_Timestamp +
                     " FROM "
-                    + oMultimediaFile.TB_MultimediaFile + "," + oPhotoOfResultscene.TB_PhotoOfResultscene + " WHERE "
-                    + oPhotoOfResultscene.TB_PhotoOfResultscene + "." + oPhotoOfResultscene.COL_RSID + " = '" + sRSID + "' AND "
-                    + oPhotoOfResultscene.TB_PhotoOfResultscene + "." + oPhotoOfResultscene.COL_FileID + " = " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " AND "
-                    + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileType + " = '" + sFileType + "'"
-                    + " ORDER BY " + oMultimediaFile.TB_MultimediaFile + "." + oMultimediaFile.COL_FileID + " DESC";
+                    + TB_MultimediaFile + "," + TB_photoofresultscene + " WHERE "
+                    + TB_photoofresultscene + "." + COL_RSID + " = '" + sRSID + "' AND "
+                    + TB_photoofresultscene + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
+                    + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
+                    + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i("show", strSQL);
             ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
@@ -3806,24 +4042,24 @@ public class DBHelper extends SQLiteAssetHelper {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
                         TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(temp15.COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(temp15.COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(temp15.COL_Timestamp));
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                         apiMultimedia.setTbMultimediaFile(temp15);
                         if (temp15.FileID != null) {
-                            strSQL = "SELECT * FROM " + oPhotoOfResultscene.TB_PhotoOfResultscene
-                                    + " WHERE " + oPhotoOfResultscene.COL_FileID + " = '" + temp15.FileID + "'";
+                            strSQL = "SELECT * FROM " + TB_photoofresultscene
+                                    + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
                             try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
                                 if (cursor3.getCount() == 1) {
                                     cursor3.moveToFirst();
                                     TbPhotoOfResultscene tbPhotoOfResultscene = new TbPhotoOfResultscene();
-                                    tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfResultscene.COL_FileID));
-                                    tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(tbPhotoOfResultscene.COL_RSID));
+                                    tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                    tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
                                     apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
                                     Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
                                 } else {
@@ -3844,6 +4080,7 @@ public class DBHelper extends SQLiteAssetHelper {
             return null;
         }
     }
+
     public long DeleteMediaFile(String sCaseReportID,
                                 String sFileID) {
         // TODO Auto-generated method stub
@@ -3852,8 +4089,8 @@ public class DBHelper extends SQLiteAssetHelper {
             SQLiteDatabase db;
             db = this.getWritableDatabase(); // Write Data
 
-            long rows = db.delete(oMultimediaFile.TB_MultimediaFile, oMultimediaFile.COL_CaseReportID
-                    + " =? AND " + oMultimediaFile.COL_FileID + " =?", new String[]{
+            long rows = db.delete(TB_MultimediaFile, COL_CaseReportID
+                    + " =? AND " + COL_FileID + " =?", new String[]{
                     sCaseReportID, sFileID});
 
             db.close();
