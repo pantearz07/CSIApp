@@ -81,12 +81,12 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
+                        android:id="@+id/ic_telphone1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_phone_android_black_24dp"
-                        android:id="@+id/ic_telphone1"
                         android:layout_gravity="center_vertical"
-                        android:background="@color/transparent"/>
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_phone_android_black_24dp" />
                 </LinearLayout>
 
                 <TableLayout
@@ -212,16 +212,15 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginTop="@dimen/margin_line"
-                        >
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtSceneInvestDateTime1"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
                             android:gravity="left"
                             android:text="วันเวลาที่ทำการตรวจสถานที่เกิดเหตุ"
                             android:textSize="@dimen/small_text" />
@@ -230,11 +229,12 @@
                             android:id="@+id/btn_property"
                             android:layout_width="@dimen/width_btn"
                             android:layout_height="wrap_content"
-                            android:background="@color/transparent"
                             android:layout_gravity="right|center_vertical"
+                            android:background="@color/transparent"
                             android:src="@drawable/ic_property" />
 
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRowSceneInvestDateTimeLayout"
                         android:layout_width="match_parent"
@@ -242,12 +242,11 @@
                         android:layout_marginTop="@dimen/margin_line">
 
 
-
                         <ListView
                             android:id="@+id/listViewAddSceneInvestDateTime"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:divider="@color/ocean"
                             android:dividerHeight="@dimen/divider_height"
                             android:padding="5dp"
@@ -652,6 +651,41 @@
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/txtInvestigatorList"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="1"
+                            android:background="@color/orange"
+                            android:padding="5dp"
+                            android:text="รายชื่อผู้ตรวจสถานที่เกิดเหตุ"
+                            android:textAppearance="@style/SectionText" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/tableRowInvestigatorLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
+
+
+                        <ListView
+                            android:id="@+id/listViewInvestigator"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:divider="@color/ocean"
+                            android:dividerHeight="@dimen/divider_height"
+                            android:padding="5dp"
+                            android:textSize="@dimen/small_text" />
 
                     </TableRow>
                 </TableLayout>

@@ -173,6 +173,7 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
         profile.setTbOfficial(official);
         if (official.AccessType.equalsIgnoreCase("inquiryofficial")) {
             profile.setPoliceStationID(mManager.getPreferenceData(dbHelper.COL_PoliceStationID));
+            profile.setSCDCAgencyCode(mManager.getPreferenceData(dbHelper.COL_SCDCAgencyCode));
         } else if (official.AccessType.equalsIgnoreCase("investigator")) {
             profile.setSCDCAgencyCode(mManager.getPreferenceData(dbHelper.COL_SCDCAgencyCode));
         }

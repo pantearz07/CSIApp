@@ -47,8 +47,8 @@ public class ConnectServer {
         SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_IP,context.MODE_PRIVATE);
 
         String IP = sp.getString(PreferenceData.KEY_IP,"192.168.4.101");
-        urlIP = "http://"+IP+"/csi/mobile/";
-        urlWebIP= "http://"+IP+"/csi/";
+        urlIP = "http://"+IP+"/mobile/";
+        urlWebIP= "http://"+IP;
         Log.d("urlIP", urlIP);
         Log.d("urlWebIP", urlWebIP);
     }

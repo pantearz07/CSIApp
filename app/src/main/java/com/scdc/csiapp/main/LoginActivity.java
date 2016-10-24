@@ -1,6 +1,5 @@
 package com.scdc.csiapp.main;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
@@ -282,7 +281,7 @@ public class LoginActivity extends AppCompatActivity {
                     WelcomeActivity.profile.setSCDCAgencyCode(apiLoginStatus.getData().getResult().getOfficial().getSCDCAgencyCode());
                 }
                 WelcomeActivity.profile.setTbUsers(users);
-
+                Log.i(TAG,  "password :"+users.pass.toString());
                 Toast.makeText(getApplicationContext(), apiLoginStatus.getData().getReason(), Toast.LENGTH_LONG).show();
                 boolean isSuccess = mManager.registerUser(users, official);
                 if (isSuccess) {

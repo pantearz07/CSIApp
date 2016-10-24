@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * Created by cbnuke on 9/16/16.
  */
-public class ApiMultimedia  implements Serializable {
+public class ApiMultimedia implements Serializable {
     // ตารางหลัก
     TbMultimediaFile tbMultimediaFile;
     TbPhotoOfOutside tbPhotoOfOutside;

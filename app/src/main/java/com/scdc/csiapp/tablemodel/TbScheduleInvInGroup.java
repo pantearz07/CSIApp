@@ -12,4 +12,19 @@ public class TbScheduleInvInGroup implements Serializable {
     // From Table scheduleinvingroup field name InvOfficialID
     public String InvOfficialID = "";
 
+    public String getScheduleGroupID() {
+        return ScheduleGroupID;
+    }
+
+    public void setScheduleGroupID(String scheduleGroupID) {
+        ScheduleGroupID = scheduleGroupID;
+    }
+
+    public String getInvOfficialID() {
+        return InvOfficialID;
+    }
+
+    public void setInvOfficialID(String invOfficialID) {
+        InvOfficialID = invOfficialID;
+    }
 }

@@ -1,6 +1,7 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -19,13 +20,17 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,11 +39,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiInvestigatorsInScene;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.GetDateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
@@ -97,6 +106,8 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
     View viewReceiveCSI;
     Context context;
+    ListView  listViewInvestigator;
+    List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
 
     @Nullable
     @Override
@@ -397,6 +408,22 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         }
         ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
         ic_telphone2.setOnClickListener(new AssignDetailTabFragment());
+        TextView txtInvestigatorList = (TextView) viewReceiveCSI.findViewById(R.id.txtInvestigatorList);
+        txtInvestigatorList.setVisibility(View.VISIBLE);
+        if (AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes() == null) {
+            apiInvestigatorsInScenes = new ArrayList<>();
+            Log.i(TAG, "apiInvestigatorsInScenes null");
+        } else {
+            apiInvestigatorsInScenes = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes();
+            Log.i(TAG, "apiInvestigatorsInScenes not null");
+            listViewInvestigator.setVisibility(View.VISIBLE);
+
+        }
+        listViewInvestigator = (ListView) viewReceiveCSI
+                .findViewById(R.id.listViewInvestigator);
+        listViewInvestigator.setOnTouchListener(new ListviewSetOnTouchListener());
+        showListInvestigators();
+
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (AssignTabFragment.mode == "view") {
 
@@ -544,6 +571,121 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
         Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+    }
+
+    private void showListInvestigators() {
+        if (AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes() != null) {
+            listViewInvestigator.setAdapter(new InvestigatorsAdapter(getActivity()));
+            setListViewHeightBasedOnItems(listViewInvestigator);
+            listViewInvestigator.setVisibility(View.VISIBLE);
+        } else {
+            listViewInvestigator.setVisibility(View.GONE);
+        }
+    }
+
+    public class InvestigatorsAdapter extends BaseAdapter {
+        private Context context;
+
+        public InvestigatorsAdapter(Context c) {
+            // TODO Auto-generated method stub
+            context = c;
+        }
+
+        @Override
+        public int getCount() {
+            return AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes().size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            if (view == null) {
+                view = inflater.inflate(R.layout.list_sceneinvestigation, null);
+            }
+            final String sInvOfficialID = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().getInvOfficialID();
+            Log.i(TAG, " show " + sInvOfficialID);
+            final String sRank = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getRank();
+            final String sFirstName = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getFirstName();
+            final String sLastName = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getLastName();
+            final String sPosition = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getPosition();
+            final TextView txtSceneInvest = (TextView) view.findViewById(R.id.txtSceneInvest);
+            txtSceneInvest.setText(String.valueOf(i + 1) + ") " + sRank + " " + sFirstName + " " + sLastName + " " + sPosition);
+            return view;
+        }
+    }
+
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+            Log.i("inside", String.valueOf(numberOfItems));
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                Log.i("inside", String.valueOf(item.getMeasuredHeight()));
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+            int totalHeight = totalItemsHeight + totalDividersHeight;
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
+            params.height = totalHeight;
+            Log.i("inside totalHeight", String.valueOf(totalHeight));
+            //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
+
+    public class ListviewSetOnTouchListener implements ListView.OnTouchListener {
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    // Allow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event);
+            return true;
+        }
     }
 
 

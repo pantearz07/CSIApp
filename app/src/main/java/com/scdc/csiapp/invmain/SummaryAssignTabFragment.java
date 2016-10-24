@@ -60,7 +60,7 @@ public class SummaryAssignTabFragment extends Fragment {
     Spinner spnCaseType, spnSubCaseType;
     String selectedCaseType, selectedSubCaseType, sCaseTypeID, sSubCaseTypeID;
     TextView edtUpdateDateTime2, edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo,
-            edtInvTel,edtInqTel,edtPoliceStation;
+            edtInvTel, edtInqTel, edtPoliceStation;
     String[] updateDT;
     String message = "";
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
@@ -76,7 +76,8 @@ public class SummaryAssignTabFragment extends Fragment {
     View layoutButton, layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
     CSIDataTabFragment csiDataTabFragment;
     TextView editSceneNoticeDate, editSceneNoticeTime;
-    String InqTel,InvTel;
+    String InqTel, InvTel;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,8 +114,8 @@ public class SummaryAssignTabFragment extends Fragment {
         layoutButton.setVisibility(View.GONE);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
-        edtInqTel= (TextView) viewSummaryCSI.findViewById(R.id.edtInqTel);
-        edtInvTel= (TextView) viewSummaryCSI.findViewById(R.id.edtInvTel);
+        edtInqTel = (TextView) viewSummaryCSI.findViewById(R.id.edtInqTel);
+        edtInvTel = (TextView) viewSummaryCSI.findViewById(R.id.edtInvTel);
         edtPoliceStation = (TextView) viewSummaryCSI.findViewById(R.id.edtPoliceStation);
 //สถานะคดี
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
@@ -199,7 +200,7 @@ public class SummaryAssignTabFragment extends Fragment {
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
                 + WelcomeActivity.profile.getTbOfficial().LastName + " ("
                 + WelcomeActivity.profile.getTbOfficial().Position + ")");
-        edtInvTel.setText("โทร."+ WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        edtInvTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
         InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
         edtInvTel.setOnClickListener(new SummaryOnClickListener());
 
@@ -214,7 +215,7 @@ public class SummaryAssignTabFragment extends Fragment {
             if (mInvOfficialArray != null) {
                 edtInqInfo.setText(mInvOfficialArray[4].toString() + " " + mInvOfficialArray[1].toString()
                         + " " + mInvOfficialArray[2].toString() + " (" + mInvOfficialArray[5].toString() + ")");
-                if ( mInvOfficialArray[7] != null || mInvOfficialArray[7].equals("")) {
+                if (mInvOfficialArray[7] != null || mInvOfficialArray[7].equals("")) {
                     edtInqTel.setText("โทร." + mInvOfficialArray[7].toString());
                     InqTel = mInvOfficialArray[7].toString();
                     edtInqTel.setOnClickListener(new SummaryOnClickListener());
@@ -251,7 +252,11 @@ public class SummaryAssignTabFragment extends Fragment {
         //ววันเวลาที่จ่ายงานห
         if (AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate == null) {
             edtSceneNoticeDateTime.setText("-");
-        } else {
+        } else if (AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate.equals("0000-00-00")) {
+            edtUpdateDateTime.setText("-");
+
+
+        }  else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate + " น.");
         }
 
@@ -267,6 +272,11 @@ public class SummaryAssignTabFragment extends Fragment {
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate == null) {
 
             edtUpdateDateTime.setText("-");
+
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("0000-00-00")) {
+            edtUpdateDateTime.setText("-");
+
+
         } else {
             edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime + " น.");
 
@@ -431,7 +441,7 @@ public class SummaryAssignTabFragment extends Fragment {
                 TimeDialog dialogKnowCaseTime = new TimeDialog(v);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
             }
-            if( v == edtInqTel){
+            if (v == edtInqTel) {
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + InqTel));
@@ -441,7 +451,7 @@ public class SummaryAssignTabFragment extends Fragment {
                     Log.e("Calling a Phone Number", "Call failed", activityException);
                 }
             }
-            if( v == edtInvTel){
+            if (v == edtInvTel) {
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + InvTel));

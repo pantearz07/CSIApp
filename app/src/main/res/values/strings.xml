@@ -12,6 +12,7 @@
     <string name="save">บันทึก</string>
     <string name="save_complete">บันทึกเรียบร้อย</string>
     <string name="delete_complete">ลบข้อมูลเรียบร้อย</string>
+    <string name="download_complete">ดาวน์โหลดเรียบร้อย</string>
     <string name="cancel">ยกเลิก</string>
     <string name="ok">ตกลง</string>
     <string name="next">ถัดไป</string>
@@ -52,6 +53,7 @@
     <string name="settings">ตั้งค่า</string>
     <string name="more">อื่นๆ</string>
     <string name="profile">ข้อมูลส่วนตัว</string>
+    <string name="change_pass">เปลี่ยนรหัสผ่าน</string>
     <string name="form_csi">ฟอร์มบันทึกข้อมูลการตรวจสถานที่เกิดเหตุ</string>
 
     <!-- drawing -->

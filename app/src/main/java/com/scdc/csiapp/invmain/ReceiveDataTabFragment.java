@@ -43,6 +43,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiInvestigatorsInScene;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -100,7 +101,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     String sHappenCaseDate_New = "";
     String sKnowCaseDate_New = "";
     String sSceneInvestDate_New = "";
-    private ListView listViewSufferer, listViewInvestigator;
+    private ListView listViewSufferer;
     private View linearLayoutAddSufferer, linearLayoutInvestigator;
     private Button btnAddSufferer, btnAddInvestigator, btnShowInvestigator, btnSaveSchedule, btnEditInvestigator;
     private ArrayList<HashMap<String, String>> suffererList;
@@ -115,7 +116,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     private TextView editSceneInvestDate, editSceneInvestTime, txtSceneInvest;
     // ตรวจเสร็จ
     //private TextView editCompleteSceneDate, editCompleteSceneTime;
-    ImageButton btn_property,ic_telphone1,ic_telphone2;
+    ImageButton btn_property, ic_telphone1, ic_telphone2;
 
     ArrayList<Integer> mMultiSelected;
     ArrayList<Boolean> mMultiChecked;
@@ -132,7 +133,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     ViewGroup viewAddSceneInvestigation;
     protected static final int DIALOG_AddSceneInvestigation = 0;
     List<TbSceneInvestigation> tbSceneInvestigations = null;
-    ListView listViewAddSceneInvestDateTime;
+    ListView listViewAddSceneInvestDateTime, listViewInvestigator;
+    List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
 
     @Nullable
     @Override
@@ -254,6 +256,17 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.listViewAddSceneInvestDateTime);
         listViewAddSceneInvestDateTime.setOnTouchListener(new ListviewSetOnTouchListener());
         showListSceneInvestigation();
+        if (CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes() == null) {
+            apiInvestigatorsInScenes = new ArrayList<>();
+            Log.i(TAG, "apiInvestigatorsInScenes null");
+        } else {
+            apiInvestigatorsInScenes = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes();
+            Log.i(TAG, "apiInvestigatorsInScenes not null");
+        }
+        listViewInvestigator = (ListView) viewReceiveCSI
+                .findViewById(R.id.listViewInvestigator);
+        listViewInvestigator.setOnTouchListener(new ListviewSetOnTouchListener());
+        showListInvestigators();
 // /show spinner
         spinnerProvince = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerProvince);
         spinnerAmphur = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAmphur);
@@ -700,7 +713,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 TimeDialog dialogSceneInvestTime = new TimeDialog(v);
                 dialogSceneInvestTime.show(getActivity().getFragmentManager(), "Time Picker");
             }
-            if( v == ic_telphone1){
+            if (v == ic_telphone1) {
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + editTextPhone1.getText().toString()));
@@ -710,7 +723,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     Log.e("Calling a Phone Number", "Call failed", activityException);
                 }
             }
-            if( v == ic_telphone2){
+            if (v == ic_telphone2) {
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
@@ -844,6 +857,60 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    private void showListInvestigators() {
+        if (CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes() != null) {
+            listViewInvestigator.setAdapter(new InvestigatorsAdapter(getActivity()));
+            setListViewHeightBasedOnItems(listViewInvestigator);
+            listViewInvestigator.setVisibility(View.VISIBLE);
+        } else {
+            listViewInvestigator.setVisibility(View.GONE);
+        }
+    }
+
+    public class InvestigatorsAdapter extends BaseAdapter {
+        private Context context;
+
+        public InvestigatorsAdapter(Context c) {
+            // TODO Auto-generated method stub
+            context = c;
+        }
+
+        @Override
+        public int getCount() {
+            return CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            if (view == null) {
+                view = inflater.inflate(R.layout.list_sceneinvestigation, null);
+            }
+            final String sInvOfficialID = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().getInvOfficialID();
+            Log.i(TAG , " show "+sInvOfficialID);
+            final String sRank = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getRank();
+            final String sFirstName = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getFirstName();
+            final String sLastName = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getLastName();
+            final String sPosition = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getPosition();
+            final TextView txtSceneInvest = (TextView) view.findViewById(R.id.txtSceneInvest);
+            txtSceneInvest.setText(String.valueOf(i + 1) + ") " + sRank + " " + sFirstName + " " + sLastName + " " + sPosition);
+            return view;
+        }
+    }
+
     public class RecOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -865,73 +932,73 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 case R.id.spinnerDistrict:
 //                    if (oldDistrict == false) {
 
-                        if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+                    if (districtid == null || districtid.equals("") || districtid.equals("null")) {
 //                            spinnerDistrict.setSelection(0);
-                            selectedDistrict = mDistrictArray[pos][0];
-                            sDistrictName = mDistrictArray[pos][2].toString();
-                            Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
-                            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
-                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
-                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
-                        } else {
-                            for (int i = 0; i < mDistrictArray.length; i++) {
-                                if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
-                                    sDistrictName = mDistrictArray[i][2].toString();
-                                    selectedDistrict = mDistrictArray[i][0];
-                                    spinnerDistrict.setSelection(i);
-                                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
-                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
-                                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                        selectedDistrict = mDistrictArray[pos][0];
+                        sDistrictName = mDistrictArray[pos][2].toString();
+                        Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
+                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
+                        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                    } else {
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            if (districtid.trim().equals(mDistrictArray[i][0].toString())) {
+                                sDistrictName = mDistrictArray[i][2].toString();
+                                selectedDistrict = mDistrictArray[i][0];
+                                spinnerDistrict.setSelection(i);
+                                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
+                                CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
+                                Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
 //                                    oldDistrict = true;
-                                    break;
-                                }
+                                break;
                             }
-
                         }
+
+                    }
 //                    }
                     break;
                 case R.id.spinnerAmphur:
 //                    if (oldAmphur == false) {
 
-                        //ดึงค่า District
-                        if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+                    //ดึงค่า District
+                    if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
 //                            spinnerAmphur.setSelection(0);
-                            selectedAmphur = mAmphurArray[pos][0];
-                            sAmphurName = mAmphurArray[pos][2].toString();
-                            Log.i(TAG," show selectedAmphur"+ selectedAmphur + " " + sAmphurName);
-                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
-                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
-                            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
-                        } else {
-                            for (int i = 0; i < mAmphurArray.length; i++) {
-                                if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
-                                    spinnerAmphur.setSelection(i);
-                                    selectedAmphur = mAmphurArray[i][0];
-                                    sAmphurName = mAmphurArray[i][2].toString();
-                                    Log.i(TAG," show selectedAmphur"+ selectedAmphur + " " + sAmphurName);
-                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
-                                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
-                                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
-                                    oldAmphur = true;
-                                    break;
-                                }
+                        selectedAmphur = mAmphurArray[pos][0];
+                        sAmphurName = mAmphurArray[pos][2].toString();
+                        Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
+                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
+                        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
+                    } else {
+                        for (int i = 0; i < mAmphurArray.length; i++) {
+                            if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {
+                                spinnerAmphur.setSelection(i);
+                                selectedAmphur = mAmphurArray[i][0];
+                                sAmphurName = mAmphurArray[i][2].toString();
+                                Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
+                                CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
+                                Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
+                                oldAmphur = true;
+                                break;
                             }
                         }
-                        mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
-                        if (mDistrictArray != null) {
-                            String[] mDistrictArray2 = new String[mDistrictArray.length];
-                            for (int i = 0; i < mDistrictArray.length; i++) {
-                                mDistrictArray2[i] = mDistrictArray[i][2];
-                                // Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
-                            }
-                            ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
-                                    android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
-                            spinnerDistrict.setAdapter(adapterDistrict);
-                        } else {
-                            spinnerDistrict.setAdapter(null);
-                            selectedDistrict = null;
-                            Log.i(TAG , " show selectedDistrict "+ String.valueOf(selectedDistrict));
+                    }
+                    mDistrictArray = dbHelper.SelectDistrict(selectedAmphur);
+                    if (mDistrictArray != null) {
+                        String[] mDistrictArray2 = new String[mDistrictArray.length];
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            mDistrictArray2[i] = mDistrictArray[i][2];
+                            // Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
                         }
+                        ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
+                        spinnerDistrict.setAdapter(adapterDistrict);
+                    } else {
+                        spinnerDistrict.setAdapter(null);
+                        selectedDistrict = null;
+                        Log.i(TAG, " show selectedDistrict " + String.valueOf(selectedDistrict));
+                    }
 //                    }
                     break;
                 case R.id.spinnerProvince:

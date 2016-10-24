@@ -3,6 +3,15 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:id="@+id/txtNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ตรวจครั้งที่"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/padding_s"
+        android:layout_marginTop="@dimen/padding_s"
+        android:textSize="@dimen/small_text" />
+    <TextView
         android:id="@+id/txtSceneInvest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

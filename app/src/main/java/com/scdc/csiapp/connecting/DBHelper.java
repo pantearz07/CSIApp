@@ -9,12 +9,18 @@ import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
+import com.scdc.csiapp.apimodel.ApiInvestigatorsInScene;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiListOfficial;
+import com.scdc.csiapp.apimodel.ApiListScheduleInvestigates;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.apimodel.ApiOfficial;
+import com.scdc.csiapp.apimodel.ApiProfile;
+import com.scdc.csiapp.apimodel.ApiScheduleGroup;
+import com.scdc.csiapp.apimodel.ApiScheduleInvInGroup;
+import com.scdc.csiapp.apimodel.ApiScheduleInvestigates;
 import com.scdc.csiapp.tablemodel.TbAmphur;
 import com.scdc.csiapp.tablemodel.TbCaseScene;
 import com.scdc.csiapp.tablemodel.TbCaseSceneType;
@@ -53,6 +59,7 @@ import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureOutside;
 import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
 import com.scdc.csiapp.tablemodel.TbScheduleGroup;
+import com.scdc.csiapp.tablemodel.TbScheduleInvInGroup;
 import com.scdc.csiapp.tablemodel.TbScheduleInvestigates;
 import com.scdc.csiapp.tablemodel.TbSubcaseSceneType;
 import com.scdc.csiapp.tablemodel.TbUsers;
@@ -1848,6 +1855,83 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    public boolean updateProfile(ApiProfile apiProfile) {
+        if (apiProfile == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+
+            String sOfficialID, id_users;
+            String strSQL;
+            db.beginTransaction();
+            sOfficialID = apiProfile.getTbOfficial().OfficialID;
+            id_users = apiProfile.getTbUsers().id_users;
+            //บันทึกข้อมูลลง official
+            strSQL = "SELECT * FROM official WHERE "
+                    + "OfficialID = '" + sOfficialID + "'";
+            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                ContentValues Val = new ContentValues();
+                Val.put(COL_OfficialID, apiProfile.getTbOfficial().OfficialID);
+                Val.put(COL_FirstName, apiProfile.getTbOfficial().FirstName);
+                Val.put(COL_LastName, apiProfile.getTbOfficial().LastName);
+                Val.put(COL_Alias, apiProfile.getTbOfficial().Alias);
+                Val.put(COL_Rank, apiProfile.getTbOfficial().Rank);
+                Val.put(COL_Position, apiProfile.getTbOfficial().Position);
+                Val.put(COL_SubPossition, apiProfile.getTbOfficial().SubPossition);
+                Val.put(COL_PhoneNumber, apiProfile.getTbOfficial().PhoneNumber);
+                Val.put(COL_OfficialEmail, apiProfile.getTbOfficial().OfficialEmail);
+                Val.put(COL_OfficialDisplayPic, apiProfile.getTbOfficial().OfficialDisplayPic);
+                Val.put(COL_AccessType, apiProfile.getTbOfficial().AccessType);
+                Val.put(COL_SCDCAgencyCode, apiProfile.getTbOfficial().SCDCAgencyCode);
+                Val.put(COL_PoliceStationID, apiProfile.getTbOfficial().PoliceStationID);
+                Val.put(COL_id_users, apiProfile.getTbOfficial().id_users);
+                Log.d(TAG, "official FirstName" + apiProfile.getTbOfficial().FirstName);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("official", null, Val);
+                    Log.d(TAG, "Sync Table official: Insert ");
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(sOfficialID)});
+                    Log.d(TAG, "Sync Table official: Update ");
+                }
+            }
+            //บันทึกข้อมูลลง users
+            strSQL = "SELECT * FROM users WHERE "
+                    + "id_users = '" + id_users + "'";
+            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                ContentValues Val = new ContentValues();
+                Val.put(COL_id_users, apiProfile.getTbUsers().id_users);
+                Val.put(COL_id_permission, apiProfile.getTbUsers().id_permission);
+                Val.put(COL_pass, apiProfile.getTbUsers().pass);
+                Val.put(COL_id_system, apiProfile.getTbUsers().id_system);
+                Val.put(COL_title, apiProfile.getTbUsers().title);
+                Val.put(COL_name, apiProfile.getTbUsers().name);
+                Val.put(COL_surname, apiProfile.getTbUsers().surname);
+                Val.put(COL_position, apiProfile.getTbUsers().position);
+                Val.put(COL_picture, apiProfile.getTbUsers().picture);
+                Val.put(COL_last_login, apiProfile.getTbUsers().last_login);
+                Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("users", null, Val);
+                    Log.d(TAG, "Sync Table users: Insert ");
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("users", Val, " id_users = ?", new String[]{String.valueOf(id_users)});
+                    Log.d(TAG, "Sync Table users: Update ");
+                }
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in updateProfile " + e.getMessage().toString());
+            return false;
+        }
+    }
+
     public boolean updateAlldataCase(ApiCaseScene apiCaseScene) {
         if (apiCaseScene == null) {
             return false;
@@ -2623,6 +2707,251 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    public ApiListScheduleInvestigates selectApiScheduleInvestigates(String SCDCAgencyCode) {
+        Log.d(TAG, "SCDCAgencyCode:" + SCDCAgencyCode);
+        ApiListScheduleInvestigates apiListScheduleInvestigates = new ApiListScheduleInvestigates();
+        apiListScheduleInvestigates.setStatus("success");
+        ApiListScheduleInvestigates.DataEntity dataEntity = new ApiListScheduleInvestigates().new DataEntity();
+        dataEntity.setAction("SQLite selectApiScheduleInvestigates");
+        dataEntity.setReason("โหลดรายการคดีสำเร็จ");
+
+        List<ApiScheduleInvestigates> apiScheduleInvestigatesList = new ArrayList<>();
+
+        try {
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+            String strSQL, strSQL_main;
+            strSQL_main = "SELECT * FROM scheduleinvestigates "
+                    + " WHERE SCDCAgencyCode = '" + SCDCAgencyCode + "'" +
+                    " ORDER BY ScheduleDate ASC";
+            try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
+
+                Log.d(TAG, "strSQL_main" + strSQL_main + " " + String.valueOf(cursor.getCount()));
+                cursor.moveToPosition(-1);
+                while (cursor.moveToNext()) {
+                    ApiScheduleInvestigates apiScheduleInvestigates = new ApiScheduleInvestigates();
+
+                    TbScheduleInvestigates tbScheduleInvestigates = new TbScheduleInvestigates();
+                    tbScheduleInvestigates.ScheduleInvestigateID = cursor.getString(cursor.getColumnIndex(COL_ScheduleInvestigateID));
+                    tbScheduleInvestigates.ScheduleDate = cursor.getString(cursor.getColumnIndex(COL_ScheduleDate));
+                    tbScheduleInvestigates.ScheduleMonth = cursor.getString(cursor.getColumnIndex(COL_ScheduleMonth));
+                    tbScheduleInvestigates.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(COL_SCDCAgencyCode));
+                    apiScheduleInvestigates.setTbScheduleInvestigates(tbScheduleInvestigates);
+                    Log.d(TAG, "tbScheduleInvestigates.ScheduleInvestigateID" + tbScheduleInvestigates.ScheduleInvestigateID);
+
+                    Log.d(TAG, "apiScheduleInvestigates" + apiScheduleInvestigates.getTbScheduleInvestigates().ScheduleInvestigateID);
+                    if (tbScheduleInvestigates.SCDCAgencyCode != null) {
+                        // Index tbOfficial ดึงจากตาราง official
+                        strSQL = "SELECT * FROM scdcagency "
+                                + " WHERE SCDCAgencyCode = '" + tbScheduleInvestigates.SCDCAgencyCode + "'";
+                        try (Cursor cursor4 = db.rawQuery(strSQL, null)) {
+                            if (cursor4.getCount() == 1) {
+                                cursor4.moveToFirst();
+                                TbSCDCagency tbSCDCagency = new TbSCDCagency();
+                                tbSCDCagency.SCDCAgencyCode = cursor4.getString(cursor4.getColumnIndex(COL_SCDCAgencyCode));
+                                tbSCDCagency.SCDCCenterID = cursor4.getString(cursor4.getColumnIndex(COL_SCDCCenterID));
+                                tbSCDCagency.SCDCAgencyName = cursor4.getString(cursor4.getColumnIndex(COL_SCDCAgencyName));
+                                apiScheduleInvestigates.setTbSCDCagency(tbSCDCagency);
+                                Log.d(TAG, "SCDCAgencyName" + apiScheduleInvestigates.getTbSCDCagency().SCDCAgencyName);
+                            }
+                        }
+                    }
+                    if (tbScheduleInvestigates.ScheduleInvestigateID != null) {
+                        List<ApiScheduleGroup> apiScheduleGroupList = new ArrayList<>();
+                        strSQL = "SELECT * FROM schedulegroup "
+                                + " WHERE ScheduleInvestigateID = '" + tbScheduleInvestigates.ScheduleInvestigateID + "'"
+                                + " ORDER BY ScheduleGroupID ASC";
+                        Log.d(TAG, "schedulegroup / " + strSQL);
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                            if (cursor2.getCount() > 0) {
+                                Log.d(TAG, "schedulegroup  " + strSQL);
+                                cursor2.moveToPosition(-1);
+                                int i = 0;
+                                while (cursor2.moveToNext()) {
+                                    ApiScheduleGroup apiScheduleGroup = new ApiScheduleGroup();
+                                    TbScheduleGroup tbScheduleGroup = new TbScheduleGroup();
+                                    tbScheduleGroup.ScheduleGroupID = cursor2.getString(cursor2.getColumnIndex(COL_ScheduleGroupID));
+                                    tbScheduleGroup.ScheduleInvestigateID = cursor2.getString(cursor2.getColumnIndex(COL_ScheduleInvestigateID));
+                                    apiScheduleGroup.setTbScheduleGroup(tbScheduleGroup);
+                                    List<ApiScheduleInvInGroup> apiScheduleInvInGroupList = new ArrayList<>();
+                                    String strSQL2 = "SELECT * FROM scheduleinvingroup "
+                                            + " WHERE ScheduleGroupID = '" + tbScheduleGroup.ScheduleGroupID + "'"
+                                            + " ORDER BY InvOfficialID ASC";
+                                    Log.d(TAG, "scheduleinvingroup  " + strSQL2);
+                                    try (Cursor cursor3 = db.rawQuery(strSQL2, null)) {
+                                        if (cursor3.getCount() > 0) {
+                                            cursor3.moveToPosition(-1);
+                                            int j = 0;
+                                            while (cursor3.moveToNext()) {
+                                                ApiScheduleInvInGroup apiScheduleInvInGroup = new ApiScheduleInvInGroup();
+
+                                                TbScheduleInvInGroup tbScheduleInvInGroup = new TbScheduleInvInGroup();
+                                                tbScheduleInvInGroup.ScheduleGroupID = cursor3.getString(cursor3.getColumnIndex(COL_ScheduleGroupID));
+                                                tbScheduleInvInGroup.InvOfficialID = cursor3.getString(cursor3.getColumnIndex(COL_InvOfficialID));
+                                                apiScheduleInvInGroup.setTbScheduleInvInGroup(tbScheduleInvInGroup);
+
+                                                if (tbScheduleInvInGroup.InvOfficialID != null) {
+                                                    // Index tbOfficial ดึงจากตาราง official
+                                                    strSQL = "SELECT * FROM official "
+                                                            + " WHERE OfficialID = '" + tbScheduleInvInGroup.InvOfficialID + "'";
+                                                    try (Cursor cursor4 = db.rawQuery(strSQL, null)) {
+                                                        if (cursor4.getCount() == 1) {
+                                                            cursor4.moveToFirst();
+                                                            TbOfficial tbOfficial = new TbOfficial();
+                                                            tbOfficial.OfficialID = cursor4.getString(cursor4.getColumnIndex(COL_OfficialID));
+                                                            tbOfficial.FirstName = cursor4.getString(cursor4.getColumnIndex(COL_FirstName));
+                                                            tbOfficial.LastName = cursor4.getString(cursor4.getColumnIndex(COL_LastName));
+                                                            tbOfficial.Alias = cursor4.getString(cursor4.getColumnIndex(COL_Alias));
+                                                            tbOfficial.Rank = cursor4.getString(cursor4.getColumnIndex(COL_Rank));
+                                                            tbOfficial.Position = cursor4.getString(cursor4.getColumnIndex(COL_Position));
+                                                            tbOfficial.SubPossition = cursor4.getString(cursor4.getColumnIndex(COL_SubPossition));
+                                                            tbOfficial.PhoneNumber = cursor4.getString(cursor4.getColumnIndex(COL_PhoneNumber));
+                                                            tbOfficial.OfficialEmail = cursor4.getString(cursor4.getColumnIndex(COL_OfficialEmail));
+                                                            tbOfficial.OfficialDisplayPic = cursor4.getString(cursor4.getColumnIndex(COL_OfficialDisplayPic));
+                                                            tbOfficial.AccessType = cursor4.getString(cursor4.getColumnIndex(COL_AccessType));
+                                                            tbOfficial.SCDCAgencyCode = cursor4.getString(cursor4.getColumnIndex(COL_SCDCAgencyCode));
+                                                            tbOfficial.PoliceStationID = cursor4.getString(cursor4.getColumnIndex(COL_PoliceStationID));
+                                                            tbOfficial.id_users = cursor4.getString(cursor4.getColumnIndex(COL_id_users));
+                                                            apiScheduleInvInGroup.setTbOfficial(tbOfficial);
+                                                        }
+                                                    }
+                                                }
+                                                apiScheduleInvInGroupList.add(apiScheduleInvInGroup);
+//                                                apiScheduleInvInGroupList.set(j, apiScheduleInvInGroup);
+                                                j++;
+                                            }
+                                        }
+                                    }
+                                    apiScheduleGroup.setApiScheduleInvInGroup(apiScheduleInvInGroupList);
+                                    apiScheduleGroupList.add(apiScheduleGroup);
+                                    apiScheduleInvestigates.setApiScheduleGroup(apiScheduleGroupList);
+                                    i++;
+                                }
+                            }
+                        }
+                    }
+                    apiScheduleInvestigates.setMode("offline");
+                    apiScheduleInvestigatesList.add(apiScheduleInvestigates);
+                    Log.d(TAG, "--" + apiScheduleInvestigates.getTbScheduleInvestigates().ScheduleInvestigateID);
+                }
+            }
+            db.close();
+            // รวมข้อมูลที่ได้ทั้งหมดลง apiScheduleInvestigatesList ก่อนส่งกลับไปใช้
+            Log.d(TAG, "apiScheduleInvestigatesList:" + apiScheduleInvestigatesList.size());
+            for (int i = 0; i < apiScheduleInvestigatesList.size(); i++) {
+                Log.d(TAG, "////--" + apiScheduleInvestigatesList.get(i).getTbScheduleInvestigates().ScheduleInvestigateID);
+            }
+            dataEntity.setResult(apiScheduleInvestigatesList);
+            apiListScheduleInvestigates.setData(dataEntity);
+            return apiListScheduleInvestigates;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in selectApiScheduleInvestigates " + e.getMessage().toString());
+            return null;
+        }
+    }
+
+    public boolean syncApiScheduleInvestigates(List<ApiScheduleInvestigates> apiScheduleInvestigates) {
+        if (apiScheduleInvestigates.size() == 0) {
+            Log.d(TAG, "apiScheduleInvestigates =  0");
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = apiScheduleInvestigates.size();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            db.beginTransaction();
+            Log.d(TAG, "apiScheduleInvestigates =  " + String.valueOf(size));
+            for (int i = 0; i < size; i++) {
+                PRIMARY_KEY = apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleInvestigateID;
+                strSQL = "SELECT * FROM scheduleinvestigates WHERE "
+                        + "ScheduleInvestigateID = '" + PRIMARY_KEY + "'" +
+                        " ORDER BY ScheduleDate ASC";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+                Log.d(TAG, strSQL + " / scheduleinvestigates getCount=  " + String.valueOf(cursor.getCount()));
+                ContentValues Val = new ContentValues();
+                Val.put(COL_ScheduleInvestigateID, apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleInvestigateID);
+                Val.put(COL_ScheduleDate, apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleDate);
+                Val.put(COL_ScheduleMonth, apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleMonth);
+                Val.put(COL_SCDCAgencyCode, apiScheduleInvestigates.get(i).getTbScheduleInvestigates().SCDCAgencyCode);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("scheduleinvestigates", null, Val);
+                    insert++;
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    // ต้องตรวจสอบก่อนว่าข้อมูลที่ได้มานั้นใหม่กว่าที่อยู่ใน SQLite จริงๆ
+                    db.update("scheduleinvestigates", Val, " SCDCAgencyCode = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
+                Log.d(TAG, "Sync Table scheduleinvestigates: Insert " + insert + ", Update " + update);
+                cursor.close();
+                if (apiScheduleInvestigates.get(i).getApiScheduleGroup() != null) {
+                    int sizeApiScheduleGroup = apiScheduleInvestigates.get(i).getApiScheduleGroup().size();
+                    int insert2 = 0;
+                    int update2 = 0;
+                    for (int j = 0; j < sizeApiScheduleGroup; j++) {
+//
+                        String sScheduleInvestigateID = apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleInvestigateID;
+                        strSQL = "SELECT * FROM schedulegroup "
+                                + " WHERE ScheduleInvestigateID = '" + sScheduleInvestigateID + "'"
+                                + " ORDER BY ScheduleGroupID ASC";
+                        Cursor cursor2 = mDb.rawQuery(strSQL, null);
+                        ContentValues Val2 = new ContentValues();
+                        Val2.put(COL_ScheduleGroupID, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID);
+                        Val2.put(COL_ScheduleInvestigateID, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleInvestigateID);
+                        if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("schedulegroup", null, Val2);
+                            insert2++;
+                        } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            // ต้องตรวจสอบก่อนว่าข้อมูลที่ได้มานั้นใหม่กว่าที่อยู่ใน SQLite จริงๆ
+                            db.update("schedulegroup", Val2, " ScheduleInvestigateID = ?", new String[]{sScheduleInvestigateID});
+                            update2++;
+                        }
+                        Log.d(TAG, "Sync Table schedulegroup: Insert " + insert2 + ", Update " + update2);
+                        cursor2.close();
+                        if (apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup() != null) {
+                            int sizeApiScheduleInvInGroup = apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().size();
+                            int insert3 = 0;
+                            int update3 = 0;
+                            for (int k = 0; k < sizeApiScheduleInvInGroup; k++) {
+                                String sInvOfficialID = apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID;
+                                strSQL = "SELECT * FROM scheduleinvingroup "
+                                        + " WHERE InvOfficialID = '" + sInvOfficialID + "'";
+                                Cursor cursor3 = mDb.rawQuery(strSQL, null);
+                                ContentValues Val3 = new ContentValues();
+                                Val3.put(COL_ScheduleGroupID, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().ScheduleGroupID);
+                                Val3.put(COL_InvOfficialID, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID);
+                                if (cursor3.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                                    db.insert("scheduleinvingroup", null, Val3);
+                                    insert3++;
+                                } else if (cursor3.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                                    // ต้องตรวจสอบก่อนว่าข้อมูลที่ได้มานั้นใหม่กว่าที่อยู่ใน SQLite จริงๆ
+                                    db.update("scheduleinvingroup", Val3, " InvOfficialID = ?", new String[]{sInvOfficialID});
+                                    update3++;
+                                }
+                                Log.d(TAG, "Sync Table scheduleinvingroup: Insert " + insert3 + ", Update " + update3);
+                                cursor3.close();
+                            }
+                        }
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncApiScheduleInvestigates " + e.getMessage().toString());
+            return false;
+        }
+    }
+
     public ApiListCaseScene selectApiCaseScene(String OfficeID) {
         Log.d(TAG, "OfficeID:" + OfficeID);
         ApiListCaseScene apiListCaseScene = new ApiListCaseScene();
@@ -2981,7 +3310,65 @@ public class DBHelper extends SQLiteAssetHelper {
                         apiCaseSceneCase.setTbSceneFeatureInSide(tbSceneFeatureInSides);
 
                     }
+                    //ApiInvestigatorsInScene
+                    if (temp.CaseReportID != null) {
+                        List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = new ArrayList<>();
+                        strSQL = "SELECT * FROM investigatorsinscene "
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
+                        Log.i(TAG, strSQL);
+                        try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
+                            if (cursor2.getCount() > 0) {
+                                cursor2.moveToPosition(-1);
+                                while (cursor2.moveToNext()) {
+                                    ApiInvestigatorsInScene apiInvestigatorsInScene = new ApiInvestigatorsInScene();
+
+                                    TbInvestigatorsInScene tbInvestigatorsInScene = new TbInvestigatorsInScene();
+                                    tbInvestigatorsInScene.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                                    tbInvestigatorsInScene.InvOfficialID = cursor2.getString(cursor2.getColumnIndex(COL_InvOfficialID));
+                                    tbInvestigatorsInScene.InvType = cursor2.getString(cursor2.getColumnIndex(COL_InvType));
+                                    apiInvestigatorsInScene.setTbInvestigatorsInScene(tbInvestigatorsInScene);
+                                    if (tbInvestigatorsInScene.InvOfficialID != null) {
+                                        strSQL = "SELECT * FROM " + TB_photoofoutside
+                                                + " WHERE " + COL_FileID + " = '" + tbInvestigatorsInScene.InvOfficialID + "'";
+
+                                        try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
+
+                                            if (cursor3.getCount() == 1) {
+                                                cursor3.moveToFirst();
+                                                TbOfficial tbOfficial = new TbOfficial();
+                                                tbOfficial.OfficialID = cursor3.getString(cursor3.getColumnIndex(COL_OfficialID));
+                                                tbOfficial.FirstName = cursor3.getString(cursor3.getColumnIndex(COL_FirstName));
+                                                tbOfficial.LastName = cursor3.getString(cursor3.getColumnIndex(COL_LastName));
+                                                tbOfficial.Alias = cursor3.getString(cursor3.getColumnIndex(COL_Alias));
+                                                tbOfficial.Rank = cursor3.getString(cursor3.getColumnIndex(COL_Rank));
+                                                tbOfficial.Position = cursor3.getString(cursor3.getColumnIndex(COL_Position));
+                                                tbOfficial.SubPossition = cursor3.getString(cursor3.getColumnIndex(COL_SubPossition));
+                                                tbOfficial.PhoneNumber = cursor3.getString(cursor3.getColumnIndex(COL_PhoneNumber));
+                                                tbOfficial.OfficialEmail = cursor3.getString(cursor3.getColumnIndex(COL_OfficialEmail));
+                                                tbOfficial.OfficialDisplayPic = cursor3.getString(cursor3.getColumnIndex(COL_OfficialDisplayPic));
+                                                tbOfficial.AccessType = cursor3.getString(cursor3.getColumnIndex(COL_AccessType));
+                                                tbOfficial.SCDCAgencyCode = cursor3.getString(cursor3.getColumnIndex(COL_SCDCAgencyCode));
+                                                tbOfficial.PoliceStationID = cursor3.getString(cursor3.getColumnIndex(COL_PoliceStationID));
+                                                tbOfficial.id_users = cursor3.getString(cursor3.getColumnIndex(COL_id_users));
+                                                apiInvestigatorsInScene.setTbOfficial(tbOfficial);
+
+                                                Log.i(TAG, "tbOfficial " + tbOfficial.FirstName);
+                                            } else {
+                                                apiInvestigatorsInScene.setTbOfficial(null);
+                                            }
+                                        }
+                                    }
+                                    apiInvestigatorsInScenes.add(apiInvestigatorsInScene);
+                                }
+                            }
+                        }
+                        apiCaseSceneCase.setApiInvestigatorsInScenes(apiInvestigatorsInScenes);
+                        Log.i(TAG, "apiInvestigatorsInScenes :" + String.valueOf(apiCaseSceneCase.getApiInvestigatorsInScenes().size()));
+                        for (int i = 0; i < apiCaseSceneCase.getApiInvestigatorsInScenes().size(); i++) {
+                            Log.i(TAG, apiCaseSceneCase.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID);
+                        }
+                    }
                     //  ApiMultimedia
                     if (temp.CaseReportID != null) {
                         List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
@@ -3253,7 +3640,7 @@ public class DBHelper extends SQLiteAssetHelper {
             db.close();
 //            Log.d("TEST", apiNoticeCases.get(0).getTbNoticeCase().NoticeCaseID + " " + apiNoticeCases.get(1).getTbNoticeCase().NoticeCaseID);
             // รวมข้อมูลที่ได้ทั้งหมดลง apiListNoticeCase ก่อนส่งกลับไปใช้
-            Log.d(TAG, "apiNoticeCases:" + apiCaseScenesCases.size());
+            Log.d(TAG, "apiCaseScenesCases:" + apiCaseScenesCases.size());
             for (int i = 0; i < apiCaseScenesCases.size(); i++) {
                 Log.d("TEST", "////--" + apiCaseScenesCases.get(i).getTbNoticeCase().NoticeCaseID);
             }
@@ -3265,48 +3652,6 @@ public class DBHelper extends SQLiteAssetHelper {
             Log.d(TAG, "Error in selectApiCaseScene " + e.getMessage().toString());
             return null;
         }
-    }
-
-    public TbNoticeCase selectNoticeScene(String noticeCaseID) {
-        // TODO Auto-generated method stub
-        TbNoticeCase TbNotice = new TbNoticeCase();
-        Log.i(TAG, "selectNoticeScene " + noticeCaseID);
-        try {
-            String arrData[] = null;
-
-            SQLiteDatabase db;
-            db = this.getReadableDatabase(); // Read Data
-
-            String strSQL = "SELECT * FROM noticecase "
-                    + " WHERE NoticeCaseID = '" + noticeCaseID + "'";
-            Cursor cursor = db.rawQuery(strSQL, null);
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    arrData = new String[cursor.getColumnCount()];
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        arrData[i] = cursor.getString(i);
-                    }
-                    // เชื่อมข้อมูลที่ดึงได้เข้ากับ Tb ของตารางนั้นๆ
-                    TbNotice.NoticeCaseID = arrData[0];
-                    TbNotice.Mobile_CaseID = arrData[1];
-                    TbNotice.InquiryOfficialID = arrData[2];
-                    TbNotice.InvestigatorOfficialID = arrData[3];
-                    TbNotice.SCDCAgencyCode = arrData[4];
-                    TbNotice.CaseTypeID = arrData[5];
-                    TbNotice.SubCaseTypeID = arrData[6];
-                    TbNotice.CaseStatus = arrData[7];
-                    Log.i(TAG, "selectNoticeScene " + arrData[0] + arrData[1] + "/" + arrData[2] + "/" + arrData[3] + "/ " + arrData[4]);
-                }
-            }
-            cursor.close();
-            db.close();
-            return TbNotice;
-
-        } catch (Exception e) {
-            Log.d(TAG, "Error in selectNoticeScene " + e.getMessage().toString());
-            return null;
-        }
-
     }
 
 
@@ -3356,43 +3701,6 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
 
             String strSQL = "SELECT * FROM amphur";
-            Cursor cursor = db.rawQuery(strSQL, null);
-
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    arrData = new String[cursor.getCount()][cursor
-                            .getColumnCount()];
-
-                    int i = 0;
-                    do {
-                        for (int j = 0; j < cursor.getColumnCount(); j++) {
-                            arrData[i][j] = cursor.getString(j);
-                        }
-                        // Log.i(TAG, "show SelectAllProvince " + arrData[i][0]);
-                        i++;
-                    } while (cursor.moveToNext());
-
-                }
-            }
-            cursor.close();
-            db.close();
-            return arrData;
-
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
-    public String[][] SelectAllDistrict() {
-        // TODO Auto-generated method stub
-
-        try {
-            String arrData[][] = null;
-            SQLiteDatabase db;
-            db = this.getReadableDatabase(); // Read Data
-
-            String strSQL = "SELECT * FROM district";
             Cursor cursor = db.rawQuery(strSQL, null);
 
             if (cursor != null) {
@@ -4101,5 +4409,107 @@ public class DBHelper extends SQLiteAssetHelper {
         } catch (Exception e) {
             return -1;
         }
+    }
+
+    public String[][] SelectAllRank() {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM policerank ORDER BY RankID ASC";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public String[][] SelectAllinqposition() {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM inqposition ORDER BY InqPosID ASC";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public String[][] SelectAllinvposition() {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM invposition ORDER BY InvPosID ASC";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

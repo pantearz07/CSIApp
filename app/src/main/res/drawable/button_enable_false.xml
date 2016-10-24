@@ -3,6 +3,6 @@
     android:shape="rectangle">
 
     <solid
-        android:color="@color/red_btnpres"/>
-<!--#d28080-->
+        android:color="@color/casestatus3"/>
+    <!--#d28080-->
 </shape>

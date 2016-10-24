@@ -13,6 +13,7 @@ import com.scdc.csiapp.apimodel.ApiGCMRequest;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiListOfficial;
+import com.scdc.csiapp.apimodel.ApiListScheduleInvestigates;
 import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
@@ -61,7 +62,7 @@ import okhttp3.Response;
  */
 public class ApiConnect {
 
-    private String urlMobileIP = "http://180.183.251.32/mcsi/C_mobile/";
+    public static String urlMobileIP = "http://180.183.251.32/mcsi/C_mobile/";
     private String defaultIP = "180.183.251.32/mcsi";
     private String TAG = "DEBUG-ApiConnect";
     private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
@@ -74,10 +75,12 @@ public class ApiConnect {
     private OkHttpClient okHttpClient = new OkHttpClient();
     // เตรียมไว้ใช้เวลาจะดึงค่าจาก SQLite
     DBHelper mDbHelper;
+    private PreferenceData mManager;
 
     public ApiConnect(Context context) {
 
         mContext = context;
+        mManager = new PreferenceData(mContext);
         updateApiConnect();
     }
 
@@ -172,13 +175,6 @@ public class ApiConnect {
         }
     }
 
-    //** ใช้อัปเดทข้อมูล User , Official ผ่าน function editProfile
-    // ส่งข้อมูลด้วย
-    // ApiProfile
-    // Username,Password ดึงเอาจาก User ของ ApiProfile
-    public boolean editProfile(ApiProfile profile) {
-        return false;
-    }
 
     // ใช้การสำหรับ sync ข้อมูลจากเซิร์ฟเวอร์ และทำการร่วมกับ DBHelper
     public boolean syncDataFromServer(String table_name) {
@@ -646,7 +642,7 @@ public class ApiConnect {
         }
     }
 
-    public ApiStatusData saveCaseReport1(ApiCaseScene apiCaseScene) {
+    public ApiStatus saveDocFile(ApiCaseScene apiCaseScene) {
         Log.d(TAG, "CaseReportID " + apiCaseScene.getTbCaseScene().getCaseReportID());
         Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
         Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
@@ -654,39 +650,28 @@ public class ApiConnect {
         FormBody.Builder formBuilder = new FormBody.Builder()
                 .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
                 .add("Password", WelcomeActivity.profile.getTbUsers().pass)
-                .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID);
+                .add("CaseReportID", apiCaseScene.getTbCaseScene().CaseReportID);
 
-        Gson gson1 = new GsonBuilder().create();
-        formBuilder.add("tbCaseScene", gson1.toJson(apiCaseScene.getTbCaseScene()));
-        formBuilder.add("tbNoticeCase", gson1.toJson(apiCaseScene.getTbNoticeCase()));
-        formBuilder.add("tbSceneInvestigations", gson1.toJson(apiCaseScene.getTbSceneInvestigations()));
-        formBuilder.add("tbSceneFeatureOutside", gson1.toJson(apiCaseScene.getTbSceneFeatureOutside()));
-        formBuilder.add("tbSceneFeatureInSide", gson1.toJson(apiCaseScene.getTbSceneFeatureInSide()));
-        formBuilder.add("tbFindEvidences", gson1.toJson(apiCaseScene.getTbFindEvidences()));
-        formBuilder.add("tbResultScenes", gson1.toJson(apiCaseScene.getTbResultScenes()));
-        formBuilder.add("tbGatewayCriminals", gson1.toJson(apiCaseScene.getTbGatewayCriminals()));
-        formBuilder.add("tbClueShowns", gson1.toJson(apiCaseScene.getTbClueShowns()));
-        formBuilder.add("tbPropertyLosses", gson1.toJson(apiCaseScene.getTbPropertyLosses()));
-        formBuilder.add("apiMultimedia", gson1.toJson(apiCaseScene.getApiMultimedia()));
         RequestBody formBody = formBuilder.build();
         Request.Builder builder = new Request.Builder();
         Request request = builder
-                .url(urlMobileIP + "saveCaseReport")
+                .url(urlMobileIP + "downloadDocFile")
                 .post(formBody)
                 .build();
         try {
             Response response = okHttpClient.newCall(request).execute();
+//            Log.d(TAG, "post data" + response.body().string());
             if (response.isSuccessful()) {
-                Log.d(TAG, "post data" + response.body().string());
+//                Log.d(TAG, "post data" + response.body().string());
                 Gson gson = new GsonBuilder().create();
                 try {
-                    ApiStatusData apiStatus = new ApiStatusData();
-                    apiStatus = gson.fromJson(response.body().string(), ApiStatusData.class);
+                    ApiStatus apiStatus = new ApiStatus();
+                    apiStatus = gson.fromJson(response.body().string(), ApiStatus.class);
                     Log.d(TAG, apiStatus.getData().getReason());
                     return apiStatus;
                 } catch (JsonParseException e) {
                     Log.d(TAG, "checkConnect fail format");
-                    ApiStatusData apiStatus = new ApiStatusData();
+                    ApiStatus apiStatus = new ApiStatus();
                     apiStatus.setStatus("fail");
 //                    apiStatus.getData().setAction("checkConnect");
 //                    apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
@@ -733,25 +718,25 @@ public class ApiConnect {
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
                 File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
-                    formBuilder1.addFormDataPart("filepic["+String.valueOf(i)+"]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
                 }
-            }else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
+            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
                 File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
-                    formBuilder1.addFormDataPart("filepic["+String.valueOf(i)+"]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
                 }
-            }else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
+            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
                 File fileVid = new File(strSDCardPathName_Vid, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (fileVid.exists()) {
-                    formBuilder1.addFormDataPart("filevid["+String.valueOf(i)+"]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                    formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
                 }
-            }else if(apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
+            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
                 File fileVoi = new File(strSDCardPathName_Voi, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (fileVoi.exists()) {
-                    formBuilder1.addFormDataPart("filevoi["+String.valueOf(i)+"]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                    formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
                 }
             }
@@ -788,6 +773,191 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
+    //** ใช้อัปเดทข้อมูล User , Official ผ่าน function editProfile
+    // ส่งข้อมูลด้วย
+    // ApiProfile
+    // Username,Password ดึงเอาจาก User ของ ApiProfile
+
+    public ApiStatus editProfile(ApiProfile apiProfile) {
+        mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
+
+        Log.d(TAG, "Not User " + apiProfile.getTbUsers().id_users);
+        Log.d(TAG, "Not Pass " + txt_pass);
+        Log.d(TAG, "Not OffID " + apiProfile.getTbOfficial().OfficialID);
+        MultipartBody.Builder formBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("Username_old", apiProfile.getTbOfficial().id_users)
+                .addFormDataPart("Password_old", txt_pass);//apiProfile.getTbUsers().pass
+        Gson gson1 = new GsonBuilder().create();
+        formBuilder.addFormDataPart("tbOfficial", gson1.toJson(apiProfile.getTbOfficial()));
+        formBuilder.addFormDataPart("tbUsers", gson1.toJson(apiProfile.getTbUsers()));
+
+        RequestBody formBody = formBuilder.build();
+
+        Request request = new Request.Builder()
+                .url(urlMobileIP + "editProfile")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+//            Log.d(TAG, "post data" + response.body().string());
+            if (response.isSuccessful()) {
+
+                Gson gson = new GsonBuilder().create();
+                try {
+                    ApiStatus apiStatus = new ApiStatus();
+                    apiStatus = gson.fromJson(response.body().string(), ApiStatus.class);
+                    Log.d(TAG, "editProfile " + apiStatus.getData().getReason());
+                    return apiStatus;
+                } catch (JsonParseException e) {
+                    Log.d(TAG, "checkConnect fail format");
+                    ApiStatus apiStatus = new ApiStatus();
+                    apiStatus.setStatus("fail");
+//                    apiStatus.getData().setAction("checkConnect");
+//                    apiStatus.getData().setReason("เชื่อมต่อไม่สำเร็จ");
+                    return apiStatus;
+                }
+            } else {
+                Log.d(TAG, "Not Success " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
+
+    public ApiListScheduleInvestigates listScheduleInvestigates() {
+        RequestBody formBody = new FormBody.Builder()
+                .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
+                .add("Password", WelcomeActivity.profile.getTbUsers().pass)
+                .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
+                .add("SCDCAgencyCode", WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode)
+                .build();
+
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(urlMobileIP + "listScheduleInvestigates")
+                .post(formBody)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+//                Log.d(TAG, "post data " + response.body().string());
+                Gson gson = new GsonBuilder().create();
+                // ข้อมูลจากเซิร์ฟเวอร์
+                ApiListScheduleInvestigates apiListScheduleInvestigatesServer = gson.fromJson(response.body().string(), ApiListScheduleInvestigates.class);
+                int ser_size = apiListScheduleInvestigatesServer.getData().getResult().size();
+//                for (int i = 0; i < ser_size; i++) {
+//                    ApiScheduleInvestigates temp_ser = apiListScheduleInvestigatesServer.getData().getResult().get(i);
+//                    temp_ser.setMode("online");
+//                    apiListScheduleInvestigatesServer.getData().getResult().add(temp_ser);
+//                }
+// String x =gson.toJson(apiListScheduleInvestigatesServer);
+//                Log.d(TAG, "toJson " + x);
+                // ข้อมูลจาก SQLite
+//                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+//                ApiListScheduleInvestigates apiListScheduleInvestigatesSQLite = mDbHelper.selectApiScheduleInvestigates(WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
+//                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+//                int ser_size = apiListScheduleInvestigatesServer.getData().getResult().size();
+//                int sql_size;
+//                if (apiListScheduleInvestigatesSQLite.getData() == null) {
+//                    sql_size = 0;
+//                } else {
+//                    sql_size = apiListScheduleInvestigatesSQLite.getData().getResult().size();
+//                }
+                for (int i = 0; i < ser_size; i++) {
+                    String x = apiListScheduleInvestigatesServer.getData().getResult().get(i).getTbScheduleInvestigates().ScheduleInvestigateID;
+                    Log.d(TAG, "ScheduleInvestigateID :" + x);
+                    String w =gson.toJson(apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup());
+                    Log.d(TAG, "toJson " + w);
+                    for (int j = 0; j < apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().size(); j++) {
+
+                        String y = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID;
+                        Log.d(TAG, "ScheduleGroupID :" + y);
+                        int sizeScheduleInvInGroup = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().size();
+                        Log.d(TAG, "sizeScheduleInvInGroup" + String.valueOf(sizeScheduleInvInGroup));
+                        for (int k = 0; k < sizeScheduleInvInGroup; k++) {
+                            String InvOfficialID = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID;
+                            Log.d(TAG, "InvOfficialID :" + InvOfficialID);
+                            String AccessType = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbOfficial().AccessType;
+                            Log.d(TAG, "AccessType :" + AccessType);
+                        }
+                    }
+                }
+//                for (int i = 0; i < ser_size; i++) {
+//                    ApiScheduleInvestigates temp_ser = apiListScheduleInvestigatesServer.getData().getResult().get(i);
+////                    String c = String.valueOf(apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(0).getApiScheduleInvInGroup().size());
+////                    Log.d(TAG, "getApiScheduleInvInGroup " + c);
+//
+//                    ApiScheduleInvestigates temp_sql;
+//                    boolean flag_have = false;
+//                    for (int j = 0; j < sql_size; j++) {
+//                        temp_sql = apiListScheduleInvestigatesSQLite.getData().getResult().get(j);
+//                        if (temp_ser.getTbScheduleInvestigates().ScheduleInvestigateID.equalsIgnoreCase(temp_sql.getTbScheduleInvestigates().ScheduleInvestigateID)) {
+////                            flag_have = true;
+////                            break;
+//                            Log.d(TAG, "true ScheduleInvestigateID :" + temp_sql.getTbScheduleInvestigates().ScheduleInvestigateID);
+//                            for (int k = 0; k < apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().size(); k++) {
+//                                ApiScheduleGroup temp_ser2 = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(k);
+//                                ApiScheduleGroup temp_sql2;
+//                                for (int l = 0; l < apiListScheduleInvestigatesSQLite.getData().getResult().get(j).getApiScheduleGroup().size(); l++) {
+//                                    temp_sql2 = apiListScheduleInvestigatesSQLite.getData().getResult().get(j).getApiScheduleGroup().get(l);
+//                                    if (temp_ser2.getTbScheduleGroup().ScheduleGroupID.equalsIgnoreCase(temp_sql2.getTbScheduleGroup().ScheduleGroupID)) {
+//                                        Log.d(TAG, "true ScheduleGroupID :" + temp_sql2.getTbScheduleGroup().ScheduleGroupID);
+//                                        for (int m = 0; m < temp_ser2.getApiScheduleInvInGroup().size(); m++) {
+//                                            ApiScheduleInvInGroup temp_ser3 = temp_ser2.getApiScheduleInvInGroup().get(m);
+//                                            ApiScheduleInvInGroup temp_sql3;
+//                                            for (int n = 0; n < temp_sql2.getApiScheduleInvInGroup().size(); n++) {
+//                                                temp_sql3 = temp_ser2.getApiScheduleInvInGroup().get(n);
+//                                                if (temp_ser3.getTbScheduleInvInGroup().InvOfficialID.equalsIgnoreCase(temp_sql3.getTbScheduleInvInGroup().InvOfficialID)) {
+//                                                    Log.d(TAG, "true InvOfficialID :" + temp_sql3.getTbScheduleInvInGroup().InvOfficialID);
+//                                                    break;
+//                                                } else {
+//                                                    Log.d(TAG, "false InvOfficialID :" + temp_ser3.getTbScheduleInvInGroup().InvOfficialID);
+//                                                    temp_ser3.setMode3("online");
+//                                                    apiListScheduleInvestigatesSQLite.getData().getResult().get(j).getApiScheduleGroup().get(l).getApiScheduleInvInGroup().add(temp_ser3);
+//
+//                                                }
+//                                            }
+//                                        }
+//                                    } else {
+//                                        Log.d(TAG, "false ScheduleGroupID :" + temp_ser2.getTbScheduleGroup().ScheduleGroupID);
+//                                        temp_ser2.setMode2("online");
+//                                        apiListScheduleInvestigatesSQLite.getData().getResult().get(j).getApiScheduleGroup().add(temp_ser2);
+//                                    }
+//                                }
+//
+//                            }
+//                        } else {
+//                            // กรณีที่ไม่มี ScheduleInvestigateID ตารางเวรวันที่เท่ากัน
+////                            flag_have = false;
+////                            if (flag_have == false) {
+//                            Log.d(TAG, "false ScheduleInvestigateID :" + temp_ser.getTbScheduleInvestigates().ScheduleInvestigateID);
+//                            temp_ser.setMode("online");
+//                            apiListScheduleInvestigatesSQLite.getData().getResult().add(temp_ser);
+////                            }
+//                        }
+//                    }
+//
+//                }
+                return apiListScheduleInvestigatesServer;
+            } else {
+                Log.d(TAG, "Not Success listScheduleInvestigates" + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in listScheduleInvestigates : " + e.getMessage());
 
             return null;
         }

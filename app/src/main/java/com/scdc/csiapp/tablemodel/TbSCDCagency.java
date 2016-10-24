@@ -15,4 +15,27 @@ public class TbSCDCagency implements Serializable {
     // From Table scdcagency field name SCDCAgencyName
     public String SCDCAgencyName = "";
 
+    public String getSCDCAgencyCode() {
+        return SCDCAgencyCode;
+    }
+
+    public void setSCDCAgencyCode(String SCDCAgencyCode) {
+        this.SCDCAgencyCode = SCDCAgencyCode;
+    }
+
+    public String getSCDCCenterID() {
+        return SCDCCenterID;
+    }
+
+    public void setSCDCCenterID(String SCDCCenterID) {
+        this.SCDCCenterID = SCDCCenterID;
+    }
+
+    public String getSCDCAgencyName() {
+        return SCDCAgencyName;
+    }
+
+    public void setSCDCAgencyName(String SCDCAgencyName) {
+        this.SCDCAgencyName = SCDCAgencyName;
+    }
 }

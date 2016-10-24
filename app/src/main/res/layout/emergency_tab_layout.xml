@@ -570,107 +570,44 @@
                         </android.support.design.widget.TextInputLayout>
 
                     </TableRow>
-                    <!--
-                                        <TableRow
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content">
 
-                                            <TextView
-                                                android:id="@+id/txtInvestigatorScene"
-                                                android:layout_width="0dp"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginTop="@dimen/margin_line"
-                                                android:layout_weight="1"
-                                                android:background="@color/orange"
-                                                android:padding="5dp"
-                                                android:text="รายชื่อผู้ตรวจสถานที่เกิดเหตุ"
-                                                android:textAppearance="@style/SectionText" />
-                                        </TableRow>
+                    <TableRow
+                        android:id="@+id/tableRowInvestigatorLayout1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                                        <TableRow
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:visibility="gone">
+                        <TextView
+                            android:id="@+id/txtInvestigatorList"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_line"
+                            android:layout_weight="1"
+                            android:background="@color/orange"
+                            android:padding="5dp"
+                            android:text="รายชื่อผู้ตรวจสถานที่เกิดเหตุ"
+                            android:visibility="gone"
+                            android:textAppearance="@style/SectionText" />
+                    </TableRow>
 
-
-                                            <LinearLayout
-                                                android:layout_width="match_parent"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginTop="@dimen/margin_line"
-
-                                                android:orientation="horizontal">
-
-                                                <TextView
-                                                    android:id="@+id/txtTypeInvestigator1"
-                                                    android:layout_width="wrap_content"
-                                                    android:layout_height="wrap_content"
-                                                    android:layout_marginTop="@dimen/margin_line"
-                                                    android:text="รายชื่อผู้ตรวจสถานที่เกิดเหตุตามตารางเวร ประจำวันที่"
-                                                    android:textSize="@dimen/ssmall_text" />
-
-                                                <View
-                                                    android:id="@+id/view4"
-                                                    android:layout_width="match_parent"
-                                                    android:layout_height="@dimen/view_height"
-                                                    android:layout_gravity="bottom"
-                                                    android:layout_marginLeft="5dp"
-                                                    android:visibility="gone"
-                                                    android:background="@color/dark_brown" />
-                                            </LinearLayout>
-                                        </TableRow>
-
-                                        <TableRow
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content">
-                                            <TextView
-                                                android:id="@+id/editScheduleInvestDate"
-                                                style="@android:style/Widget.Holo.Light.Spinner"
-                                                android:layout_width="0dp"
-                                                android:layout_height="50dp"
-                                                android:layout_column="0"
-                                                android:layout_weight="8"
-                                                android:textSize="@dimen/small_text" />
-                                            <Button
-                                                android:id="@+id/btnShowInvestigator"
-                                                android:layout_width="0dp"
-                                                android:layout_height="match_parent"
-                                                android:layout_marginTop="@dimen/margin_line"
-                                                android:layout_weight="2"
-                                                android:background="@drawable/selector_button"
-                                                android:padding="5dp"
-                                                android:textColor="@color/white"
-                                                android:text="ดูรายชื่อ"
-                                                android:layout_marginRight="5dp"
-                                                android:textSize="@dimen/ssmall_text" />
+                    <TableRow
+                        android:id="@+id/tableRowInvestigatorLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_line">
 
 
-                                        </TableRow>
-                                        <TableRow
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content">
+                        <ListView
+                            android:id="@+id/listViewInvestigator"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:divider="@color/ocean"
+                            android:dividerHeight="@dimen/divider_height"
+                            android:padding="5dp"
+                            android:visibility="gone"
+                            android:textSize="@dimen/small_text" />
 
-                                            <LinearLayout
-                                                android:id="@+id/linearLayoutInvestigator"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-
-                                                android:gravity="center_vertical"
-                                                android:orientation="vertical">
-
-                                                <ListView
-                                                    android:id="@+id/listViewInvestigator"
-                                                    android:layout_width="match_parent"
-                                                    android:layout_height="200dp"
-                                                    android:divider="@color/orange"
-                                                    android:dividerHeight="@dimen/view_height"
-
-                                                    android:textSize="@dimen/small_text" />
-
-                                            </LinearLayout>
-
-                                        </TableRow>-->
-
-
+                    </TableRow>
                 </TableLayout>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

@@ -99,21 +99,12 @@
 
 
         <activity
-            android:name="com.scdc.csiapp.main.MapActivity"
-            android:label="Map"></activity>
-        <activity
             android:name="com.scdc.csiapp.invmain.VideoPlayerActivity"
             android:label="video"></activity>
         <activity
             android:name="com.scdc.csiapp.invmain.NoteActivity"
             android:label="note"
             android:theme="@style/AppThemeDarkActionBar" />
-        <activity
-            android:name="com.scdc.csiapp.invmain.ClueShownActivity"
-            android:label="ClueShown" />
-        <activity
-            android:name="com.scdc.csiapp.invmain.PropertyLossActivity"
-            android:label="PropertyLoss" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

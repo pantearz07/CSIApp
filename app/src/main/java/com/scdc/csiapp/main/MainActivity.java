@@ -33,6 +33,7 @@ import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
+import com.scdc.csiapp.schdule.CalendarFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
     PoliceListFragment policeListFragment;
     //รายการตารางเวร
     ScheduleInvestigatorsFragment scheduleInvestigatorsFragment;
+    CalendarFragment calendarFragment;
     SettingFragment settingFragment;
+
+
     //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
 
@@ -89,12 +93,13 @@ public class MainActivity extends AppCompatActivity {
         mManager = new PreferenceData(this);
         mContext = getApplicationContext();
         // PreferenceData member id
-        if(WelcomeActivity.profile.getTbOfficial() != null) {
+        if (WelcomeActivity.profile.getTbOfficial() != null) {
             officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
             username = WelcomeActivity.profile.getTbUsers().id_users;
             password = WelcomeActivity.profile.getTbUsers().pass;
             accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
-        }else{
+            Log.i(TAG, password.toString());
+        } else {
             Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
             finish();
             startActivity(gotoWelcomeActivity);
@@ -132,16 +137,17 @@ public class MainActivity extends AppCompatActivity {
 
         policeListFragment = new PoliceListFragment();
         scheduleInvestigatorsFragment = new ScheduleInvestigatorsFragment();
+        calendarFragment = new CalendarFragment();
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
 
         mFragmentManager = getSupportFragmentManager();
-        setFragment(caseSceneListFragment,1);
+        setFragment(caseSceneListFragment, 1);
 
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("caseSceneListFragment")) {
-                setFragment(caseSceneListFragment,1);
+                setFragment(caseSceneListFragment, 1);
             }
         }
 
@@ -151,11 +157,8 @@ public class MainActivity extends AppCompatActivity {
                 // Consume input from header view. This disables the ripple effect
                 //Toast.makeText(getApplicationContext(),"Send Selected", Toast.LENGTH_SHORT).show();
                 mDrawerLayout.closeDrawers();
-                //mFragmentTransaction.replace(R.id.containerView, profileFragment).commit();
-//                FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
-//                ftprofile.replace(R.id.containerView, profileFragment);
-//                ftprofile.addToBackStack(null);
-//                ftprofile.commit();
+                setFragment(profileFragment, 1);
+
             }
         });
 
@@ -173,17 +176,18 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
-                    setFragment(caseSceneListFragment,1);
+                    setFragment(caseSceneListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_schedule) {
+                    setFragment(calendarFragment, 1);
                 }
                 if (menuItem.getItemId() == R.id.nav_item_police) {
-                    setFragment(policeListFragment,1);
+                    setFragment(policeListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
-                    setFragment(settingFragment,1);
+                    setFragment(settingFragment, 1);
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
@@ -301,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            setFragment(settingFragment,1);
+            setFragment(settingFragment, 1);
         }
 
         return super.onOptionsItemSelected(item);
@@ -336,7 +340,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setFragment(Fragment fragment, int backstackyes) {
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-        if (backstackyes==1) {fragmentTransaction.addToBackStack(null);}
+        if (backstackyes == 1) {
+            fragmentTransaction.addToBackStack(null);
+        }
         fragmentTransaction.replace(R.id.containerView, fragment);
         fragmentTransaction.commit();
     }

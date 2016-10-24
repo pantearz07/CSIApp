@@ -258,6 +258,8 @@ public class SummaryEmerTabFragment extends Fragment {
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         if (EmergencyTabFragment.tbNoticeCase.SceneNoticeDate == null) {
             edtSceneNoticeDateTime.setText("-");
+        } else if (EmergencyTabFragment.tbNoticeCase.SceneNoticeDate.equals("0000-00-00")) {
+            edtSceneNoticeDateTime.setText("-");
         } else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.SceneNoticeDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.SceneNoticeTime + " น.");
         }
@@ -265,7 +267,8 @@ public class SummaryEmerTabFragment extends Fragment {
         //วันเวลาที่ตรวจคดีเสร็จ
         if (EmergencyTabFragment.tbNoticeCase.CompleteSceneDate == null) {
             edtCompleteSceneDateTime.setText("-");
-
+        } else if (EmergencyTabFragment.tbNoticeCase.CompleteSceneDate.equals("0000-00-00")) {
+            edtCompleteSceneDateTime.setText("-");
         } else {
             edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.CompleteSceneDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.CompleteSceneTime + " น.");
 
@@ -273,6 +276,8 @@ public class SummaryEmerTabFragment extends Fragment {
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
         if (EmergencyTabFragment.tbNoticeCase.LastUpdateDate == null) {
 
+            edtUpdateDateTime.setText("-");
+        } else if (EmergencyTabFragment.tbNoticeCase.LastUpdateDate.equals("0000-00-00")) {
             edtUpdateDateTime.setText("-");
         } else {
             edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime + " น.");

@@ -59,7 +59,7 @@ public class ApiCaseScene implements Serializable {
 
     // เก็บเวลาที่ออกตรวจสถานที่นั้นๆ
     List<TbSceneInvestigation> tbSceneInvestigations;
-
+    List<ApiInvestigatorsInScene> apiInvestigatorsInScenes;
     // เก็บลักษณะภายนอก
     TbSceneFeatureOutside tbSceneFeatureOutside;
 
@@ -86,6 +86,14 @@ public class ApiCaseScene implements Serializable {
 
     public void setApiMultimedia(List<ApiMultimedia> apiMultimedia) {
         this.apiMultimedia = apiMultimedia;
+    }
+
+    public List<ApiInvestigatorsInScene> getApiInvestigatorsInScenes() {
+        return apiInvestigatorsInScenes;
+    }
+
+    public void setApiInvestigatorsInScenes(List<ApiInvestigatorsInScene> apiInvestigatorsInScenes) {
+        this.apiInvestigatorsInScenes = apiInvestigatorsInScenes;
     }
 
     public TbCaseScene getTbCaseScene() {

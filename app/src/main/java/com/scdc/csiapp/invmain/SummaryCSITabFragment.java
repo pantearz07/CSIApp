@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -31,22 +32,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
+import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusData;
-import com.scdc.csiapp.connecting.ConnectServer;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -55,8 +52,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class SummaryCSITabFragment extends Fragment {
@@ -71,6 +66,7 @@ public class SummaryCSITabFragment extends Fragment {
     ConnectionDetector cd;
     GetDateTime getDateTime;
     EditText edtReportNo;
+    private static String strSDCardPathName_Doc = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Documents/";
 
     TextView edtStatus, edtUpdateDateTime2, edtSceneNoticeDateTime, edtCompleteSceneDateTime, edtCompleteSceneDateTimeTitle,
             edtUpdateDateTime, txtUpdateDateTimeTitle, edtInqInfo, edtInvInfo, edtPoliceStation,
@@ -292,11 +288,15 @@ public class SummaryCSITabFragment extends Fragment {
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate == null) {
             edtSceneNoticeDateTime.setText("-");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate.equals("0000-00-00")) {
+            edtSceneNoticeDateTime.setText("-");
         } else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime + " น.");
         }
         //วันเวลาที่ตรวจคดีเสร็จ
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null) {
+            edtCompleteSceneDateTime.setText("-");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
             edtCompleteSceneDateTime.setText("-");
 
         } else {
@@ -305,6 +305,9 @@ public class SummaryCSITabFragment extends Fragment {
         }
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate == null) {
+            edtUpdateDateTime.setText("-");
+
+        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate.equals("0000-00-00")) {
             edtUpdateDateTime.setText("-");
 
         } else {
@@ -442,7 +445,8 @@ public class SummaryCSITabFragment extends Fragment {
             }
             if (v == btnDownloadfile) {
                 Log.i(TAG, "btnDownloadfile");
-
+                DownloadDocFile downloadDocFile = new DownloadDocFile();
+                downloadDocFile.execute(CSIDataTabFragment.apiCaseScene);
             }
 
             if (v == fabBtn) {
@@ -507,37 +511,6 @@ public class SummaryCSITabFragment extends Fragment {
         }
     }
 
-    public boolean downloadDocFile(String sReportID) {
-        // TODO Auto-generated method stub
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("sCaseReportID", sReportID));
-        String resultServer = ConnectServer.getJsonPostGet(params,
-                "downloadDocFile");
-        /*** Default Value ***/
-        String strStatusID = "0";
-        String strError = "Unknow Status!";
-        JSONObject c;
-
-        try {
-            c = new JSONObject(resultServer.replace("\uFEFF", ""));
-            strStatusID = c.getString("StatusID");
-            strError = c.getString("Error");
-        } catch (JSONException e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
-        // Prepare Save Data
-        if (strStatusID.equals("0")) {
-            Log.i("downloadDocFile", strError);
-            return false;
-        } else {
-            Log.i("downloadDocFile", strError);
-            new DownloadFile().execute(strError);
-
-            return true;
-        }
-    }
-
     class DownloadFile extends AsyncTask<String, Void, String> {
 
 
@@ -550,27 +523,32 @@ public class SummaryCSITabFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             int count;
-            String root = "";
+
             File myDir;
             String fileoutput = "";
             try {
-                root = Environment.getExternalStorageDirectory().toString();
-                myDir = new File(root + "/CSIFiles/Documents/");
+
+                myDir = new File(strSDCardPathName_Doc);
                 myDir.mkdirs();
-                ConnectServer.updateIP();
-                String filepath = ConnectServer.urlWebIP + "csi_files/2559/July" + ".doc";
+                //http://localhost/mCSI/assets/csifiles/CR04_000002/docs/
+                String defaultIP = "180.183.251.32/mcsi";
+                SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+                defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
+                String filepath = "http://" + defaultIP + "/assets/csifiles/" + params[0] + "/docs/" + params[0] + ".docx";
+                Log.i(TAG, "docs: " + filepath);
+
                 URL url = new URL(filepath);
                 URLConnection conexion = url.openConnection();
                 conexion.connect();
 
                 int lenghtOfFile = conexion.getContentLength();
-                Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+                Log.d(TAG, "Lenght of file: " + lenghtOfFile);
 
                 InputStream input = new BufferedInputStream(url.openStream());
 
                 // Get File Name from URL
-                fileoutput = Environment.getExternalStorageDirectory() + "/CSIFiles/Documents/" + params[0] + ".doc";
-                Log.i("fileoutput", filepath + ":" + fileoutput);
+                fileoutput = strSDCardPathName_Doc + params[0] + ".docx";
+                Log.i(TAG, "fileoutput : " + fileoutput);
                 OutputStream output = new FileOutputStream(fileoutput);
                 //OutputStream output = new FileOutputStream("/sdcard/Download/"+fileName+".doc");
 
@@ -587,31 +565,62 @@ public class SummaryCSITabFragment extends Fragment {
                 output.flush();
                 output.close();
                 input.close();
-
+                return fileoutput;
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
+                return "error";
             }
 
-            return fileoutput;
+
         }
 
-        /*
-                private void publishProgress(String s) {
-                }
+        protected void onPostExecute(final String arrData) {
+            final String CurrentDate_ID[] = getDateTime.getDateTimeCurrent();
+            String timestamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                protected void onProgressUpdate(String... progress) {
-                    // setting progress percentage
-                    dialog.setProgress(Integer.parseInt(progress[0]));
+            ApiMultimedia apiMultimedia = new ApiMultimedia();
+            TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+
+            tbMultimediaFile.setCaseReportID(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
+            tbMultimediaFile.setFileID(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
+            tbMultimediaFile.setFilePath(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + ".docx");
+            tbMultimediaFile.setFileType("document");
+            tbMultimediaFile.setFileDescription("รายงานสรุปคดี " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo);
+            tbMultimediaFile.setTimestamp(timestamp);
+            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+            Log.i(TAG, String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.download_complete) + " ไฟล์อยู่ใน\n" + arrData.toString(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("เปิดดู", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (arrData.toString() != "error") {
+                                        openDocument(arrData.toString());
+                                    }
+                                }
+                            });
+                    snackbar.show();
                 }
-        */
-        protected void onPostExecute(String arrData) {
-            Toast.makeText(getActivity(),
-                    "ดาวน์โหลดเรียบร้อยแล้ว",
-                    Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(),
-                    "ไฟล์อยู่ใน " + arrData,
-                    Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    public void openDocument(String name) {
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+        File file = new File(name);
+        String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).toString());
+        String mimetype = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        if (extension.equalsIgnoreCase("") || mimetype == null) {
+            // if there is no extension or there is no definite mimetype, still try to open the file
+            intent.setDataAndType(Uri.fromFile(file), "text/*");
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), mimetype);
+        }
+        // custom message for the intent
+        startActivity(Intent.createChooser(intent, "Choose an Application:"));
     }
 
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
@@ -751,15 +760,26 @@ public class SummaryCSITabFragment extends Fragment {
 
         }
     }
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putSerializable(CSIDataTabFragment.Bundle_Key,CSIDataTabFragment.apiCaseScene);
-//    }
-//
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        CSIDataTabFragment.apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable(CSIDataTabFragment.Bundle_Key);
-//    }
+
+    class DownloadDocFile extends AsyncTask<ApiCaseScene, Void, ApiStatus> {
+        @Override
+        protected ApiStatus doInBackground(ApiCaseScene... params) {
+            return WelcomeActivity.api.saveDocFile(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getStatus().toString());
+
+
+                new DownloadFile().execute(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
+
+            } else {
+                Log.d(TAG, "error");
+            }
+        }
+    }
+
 }

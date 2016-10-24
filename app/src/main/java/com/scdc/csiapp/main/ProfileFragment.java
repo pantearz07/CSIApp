@@ -1,17 +1,22 @@
 package com.scdc.csiapp.main;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,414 +24,410 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
-import com.scdc.csiapp.connecting.ConnectServer;
+import com.scdc.csiapp.apimodel.ApiProfile;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Pantearz07 on 23/9/2558.
  */
 public class ProfileFragment extends Fragment {
+    private static final String TAG = "DEBUG-ProfileFragment";
     // connect sqlite
-    SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
+    DBHelper dbHelper;
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    Boolean networkConnectivity = false;
-    long isConnectingToInternet = 0;
-
+    private CoordinatorLayout rootLayout;
     String officialID;
-    TextView tMemberID, tAccessType;
-    EditText tUsername, tPassword, txtFirstName, txtLastName, tEmail, txtAreaCodeTel,
-            txtPhoneNumber;
+    TextView tMemberID, tAccessType, txtChangePassword;
+    EditText edtUsername, edtPassword, edtFirstName, edtLastName, edtEmail,
+            editTextPhone, edtPosition;
     Spinner spinnerRankInspector, spinnerPositionInspector;
     Button btnUpdateMember;
-
+    GetDateTime getDateTime;
+    boolean oldRank, oldPosition = false;
+    String[] Rank, Position;
+    Snackbar snackbar;
+    FloatingActionButton fabBtn;
+    String[] mRankArray2, mPositionArray2;
+    String[][] mRankArray, mPositionArray;
+    ChangePassFragment changePassFragment;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.profile_layout, null);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.profile);
-
+        rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
+        changePassFragment = new ChangePassFragment();
         mContext = getContext();
         mManager = new PreferenceData(getActivity());
         cd = new ConnectionDetector(getActivity());
-        networkConnectivity = cd.isNetworkAvailable();
-        isConnectingToInternet = cd.isConnectingToInternet();
-
-        mDbHelper = new SQLiteDBHelper(getActivity());
-        mDb = mDbHelper.getWritableDatabase();
-
-        officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
+        dbHelper = new DBHelper(getActivity());
+        getDateTime = new GetDateTime();
 // txtMemberID,txtMemberID,txtUsername,txtPassword,txtName,txtEmail,txtTel
+        txtChangePassword = (TextView) view.findViewById(R.id.txtChangePassword);
         tMemberID = (TextView) view.findViewById(R.id.txtMemberID);
-        tUsername = (EditText) view.findViewById(R.id.txtUsername);
-        tPassword = (EditText) view.findViewById(R.id.txtPassword);
+        edtUsername = (EditText) view.findViewById(R.id.edtUsername);
+        edtPassword = (EditText) view.findViewById(R.id.edtPassword);
+        edtPassword.setVisibility(View.GONE);
         spinnerRankInspector = (Spinner) view
                 .findViewById(R.id.spinnerRankInspector);
-        txtFirstName = (EditText) view.findViewById(R.id.txtFirstName);
-        txtLastName = (EditText) view.findViewById(R.id.txtLastName);
+        mRankArray = dbHelper.SelectAllRank();
+        if (mRankArray != null) {
+            mRankArray2 = new String[mRankArray.length];
+            for (int i = 0; i < mRankArray.length; i++) {
+                mRankArray2[i] = mRankArray[i][2];
+                Log.i(TAG + " show mRankArray2", mRankArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterRank = new ArrayAdapter<String>(
+                    getActivity(), android.R.layout.simple_dropdown_item_1line,
+                    mRankArray2);
+            spinnerRankInspector.setAdapter(adapterRank);
+        } else {
+            Log.i(TAG + " show mRankArray", "null");
+        }
+        if (WelcomeActivity.profile.getTbOfficial().Rank == null || WelcomeActivity.profile.getTbOfficial().Rank.equals("") || WelcomeActivity.profile.getTbOfficial().Rank.equals("null")) {
+            spinnerRankInspector.setSelection(0);
+        } else {
+            for (int i = 0; i < mRankArray2.length; i++) {
+                if (WelcomeActivity.profile.getTbOfficial().Rank.trim().equals(mRankArray2[i])) {
+                    spinnerRankInspector.setSelection(i);
+                    oldRank = true;
+                    break;
+                }
+            }
+        }
+        spinnerRankInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
+        spinnerRankInspector.setOnTouchListener(new ProOnItemSelectedListener());
 
         spinnerPositionInspector = (Spinner) view
                 .findViewById(R.id.spinnerPositionInspector);
-        tEmail = (EditText) view.findViewById(R.id.txtEmail);
-        txtAreaCodeTel = (EditText) view.findViewById(R.id.editTextPhone1);
-        txtAreaCodeTel.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-                // TODO Auto-generated method stub
-                if (txtAreaCodeTel.getText().toString().length() == 3) {
-                    txtPhoneNumber.requestFocus();
+        if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
+            mPositionArray = dbHelper.SelectAllinvposition();
+        } else if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("inquiryofficial")) {
+            mPositionArray = dbHelper.SelectAllinqposition();
+        }
+        if (mPositionArray != null) {
+            mPositionArray2 = new String[mPositionArray.length];
+            for (int i = 0; i < mPositionArray.length; i++) {
+                mPositionArray2[i] = mPositionArray[i][2];
+                Log.i(TAG + " show mPositionArray2", mPositionArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterPosition = new ArrayAdapter<String>(
+                    getActivity(), android.R.layout.simple_dropdown_item_1line,
+                    mPositionArray2);
+            spinnerPositionInspector.setAdapter(adapterPosition);
+        } else {
+            Log.i(TAG + " show mRankArray", "null");
+        }
+        if (WelcomeActivity.profile.getTbOfficial().Position == null || WelcomeActivity.profile.getTbOfficial().Position.equals("") || WelcomeActivity.profile.getTbOfficial().Position.equals("null")) {
+            spinnerPositionInspector.setSelection(0);
+        } else {
+            for (int i = 0; i < mPositionArray2.length; i++) {
+                if (WelcomeActivity.profile.getTbOfficial().Position.trim().equals(mPositionArray2[i])) {
+                    spinnerPositionInspector.setSelection(i);
+                    oldPosition = true;
+                    break;
                 }
             }
+        }
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-                // TODO Auto-generated method stub
+        spinnerPositionInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
+        spinnerPositionInspector.setOnTouchListener(new ProOnItemSelectedListener());
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-        txtPhoneNumber = (EditText) view.findViewById(R.id.editTextPhone2);
+        edtPosition = (EditText) view.findViewById(R.id.edtPosition);
+        edtFirstName = (EditText) view.findViewById(R.id.edtFirstName);
+        edtLastName = (EditText) view.findViewById(R.id.edtLastName);
+        edtEmail = (EditText) view.findViewById(R.id.edtEmail);
+        editTextPhone = (EditText) view.findViewById(R.id.editTextPhone);
+        edtUsername.addTextChangedListener(new ProfileTextWatcher(edtUsername));
+//        edtPassword.addTextChangedListener(new ProfileTextWatcher(edtPassword));
+        edtFirstName.addTextChangedListener(new ProfileTextWatcher(edtFirstName));
+        edtLastName.addTextChangedListener(new ProfileTextWatcher(edtLastName));
+        edtEmail.addTextChangedListener(new ProfileTextWatcher(edtEmail));
+        edtPosition.addTextChangedListener(new ProfileTextWatcher(edtPosition));
+        editTextPhone.addTextChangedListener(new ProfileTextWatcher(editTextPhone));
         tAccessType = (TextView) view.findViewById(R.id.txtStatus);
 
+        fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
+        fabBtn.setOnClickListener(new ProfileOnClickListener());
+        txtChangePassword.setOnClickListener(new ProfileOnClickListener());
 
-        if (isConnectingToInternet == 1) {
-            new showOfficialDataTask().execute(officialID);
+        if (WelcomeActivity.profile.getTbOfficial() != null) {
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+            tMemberID.setText(WelcomeActivity.profile.getTbOfficial().OfficialID);
 
-        } else if (isConnectingToInternet == 2) {
-            Log.d("internet status", "data plan");
-            new showOfficialDataFromSQLiteTask().execute(officialID);
-        } else {
-            new showOfficialDataFromSQLiteTask().execute(officialID);
+            edtUsername.setText(WelcomeActivity.profile.getTbOfficial().id_users);
+            edtFirstName.setText(WelcomeActivity.profile.getTbOfficial().FirstName);
+            edtLastName.setText(WelcomeActivity.profile.getTbOfficial().LastName);
+            edtEmail.setText(WelcomeActivity.profile.getTbOfficial().OfficialEmail);
+            editTextPhone.setText(WelcomeActivity.profile.getTbOfficial().PhoneNumber);
+            tAccessType.setText(WelcomeActivity.profile.getTbOfficial().AccessType);
         }
-        btnUpdateMember = (Button) view.findViewById(R.id.btnSave);
-        btnUpdateMember.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-
-
-                // check for Internet status
-                if (networkConnectivity) {
-                    if (updateMember()) {
-                        new updateOfficialDataTask().execute(tMemberID.getText().toString(),
-                                tUsername.getText().toString(),
-                                tPassword.getText().toString(),
-                                String.valueOf(spinnerRankInspector.getSelectedItem()),
-                                txtFirstName.getText().toString(),
-                                txtLastName.getText().toString(),
-                                String.valueOf(spinnerPositionInspector.getSelectedItem()),
-                                txtAreaCodeTel.getText().toString(),
-                                txtPhoneNumber.getText().toString(),
-                                tEmail.getText().toString(),
-                                tAccessType.getText().toString());
-                        Log.i("Recieve", "Save in SQLite success");
-                    } else {
-                        Toast.makeText(getActivity(),
-                                "เเก้ไขข้อมูลใน SQLite ไม่สำเร็จ",
-                                Toast.LENGTH_LONG).show();
-                    }
-
-
-                } else {
-                    // Internet connection is not present
-
-                    if (updateMember()) {
-
-
-                        Toast.makeText(getActivity(),
-                                "เเก้ไขข้อมูลใน SQLite เรียบร้อยเเล้ว",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-
-        });
+        if (WelcomeActivity.profile.getTbUsers() != null) {
+            edtUsername.setText(WelcomeActivity.profile.getTbUsers().id_users);
+            edtPassword.setText(WelcomeActivity.profile.getTbUsers().pass);
+        }
 
         return view;
     }
 
-    private boolean updateMember() {
 
-        long saveStatus = mDbHelper.updateMember(tMemberID
-                        .getText().toString(), tUsername.getText()
-                        .toString(), tPassword.getText().toString(),
-                String.valueOf(spinnerRankInspector
-                        .getSelectedItem()), txtFirstName.getText()
-                        .toString(), txtLastName.getText()
-                        .toString(), String
-                        .valueOf(spinnerPositionInspector
-                                .getSelectedItem()), txtAreaCodeTel.getText().toString(),
-                txtPhoneNumber.getText().toString(),
-                tEmail.getText().toString(), "", tAccessType
-                        .getText().toString());
+    private class ProfileTextWatcher implements TextWatcher {
+        private EditText mEditText;
 
-        if (saveStatus <= 0) {
-            Log.i("Recieve", "Error!! ");
-            mDbHelper.close();
-            return false;
-        } else {
-            mDbHelper.close();
-            return true;
+        public ProfileTextWatcher(EditText editText) {
+            mEditText = editText;
         }
 
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (editable == editTextPhone.getEditableText()) {
+                WelcomeActivity.profile.getTbOfficial().setPhoneNumber(editTextPhone.getText().toString());
+                Log.i(TAG, "PhoneNumber " + WelcomeActivity.profile.getTbOfficial().PhoneNumber);
+            } else if (editable == edtEmail.getEditableText()) {
+                WelcomeActivity.profile.getTbOfficial().setOfficialEmail(edtEmail.getText().toString());
+                Log.i(TAG, "OfficialEmail " + WelcomeActivity.profile.getTbOfficial().OfficialEmail);
+            } else if (editable == edtFirstName.getEditableText()) {
+                WelcomeActivity.profile.getTbOfficial().setFirstName(edtFirstName.getText().toString());
+                WelcomeActivity.profile.getTbUsers().setName(edtFirstName.getText().toString());
+                Log.i(TAG, "FirstName " + WelcomeActivity.profile.getTbOfficial().FirstName);
+            } else if (editable == edtLastName.getEditableText()) {
+                WelcomeActivity.profile.getTbOfficial().setLastName(edtLastName.getText().toString());
+                WelcomeActivity.profile.getTbUsers().setSurname(edtLastName.getText().toString());
+                Log.i(TAG, "LastName " + WelcomeActivity.profile.getTbOfficial().LastName);
+            } else if (editable == edtUsername.getEditableText()) {
+                WelcomeActivity.profile.getTbOfficial().setId_users(edtUsername.getText().toString());
+                WelcomeActivity.profile.getTbUsers().setId_users(edtUsername.getText().toString());
+                Log.i(TAG, "id_users " + WelcomeActivity.profile.getTbOfficial().id_users);
+            } else if (editable == edtPassword.getEditableText()) {
+//                WelcomeActivity.profile.getTbUsers().setPass(md5(edtPassword.getText().toString()));
+//                Log.i(TAG, "edtPassword " + WelcomeActivity.profile.getTbUsers().pass);
+            } else if (editable == edtPosition.getEditableText()) {
+                WelcomeActivity.profile.getTbOfficial().setSubPossition(edtPosition.getText().toString());
+                Log.i(TAG, "SubPossition " + WelcomeActivity.profile.getTbOfficial().SubPossition);
+            }
+        }
     }
 
-    class showOfficialDataTask extends AsyncTask<String, Void, String> {
 
+
+    private class ProfileOnClickListener implements View.OnClickListener {
         @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
+        public void onClick(View view) {
+            if (view == txtChangePassword) {
+                MainActivity.setFragment(changePassFragment, 1);
+            }
+            if (view == fabBtn) {
+                if (cd.isNetworkAvailable()) {
+                    if (WelcomeActivity.profile.getTbOfficial() != null) {
+                        //save to server
+                        EditProfile editProfile = new EditProfile();
+                        editProfile.execute(WelcomeActivity.profile);
 
-
-        @Override
-        protected String doInBackground(String... params) {
-            String paramsOfficialID = params[0];
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("strOfficialID", paramsOfficialID));
-
-            String resultServer = ConnectServer.getJsonPostGet(nameValuePairs, "getOfficialDetail");
-
-            Log.i("Recieve strOfficialID", resultServer);
-            return resultServer;
-        }
-
-        protected void onPostExecute(String resultServer) {
-
-
-            String sOfficialID = "";
-            String sUsername = "";
-            String sPassword = "";
-            String sRank = "";
-            String sFirstName = "";
-            String sLastName = "";
-            String sAlias = "";
-            String sPosition = "";
-            String sSubPossition = "";
-            String sStationName = "";
-            String sAgencyName = "";
-            String sCenterName = "";
-            String sAreaCodeTel = "";
-            String sPhoneNumber = "";
-            String sOfficialEmail = "";
-            String sOfficialDisplayPic = "";
-            String sIMEI = "";
-            String sLastLogin = "";
-            String sAccessType = "";
-            JSONObject c;
-            try {
-                c = new JSONObject(resultServer);
-                sOfficialID = c.getString("OfficialID");
-                sUsername = c.getString("Username");
-                sPassword = c.getString("Password");
-                sAlias = c.getString("Alias");
-                sRank = c.getString("Rank");
-                sFirstName = c.getString("FirstName");
-                sLastName = c.getString("LastName");
-                sPosition = c.getString("Position");
-                sSubPossition = c.getString("SubPossition");
-                sStationName = c.getString("StationName");
-                sAgencyName = c.getString("AgencyName");
-                sCenterName = c.getString("CenterName");
-                sAreaCodeTel = c.getString("AreaCodeTel");
-                sPhoneNumber = c.getString("PhoneNumber");
-                sOfficialEmail = c.getString("OfficialEmail");
-                sOfficialDisplayPic = c.getString("OfficialDisplayPic");
-                sIMEI = c.getString("IMEI");
-                sLastLogin = c.getString("LastLogin");
-                sAccessType = c.getString("AccessType");
-                Log.i("show sFirstName", sFirstName + " " + sLastName);
-
-                if (!sOfficialID.equals("")) {
-                    tMemberID.setText(sOfficialID);
-                    tUsername.setText(sUsername);
-                    tPassword.setText(sPassword);
-                    txtFirstName.setText(sFirstName);
-                    txtLastName.setText(sLastName);
-                    tEmail.setText(sOfficialEmail);
-                    txtAreaCodeTel.setText(sAreaCodeTel);
-                    txtPhoneNumber.setText(sPhoneNumber);
-
-                    if(sAccessType == "investigator")
-                        tAccessType.setText("ผู้ตรวจสถานที่เกิดเหตุ");
-                    if(sAccessType == "inquiryofficial")
-                        tAccessType.setText("พนักงานสืบสวน");
-                    if (sRank.length() != 0) {
-                        String[] strRank = getResources().getStringArray(
-                                R.array.rank_inspector);
-                        spinnerRankInspector.setSelection(Arrays.asList(strRank).indexOf(
-                                sRank));
                     }
+                } else {
 
-                    if (sPosition.length() != 0) {
-                        String[] strPosition = getResources().getStringArray(
-                                R.array.inv_position);
-                        spinnerPositionInspector.setSelection(Arrays.asList(strPosition)
-                                .indexOf(sPosition));
+                    if (WelcomeActivity.profile.getTbOfficial() != null) {
+                        boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                        if (isSuccess) {
+                            boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
+                            if (isSuccess2) {
+                                if (snackbar == null || !snackbar.isShown()) {
+                                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode)
+                                                    + "/n" + getString(R.string.save_complete)
+                                                    + "/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                            , Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+                                                }
+                                            });
+                                    snackbar.show();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
+                                if (snackbar == null || !snackbar.isShown()) {
+                                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                                    + "และบันทึก pref ไม่สำเร็จ/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                            , Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+
+                                                }
+                                            });
+                                    snackbar.show();
+                                }
+                            }
+
+                        } else {
+                            if (snackbar == null || !snackbar.isShown()) {
+                                snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                                + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                        , Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+
+                                            }
+                                        });
+                                snackbar.show();
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private class ProOnItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener, View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (view == spinnerRankInspector) {
+                oldRank = false;
+            }
+            if (view == spinnerPositionInspector) {
+                oldPosition = false;
+            }
+            return false;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            switch (adapterView.getId()) {
+
+                case R.id.spinnerRankInspector:
+                    if (oldRank == false) {
+                        WelcomeActivity.profile.getTbOfficial().setRank(String.valueOf(mRankArray2[i]));
+                        WelcomeActivity.profile.getTbUsers().setTitle(String.valueOf(mRankArray2[i]));
+                        Log.i(TAG, "Rank " + WelcomeActivity.profile.getTbOfficial().Rank);
+                    }
+                    break;
+                case R.id.spinnerPositionInspector:
+                    if (oldPosition == false) {
+                        WelcomeActivity.profile.getTbOfficial().setPosition(String.valueOf(mPositionArray2[i]));
+                        WelcomeActivity.profile.getTbUsers().setPosition(String.valueOf(mPositionArray2[i]));
+                        Log.i(TAG, "Position " + WelcomeActivity.profile.getTbOfficial().Position);
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+            switch (adapterView.getId()) {
+
+                case R.id.spinnerRankInspector:
+                    WelcomeActivity.profile.getTbOfficial().setRank(String.valueOf(mRankArray2[0]));
+                    WelcomeActivity.profile.getTbUsers().setTitle(String.valueOf(mRankArray2[0]));
+                    Log.i(TAG, "Rank " + WelcomeActivity.profile.getTbOfficial().Rank);
+                    break;
+                case R.id.spinnerPositionInspector:
+                    WelcomeActivity.profile.getTbOfficial().setPosition(String.valueOf(mPositionArray2[0]));
+                    WelcomeActivity.profile.getTbUsers().setPosition(String.valueOf(mPositionArray2[0]));
+                    Log.i(TAG, "Position " + WelcomeActivity.profile.getTbOfficial().Position);
+                    break;
+            }
+        }
+    }
+
+    class EditProfile extends AsyncTask<ApiProfile, Void, ApiStatus> {
+
+        @Override
+        protected ApiStatus doInBackground(ApiProfile... apiProfiles) {
+            return WelcomeActivity.api.editProfile(apiProfiles[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+
+            Log.d(TAG, apiStatus.getStatus());
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getData().getReason());
+                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                if (isSuccess) {
+
+                    boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
+                    if (isSuccess2) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete)
+                                            + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                    , Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
+                        if (snackbar == null || !snackbar.isShown()) {
+                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                            + "และบันทึก pref ไม่สำเร็จ/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                    , Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+
+                                        }
+                                    });
+                            snackbar.show();
+                        }
                     }
 
                 } else {
-                    tMemberID.setText("-");
-                    tUsername.setText("-");
-                    tPassword.setText("-");
-                    txtFirstName.setText("-");
-                    txtLastName.setText("-");
-                    tEmail.setText("-");
-                    txtAreaCodeTel.setText("-");
-                    txtPhoneNumber.setText("-");
-                    tAccessType.setText("-");
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
+                                        + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                , Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+
+                                    }
+                                });
+                        snackbar.show();
+                    }
                 }
-
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                Log.e("log_tag", "Error parsing data " + e.toString());
-            }
-
-
-        }
-    }
-
-    class showOfficialDataFromSQLiteTask extends AsyncTask<String, Void, String[]> {
-
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        protected String[] doInBackground(String... params) {
-            //
-            // Show Data
-            String[] arrData = {""};
-            arrData = mDbHelper.SelectDataOfficial(params[0]);
-
-            Log.i("Recieve", arrData[8]);
-            return arrData;
-        }
-
-        protected void onPostExecute(String[] arrData) {
-            // Dismiss ProgressBar
-            //Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
-            /*** Default Value ***/
-            if (arrData != null) {
-
-                tMemberID.setText(arrData[5]);
-                tUsername.setText(arrData[14]);
-                tPassword.setText(arrData[15]);
-                txtFirstName.setText(arrData[6]);
-                txtLastName.setText(arrData[7]);
-                txtAreaCodeTel.setText(arrData[2]);
-                txtPhoneNumber.setText(arrData[1]);
-                if (arrData[4].length() != 0) {
-                    String[] sRank = getResources().getStringArray(
-                            R.array.rank_inspector);
-                    spinnerRankInspector.setSelection(Arrays.asList(sRank).indexOf(
-                            arrData[4]));
-                }
-
-                if (arrData[8].length() != 0) {
-                    String[] sPosition = getResources().getStringArray(
-                            R.array.inv_position);
-                    spinnerPositionInspector.setSelection(Arrays.asList(sPosition)
-                            .indexOf(arrData[8]));
-                }
-                tEmail.setText(arrData[12]);
-                tAccessType.setText(arrData[18]);
-
-
-            }
-
-        }
-    }
-
-    class updateOfficialDataTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-
-        @Override
-        protected String doInBackground(String... paramsData) {
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("sOfficialID", paramsData[0]));
-            params.add(new BasicNameValuePair("sUsername"
-                    , paramsData[1]));
-            params.add(new BasicNameValuePair("sPassword"
-                    , paramsData[2]));
-            params.add(new BasicNameValuePair("sRank", paramsData[3]));
-            params.add(new BasicNameValuePair("sFirstName", paramsData[4]));
-            params.add(new BasicNameValuePair("sLastName", paramsData[5]));
-
-            params.add(new BasicNameValuePair("sPosition", paramsData[6]));
-            params.add(new BasicNameValuePair("sAreaTel", paramsData[7]));
-            params.add(new BasicNameValuePair("sTel", paramsData[8]));
-            params.add(new BasicNameValuePair("sEmail", paramsData[9]));
-            params.add(new BasicNameValuePair("sAvatar", ""));
-            params.add(new BasicNameValuePair("sStatus", paramsData[10]));
-
-            String resultServer = ConnectServer
-                    .getJsonPostGet(params,
-                            "editProfileMember");
-            Log.i("editProfileMember", resultServer);
-            return resultServer;
-        }
-
-        protected void onPostExecute(String resultServer) {
-
-            String strStatusID = "0";
-            String strError = "Unknow Status!";
-            JSONObject c;
-
-            try {
-                c = new JSONObject(resultServer);
-                strStatusID = c.getString("StatusID");
-                strError = c.getString("Error");
-            } catch (JSONException e) {
-                // TODO: handle exception
-                e.printStackTrace();
-            }
-
-            // Prepare Save Data
-            if (strStatusID.equals("0")) {
-                Toast.makeText(getActivity(),
-                        "เเก้ไขข้อมูลไม่สำเร็จ",
-                        Toast.LENGTH_SHORT).show();
 
             } else {
-                Toast.makeText(getActivity(),
-                        "เเก้ไขข้อมูลเรียบร้อยเเล้ว",
-                        Toast.LENGTH_LONG).show();
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason().toString()
+                                    + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                            , Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
 
+
+                                }
+                            });
+                    snackbar.show();
+                }
             }
-
-
         }
     }
-
-
 }
