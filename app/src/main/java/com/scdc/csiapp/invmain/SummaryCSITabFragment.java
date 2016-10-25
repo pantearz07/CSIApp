@@ -373,17 +373,17 @@ public class SummaryCSITabFragment extends Fragment {
                         // uploadDataToServer();
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
-                        if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-
-                                        }
-                                    });
-                            snackbar.show();
-                        }
+//                        if (snackbar == null || !snackbar.isShown()) {
+//                            snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
+//                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View view) {
+//
+//
+//                                        }
+//                                    });
+//                            snackbar.show();
+//                        }
                         boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                         if (isSuccess) {
                             SaveCaseReport statusCase = new SaveCaseReport();
@@ -418,17 +418,17 @@ public class SummaryCSITabFragment extends Fragment {
                         } else {
                             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
-                            if (snackbar == null || !snackbar.isShown()) {
-                                snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-
-
-                                            }
-                                        });
-                                snackbar.show();
-                            }
+//                            if (snackbar == null || !snackbar.isShown()) {
+//                                snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
+//                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View view) {
+//
+//
+//                                            }
+//                                        });
+//                                snackbar.show();
+//                            }
                             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                             if (isSuccess) {
                                 SaveCaseReport statusCase = new SaveCaseReport();

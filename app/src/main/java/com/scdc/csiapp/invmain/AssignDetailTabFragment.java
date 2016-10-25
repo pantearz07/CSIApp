@@ -97,7 +97,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     String lat, lng;
     ImageButton ic_telphone1, ic_telphone2;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
-
+    String phone;
     private TextView editReceiveCaseDate, editReceiveCaseTime;
     private TextView editHappenCaseDate, editHappenCaseTime;
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
@@ -106,7 +106,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
     View viewReceiveCSI;
     Context context;
-    ListView  listViewInvestigator;
+    ListView listViewInvestigator;
     List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
 
     @Nullable
@@ -405,11 +405,14 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             editTextSuffererPhone.setText("");
         } else {
             editTextSuffererPhone.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
+            phone =AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum;
         }
         ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
         ic_telphone2.setOnClickListener(new AssignDetailTabFragment());
         TextView txtInvestigatorList = (TextView) viewReceiveCSI.findViewById(R.id.txtInvestigatorList);
         txtInvestigatorList.setVisibility(View.VISIBLE);
+        listViewInvestigator = (ListView) viewReceiveCSI
+                .findViewById(R.id.listViewInvestigator);
         if (AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes() == null) {
             apiInvestigatorsInScenes = new ArrayList<>();
             Log.i(TAG, "apiInvestigatorsInScenes null");
@@ -419,8 +422,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             listViewInvestigator.setVisibility(View.VISIBLE);
 
         }
-        listViewInvestigator = (ListView) viewReceiveCSI
-                .findViewById(R.id.listViewInvestigator);
+
         listViewInvestigator.setOnTouchListener(new ListviewSetOnTouchListener());
         showListInvestigators();
 
@@ -433,7 +435,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             p.height = 0;
             fabBtnRec.setLayoutParams(p);
             fabBtnRec.hide();
-            editTextPhone1.setEnabled(false);
+//            editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
             editReceiveCaseTime.setEnabled(false);
             editHappenCaseDate.setEnabled(false);
@@ -449,7 +451,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             spinnerAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
-            editTextSuffererPhone.setEnabled(false);
+//            editTextSuffererPhone.setEnabled(false);
             editCircumstanceOfCaseDetail.setEnabled(false);
         }
 
@@ -530,7 +532,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             case R.id.ic_telphone2:
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
+                    callIntent.setData(Uri.parse("tel:" + phone));
                     callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(callIntent);
                 } catch (ActivityNotFoundException activityException) {

@@ -88,7 +88,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     Log.e(TAG, "scheduleDate : " + scheduleDate);
                     String message = "ตารางเวรวันที่ " + scheduleDate;
                     String bigmessage = "ตารางเวรตรวนสถานที่เกิดเหตุใหม่" + "\n" + "วันที่ " + scheduleDate;
-                    sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "scheduleinvestigatorsfragment");
+                    sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "calendarfragment");
 
                 }
             }
@@ -151,8 +151,8 @@ public class GcmDownstreamService extends GcmListenerService {
 //                intent = new Intent(this, Class.forName("com.scdc.csiapp.inqmain." + nameintent));
 //            }else if(namefragment.equals("casescenelistfragment")) {
 //                intent = new Intent(this, Class.forName("com.scdc.csiapp.invmain." + nameintent));
-//            }else if(namefragment.equals("scheduleinvestigatorsfragment")){
-//                intent = new Intent(this, Class.forName("com.scdc.csiapp.main." + nameintent));
+//            }else if(namefragment.equals("calendarfragment")){
+//                intent = new Intent(this, Class.forName("com.scdc.csiapp.schdule." + nameintent));
 //            }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
