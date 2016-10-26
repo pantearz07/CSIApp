@@ -348,7 +348,7 @@ public class ApiConnect {
         try {
 
             Response response = okHttpClient.newCall(request).execute();
-
+//            Log.d(TAG, "post data " + response.body().string());
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
                 // ข้อมูลจากเซิร์ฟเวอร์

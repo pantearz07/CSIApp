@@ -1478,7 +1478,7 @@ public class DBHelper extends SQLiteAssetHelper {
                 if (cursor.moveToFirst()) {
 //                    arrData = new String[cursor.getColumnCount()];
 
-                    arrData = cursor.getString(0);// OfficialID
+                    arrData = cursor.getString(0);// CaseTypeID
 
                 }
             }
@@ -1541,7 +1541,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             mDb = this.getReadableDatabase(); // Read Data
 
-            String strSQL = "SELECT * FROM " + TB_CaseSceneType;
+            String strSQL = "SELECT * FROM " + TB_CaseSceneType +" ORDER BY CaseTypeID ASC LIMIT 5 OFFSET 1";
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
