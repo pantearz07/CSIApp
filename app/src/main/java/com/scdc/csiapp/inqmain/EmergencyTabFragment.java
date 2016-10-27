@@ -30,6 +30,7 @@ public class EmergencyTabFragment extends Fragment {
     private static final String TAG = "DEBUG-EmergencyTabFragment";
     public static String Bundle_Key = "noticecase";
     public static String Bundle_mode = "mode";
+
     public static TbNoticeCase tbNoticeCase;
     public static String mode;
     Snackbar snackbar;
@@ -89,9 +90,9 @@ public class EmergencyTabFragment extends Fragment {
 
             switch (position) {
                 case 0:
-                    return new SummaryEmerTabFragment();
-                case 1:
                     return new EmergencyDetailTabFragment();
+                case 1:
+                    return new SummaryEmerTabFragment();
 
             }
             return null;
@@ -113,9 +114,9 @@ public class EmergencyTabFragment extends Fragment {
 
             switch (position) {
                 case 0:
-                    return "สรุป";
-                case 1:
                     return "แจ้งเหตุ";
+                case 1:
+                    return "สรุป";
 
             }
             return null;

@@ -206,6 +206,7 @@ public class NoticeCaseListFragment extends Fragment {
 //                            if (isSuccess) {
                             Bundle i = new Bundle();
                             i.putSerializable(Bundle_Key, tbNoticeCase);
+
                             i.putString(emergencyTabFragment.Bundle_mode, "new");
                             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                             emergencyTabFragment.setArguments(i);

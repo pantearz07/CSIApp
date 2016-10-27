@@ -115,6 +115,8 @@ public class SummaryEmerTabFragment extends Fragment {
         layoutSceneNoticeDate.setVisibility(View.GONE);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
         edtInvInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInvInfo);
+        edtInqTel = (TextView) viewSummaryCSI.findViewById(R.id.edtInqTel);
+        edtInvTel = (TextView) viewSummaryCSI.findViewById(R.id.edtInvTel);
         edtPoliceStation = (TextView) viewSummaryCSI.findViewById(R.id.edtPoliceStation);
 //สถานะคดี
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
@@ -201,7 +203,6 @@ public class SummaryEmerTabFragment extends Fragment {
             }
         }
 
-
         edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
                 + WelcomeActivity.profile.getTbOfficial().FirstName + " "
                 + WelcomeActivity.profile.getTbOfficial().LastName + " ("
@@ -285,10 +286,14 @@ public class SummaryEmerTabFragment extends Fragment {
         }
 
         if (EmergencyTabFragment.mode == "view") {
-            fabBtn.setVisibility(View.GONE);
-            if (fabBtn != null || fabBtn.isShown()) {
-                fabBtn.setVisibility(View.GONE);
-            }
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtn.setLayoutParams(p);
+            fabBtn.hide();
+            fabBtn.setEnabled(false);
+
             spnCaseType.setEnabled(false);
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
@@ -298,8 +303,7 @@ public class SummaryEmerTabFragment extends Fragment {
                 btnNoticecase.setVisibility(View.VISIBLE);
                 btnDownloadfile.setVisibility(View.VISIBLE);
                 btnDownloadfile.setText("ลบคดี");
-            }
-            if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("notice")) {
+            } else {
                 btnDownloadfile.setVisibility(View.GONE);
             }
         } else if (EmergencyTabFragment.mode == "edit") {
@@ -401,6 +405,7 @@ public class SummaryEmerTabFragment extends Fragment {
                         EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
 
                         if (EmergencyTabFragment.tbNoticeCase != null) {
+
                             boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
                             if (isSuccess) {
                                 SendNewNoticeCase noticeCase = new SendNewNoticeCase();

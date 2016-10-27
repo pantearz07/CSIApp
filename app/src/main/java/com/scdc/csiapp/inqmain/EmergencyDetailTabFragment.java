@@ -130,7 +130,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     .build();
             Log.d(TAG, "Create Google services");
         }
-
+        editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
         updateDT = getDateTime.getDateTimeNow();
         String noticecaseid = EmergencyTabFragment.tbNoticeCase.getNoticeCaseID();
         Log.i(TAG, " NoticeCaseID " + noticecaseid);
@@ -347,7 +347,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
         autoCompleteSuffererStatus.addTextChangedListener(new EmerTextWatcher(autoCompleteSuffererStatus));
 
-        editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
+
         if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum == null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum.equals("")) {
             editTextSuffererPhone.setText("");
         } else {
@@ -358,11 +358,14 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         ic_telphone2.setOnClickListener(new EmergencyDetailTabFragment());
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (emergencyTabFragment.mode == "view") {
-            fabBtnRec.setVisibility(View.GONE);
-            if (fabBtnRec != null || fabBtnRec.isShown()) {
-                fabBtnRec.setVisibility(View.GONE);
-            }
+            CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            p.setAnchorId(View.NO_ID);
+            p.width = 0;
+            p.height = 0;
+            fabBtnRec.setLayoutParams(p);
+            fabBtnRec.hide();
             fabBtnRec.setEnabled(false);
+
             editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
             editReceiveCaseTime.setEnabled(false);
@@ -547,7 +550,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             case R.id.ic_telphone2:
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
+                    callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum));
                     callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(callIntent);
                 } catch (ActivityNotFoundException activityException) {
