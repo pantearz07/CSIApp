@@ -190,10 +190,12 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
 
         //datetime
+        String[] currentDT = getDateTime.updateDataDateTime();
         editReceiveCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate.equals("")) {
-            editReceiveCaseDate.setText("");
+
+            editReceiveCaseDate.setText(currentDT[0]);
         } else {
             editReceiveCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate));
         }
@@ -203,7 +205,11 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.editReceiveCaseTime);
         editReceiveCaseTime.setEnabled(false);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("")) {
-            editReceiveCaseTime.setText("");
+            if (CSIDataTabFragment.mode == "view") {
+                editReceiveCaseTime.setText("");
+            }else {
+                editReceiveCaseTime.setText(currentDT[1]);
+            }
         } else {
             editReceiveCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime));
         }
@@ -211,7 +217,12 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editHappenCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate.equals("")) {
-            editHappenCaseDate.setText("");
+            if (CSIDataTabFragment.mode == "view") {
+
+                editHappenCaseDate.setText("");
+            }else {
+                editHappenCaseDate.setText(currentDT[0]);
+            }
         } else {
             editHappenCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate));
         }
@@ -219,7 +230,11 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editHappenCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseTime);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("")) {
-            editHappenCaseTime.setText("");
+            if (CSIDataTabFragment.mode == "view") {
+                editHappenCaseTime.setText("");
+            }else{
+                editHappenCaseTime.setText(currentDT[1]);
+            }
         } else {
             editHappenCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime));
         }
@@ -227,7 +242,11 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("")) {
-            editKnowCaseDate.setText("");
+            if (CSIDataTabFragment.mode == "view") {
+                editKnowCaseDate.setText("");
+            }else{
+                editKnowCaseDate.setText(currentDT[1]);
+            }
         } else {
             editKnowCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate));
         }
@@ -235,7 +254,11 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editKnowCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseTime);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("")) {
-            editKnowCaseTime.setText("");
+            if (CSIDataTabFragment.mode == "view") {
+                editKnowCaseTime.setText("");
+            }else{
+                editKnowCaseTime.setText(currentDT[1]);
+            }
         } else {
             editKnowCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime));
         }
@@ -930,10 +953,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             switch (parent.getId()) {
 
                 case R.id.spinnerDistrict:
-//                    if (oldDistrict == false) {
-
                     if (districtid == null || districtid.equals("") || districtid.equals("null")) {
-//                            spinnerDistrict.setSelection(0);
                         selectedDistrict = mDistrictArray[pos][0];
                         sDistrictName = mDistrictArray[pos][2].toString();
                         Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
@@ -949,20 +969,15 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
                                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
                                 Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
-//                                    oldDistrict = true;
                                 break;
                             }
                         }
-
                     }
-//                    }
                     break;
                 case R.id.spinnerAmphur:
-//                    if (oldAmphur == false) {
 
                     //ดึงค่า District
                     if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
-//                            spinnerAmphur.setSelection(0);
                         selectedAmphur = mAmphurArray[pos][0];
                         sAmphurName = mAmphurArray[pos][2].toString();
                         Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
@@ -1122,15 +1137,4 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putSerializable(CSIDataTabFragment.Bundle_Key,CSIDataTabFragment.apiCaseScene);
-//    }
-//
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        CSIDataTabFragment.apiCaseScene = (ApiCaseScene) savedInstanceState.getSerializable(CSIDataTabFragment.Bundle_Key);
-//    }
 }

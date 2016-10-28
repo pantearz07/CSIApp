@@ -237,6 +237,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
+
         protected void onPostExecute(ApiLoginStatus apiLoginStatus) {
             super.onPostExecute(apiLoginStatus);
             if (apiLoginStatus.getStatus().equalsIgnoreCase("success")) {
