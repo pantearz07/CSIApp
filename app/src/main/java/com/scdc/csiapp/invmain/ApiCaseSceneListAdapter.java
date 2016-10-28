@@ -153,11 +153,11 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
         // เปลี่ยนสีเส้นตาม CaseStatus ด้วยการเปลี่ยนรูปใหม่มาใส่แทนตัวเก่า
         String CaseStatus = apiNoticeCase.getTbNoticeCase().CaseStatus;
         if (CaseStatus.equalsIgnoreCase("receive")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus3));
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus1));
         } else if (CaseStatus.equalsIgnoreCase("notice")) {
             csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus2));
         } else if (CaseStatus.equalsIgnoreCase("assign")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus1));
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus3));
         } else if (CaseStatus.equalsIgnoreCase("accept")) {
             csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus4));
         } else if (CaseStatus.equalsIgnoreCase("investigating")) {

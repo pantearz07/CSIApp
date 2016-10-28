@@ -265,7 +265,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         //datetime
         editReceiveCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseDate);
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate == null
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate.equals("0000-00-00")) {
             editReceiveCaseDate.setText("");
         } else {
             editReceiveCaseDate.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseDate));
@@ -273,7 +275,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
         editReceiveCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseTime);
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime == null
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime.equals("00:00:00")) {
             editReceiveCaseTime.setText("");
         } else {
             editReceiveCaseTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().ReceivingCaseTime));
@@ -282,7 +286,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
         editHappenCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseDate);
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate == null
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate.equals("0000-00-00")) {
             editHappenCaseDate.setText("");
         } else {
             editHappenCaseDate.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseDate));
@@ -290,7 +296,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
         editHappenCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseTime);
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime == null
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime.equals("00:00:00")) {
             editHappenCaseTime.setText("");
         } else {
             editHappenCaseTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().HappenCaseTime));
@@ -298,7 +306,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate == null
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate.equals("0000-00-00")) {
             editKnowCaseDate.setText("");
         } else {
             editKnowCaseDate.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseDate));
@@ -307,7 +317,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         editKnowCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseTime);
 
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime.equals("")) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime == null
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime.equals("00:00:00")) {
             editKnowCaseTime.setText("");
         } else {
             editKnowCaseTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().KnowCaseTime));

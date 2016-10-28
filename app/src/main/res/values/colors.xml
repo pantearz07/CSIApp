@@ -17,9 +17,10 @@
     <color name="red_btnpres">#e60000</color>
     <color name="casestatus1">#c9302c</color>
     <color name="casestatus2">#ec971f</color>
-    <color name="casestatus3">#D7DBDD</color>
-    <color name="casestatus4">#286090</color>
-    <color name="casestatus5">#31b0d5</color>
-    <color name="casestatus6">#449d44</color>
+    <color name="casestatus3">#449d44</color>
+    <color name="casestatus4">#31b0d5</color>
+    <color name="casestatus5">#286090</color>
+    <color name="casestatus6">#D7DBDD</color>
+
     <color name="lightgray">#D7DBDD</color>
 </resources>

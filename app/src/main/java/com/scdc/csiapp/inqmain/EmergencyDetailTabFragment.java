@@ -225,7 +225,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         String[] currentDT = getDateTime.updateDataDateTime();
         editReceiveCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseDate);
-        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate == null || EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate.equals("")) {
+        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate == null || EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate.equals("")
+                || EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate.equals("0000-00-00")) {
             if (EmergencyTabFragment.mode == "view") {
                 editReceiveCaseDate.setText("");
             } else {
@@ -237,9 +238,11 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         editReceiveCaseDate.setOnClickListener(this);
         editReceiveCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseTime);
-        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime == null || EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime.equals("")) {
+        if (EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime == null || EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime.equals("")
+                || EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime.equals("00:00:00")) {
             if (EmergencyTabFragment.mode == "view") {
                 editReceiveCaseTime.setText("");
+
             } else {
                 editReceiveCaseTime.setText(currentDT[1]);
             }
@@ -251,7 +254,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         editReceiveCaseTime.setOnClickListener(this);
         editHappenCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseDate);
-        if (EmergencyTabFragment.tbNoticeCase.HappenCaseDate == null || EmergencyTabFragment.tbNoticeCase.HappenCaseDate.equals("")) {
+        if (EmergencyTabFragment.tbNoticeCase.HappenCaseDate == null || EmergencyTabFragment.tbNoticeCase.HappenCaseDate.equals("")
+                || EmergencyTabFragment.tbNoticeCase.HappenCaseDate.equals("0000-00-00")) {
             if (EmergencyTabFragment.mode == "view") {
                 editHappenCaseDate.setText("");
             } else {
@@ -263,7 +267,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         editHappenCaseDate.setOnClickListener(this);
         editHappenCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseTime);
-        if (EmergencyTabFragment.tbNoticeCase.HappenCaseTime == null || EmergencyTabFragment.tbNoticeCase.HappenCaseTime.equals("")) {
+        if (EmergencyTabFragment.tbNoticeCase.HappenCaseTime == null || EmergencyTabFragment.tbNoticeCase.HappenCaseTime.equals("")
+                || EmergencyTabFragment.tbNoticeCase.HappenCaseTime.equals("00:00:00")) {
             if (EmergencyTabFragment.mode == "view") {
                 editHappenCaseTime.setText("");
             } else {
@@ -276,7 +281,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
-        if (EmergencyTabFragment.tbNoticeCase.KnowCaseDate == null || EmergencyTabFragment.tbNoticeCase.KnowCaseDate.equals("")) {
+        if (EmergencyTabFragment.tbNoticeCase.KnowCaseDate == null || EmergencyTabFragment.tbNoticeCase.KnowCaseDate.equals("")
+                || EmergencyTabFragment.tbNoticeCase.KnowCaseDate.equals("0000-00-00")) {
             if (EmergencyTabFragment.mode == "view") {
                 editKnowCaseDate.setText("");
             } else {
@@ -290,7 +296,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         editKnowCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseTime);
 
-        if (EmergencyTabFragment.tbNoticeCase.KnowCaseTime == null || EmergencyTabFragment.tbNoticeCase.KnowCaseTime.equals("")) {
+        if (EmergencyTabFragment.tbNoticeCase.KnowCaseTime == null || EmergencyTabFragment.tbNoticeCase.KnowCaseTime.equals("")
+                || EmergencyTabFragment.tbNoticeCase.KnowCaseTime.equals("00:00:00")) {
             if (EmergencyTabFragment.mode == "view") {
                 editKnowCaseTime.setText("");
             } else {

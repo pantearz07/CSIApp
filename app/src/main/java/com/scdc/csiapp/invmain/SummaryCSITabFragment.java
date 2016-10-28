@@ -286,17 +286,16 @@ public class SummaryCSITabFragment extends Fragment {
         }
 //
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
-        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate == null) {
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate == null || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate.equals("0000-00-00")) {
             edtSceneNoticeDateTime.setText("-");
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate.equals("0000-00-00")) {
-            edtSceneNoticeDateTime.setText("-");
+
         } else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime + " น.");
         }
         //วันเวลาที่ตรวจคดีเสร็จ
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null) {
-            edtCompleteSceneDateTime.setText("-");
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate.equals("0000-00-00")) {
             edtCompleteSceneDateTime.setText("-");
 
         } else {
@@ -304,10 +303,8 @@ public class SummaryCSITabFragment extends Fragment {
 
         }
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate == null) {
-            edtUpdateDateTime.setText("-");
-
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate.equals("0000-00-00")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate == null || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("0000-00-00")) {
             edtUpdateDateTime.setText("-");
 
         } else {

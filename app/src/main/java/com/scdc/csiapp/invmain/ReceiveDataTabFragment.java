@@ -193,8 +193,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         String[] currentDT = getDateTime.updateDataDateTime();
         editReceiveCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseDate);
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate.equals("")) {
-
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate.equals("0000-00-00")) {
             editReceiveCaseDate.setText(currentDT[0]);
         } else {
             editReceiveCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate));
@@ -204,7 +204,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editReceiveCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editReceiveCaseTime);
         editReceiveCaseTime.setEnabled(false);
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("00:00:00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editReceiveCaseTime.setText("");
             }else {
@@ -216,7 +217,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editReceiveCaseTime.setEnabled(false);
         editHappenCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseDate);
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate.equals("")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate.equals("0000-00-00")) {
             if (CSIDataTabFragment.mode == "view") {
 
                 editHappenCaseDate.setText("");
@@ -229,7 +231,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editHappenCaseDate.setOnClickListener(new SummaryOnClickListener());
         editHappenCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editHappenCaseTime);
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("00:00:00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editHappenCaseTime.setText("");
             }else{
@@ -241,7 +244,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editHappenCaseTime.setOnClickListener(new SummaryOnClickListener());
         editKnowCaseDate = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseDate);
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("0000-00-00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editKnowCaseDate.setText("");
             }else{
@@ -253,7 +257,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editKnowCaseDate.setOnClickListener(new SummaryOnClickListener());
         editKnowCaseTime = (TextView) viewReceiveCSI
                 .findViewById(R.id.editKnowCaseTime);
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("00:00:00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editKnowCaseTime.setText("");
             }else{

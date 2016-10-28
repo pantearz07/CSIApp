@@ -71,6 +71,7 @@ public class NoticeCaseListFragment extends Fragment {
     Snackbar snackbar;
     Handler mHandler = new Handler();
     private final static int INTERVAL = 1000 * 20; //20 second
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -316,6 +317,17 @@ public class NoticeCaseListFragment extends Fragment {
             mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
 
         } else {
+            if (snackbar == null || !snackbar.isShown()) {
+                snackbar = Snackbar.make(rootLayout, "ดาวน์โหลดข้อมูลผิดพลาด", Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+
+                            }
+                        });
+                snackbar.show();
+            }
             selectApiNoticeCaseFromSQLite();
         }
 
@@ -450,9 +462,12 @@ public class NoticeCaseListFragment extends Fragment {
                 apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
                 rvDraft.setAdapter(apiNoticeCaseListAdapter);
                 apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+            } else {
+                selectApiNoticeCaseFromSQLite();
             }
         }
     }
+
     Runnable mHandlerTaskcheckConnect = new Runnable() {
         @Override
         public void run() {
@@ -461,6 +476,7 @@ public class NoticeCaseListFragment extends Fragment {
             mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
         }
     };
+
     class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
 
         @Override

@@ -250,11 +250,9 @@ public class SummaryAssignTabFragment extends Fragment {
         TextView txtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.txtSceneNoticeDateTime);
         txtSceneNoticeDateTime.setText("วันเวลาที่จ่ายงาน");
         //ววันเวลาที่จ่ายงานห
-        if (AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate == null) {
+        if (AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate == null || AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate.equals("")
+                || AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate.equals("0000-00-00")) {
             edtSceneNoticeDateTime.setText("-");
-        } else if (AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate.equals("0000-00-00")) {
-            edtUpdateDateTime.setText("-");
-
 
         }  else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate + " น.");
@@ -269,13 +267,10 @@ public class SummaryAssignTabFragment extends Fragment {
         editSceneNoticeDate.setOnClickListener(new SummaryOnClickListener());
         editSceneNoticeTime.setOnClickListener(new SummaryOnClickListener());
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate == null) {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("")
+                || AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("0000-00-00")) {
 
             edtUpdateDateTime.setText("-");
-
-        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("0000-00-00")) {
-            edtUpdateDateTime.setText("-");
-
 
         } else {
             edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime + " น.");
@@ -409,19 +404,6 @@ public class SummaryAssignTabFragment extends Fragment {
                         snackbar.show();
                     }
                 }
-//                } else {
-//                    if (snackbar == null || !snackbar.isShown()) {
-//                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-//                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View view) {
-//
-//
-//                                    }
-//                                });
-//                        snackbar.show();
-//                    }
-//                }
             }
             if (v == btnDownloadfile) {
                 Log.i(TAG, "btnDownloadfile");
