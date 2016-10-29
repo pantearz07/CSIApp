@@ -155,7 +155,7 @@ public class SummaryEmerTabFragment extends Fragment {
             String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
             for (int i = 0; i < mCaseTypeArray.length; i++) {
                 mCaseTypeArray2[i] = mCaseTypeArray[i][1];
-                //  Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
+                  Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
             }
             ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
                     getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -173,7 +173,7 @@ public class SummaryEmerTabFragment extends Fragment {
         } else {
             String SelectCaseTypeID = dbHelper.SelectCaseTypeID(sSubCaseTypeID);
             for (int i = 0; i < mCaseTypeArray.length; i++) {
-                if (sCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
+                if (SelectCaseTypeID.trim().equals(mCaseTypeArray[i][0].toString())) {
                     spnCaseType.setSelection(i);
                     oldselectedCT = true;
                     break;

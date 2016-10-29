@@ -124,11 +124,8 @@ public class InqMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Consume input from header view. This disables the ripple effect
-//                mDrawerLayout.closeDrawers();
-//                FragmentTransaction ftprofile = getSupportFragmentManager().beginTransaction();
-//                ftprofile.replace(R.id.containerView, profileFragment);
-//                ftprofile.addToBackStack(null);
-//                ftprofile.commit();
+                mDrawerLayout.closeDrawers();
+                setFragment(profileFragment, 1);
             }
         });
 

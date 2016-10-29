@@ -1541,7 +1541,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             mDb = this.getReadableDatabase(); // Read Data
 
-            String strSQL = "SELECT * FROM " + TB_CaseSceneType +" ORDER BY CaseTypeID ASC LIMIT 5 OFFSET 1";
+            String strSQL = "SELECT * FROM " + TB_CaseSceneType + " ORDER BY CaseTypeID ASC LIMIT 5 OFFSET 1";
             Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
@@ -4504,6 +4504,57 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
             }
             cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public String getPoliceStionName(String PoliceStationID) {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM policestation WHERE PoliceStationID = '" + PoliceStationID + "' LIMIT 1";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            Log.i(TAG, PoliceStationID + "   " + String.valueOf(cursor.getCount()));
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                arrData = cursor.getString(cursor.getColumnIndex("PoliceStationName"));
+            }
+            cursor.close();
+
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+    public String getSCDCAgencyName(String SCDCAgencyCode) {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM scdcagency WHERE SCDCAgencyCode = '" + SCDCAgencyCode + "' LIMIT 1";
+            Cursor cursor = db.rawQuery(strSQL, null);
+            Log.i(TAG, SCDCAgencyCode + "   " + String.valueOf(cursor.getCount()));
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                arrData = cursor.getString(cursor.getColumnIndex("SCDCAgencyName"));
+            }
+            cursor.close();
+
             db.close();
             return arrData;
 

@@ -35,7 +35,8 @@
                         android:id="@+id/tableRow1"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="5dp">
+                        android:padding="5dp"
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="0dp"
@@ -55,9 +56,40 @@
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
-                    <View
-                        android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                    <!--<View-->
+                    <!--android:layout_height="@dimen/view_height"-->
+                    <!--android:background="@color/orange" />-->
+                    <TableRow
+                        android:id="@+id/tableRow13"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:gravity="center">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/profile_image"
+                            android:layout_width="76dp"
+                            android:layout_height="76dp"
+                            android:src="@drawable/avatar"
+                            app:civ_border_color="#FF000000"
+                            android:layout_gravity="center"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/tableRow14"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="เปลี่ยนรูปภาพ"
+                            android:textSize="@dimen/small_text"
+                            android:textColor="@color/casestatus5"/>
+                    </TableRow>
 
                     <TableRow
                         android:id="@+id/tableRow2"
@@ -94,23 +126,21 @@
                             android:gravity="center"
                             android:text="เปลี่ยนรหัสผ่าน"
                             android:textColor="@color/casestatus5"
-                            android:textSize="@dimen/small_text"
-                            android:textStyle="bold" />
+                            android:textSize="@dimen/small_text" />
 
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/edtPasswordLayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:visibility="gone" >
+                            android:visibility="gone">
 
                             <EditText
                                 android:id="@+id/edtPassword"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:textSize="@dimen/small_text"
-                                />
+                                android:textSize="@dimen/small_text" />
 
                         </android.support.design.widget.TextInputLayout>
 
@@ -118,13 +148,13 @@
 
                     <View
                         android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                        android:background="@color/lightgray" />
 
                     <TableRow
                         android:id="@+id/tableRow7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="5dp">
+                        android:padding="10dp">
 
                         <TextView
                             android:layout_width="0dp"
@@ -145,7 +175,7 @@
 
                     <View
                         android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                        android:background="@color/lightgray" />
 
                     <TableRow
                         android:id="@+id/tableRow4"
@@ -185,12 +215,13 @@
 
                     <View
                         android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                        android:background="@color/lightgray" />
 
                     <TableRow
                         android:id="@+id/tableRow8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:padding="5dp">
 
                         <TextView
@@ -211,10 +242,35 @@
                     </TableRow>
 
                     <TableRow
+                        android:id="@+id/tableRow12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:gravity="left"
+                            android:text="หน่วยงาน:"
+                            android:textSize="@dimen/small_text"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtCenter"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4"
+                            android:textSize="@dimen/small_text" />
+                    </TableRow>
+
+                    <TableRow
                         android:id="@+id/tableRow10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="5dp">
+                        android:padding="5dp"
+                        android:visibility="gone">
 
 
                         <android.support.design.widget.TextInputLayout
@@ -232,9 +288,9 @@
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
-                    <View
-                        android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                    <!--<View-->
+                    <!--android:layout_height="@dimen/view_height"-->
+                    <!--android:background="@color/lightgray" />-->
 
                     <TableRow
                         android:id="@+id/tableRow5"
@@ -282,12 +338,13 @@
 
                     <View
                         android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                        android:background="@color/lightgray" />
 
                     <TableRow
                         android:id="@+id/tableRow9"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:padding="5dp">
 
                         <TextView
@@ -307,9 +364,10 @@
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
-                    <View
-                        android:layout_height="@dimen/view_height"
-                        android:background="@color/orange" />
+                    <!--<View-->
+                    <!--android:layout_height="@dimen/view_height"-->
+                    <!--android:background="@color/lightgray" />-->
+
                 </TableLayout>
 
             </LinearLayout>

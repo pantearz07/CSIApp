@@ -3,6 +3,7 @@ package com.scdc.csiapp.main;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +44,7 @@ public class ProfileFragment extends Fragment {
     ConnectionDetector cd;
     private CoordinatorLayout rootLayout;
     String officialID;
-    TextView tMemberID, tAccessType, txtChangePassword;
+    TextView tMemberID, tAccessType, txtChangePassword, txtCenter;
     EditText edtUsername, edtPassword, edtFirstName, edtLastName, edtEmail,
             editTextPhone, edtPosition;
     Spinner spinnerRankInspector, spinnerPositionInspector;
@@ -55,6 +57,9 @@ public class ProfileFragment extends Fragment {
     String[] mRankArray2, mPositionArray2;
     String[][] mRankArray, mPositionArray;
     ChangePassFragment changePassFragment;
+    ImageView profile_image;
+    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.profile_layout, null);
@@ -138,24 +143,24 @@ public class ProfileFragment extends Fragment {
         spinnerPositionInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
         spinnerPositionInspector.setOnTouchListener(new ProOnItemSelectedListener());
 
-        edtPosition = (EditText) view.findViewById(R.id.edtPosition);
+//        edtPosition = (EditText) view.findViewById(R.id.edtPosition);
         edtFirstName = (EditText) view.findViewById(R.id.edtFirstName);
         edtLastName = (EditText) view.findViewById(R.id.edtLastName);
         edtEmail = (EditText) view.findViewById(R.id.edtEmail);
         editTextPhone = (EditText) view.findViewById(R.id.editTextPhone);
         edtUsername.addTextChangedListener(new ProfileTextWatcher(edtUsername));
-//        edtPassword.addTextChangedListener(new ProfileTextWatcher(edtPassword));
         edtFirstName.addTextChangedListener(new ProfileTextWatcher(edtFirstName));
         edtLastName.addTextChangedListener(new ProfileTextWatcher(edtLastName));
         edtEmail.addTextChangedListener(new ProfileTextWatcher(edtEmail));
-        edtPosition.addTextChangedListener(new ProfileTextWatcher(edtPosition));
+//        edtPosition.addTextChangedListener(new ProfileTextWatcher(edtPosition));
         editTextPhone.addTextChangedListener(new ProfileTextWatcher(editTextPhone));
         tAccessType = (TextView) view.findViewById(R.id.txtStatus);
-
+        txtCenter = (TextView) view.findViewById(R.id.txtCenter);
         fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new ProfileOnClickListener());
         txtChangePassword.setOnClickListener(new ProfileOnClickListener());
 
+        profile_image = (ImageView) view.findViewById(R.id.profile_image);
         if (WelcomeActivity.profile.getTbOfficial() != null) {
             officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
             tMemberID.setText(WelcomeActivity.profile.getTbOfficial().OfficialID);
@@ -165,7 +170,28 @@ public class ProfileFragment extends Fragment {
             edtLastName.setText(WelcomeActivity.profile.getTbOfficial().LastName);
             edtEmail.setText(WelcomeActivity.profile.getTbOfficial().OfficialEmail);
             editTextPhone.setText(WelcomeActivity.profile.getTbOfficial().PhoneNumber);
-            tAccessType.setText(WelcomeActivity.profile.getTbOfficial().AccessType);
+            Log.i(TAG, WelcomeActivity.profile.getTbOfficial().AccessType);
+            if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
+                tAccessType.setText("ผู้ตรวจสถานที่เกิดเหตุ");
+                if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode == null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode.equals("")) {
+
+                    txtCenter.setText("");
+                } else {
+                    String SCDCAgencyName = dbHelper.getSCDCAgencyName(WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
+                    txtCenter.setText(SCDCAgencyName);
+                }
+            }
+            if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("inquiryofficial")) {
+                tAccessType.setText("พนักงานสอบสวน");
+                if (WelcomeActivity.profile.getTbOfficial().PoliceStationID == null || WelcomeActivity.profile.getTbOfficial().PoliceStationID.equals("")) {
+
+                    txtCenter.setText("");
+                } else {
+                    String PoliceStionName = dbHelper.getPoliceStionName(WelcomeActivity.profile.getTbOfficial().PoliceStationID);
+                    txtCenter.setText("สภ."+PoliceStionName);
+                }
+            }
+
         }
         if (WelcomeActivity.profile.getTbUsers() != null) {
             edtUsername.setText(WelcomeActivity.profile.getTbUsers().id_users);
@@ -213,16 +239,13 @@ public class ProfileFragment extends Fragment {
                 WelcomeActivity.profile.getTbOfficial().setId_users(edtUsername.getText().toString());
                 WelcomeActivity.profile.getTbUsers().setId_users(edtUsername.getText().toString());
                 Log.i(TAG, "id_users " + WelcomeActivity.profile.getTbOfficial().id_users);
-            } else if (editable == edtPassword.getEditableText()) {
-//                WelcomeActivity.profile.getTbUsers().setPass(md5(edtPassword.getText().toString()));
-//                Log.i(TAG, "edtPassword " + WelcomeActivity.profile.getTbUsers().pass);
-            } else if (editable == edtPosition.getEditableText()) {
-                WelcomeActivity.profile.getTbOfficial().setSubPossition(edtPosition.getText().toString());
-                Log.i(TAG, "SubPossition " + WelcomeActivity.profile.getTbOfficial().SubPossition);
             }
+//            else if (editable == edtPosition.getEditableText()) {
+//                WelcomeActivity.profile.getTbOfficial().setSubPossition(edtPosition.getText().toString());
+//                Log.i(TAG, "SubPossition " + WelcomeActivity.profile.getTbOfficial().SubPossition);
+//            }
         }
     }
-
 
 
     private class ProfileOnClickListener implements View.OnClickListener {

@@ -627,7 +627,7 @@ public class ApiConnect {
         }
     }
 
-    public ApiStatus saveDocFile(ApiCaseScene apiCaseScene) {
+    public ApiStatusResult saveDocFile(ApiCaseScene apiCaseScene) {
         Log.d(TAG, "CaseReportID " + apiCaseScene.getTbCaseScene().getCaseReportID());
         Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
         Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
@@ -646,20 +646,21 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
 //            Log.d(TAG, "post data" + response.body().string());
-            ApiStatus apiStatus = new ApiStatus();
+            ApiStatusResult apiStatusResult = new ApiStatusResult();
 
             if (response.isSuccessful()) {
 //                Log.d(TAG, "post data" + response.body().string());
                 Gson gson = new GsonBuilder().create();
                 try {
-                    apiStatus = gson.fromJson(response.body().string(), ApiStatus.class);
-                    Log.d(TAG, apiStatus.getData().getReason());
+                    apiStatusResult = gson.fromJson(response.body().string(), ApiStatusResult.class);
+                    Log.d(TAG, "downloadDocFile" + apiStatusResult.getData().getReason());
+                    Log.d(TAG, "downloadDocFile" + apiStatusResult.getData().getResult());
                 } catch (JsonParseException e) {
                     Log.d(TAG, "checkConnect fail format");
-                    apiStatus.setStatus("fail");
+                    apiStatusResult.setStatus("fail");
                 }
                 response.close();
-                return apiStatus;
+                return apiStatusResult;
             } else {
                 Log.d(TAG, "Not Success " + response.code());
                 return null;

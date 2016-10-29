@@ -36,8 +36,8 @@ import android.widget.TextView;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
-import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusData;
+import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -531,7 +531,7 @@ public class SummaryCSITabFragment extends Fragment {
                 String defaultIP = "180.183.251.32/mcsi";
                 SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
                 defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
-                String filepath = "http://" + defaultIP + "/assets/csifiles/" + params[0] + "/docs/" + params[0] + ".docx";
+                String filepath = "http://" + defaultIP + "/assets/csifiles/" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/docs/" + params[0] + ".docx";
                 Log.i(TAG, "docs: " + filepath);
 
                 URL url = new URL(filepath);
@@ -758,20 +758,20 @@ public class SummaryCSITabFragment extends Fragment {
         }
     }
 
-    class DownloadDocFile extends AsyncTask<ApiCaseScene, Void, ApiStatus> {
+    class DownloadDocFile extends AsyncTask<ApiCaseScene, Void, ApiStatusResult> {
         @Override
-        protected ApiStatus doInBackground(ApiCaseScene... params) {
+        protected ApiStatusResult doInBackground(ApiCaseScene... params) {
             return WelcomeActivity.api.saveDocFile(params[0]);
         }
 
         @Override
-        protected void onPostExecute(ApiStatus apiStatus) {
-            super.onPostExecute(apiStatus);
-            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                Log.d(TAG, apiStatus.getStatus().toString());
+        protected void onPostExecute(ApiStatusResult apiStatusResult) {
+            super.onPostExecute(apiStatusResult);
+            if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatusResult.getStatus().toString());
+                Log.d(TAG, apiStatusResult.getData().getResult().toString());
 
-
-                new DownloadFile().execute(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
+                new DownloadFile().execute(apiStatusResult.getData().getResult().toString());
 
             } else {
                 Log.d(TAG, "error");
