@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,6 +72,7 @@ public class ApiConnect {
     private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
     private static String strSDCardPathName_Voi = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/VoiceRecorder/";
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
+    private static final MediaType MEDIA_TYPE_IMG = MediaType.parse("image/*");
     private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/mp4");
     private static final MediaType MEDIA_TYPE_VOICE = MediaType.parse("audio/3gp");
     private Context mContext;
@@ -781,10 +783,13 @@ public class ApiConnect {
         formBuilder.addFormDataPart("tbOfficial", gson1.toJson(apiProfile.getTbOfficial()));
         formBuilder.addFormDataPart("tbUsers", gson1.toJson(apiProfile.getTbUsers()));
         if (apiProfile.getTbOfficial().OfficialDisplayPic != null) {
+            final String MEDIA_TYPE = MimeTypeMap.getFileExtensionFromUrl(strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
             File filePic = new File(strSDCardPathName_temp, apiProfile.getTbOfficial().OfficialDisplayPic);
             if (filePic.exists()) {
+                Log.d(TAG, "MEDIA_TYPE " + MEDIA_TYPE + " filename: " + apiProfile.getTbOfficial().OfficialDisplayPic);
                 formBuilder.addFormDataPart("filedisplay", apiProfile.getTbOfficial().OfficialDisplayPic,
-                        RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+//                        RequestBody.create(MediaType.parse("image/"+MEDIA_TYPE), filePic));
+                        RequestBody.create(MEDIA_TYPE_IMG, filePic));
             }
         }
         RequestBody formBody = formBuilder.build();
@@ -804,7 +809,8 @@ public class ApiConnect {
                 Gson gson = new GsonBuilder().create();
                 try {
                     apiStatusResult = gson.fromJson(response.body().string(), ApiStatusResult.class);
-                    Log.d(TAG, "editProfile " + apiStatusResult.getData().getReason());
+                    Log.d(TAG, "editProfile Reason " + apiStatusResult.getData().getReason());
+                    Log.d(TAG, "editProfile Result " + apiStatusResult.getData().getResult());
                     return apiStatusResult;
                 } catch (JsonParseException e) {
                     Log.d(TAG, "checkConnect fail format");

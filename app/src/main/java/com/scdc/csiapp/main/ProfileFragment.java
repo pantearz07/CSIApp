@@ -333,7 +333,7 @@ public class ProfileFragment extends Fragment {
                 sDisplayPicpath = "img_" + WelcomeActivity.profile.getTbOfficial().OfficialID + ".jpg";
 
                 String title = "เลือกรูปภาพโปรไฟล์";
-                CharSequence[] itemlist = {"ถ่ายรุป",
+                CharSequence[] itemlist = {"ถ่ายรูป",
                         "เลือกจากอัลบั้มภาพ",
                         "เปิดจากไฟล์"};
 
@@ -484,7 +484,7 @@ public class ProfileFragment extends Fragment {
                     if (isSuccess2) {
                         if (snackbar == null || !snackbar.isShown()) {
                             snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete)
-                                            + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                            + "\n" + apiStatus.getData().getResult().toString()
                                     , Snackbar.LENGTH_INDEFINITE)
                                     .setAction(getString(R.string.ok), new View.OnClickListener() {
                                         @Override
@@ -514,7 +514,6 @@ public class ProfileFragment extends Fragment {
                 } else {
                     if (snackbar == null || !snackbar.isShown()) {
                         snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
-                                        + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
                                 , Snackbar.LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
@@ -530,7 +529,7 @@ public class ProfileFragment extends Fragment {
             } else {
                 if (snackbar == null || !snackbar.isShown()) {
                     snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason().toString()
-                                    + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
+                                    + "\n " + apiStatus.getData().getResult().toString()
                             , Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
@@ -708,6 +707,19 @@ public class ProfileFragment extends Fragment {
                             src.close();
                             dst.close();
                             Log.i(TAG, "save new Photo from gallery " + destinationImagePath);
+                        } else {
+                            Log.i(TAG, "Photo from gallery error ");
+                            if (snackbar == null || !snackbar.isShown()) {
+                                snackbar = Snackbar.make(rootLayout, "ไม่สามารถใช้รูปนี้ได้"
+                                        , Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                            }
+                                        });
+                                snackbar.show();
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -754,10 +766,10 @@ public class ProfileFragment extends Fragment {
                     // Do Pick Photo task here
 
                     Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    getIntent.setType("image/*");
+                    getIntent.setType("image/jpeg");
 
                     Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    pickIntent.setType("image/*");
+                    pickIntent.setType("image/jpeg");
 
                     Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
