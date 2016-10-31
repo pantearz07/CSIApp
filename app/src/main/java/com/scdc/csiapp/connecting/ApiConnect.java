@@ -379,8 +379,20 @@ public class ApiConnect {
                         temp_sql = apiListNoticeCaseSQLite.getData().getResult().get(j);
                         if (temp_ser.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_sql.getTbNoticeCase().NoticeCaseID)) {
                             flag_have = true;
-                            break;
+                            if (temp_ser.getTbNoticeCase().LastUpdateDate.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateDate)
+                                    && temp_ser.getTbNoticeCase().LastUpdateTime.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateTime)) {
+                                break;
+                            } else {
+                                Log.d(TAG, "temp_ser " + temp_ser.getTbNoticeCase().LastUpdateTime + "" +
+                                        " temp_sql " + temp_sql.getTbNoticeCase().LastUpdateTime);
+                                boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
+                                if (isSuccess) {
+                                    Log.d(TAG, "update saveNoticeCase ");
+                                    break;
+                                }
+                            }
                         }
+
                     }
                     if (flag_have == false) {
                         temp_ser.setMode("online");
@@ -440,8 +452,21 @@ public class ApiConnect {
                         temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
                         if (temp_ser.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_sql.getTbCaseScene().CaseReportID)) {
                             flag_have = true;
-                            break;
+                            if (temp_ser.getTbCaseScene().LastUpdateDate.equalsIgnoreCase(temp_sql.getTbCaseScene().LastUpdateDate)
+                                    && temp_ser.getTbCaseScene().LastUpdateTime.equalsIgnoreCase(temp_sql.getTbCaseScene().LastUpdateTime)) {
+                                break;
+                            } else {
+
+                                Log.d(TAG, "temp_ser " + temp_ser.getTbCaseScene().LastUpdateTime + "" +
+                                        " temp_sql " + temp_sql.getTbCaseScene().LastUpdateTime);
+                                boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
+                                if (isSuccess) {
+                                    Log.d(TAG, "updateAlldataCase ");
+                                    break;
+                                }
+                            }
                         }
+
                     }
                     if (flag_have == false) {
                         temp_ser.setMode("online");
@@ -544,7 +569,7 @@ public class ApiConnect {
                 .add("NoticeCaseID", tbNoticeCase.getNoticeCaseID())
                 .add("tbNoticeCase", gson1.toJson(tbNoticeCase))
                 .build();
-        Log.d(TAG, "tbNoticeCase toJson " + gson1.toJson(tbNoticeCase));
+//        Log.d(TAG, "tbNoticeCase toJson " + gson1.toJson(tbNoticeCase));
         Log.d(TAG, "NoticeCaseID " + tbNoticeCase.getNoticeCaseID());
         Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
         Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
@@ -702,29 +727,65 @@ public class ApiConnect {
         formBuilder1.addFormDataPart("apiMultimedia", gson1.toJson(apiCaseScene.getApiMultimedia()));
         Log.d(TAG, "getApiMultimedia size" + String.valueOf(apiCaseScene.getApiMultimedia().size()));
         for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
+//            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
+//                File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+//                if (filePic.exists()) {
+//                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+//                            RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+//                }
+//            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
+//                File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+//                if (filePic.exists()) {
+//                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+//                            RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+//                }
+//            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
+//                File fileVid = new File(strSDCardPathName_Vid, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+//                if (fileVid.exists()) {
+//                    formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+//                            RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
+//                }
+//            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
+//                File fileVoi = new File(strSDCardPathName_Voi, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+//                if (fileVoi.exists()) {
+//                    formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+//                            RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
+//                }
+//            }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
                 File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
                     formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+                } else {
+                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", null);
                 }
-            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
+            }
+            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
                 File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
                     formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+                } else {
+                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", null);
                 }
-            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
+            }
+            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
                 File fileVid = new File(strSDCardPathName_Vid, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (fileVid.exists()) {
                     formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
+                } else {
+                    formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", null);
                 }
-            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
+            }
+            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
                 File fileVoi = new File(strSDCardPathName_Voi, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (fileVoi.exists()) {
                     formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
+                } else {
+                    formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", null);
                 }
             }
         }

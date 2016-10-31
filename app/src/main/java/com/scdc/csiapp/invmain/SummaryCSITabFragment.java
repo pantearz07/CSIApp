@@ -281,6 +281,20 @@ public class SummaryCSITabFragment extends Fragment {
             edtStatus.setText("รอรับไปตรวจ");
         } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("accept")) {
             edtStatus.setText("รับเรื่องแล้ว");
+            final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "accept to investigating");
+                SaveCaseReport statusCase = new SaveCaseReport();
+                statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                edtStatus.setText("กำลังดำเนินการตรวจ");
+            }
         } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("investigated")) {
             edtStatus.setText("ตรวจเสร็จแล้ว");
         }
@@ -732,7 +746,7 @@ public class SummaryCSITabFragment extends Fragment {
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -743,7 +757,7 @@ public class SummaryCSITabFragment extends Fragment {
 
             } else {
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

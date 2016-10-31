@@ -339,7 +339,9 @@ public class AddFindEvidenceFragment extends Fragment {
                     apiMultimedia.setTbPhotoOfEvidence(tbPhotoOfEvidence);
 
                     apiMultimediaList.add(apiMultimedia);
-                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+
+                    CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
                     Log.i(TAG, "apiMultimediaList "+String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {

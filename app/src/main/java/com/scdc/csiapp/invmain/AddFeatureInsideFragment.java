@@ -268,8 +268,9 @@ public class AddFeatureInsideFragment extends Fragment {
                     apiMultimedia.setTbPhotoOfInside(tbPhotoOfInside);
 
                     apiMultimediaList.add(apiMultimedia);
-                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
 
+                    CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
                         Log.i(TAG, "PHOTO saved to Gallery!" + DetailsTabFragment.strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");

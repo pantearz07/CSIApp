@@ -200,11 +200,11 @@ public class CaseSceneListFragment extends Fragment {
         @Override
         public void onItemClick(View view, int position) {
             final ApiCaseScene apiNoticeCase = caseList.get(position);
-            final String caserepTD = apiNoticeCase.getTbNoticeCase().getNoticeCaseID().toString();
+            final String caserepID = apiNoticeCase.getTbCaseScene().getCaseReportID().toString();
             final String mode = apiNoticeCase.getMode().toString();
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(getActivity());
-            builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepTD);
+            builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepID);
 
             builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {

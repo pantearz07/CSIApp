@@ -2455,9 +2455,23 @@ public class DBHelper extends SQLiteAssetHelper {
                         }
                     }
 
-                    // Index tbCaseSceneType ดึงจากตาราง casescenetype ใช้ค่าจาก Index tbNoticeCase
+
+                    // Index tbSubcaseSceneType ดึงจากตาราง subcasescenetype ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM subcasescenetype "
+                            + " WHERE SubCaseTypeID = '" + temp.SubCaseTypeID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
+                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
+                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeName));
+                            apiNoticeCase.setTbSubcaseSceneType(temp4);
+                        }
+                    }
+// Index tbCaseSceneType ดึงจากตาราง casescenetype ใช้ค่าจาก Index tbNoticeCase
                     strSQL = "SELECT * FROM casescenetype "
-                            + " WHERE CaseTypeID = '" + temp.CaseTypeID + "'";
+                            + " WHERE CaseTypeID = '" + apiNoticeCase.getTbSubcaseSceneType().CaseTypeID + "'";
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
@@ -2473,20 +2487,6 @@ public class DBHelper extends SQLiteAssetHelper {
                             temp3.casetype_colorhigh = cursor2.getString(cursor2.getColumnIndex(COL_casetype_colorhigh));
                             temp3.casetype_status = cursor2.getString(cursor2.getColumnIndex(COL_casetype_status));
                             apiNoticeCase.setTbCaseSceneType(temp3);
-                        }
-                    }
-
-                    // Index tbSubcaseSceneType ดึงจากตาราง subcasescenetype ใช้ค่าจาก Index tbNoticeCase
-                    strSQL = "SELECT * FROM subcasescenetype "
-                            + " WHERE SubCaseTypeID = '" + temp.SubCaseTypeID + "'";
-                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                        if (cursor2.getCount() == 1) {
-                            cursor2.moveToFirst();
-                            TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
-                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
-                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
-                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeName));
-                            apiNoticeCase.setTbSubcaseSceneType(temp4);
                         }
                     }
 
@@ -3089,9 +3089,22 @@ public class DBHelper extends SQLiteAssetHelper {
                         }
                     }
 
+                    // Index tbSubcaseSceneType ดึงจากตาราง subcasescenetype ใช้ค่าจาก Index tbNoticeCase
+                    strSQL = "SELECT * FROM subcasescenetype "
+                            + " WHERE SubCaseTypeID = '" + temp.SubCaseTypeID + "'";
+                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+                        if (cursor2.getCount() == 1) {
+                            cursor2.moveToFirst();
+                            TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
+                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
+                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
+                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeName));
+                            apiCaseSceneCase.setTbSubcaseSceneType(temp4);
+                        }
+                    }
                     // Index tbCaseSceneType ดึงจากตาราง casescenetype ใช้ค่าจาก Index tbNoticeCase
                     strSQL = "SELECT * FROM casescenetype "
-                            + " WHERE CaseTypeID = '" + temp.CaseTypeID + "'";
+                            + " WHERE CaseTypeID = '" + apiCaseSceneCase.getTbSubcaseSceneType().CaseTypeID + "'";
                     try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                         if (cursor2.getCount() == 1) {
                             cursor2.moveToFirst();
@@ -3109,21 +3122,6 @@ public class DBHelper extends SQLiteAssetHelper {
                             apiCaseSceneCase.setTbCaseSceneType(temp3);
                         }
                     }
-
-                    // Index tbSubcaseSceneType ดึงจากตาราง subcasescenetype ใช้ค่าจาก Index tbNoticeCase
-                    strSQL = "SELECT * FROM subcasescenetype "
-                            + " WHERE SubCaseTypeID = '" + temp.SubCaseTypeID + "'";
-                    try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                        if (cursor2.getCount() == 1) {
-                            cursor2.moveToFirst();
-                            TbSubcaseSceneType temp4 = new TbSubcaseSceneType();
-                            temp4.SubCaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeID));
-                            temp4.CaseTypeID = cursor2.getString(cursor2.getColumnIndex(COL_CaseTypeID));
-                            temp4.SubCaseTypeName = cursor2.getString(cursor2.getColumnIndex(COL_SubCaseTypeName));
-                            apiCaseSceneCase.setTbSubcaseSceneType(temp4);
-                        }
-                    }
-
                     // Index tbPoliceStation ดึงจากตาราง policestation ใช้ค่าจาก Index tbNoticeCase
                     TbPoliceStation temp5 = new TbPoliceStation();
                     strSQL = "SELECT * FROM policestation "
@@ -4538,6 +4536,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
 
     }
+
     public String getSCDCAgencyName(String SCDCAgencyCode) {
         // TODO Auto-generated method stub
 

@@ -803,7 +803,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             } else if (s == editTextSuffererPhone.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
                 Log.i(TAG, "SuffererPhoneNum " + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
-            } else if (s == editCircumstanceOfCaseDetail) {
+            } else if (s == editCircumstanceOfCaseDetail.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
                 Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
             }

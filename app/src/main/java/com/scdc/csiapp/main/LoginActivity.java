@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -47,6 +48,13 @@ import com.scdc.csiapp.gcmservice.GcmRegisterService;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 
 /**
@@ -80,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
 
+    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
+    private static String strSDCardPathName_temps = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/temps/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -290,7 +300,12 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
                 }
+                if(apiLoginStatus.getData().getResult().getUsers().getPicture() == null || apiLoginStatus.getData().getResult().getUsers().getPicture().equals("")){
 
+                }else{
+                    DownloadDocFile downloadDocFile = new DownloadDocFile();
+                    downloadDocFile.execute(apiLoginStatus.getData().getResult().getUsers().getPicture());
+                }
                 // ดึงข้อมูลอัพเดทจากเซิร์ฟเวอร์
                 SyncData syncData = new SyncData();
                 syncData.execute();
@@ -520,5 +535,72 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(getApplication(), apiStatus.getData().getReason(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    class DownloadDocFile extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            // Create Show ProgressBar
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            int count;
+            Log.i(TAG, "DownloadDocFile display file name "+ String.valueOf(params[0]));
+            File myDir;
+            String fileoutput = "";
+            try {
+
+                myDir = new File(strSDCardPathName_temp);
+                myDir.mkdirs();
+                //http://localhost/mCSI/assets/csifiles/CR04_000002/docs/
+                String defaultIP = "180.183.251.32/mcsi";
+                SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+                defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
+                String filepath = "http://" + defaultIP + "/assets/img/users/" + params[0];
+                Log.i(TAG, "display file name: " + filepath);
+
+                URL url = new URL(filepath);
+                URLConnection conexion = url.openConnection();
+                conexion.connect();
+
+                int lenghtOfFile = conexion.getContentLength();
+                Log.d(TAG, "Lenght of file: " + lenghtOfFile);
+
+                InputStream input = new BufferedInputStream(url.openStream());
+
+                // Get File Name from URL
+                fileoutput = strSDCardPathName_temp + params[0];
+                Log.i(TAG, "fileoutput : " + fileoutput);
+                OutputStream output = new FileOutputStream(fileoutput);
+                //OutputStream output = new FileOutputStream("/sdcard/Download/"+fileName+".doc");
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    //publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                    output.write(data, 0, count);
+                }
+
+                output.flush();
+                output.close();
+                input.close();
+                return fileoutput;
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+                return "error";
+            }
+
+
+        }
+
+    }
+    protected void onPostExecute(final String arrData) {
+        Log.i(TAG, "DownloadDocFile display"+ String.valueOf(arrData));
     }
 }

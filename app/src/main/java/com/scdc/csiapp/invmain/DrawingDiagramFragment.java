@@ -301,8 +301,9 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
 //                            apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
 
                             apiMultimediaList.add(apiMultimedia);
-                            CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+//                            CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
 
+                            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
                             Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                             String fname = sDiagramID + ".jpg";
                             File file = new File(myDir, fname);

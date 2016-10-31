@@ -275,11 +275,9 @@ public class ResultTabFragment extends Fragment {
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")
                 || AssignTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
-            if (CSIDataTabFragment.mode == "view") {
-                editCompleteSceneDate.setText("");
-            } else {
-                editCompleteSceneDate.setText(currentDT[0]);
-            }
+
+            editCompleteSceneDate.setText("");
+
         } else {
             editCompleteSceneDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate));
         }
@@ -290,11 +288,9 @@ public class ResultTabFragment extends Fragment {
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime == null
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime.equals("")
                 || AssignTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime.equals("00:00:00")) {
-            if (CSIDataTabFragment.mode == "view") {
-                editCompleteSceneTime.setText("");
-            } else {
-                editCompleteSceneTime.setText(currentDT[1]);
-            }
+
+            editCompleteSceneTime.setText("");
+
         } else {
             editCompleteSceneTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime));
         }

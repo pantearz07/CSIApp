@@ -232,7 +232,8 @@ public class VoiceTabFragment extends Fragment {
                 apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
 
                 apiMultimediaList.add(apiMultimedia);
-                CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+                CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+//                CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
                 Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
