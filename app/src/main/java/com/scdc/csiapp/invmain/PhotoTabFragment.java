@@ -33,6 +33,7 @@ import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,33 +155,23 @@ public class PhotoTabFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            //load image by piccaso
-            // String imgPath = "file:///CSIFiles/Pictures/"
-            ///         + lis[position][3].toString();
-            //file:///1234.jpg
-           /* Picasso.with(getActivity())
-                    .load("file:///1234.jpg")
-                    //new File("CSIFiles/Pictures/"+lis[position][3].toString())
-                   .resize(50, 50)
-                    //.centerCrop()
-                    //.error(R.drawable.user_placeholder_error)
+
+            Picasso.with(getActivity())
+                    .load(new File(strPath))
+                    .resize(50, 50)
+                    .centerCrop()
                     .into(imageView);
-*/
-            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-
-            int width1 = bmpSelectedImage.getWidth();
-            int height1 = bmpSelectedImage.getHeight();
-            Log.i("size", width1 + " " + height1);
-            int width = width1 / 13;
-            int height = height1 / 13;
-            Log.i("resize", width + " " + height);
-            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
-                    width, height, true);
-            imageView.setImageBitmap(resizedbitmap);
-
-
-            // imageView.setImageBitmap(bmpSelectedImage);
-
+//            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
+//
+//            int width1 = bmpSelectedImage.getWidth();
+//            int height1 = bmpSelectedImage.getHeight();
+//            Log.i("size", width1 + " " + height1);
+//            int width = width1 / 13;
+//            int height = height1 / 13;
+//            Log.i("resize", width + " " + height);
+//            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
+//                    width, height, true);
+//            imageView.setImageBitmap(resizedbitmap);
             return convertView;
 
         }

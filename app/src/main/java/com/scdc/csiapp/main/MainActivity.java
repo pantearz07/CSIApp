@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -34,6 +35,9 @@ import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
 import com.scdc.csiapp.schdule.CalendarFragment;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
 
+    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
     ConnectionDetector cd;
 
     long isConnectingToInternet = 0;
@@ -123,7 +128,29 @@ public class MainActivity extends AppCompatActivity {
         String nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank + WelcomeActivity.profile.getTbOfficial().FirstName + " " + WelcomeActivity.profile.getTbOfficial().LastName;
         OfficialName.setText(nameOfficial);
         txtusername.setText(username);
+        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
+            Picasso.with(this)
+                    .load(R.drawable.avatar)
+                    .resize(76, 76)
+                    .centerCrop()
+                    .into(avatar);
+        } else {
+            File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            if (avatarfile.exists()) {
+                Picasso.with(this)
+                        .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                        .resize(76, 76)
+                        .centerCrop()
+                        .into(avatar);
+            } else {
+                Picasso.with(this)
+                        .load(R.drawable.avatar)
+                        .resize(76, 76)
+                        .centerCrop()
+                        .into(avatar);
+            }
+        }
         Log.i("officialID", officialID);
 
         mNavigationView.addHeaderView(headerView);

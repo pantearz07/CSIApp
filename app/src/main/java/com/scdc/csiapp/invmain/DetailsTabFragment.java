@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -59,6 +56,7 @@ import com.scdc.csiapp.tablemodel.TbPhotoOfOutside;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureOutside;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -509,15 +507,19 @@ public class DetailsTabFragment extends Fragment {
 
         // Image Resource
         ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-                width, height, matrix, true);
-        imageView.setImageBitmap(resizedBitmap);
+        Picasso.with(getActivity())
+                .load(new File(strPath))
+                .resize(50, 50)
+                .centerCrop()
+                .into(imageView);
+//        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
+//        int width = bmpSelectedImage.getWidth();
+//        int height = bmpSelectedImage.getHeight();
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(90);
+//        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
+//                width, height, matrix, true);
+//        imageView.setImageBitmap(resizedBitmap);
         dialog.show();
     }
 
@@ -569,30 +571,23 @@ public class DetailsTabFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-//            String imgPath = "file:///CSIFiles/Pictures/"
-//                    + tbPhotoList.get(position).FilePath.toString();
-            //Picasso.with(getActivity()).load(f).into(imageView);
-           /* Picasso.with(getContext())
-                    .load("file:///1234.jpg")
-                    // .resize(50, 50)
-                    //.centerCrop()
-                    //.error(R.drawable.user_placeholder_error)
+            Picasso.with(getActivity())
+                    .load(new File(strPath))
+                    .resize(50, 50)
+                    .centerCrop()
                     .into(imageView);
- */
-            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-            if (bmpSelectedImage != null) {
-                int width1 = bmpSelectedImage.getWidth();
-                int height1 = bmpSelectedImage.getHeight();
-                Log.i("size", width1 + " " + height1);
-                int width = width1 / 13;
-                int height = height1 / 13;
-                Log.i("resize", width + " " + height);
-                Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
-                        width, height, true);
-                imageView.setImageBitmap(resizedbitmap);
-            }
-
-            // imageView.setImageBitmap(bmpSelectedImage);
+//            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
+//            if (bmpSelectedImage != null) {
+//                int width1 = bmpSelectedImage.getWidth();
+//                int height1 = bmpSelectedImage.getHeight();
+//                Log.i("size", width1 + " " + height1);
+//                int width = width1 / 13;
+//                int height = height1 / 13;
+//                Log.i("resize", width + " " + height);
+//                Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
+//                        width, height, true);
+//                imageView.setImageBitmap(resizedbitmap);
+//            }
 
             return convertView;
 

@@ -40,5 +40,7 @@
     <integer name="large_size">20</integer>
 
     <dimen name="paddingLeftTxt">50dp</dimen>
+
+    <dimen name="wh_display">120dp</dimen>
     <dimen name="width_btn">50dp</dimen>
 </resources>

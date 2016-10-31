@@ -45,6 +45,6 @@
     <dimen name="icon_image_l">40dp</dimen>
     <dimen name="tabIndicHeight">5dp</dimen>
     <dimen name="paddingLeftTxt">50dp</dimen>
-
+    <dimen name="wh_display">76dp</dimen>
     <dimen name="width_btn">30dp</dimen>
 </resources>

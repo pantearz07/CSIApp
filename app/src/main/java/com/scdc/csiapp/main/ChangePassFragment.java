@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiProfile;
-import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -174,19 +174,19 @@ public class ChangePassFragment extends Fragment {
         }
     }
 
-    class EditProfile extends AsyncTask<ApiProfile, Void, ApiStatus> {
+    class EditProfile extends AsyncTask<ApiProfile, Void, ApiStatusResult> {
 
         @Override
-        protected ApiStatus doInBackground(ApiProfile... apiProfiles) {
+        protected ApiStatusResult doInBackground(ApiProfile... apiProfiles) {
             return WelcomeActivity.api.editProfile(apiProfiles[0]);
         }
 
         @Override
-        protected void onPostExecute(ApiStatus apiStatus) {
-            super.onPostExecute(apiStatus);
+        protected void onPostExecute(ApiStatusResult apiStatusResult) {
+            super.onPostExecute(apiStatusResult);
 
-            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                Log.d(TAG, apiStatus.getData().getReason());
+            if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatusResult.getData().getReason());
                 boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
                 if (isSuccess) {
 
@@ -213,7 +213,7 @@ public class ChangePassFragment extends Fragment {
 
             } else {
                 Toast.makeText(getActivity(),
-                        apiStatus.getData().getReason().toString()
+                        apiStatusResult.getData().getReason().toString()
                                 + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString(),
                         Toast.LENGTH_SHORT).show();
 

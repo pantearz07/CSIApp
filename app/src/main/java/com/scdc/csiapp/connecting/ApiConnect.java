@@ -66,6 +66,7 @@ public class ApiConnect {
     public static String urlMobileIP = "http://180.183.251.32/mcsi/C_mobile/";
     private String defaultIP = "180.183.251.32/mcsi";
     private String TAG = "DEBUG-ApiConnect";
+    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
     private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
     private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
     private static String strSDCardPathName_Voi = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/VoiceRecorder/";
@@ -765,7 +766,7 @@ public class ApiConnect {
     // ApiProfile
     // Username,Password ดึงเอาจาก User ของ ApiProfile
 
-    public ApiStatus editProfile(ApiProfile apiProfile) {
+    public ApiStatusResult editProfile(ApiProfile apiProfile) {
         mDbHelper = new DBHelper(WelcomeActivity.mContext);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
 
@@ -779,7 +780,13 @@ public class ApiConnect {
         Gson gson1 = new GsonBuilder().create();
         formBuilder.addFormDataPart("tbOfficial", gson1.toJson(apiProfile.getTbOfficial()));
         formBuilder.addFormDataPart("tbUsers", gson1.toJson(apiProfile.getTbUsers()));
-
+        if (apiProfile.getTbOfficial().OfficialDisplayPic != null) {
+            File filePic = new File(strSDCardPathName_temp, apiProfile.getTbOfficial().OfficialDisplayPic);
+            if (filePic.exists()) {
+                formBuilder.addFormDataPart("filedisplay", apiProfile.getTbOfficial().OfficialDisplayPic,
+                        RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+            }
+        }
         RequestBody formBody = formBuilder.build();
 
         Request request = new Request.Builder()
@@ -790,21 +797,21 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
 //            Log.d(TAG, "post data" + response.body().string());
-            ApiStatus apiStatus = new ApiStatus();
+            ApiStatusResult apiStatusResult = new ApiStatusResult();
 
             if (response.isSuccessful()) {
 
                 Gson gson = new GsonBuilder().create();
                 try {
-                    apiStatus = gson.fromJson(response.body().string(), ApiStatus.class);
-                    Log.d(TAG, "editProfile " + apiStatus.getData().getReason());
-                    return apiStatus;
+                    apiStatusResult = gson.fromJson(response.body().string(), ApiStatusResult.class);
+                    Log.d(TAG, "editProfile " + apiStatusResult.getData().getReason());
+                    return apiStatusResult;
                 } catch (JsonParseException e) {
                     Log.d(TAG, "checkConnect fail format");
-                    apiStatus.setStatus("fail");
+                    apiStatusResult.setStatus("fail");
                 }
                 response.close();
-                return apiStatus;
+                return apiStatusResult;
             } else {
                 Log.d(TAG, "Not Success " + response.code());
                 return null;

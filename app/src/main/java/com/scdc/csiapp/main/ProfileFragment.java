@@ -1,13 +1,19 @@
 package com.scdc.csiapp.main;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,10 +33,18 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiProfile;
-import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by Pantearz07 on 23/9/2558.
@@ -43,8 +57,8 @@ public class ProfileFragment extends Fragment {
     private PreferenceData mManager;
     ConnectionDetector cd;
     private CoordinatorLayout rootLayout;
-    String officialID;
-    TextView tMemberID, tAccessType, txtChangePassword, txtCenter;
+    String officialID, sDisplayPicpath;
+    TextView tMemberID, tAccessType, txtChangePassword, txtCenter, change_display;
     EditText edtUsername, edtPassword, edtFirstName, edtLastName, edtEmail,
             editTextPhone, edtPosition;
     Spinner spinnerRankInspector, spinnerPositionInspector;
@@ -58,7 +72,14 @@ public class ProfileFragment extends Fragment {
     String[][] mRankArray, mPositionArray;
     ChangePassFragment changePassFragment;
     ImageView profile_image;
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    Uri uri;
+    File newfile;
+
+    private String mCurrentPhotoPath;
+    public static final int REQUEST_CAMERA_OUTSIDE = 0;
+    public static final int REQUEST_GALLERY = 1;
+    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
+    private static String strSDCardPathName_temps = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/temps/";
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -160,7 +181,6 @@ public class ProfileFragment extends Fragment {
         fabBtn.setOnClickListener(new ProfileOnClickListener());
         txtChangePassword.setOnClickListener(new ProfileOnClickListener());
 
-        profile_image = (ImageView) view.findViewById(R.id.profile_image);
         if (WelcomeActivity.profile.getTbOfficial() != null) {
             officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
             tMemberID.setText(WelcomeActivity.profile.getTbOfficial().OfficialID);
@@ -188,7 +208,7 @@ public class ProfileFragment extends Fragment {
                     txtCenter.setText("");
                 } else {
                     String PoliceStionName = dbHelper.getPoliceStionName(WelcomeActivity.profile.getTbOfficial().PoliceStationID);
-                    txtCenter.setText("สภ."+PoliceStionName);
+                    txtCenter.setText("สภ." + PoliceStionName);
                 }
             }
 
@@ -196,6 +216,34 @@ public class ProfileFragment extends Fragment {
         if (WelcomeActivity.profile.getTbUsers() != null) {
             edtUsername.setText(WelcomeActivity.profile.getTbUsers().id_users);
             edtPassword.setText(WelcomeActivity.profile.getTbUsers().pass);
+        }
+        profile_image = (ImageView) view.findViewById(R.id.profile_image);
+        change_display = (TextView) view.findViewById(R.id.change_display);
+        change_display.setOnClickListener(new ProfileOnClickListener());
+        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
+
+            Picasso.with(getActivity())
+                    .load(R.drawable.avatar)
+                    .resize(76, 76)
+                    .centerCrop()
+                    .into(profile_image);
+        } else {
+
+            File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            if (avatarfile.exists()) {
+                Picasso.with(getActivity())
+                        .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                        .resize(76, 76)
+                        .centerCrop()
+                        .into(profile_image);
+            } else {
+
+                Picasso.with(getActivity())
+                        .load(R.drawable.avatar)
+                        .resize(76, 76)
+                        .centerCrop()
+                        .into(profile_image);
+            }
         }
 
         return view;
@@ -253,6 +301,49 @@ public class ProfileFragment extends Fragment {
         public void onClick(View view) {
             if (view == txtChangePassword) {
                 MainActivity.setFragment(changePassFragment, 1);
+            }
+            if (view == change_display) {
+
+                File folder = new File(strSDCardPathName_temp);
+                try {
+                    // Create folder
+                    if (!folder.exists()) {
+                        folder.mkdir();
+                        Log.i(TAG, "mkdir" + strSDCardPathName_temp);
+                    } else {
+                        Log.i(TAG, "folder.exists" + strSDCardPathName_temp);
+
+                    }
+                } catch (Exception ex) {
+                    Log.i(TAG, "mkdir" + ex.getMessage());
+                }
+                File folder_temps = new File(strSDCardPathName_temps);
+                try {
+                    // Create folder
+                    if (!folder_temps.exists()) {
+                        folder_temps.mkdir();
+                        Log.i(TAG, "mkdir" + strSDCardPathName_temps);
+                    } else {
+                        Log.i(TAG, "folder.exists" + strSDCardPathName_temps);
+
+                    }
+                } catch (Exception ex) {
+                    Log.i(TAG, "mkdir" + ex.getMessage());
+                }
+                sDisplayPicpath = "img_" + WelcomeActivity.profile.getTbOfficial().OfficialID + ".jpg";
+
+                String title = "เลือกรูปภาพโปรไฟล์";
+                CharSequence[] itemlist = {"ถ่ายรุป",
+                        "เลือกจากอัลบั้มภาพ",
+                        "เปิดจากไฟล์"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setIcon(R.drawable.icon_app);
+                builder.setTitle(title);
+                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                AlertDialog alert = builder.create();
+                alert.setCancelable(true);
+                alert.show();
             }
             if (view == fabBtn) {
                 if (cd.isNetworkAvailable()) {
@@ -372,15 +463,15 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    class EditProfile extends AsyncTask<ApiProfile, Void, ApiStatus> {
+    class EditProfile extends AsyncTask<ApiProfile, Void, ApiStatusResult> {
 
         @Override
-        protected ApiStatus doInBackground(ApiProfile... apiProfiles) {
+        protected ApiStatusResult doInBackground(ApiProfile... apiProfiles) {
             return WelcomeActivity.api.editProfile(apiProfiles[0]);
         }
 
         @Override
-        protected void onPostExecute(ApiStatus apiStatus) {
+        protected void onPostExecute(ApiStatusResult apiStatus) {
             super.onPostExecute(apiStatus);
 
             Log.d(TAG, apiStatus.getStatus());
@@ -450,6 +541,234 @@ public class ProfileFragment extends Fragment {
                             });
                     snackbar.show();
                 }
+            }
+        }
+    }
+
+    private Object mActivityResultSubscriber = new Object() {
+        @Subscribe
+        public void onActivityResultReceived(ActivityResultEvent event) {
+            int requestCode = event.getRequestCode();
+            int resultCode = event.getResultCode();
+            Intent data = event.getData();
+            onActivityResult(requestCode, resultCode, data);
+        }
+    };
+
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart profilefragment ");
+        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "onStop profilefragment");
+
+        ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume profilefragment");
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("Result media", String.valueOf(requestCode) + " " + String.valueOf(resultCode));
+
+
+        if (requestCode == REQUEST_CAMERA_OUTSIDE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    Log.i(TAG, "Photo from camera 1" + sDisplayPicpath);
+//                    String path = uri.getPath();
+//                    Log.i(TAG, "path Photo from camera " + path);
+                    try {
+                        File sd = Environment.getExternalStorageDirectory();
+                        File data1 = Environment.getExternalStorageDirectory();
+                        if (sd.canWrite()) {
+                            String sourceImagePath = "/CSIFiles/temp/temps/" + sDisplayPicpath;
+                            String destinationImagePath = "/CSIFiles/temp/" + sDisplayPicpath;
+                            File source = new File(data1, sourceImagePath);
+                            File destination = new File(sd, destinationImagePath);
+                            if (source.exists()) {
+                                Log.i(TAG, "source" + sourceImagePath);
+                                FileChannel src = new FileInputStream(source).getChannel();
+                                FileChannel dst = new FileOutputStream(destination).getChannel();
+//                                if (destination.exists())
+//                                    destination.delete();
+                                try {
+                                    dst.transferFrom(src, 0, src.size());
+                                    Log.i(TAG, "transferFrom ");
+                                } catch (IOException e) {
+                                    Log.i(TAG, "transferFrom " + e.getMessage());
+                                }
+                                if (destination != null) {
+                                    source.delete();
+                                    WelcomeActivity.profile.getTbOfficial().setOfficialDisplayPic(sDisplayPicpath);
+                                    WelcomeActivity.profile.getTbUsers().setPicture(sDisplayPicpath);
+                                    boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                                    if (isSuccess) {
+                                        Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
+                                        Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
+                                        Picasso.with(getActivity())
+                                                .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                                                .resize(76, 76)
+                                                .centerCrop()
+                                                .into(profile_image);
+                                    }
+                                }
+                                src.close();
+                                dst.close();
+                                Log.i(TAG, "save new Photo from camera " + destinationImagePath);
+//                                if (cd.isNetworkAvailable()) {
+//                                    if (WelcomeActivity.profile.getTbOfficial() != null) {
+//                                        //save to server
+//                                        EditProfile editProfile = new EditProfile();
+//                                        editProfile.execute(WelcomeActivity.profile);
+//
+//                                    }
+//                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "Photo from camera " + e.getMessage());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                //data.getData();
+                String path = uri.getPath();
+                File source = new File(path);
+                if (source.exists())
+                    source.delete();
+                Log.i(TAG, "media recording cancelled." + sDisplayPicpath);
+            } else {
+                Log.i(TAG, "Failed to record media");
+            }
+        }
+        if (requestCode == REQUEST_GALLERY && resultCode == getActivity().RESULT_OK && null != data) {
+
+//            InputStream inputStream = context.getContentResolver().openInputStream(data.getData());
+            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
+            try {
+                Uri selectedImage = data.getData();
+                Log.i(TAG, "path Photo from gallery " + selectedImage.getPath());
+
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                Log.i(TAG, "Photo from gallery " + picturePath);
+
+                try {
+                    File sd = Environment.getExternalStorageDirectory();
+                    File datadest = Environment.getExternalStorageDirectory();
+                    if (sd.canWrite()) {
+//                        String sourceImagePath = "/path/to/source/file.jpg";
+                        String destinationImagePath = "/CSIFiles/temp/" + sDisplayPicpath;
+                        File source = new File(picturePath);
+
+                        File destination = new File(datadest, destinationImagePath);
+                        if (source.exists()) {
+                            Log.i(TAG, "source ");
+                            FileChannel src = new FileInputStream(source).getChannel();
+                            FileChannel dst = new FileOutputStream(destination).getChannel();
+
+                            try {
+                                dst.transferFrom(src, 0, src.size());
+                                Log.i(TAG, "transferFrom ");
+                            } catch (IOException e) {
+                                Log.i(TAG, "transferFrom " + e.getMessage());
+                            }
+                            if (destination.exists()) {
+                                source.delete();
+                                Log.i(TAG, "source.delete ");
+                                WelcomeActivity.profile.getTbOfficial().setOfficialDisplayPic(sDisplayPicpath);
+                                WelcomeActivity.profile.getTbUsers().setPicture(sDisplayPicpath);
+                                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                                if (isSuccess) {
+                                    Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
+                                    Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
+                                    Picasso.with(getActivity())
+                                            .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                                            .resize(76, 76)
+                                            .centerCrop()
+                                            .into(profile_image);
+                                }
+                            }
+                            src.close();
+                            dst.close();
+                            Log.i(TAG, "save new Photo from gallery " + destinationImagePath);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.i(TAG, "Photo from gallery error " + e.getMessage());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            return;
+        }
+    }
+
+    private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
+
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int which) {
+            switch (which) {
+                case 0:// Take Photo
+                    // Do Take Photo task here
+
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
+                    newfile = new File(strSDCardPathName_temps + sDisplayPicpath);
+                    if (newfile.exists())
+                        newfile.delete();
+                    try {
+                        newfile.createNewFile();
+                        mCurrentPhotoPath = newfile.getAbsolutePath();
+                        Log.i(TAG, "mCurrentPhotoPath " + mCurrentPhotoPath);
+                    } catch (IOException e) {
+                    }
+                    if (newfile != null) {
+                        uri = Uri.fromFile(newfile);
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        getActivity().startActivityForResult(Intent.createChooser(cameraIntent
+                                , "เลือกแอปพลิเคชันถ่ายรูป"), REQUEST_CAMERA_OUTSIDE);
+                    }
+                    break;
+                case 1:// Choose Existing Photo
+                    // Do Pick Photo task here
+
+                    Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    getIntent.setType("image/*");
+
+                    Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    pickIntent.setType("image/*");
+
+                    Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+                    getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
+
+                    break;
+                case 2:// Choose Existing File
+                    // Do Pick file here
+                    break;
+                default:
+                    break;
             }
         }
     }

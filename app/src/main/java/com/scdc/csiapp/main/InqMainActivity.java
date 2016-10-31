@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -30,13 +31,16 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class InqMainActivity extends AppCompatActivity {
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
 
-
+    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     static FragmentManager mFragmentManager;
@@ -97,7 +101,29 @@ public class InqMainActivity extends AppCompatActivity {
         OfficialName.setText(nameOfficial);
         txtusername.setText(username);
         Log.i("login", officialID);
+        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
+            Picasso.with(this)
+                    .load(R.drawable.avatar)
+                    .resize(76, 76)
+                    .centerCrop()
+                    .into(avatar);
+        } else {
+            File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            if (avatarfile.exists()) {
+                Picasso.with(this)
+                        .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                        .resize(76, 76)
+                        .centerCrop()
+                        .into(avatar);
+            } else {
+                Picasso.with(this)
+                        .load(R.drawable.avatar)
+                        .resize(76, 76)
+                        .centerCrop()
+                        .into(avatar);
+            }
+        }
         mNavigationView.addHeaderView(headerView);
         /**
          * Lets inflate the very first fragment
