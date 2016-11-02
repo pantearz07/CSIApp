@@ -2,26 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="5dp"
+    android:layout_gravity="center_horizontal"
     android:orientation="vertical"
-    android:layout_gravity="center_horizontal">
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/imgPhoto"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-android:scaleType="centerCrop"
-        android:layout_gravity="center">
-    </ImageView>
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"></ImageView>
 
     <TextView
         android:id="@+id/txtDescPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="2dp"
-        android:textSize="@dimen/ssmall_text"
         android:text="xxxx"
-        android:layout_gravity="center_horizontal">
+        android:textSize="@dimen/ssmall_text">
 
     </TextView>
 

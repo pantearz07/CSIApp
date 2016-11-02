@@ -97,10 +97,12 @@
             android:name="com.scdc.csiapp.main.LoginActivity"
             android:label="@string/login"></activity>
 
-
         <activity
             android:name="com.scdc.csiapp.invmain.VideoPlayerActivity"
             android:label="video"></activity>
+        <activity
+            android:name="com.scdc.csiapp.invmain.FullScreenPhoto"
+            android:label="photo"></activity>
         <activity
             android:name="com.scdc.csiapp.invmain.NoteActivity"
             android:label="note"

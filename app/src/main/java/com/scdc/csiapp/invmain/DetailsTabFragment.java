@@ -512,8 +512,13 @@ public class DetailsTabFragment extends Fragment {
             horizontal_gridView_Outside.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
+                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("photopath", tbPhotoList.get(position).FilePath.toString());
+                    intent.putExtras(extras);
+                    startActivity(intent);
 
-                    showViewPic(tbPhotoList.get(position).FilePath.toString());
+//                    showViewPic(tbPhotoList.get(position).FilePath.toString());
                 }
             });
         } else {
@@ -892,8 +897,33 @@ public class DetailsTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
             txtVideo.setVisibility(View.GONE);
-            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                if (cd.isNetworkAvailable()) {
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
 
+                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null) {
+                                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID.equals(sFeatureInsideID)) {
+                                    apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                    apiMultimedia.setTbPhotoOfInside(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside());
+
+                                    apiMultimediaList.add(apiMultimedia);
+                                }
+                            }
+                        }
+                    }
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+                } else {
+                    apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
+
+                }
+            } else {
+                apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
+                Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            }
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList Inside " + sFeatureInsideID + " " + String.valueOf(apiMultimediaList.size()));
                 txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
@@ -992,7 +1022,7 @@ public class DetailsTabFragment extends Fragment {
             });
             if (CSIDataTabFragment.mode == "view") {
                 imgDelete.setVisibility(View.GONE);
-                imgEdit.setVisibility(View.GONE);
+//                imgEdit.setVisibility(View.GONE);
             }
             return convertView;
 

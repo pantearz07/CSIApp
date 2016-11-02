@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +45,10 @@ import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
@@ -103,6 +109,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     Spinner spinnerAntecedent;
     String[] Antecedent;
     boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
+    String address, amphur, province, country, postalCode, knownName = "null";
 
     @Nullable
     @Override
@@ -188,7 +195,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
         //เเสดงค่าเดิม
         if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+
             spinnerProvince.setSelection(0);
+
         } else {
             for (int i = 0; i < mProvinceArray.length; i++) {
                 if (provinceid.trim().equals(mProvinceArray[i][0])) {
@@ -197,21 +206,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     break;
                 }
             }
-            mAmphurArray = dbHelper.SelectAmphur(provinceid);
-            if (mAmphurArray != null) {
-                String[] mAmphurArray2 = new String[mAmphurArray.length];
-                for (int i = 0; i < mAmphurArray.length; i++) {
-                    mAmphurArray2[i] = mAmphurArray[i][2];
-                    Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
-                }
-                ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
-                spinnerAmphur.setAdapter(adapterAmphur);
-            } else {
-                spinnerAmphur.setAdapter(null);
-                selectedAmphur = null;
-                Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
-            }
+            setSelectAmphur(provinceid);
+            Log.i(TAG, " show  provinceid " + provinceid );
         }
         spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spinnerProvince.setOnItemSelectedListener(new EmerOnItemSelectedListener());
@@ -422,6 +418,24 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         return viewReceiveCSI;
     }
 
+    private void setSelectAmphur(String provinceid) {
+        mAmphurArray = dbHelper.SelectAmphur(provinceid);
+        if (mAmphurArray != null) {
+            String[] mAmphurArray2 = new String[mAmphurArray.length];
+            for (int i = 0; i < mAmphurArray.length; i++) {
+                mAmphurArray2[i] = mAmphurArray[i][2];
+//                Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
+            spinnerAmphur.setAdapter(adapterAmphur);
+        } else {
+            spinnerAmphur.setAdapter(null);
+            selectedAmphur = null;
+            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+        }
+    }
+
     public void onStart() {
         super.onStart();
         if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
@@ -604,7 +618,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
         mLastLocation = FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d(TAG, "get mLastLocation");
+            Log.d(TAG, "get mLastLocation " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
+
         }
     }
 
@@ -621,7 +636,96 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
-        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLongitude());
+        Geocoder gcd = new Geocoder(context, Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+            if (addresses != null && addresses.size() > 0) {
+
+
+                address = addresses.get(0).getAddressLine(0);
+                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                amphur = addresses.get(0).getLocality();
+                province = addresses.get(0).getAdminArea();
+                country = addresses.get(0).getCountryName();
+                postalCode = addresses.get(0).getPostalCode();
+                knownName = addresses.get(0).getFeatureName();
+
+                Log.d(TAG, "get mLastLocation address" + address);
+                Log.d(TAG, "get mLastLocation amphur " + amphur);
+                Log.d(TAG, "get mLastLocation province " + province);
+                Log.d(TAG, "get mLastLocation country " + country);
+                Log.d(TAG, "get mLastLocation postalCode " + postalCode);
+                Log.d(TAG, "get mLastLocation knownName " + knownName);
+
+            }
+            if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+                if (province != null || province != "null") {
+                    for (int i = 0; i < mProvinceArray.length; i++) {
+                        if (province.trim().equals(mProvinceArray[i][2])) {
+                            spinnerProvince.setSelection(i);
+                            provinceid = mProvinceArray[i][0];
+
+                            oldProvince = false;
+                            break;
+                        }
+                    }
+                    setSelectAmphur(provinceid);
+                    Log.i(TAG, " show province " + province + " provinceid " + provinceid);
+                    EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = provinceid;
+                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+                } else {
+                    spinnerProvince.setSelection(0);
+                }
+            }
+            if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+
+                if (amphur != null || amphur != "null") {
+                    amphur = amphur.replace("อำเภอ", "");
+                    Log.i(TAG, "have amphur" + amphur);
+                    for (int i = 0; i < mAmphurArray.length; i++) {
+                        if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
+                            spinnerAmphur.setSelection(i);
+                            amphurid = mAmphurArray[i][0];
+                            sAmphurName = mAmphurArray[i][2].toString();
+                            Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+                            EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = amphurid;
+                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                            break;
+                        }
+                    }
+                } else {
+                    spinnerAmphur.setSelection(0);
+                }
+            }
+            if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+
+                if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
+                    knownName = knownName.replace("ตำบล", "");
+                    Log.i(TAG, "have knownName" + knownName);
+                    for (int i = 0; i < mDistrictArray.length; i++) {
+                        if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
+                            spinnerDistrict.setSelection(i);
+                            districtid = mDistrictArray[i][0];
+                            sDistrictName = mDistrictArray[i][2].toString();
+                            Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+                            EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = districtid;
+                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                            break;
+                        }
+                    }
+                } else {
+                    spinnerDistrict.setSelection(0);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "get mLastLocation error" + e.getMessage());
+        }
+
     }
 
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
@@ -667,11 +771,13 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     break;
                 case R.id.spinnerAmphur:
                     if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+
                         selectedAmphur = mAmphurArray[pos][0];
                         sAmphurName = mAmphurArray[pos][2].toString();
                         Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
                         EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
                         Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+
                     } else {
                         for (int i = 0; i < mAmphurArray.length; i++) {
                             if (amphurid.trim().equals(mAmphurArray[i][0].toString())) {

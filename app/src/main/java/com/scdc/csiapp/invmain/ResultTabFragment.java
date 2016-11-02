@@ -117,7 +117,7 @@ public class ResultTabFragment extends Fragment {
     ImageButton btnShowHide1, btnShowHide2, btnShowHide3, btnShowHide4;
     private boolean viewGroupIsVisible = true;
     private static final String TAG = "DEBUG-ResultTabFragment";
-    public static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
+    public static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles/";
     public static String Bundle_ID = "dataid";
     public static String Bundle_TB = "datatb";
     public static String Bundle_mode = "mode";
@@ -713,7 +713,30 @@ public class ResultTabFragment extends Fragment {
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
-            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                if (cd.isNetworkAvailable()) {
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
+                                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID.equals(sRSID)) {
+                                    apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                    apiMultimedia.setTbPhotoOfResultscene(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene());
+                                    apiMultimediaList.add(apiMultimedia);
+                                }
+                            }
+                        }
+                    }
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+                } else {
+                    apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+                }
+            } else {
+                apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+                Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            }
             txtVideo.setVisibility(View.GONE);
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList GatewayCriminals " + sRSID + " " + String.valueOf(apiMultimediaList.size()));
@@ -814,7 +837,6 @@ public class ResultTabFragment extends Fragment {
             });
             if (CSIDataTabFragment.mode == "view") {
                 imgDelete.setVisibility(View.GONE);
-                imgEdit.setVisibility(View.GONE);
             }
             return convertView;
 
@@ -885,7 +907,31 @@ public class ResultTabFragment extends Fragment {
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
-            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                if (cd.isNetworkAvailable()) {
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
+                                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID.equals(sRSID)) {
+                                    apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                    apiMultimedia.setTbPhotoOfResultscene(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene());
+                                    apiMultimediaList.add(apiMultimedia);
+                                }
+                            }
+                        }
+                    }
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+                } else {
+                    apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+                }
+            } else {
+                apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+                Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            }
+
             txtVideo.setVisibility(View.GONE);
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList ClueShown " + sRSID + " " + String.valueOf(apiMultimediaList.size()));
@@ -973,7 +1019,6 @@ public class ResultTabFragment extends Fragment {
             });
             if (CSIDataTabFragment.mode == "view") {
                 imgDelete.setVisibility(View.GONE);
-                imgEdit.setVisibility(View.GONE);
             }
             return convertView;
 
@@ -1055,8 +1100,30 @@ public class ResultTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
             txtVideo.setVisibility(View.GONE);
-            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPropertyLossID, "photo");
-
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                if (cd.isNetworkAvailable()) {
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null) {
+                                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().PropertyLessID.equals(sPropertyLossID)) {
+                                    apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                    apiMultimedia.setTbPhotoOfPropertyless(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless());
+                                    apiMultimediaList.add(apiMultimedia);
+                                }
+                            }
+                        }
+                    }
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+                } else {
+                    apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPropertyLossID, "photo");
+                }
+            } else {
+                apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPropertyLossID, "photo");
+                Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            }
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList propertyloss " + sPropertyLossID + " " + String.valueOf(apiMultimediaList.size()));
                 txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");
@@ -1254,8 +1321,30 @@ public class ResultTabFragment extends Fragment {
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
             txtVideo.setVisibility(View.GONE);
-            List<ApiMultimedia> apiMultimediaList = dbHelper.SelectDataPhotoOfEvidence(sFindEvidenceID, "photo");
-
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                if (cd.isNetworkAvailable()) {
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null) {
+                                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID.equals(sFindEvidenceID)) {
+                                    apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                    apiMultimedia.setTbPhotoOfEvidence(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence());
+                                    apiMultimediaList.add(apiMultimedia);
+                                }
+                            }
+                        }
+                    }
+                    Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+                } else {
+                    apiMultimediaList = dbHelper.SelectDataPhotoOfEvidence(sFindEvidenceID, "photo");
+                }
+            } else {
+                apiMultimediaList = dbHelper.SelectDataPhotoOfEvidence(sFindEvidenceID, "photo");
+                Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            }
             if (apiMultimediaList != null) {
                 Log.i(TAG, "apiMultimediaList Evidence " + sFindEvidenceID + " " + String.valueOf(apiMultimediaList.size()));
                 txtPhoto.setText("รูปภาพ  (" + String.valueOf(apiMultimediaList.size()) + ")");

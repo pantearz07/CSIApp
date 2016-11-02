@@ -3,6 +3,7 @@ package com.scdc.csiapp.invmain;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -34,7 +35,9 @@ import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
+import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
@@ -75,6 +78,10 @@ public class AddGatewayFragment extends Fragment {
     public static final int REQUEST_CAMERA = 777;
     private String mCurrentPhotoPath;
     Uri uri;
+    Context mContext;
+    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    String defaultIP = "180.183.251.32/mcsi";
+    ConnectionDetector cd;
 
     public AddGatewayFragment() {
 
@@ -95,6 +102,10 @@ public class AddGatewayFragment extends Fragment {
         Log.i(TAG, "sRSID " + sRSID + " typeid " + typeid);
         Log.i(TAG, "CaseReportID " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
         Log.i(TAG, typeid + " GatewayCriminalsList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
+        cd = new ConnectionDetector(getActivity());
+        mContext = view.getContext();
+        SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
 
 
         dbHelper = new DBHelper(getActivity());
@@ -281,7 +292,29 @@ public class AddGatewayFragment extends Fragment {
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         apiMultimediaList = new ArrayList<>();
-        apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            if (cd.isNetworkAvailable()) {
+                ApiMultimedia apiMultimedia = new ApiMultimedia();
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().RSID.equals(sRSID)) {
+                                apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                apiMultimedia.setTbPhotoOfResultscene(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene());
+                                apiMultimediaList.add(apiMultimedia);
+                            }
+                        }
+                    }
+                }
+                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+            } else {
+                apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+            }
+        } else {
+            apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+            Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+        }
         int photolength = 0;
 
 //        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID, "photo");
@@ -316,8 +349,13 @@ public class AddGatewayFragment extends Fragment {
             horizontal_gridView_GC.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
+//                    showViewPic(apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
 
-                    showViewPic(apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
+                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
+                    intent.putExtras(extras);
+                    startActivity(intent);
                 }
             });
         } else {
@@ -365,33 +403,38 @@ public class AddGatewayFragment extends Fragment {
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
             textView.setVisibility(View.GONE);
-            String root = Environment.getExternalStorageDirectory().toString();
-
-            String strPath = root + "/CSIFiles/Pictures/"
+            String strPath = strSDCardPathName_Pic
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
 
-            Log.i("list photo", "/CSIFiles/Pictures/" + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
-            // "file:///android_asset/DvpvklR.png"
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            Picasso.with(getActivity())
-                    .load(new File(strPath))
-                    .resize(50, 50)
-                    .centerCrop()
-                    .into(imageView);
-//            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-//            if (bmpSelectedImage != null) {
-//                int width1 = bmpSelectedImage.getWidth();
-//                int height1 = bmpSelectedImage.getHeight();
-//                Log.i("size", width1 + " " + height1);
-//                int width = width1 / 13;
-//                int height = height1 / 13;
-//                Log.i("resize", width + " " + height);
-//                Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
-//                        width, height, true);
-//                imageView.setImageBitmap(resizedbitmap);
-//            }
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                if (cd.isNetworkAvailable()) {
+                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
+                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                            + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
+//                    Log.i(TAG, "server file name: " + filepath);
+                    Picasso.with(getActivity())
+                            .load(filepath)
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(imageView);
+                } else {
+                    Picasso.with(getActivity())
+                            .load(new File(strPath))
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(imageView);
+                }
+            } else {
+                Picasso.with(getActivity())
+                        .load(new File(strPath))
+                        .resize(50, 50)
+                        .centerCrop()
+                        .into(imageView);
+            }
 
 
             return convertView;

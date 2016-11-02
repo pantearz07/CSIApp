@@ -2,6 +2,7 @@ package com.scdc.csiapp.invmain;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
@@ -13,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.ActivityResultBus;
@@ -58,6 +61,10 @@ public class VideoTabFragment extends Fragment {
     TextView txtVideoNum;
     GetDateTime getDateTime;
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
+    Context mContext;
+    private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
+    String defaultIP = "180.183.251.32/mcsi";
+    ConnectionDetector cd;
 
     @Nullable
     @Override
@@ -67,13 +74,15 @@ public class VideoTabFragment extends Fragment {
         dbHelper = new DBHelper(getActivity());
         View viewPhotosTab = inflater.inflate(R.layout.video_tab_layout, container, false);
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
-
+        cd = new ConnectionDetector(getActivity());
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewVideo = (GridView) viewPhotosTab.findViewById(R.id.gridViewVideo);
         txtVideoNum = (TextView) viewPhotosTab.findViewById(R.id.txtVideoNum);
         showAllVideo();
         fabBtn = (FloatingActionButton) viewPhotosTab.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new VideoOnClickListener());
+        SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
 
         if (CSIDataTabFragment.mode == "view") {
 
@@ -138,22 +147,37 @@ public class VideoTabFragment extends Fragment {
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
             textView.setVisibility(View.GONE);
-           /* textView.setText(lis[position][3].toString() + "\n"
-                    + lis[position][4].toString());
-*/
-            String root = Environment.getExternalStorageDirectory().toString();
-            String strPath = root + "/CSIFiles/Video/"
+
+            String strPath = strSDCardPathName_Vid
                     + tbMultimediaFileList.get(position).FilePath.toString();
 
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
+            Bitmap bmThumbnail = null;
 
-            Bitmap bmThumbnail;
-            bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
-                    MediaStore.Video.Thumbnails.MINI_KIND);
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+//                Log.i(TAG, "view online");
+                if (cd.isNetworkAvailable()) {
+                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/video/"
+                            + tbMultimediaFileList.get(position).FilePath.toString();
+//                    bmThumbnail = ThumbnailUtils.createVideoThumbnail(filepath,
+//                            MediaStore.Video.Thumbnails.MICRO_KIND);
+                    imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
 
-            imageView.setImageBitmap(bmThumbnail);
+                } else {
+                    bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
+                            MediaStore.Video.Thumbnails.MICRO_KIND);
+                    imageView.setImageBitmap(bmThumbnail);
+                }
+            } else {
+                bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
+                        MediaStore.Video.Thumbnails.MICRO_KIND);
+                imageView.setImageBitmap(bmThumbnail);
+            }
+
+
             return convertView;
 
         }
@@ -162,7 +186,26 @@ public class VideoTabFragment extends Fragment {
     public void showAllVideo() {
         // TODO Auto-generated method stub
         tbMultimediaFileList = new ArrayList<>();
-        tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "video");
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            if (cd.isNetworkAvailable()) {
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equals("video")) {
+                            tbMultimediaFileList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                        }
+                    }
+                }
+                Log.i(TAG, "tbMultimediaFileList " + String.valueOf(tbMultimediaFileList.size()));
+            } else {
+                tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "video");
+
+            }
+        } else {
+            tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "video");
+
+            Log.i(TAG, "tbMultimediaFileList video offline " + String.valueOf(tbMultimediaFileList.size()));
+        }
         if (tbMultimediaFileList != null) {
             txtVideoNum.setText(String.valueOf(tbMultimediaFileList.size()));
             gViewVideo.setVisibility(View.VISIBLE);

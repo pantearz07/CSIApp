@@ -222,11 +222,11 @@ public class ProfileFragment extends Fragment {
         change_display.setOnClickListener(new ProfileOnClickListener());
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
-            Picasso.with(getActivity())
-                    .load(R.drawable.avatar)
-                    .resize(76, 76)
-                    .centerCrop()
-                    .into(profile_image);
+//            Picasso.with(getActivity())
+//                    .load(R.drawable.avatar)
+//                    .resize(76, 76)
+//                    .centerCrop()
+//                    .into(profile_image);
         } else {
 
             File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
@@ -238,11 +238,11 @@ public class ProfileFragment extends Fragment {
                         .into(profile_image);
             } else {
 
-                Picasso.with(getActivity())
-                        .load(R.drawable.avatar)
-                        .resize(76, 76)
-                        .centerCrop()
-                        .into(profile_image);
+//                Picasso.with(getActivity())
+//                        .load(R.drawable.avatar)
+//                        .resize(76, 76)
+//                        .centerCrop()
+//                        .into(profile_image);
             }
         }
 

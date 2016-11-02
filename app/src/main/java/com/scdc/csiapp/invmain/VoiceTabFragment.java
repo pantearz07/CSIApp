@@ -3,6 +3,7 @@ package com.scdc.csiapp.invmain;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
@@ -74,6 +76,10 @@ public class VoiceTabFragment extends Fragment {
     TextView txtVoiceNum;
     GetDateTime getDateTime;
     List<TbMultimediaFile> tbMultimediaFileList = null;
+    Context mContext;
+    private static String strSDCardPathName_Voi = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/VoiceRecorder/";
+    String defaultIP = "180.183.251.32/mcsi";
+    ConnectionDetector cd;
 
     @Nullable
     @Override
@@ -81,9 +87,12 @@ public class VoiceTabFragment extends Fragment {
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
-
         dbHelper = new DBHelper(getActivity());
         View viewVoiceTab = inflater.inflate(R.layout.voice_tab_layout, container, false);
+        mContext = viewVoiceTab.getContext();
+        cd = new ConnectionDetector(getActivity());
+        SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
 
 
         if (mMedia != null) {
@@ -324,7 +333,26 @@ public class VoiceTabFragment extends Fragment {
     public void showListVoiceRecord() {
         // TODO Auto-generated method stub
         tbMultimediaFileList = new ArrayList<>();
-        tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            if (cd.isNetworkAvailable()) {
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equals("voice")) {
+                            tbMultimediaFileList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                        }
+                    }
+                }
+                Log.i(TAG, "tbMultimediaFileList " + String.valueOf(tbMultimediaFileList.size()));
+            } else {
+                tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
+
+            }
+        } else {
+            tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
+
+            Log.i(TAG, "tbMultimediaFileList voice offline " + String.valueOf(tbMultimediaFileList.size()));
+        }
         if (tbMultimediaFileList != null) {
 
 //            arrDataVoiceRecord = mDbHelper.SelectDataMultimediaFile(caseReportID, "voice");
@@ -340,10 +368,8 @@ public class VoiceTabFragment extends Fragment {
             listViewVoice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
-                    String root = Environment
-                            .getExternalStorageDirectory().toString();
-                    String strPath = root
-                            + "/CSIFiles/VoiceRecorder/"
+
+                    String strPath = strSDCardPathName_Voi
                             + tbMultimediaFileList.get(position).FilePath
                             .toString();
                     String sVoiceName = tbMultimediaFileList.get(position).FilePath
@@ -375,8 +401,7 @@ public class VoiceTabFragment extends Fragment {
                 .findViewById(R.id.textView1);
         textView1.setText("ชื่อไฟล์ : " + sVoiceName1);
 
-        Uri uri = Uri.parse(Environment.getExternalStorageDirectory()
-                .getAbsolutePath() + "/CSIFiles/VoiceRecorder/" + sVoiceName1);
+        Uri uri = Uri.parse(strSDCardPathName_Voi + sVoiceName1);
         mMedia = new MediaPlayer();
         mMedia = MediaPlayer.create(getActivity(), uri);
         mMedia.start();
@@ -477,8 +502,7 @@ public class VoiceTabFragment extends Fragment {
             String root = Environment.getExternalStorageDirectory().toString();
 
             String sVoiceName = tbMultimediaFileList.get(info.position).FilePath.toString();
-            String strPath = root + "/CSIFiles/VoiceRecorder/"
-                    + sVoiceName;
+            String strPath = strSDCardPathName_Voi + sVoiceName;
             Toast.makeText(getActivity(), "Your selected : " + strPath,
                     Toast.LENGTH_SHORT).show();
 

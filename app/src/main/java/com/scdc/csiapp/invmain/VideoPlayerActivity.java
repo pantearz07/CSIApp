@@ -1,7 +1,9 @@
 package com.scdc.csiapp.invmain;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,8 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.PreferenceData;
 
 /**
  * Created by Pantearz07 on 23/12/2558.
@@ -23,8 +27,14 @@ public class VideoPlayerActivity extends Activity {
     DisplayMetrics dm;
     SurfaceView sur_View;
     MediaController media_Controller;
+    Context mContext;
+    private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
+    String defaultIP = "180.183.251.32/mcsi";
+    ConnectionDetector cd;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +44,14 @@ public class VideoPlayerActivity extends Activity {
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         setContentView(R.layout.activity_video_player);
-
-        Intent intent= getIntent();
+        mContext = this;
+        SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
+        cd = new ConnectionDetector(this);
+        Intent intent = getIntent();
         String VideoPath = intent.getStringExtra("VideoPath"); // for String
-        String root = Environment.getExternalStorageDirectory().toString();
 
-        String strPath = root + "/CSIFiles/Video/"+ VideoPath;
+        String strPath = strSDCardPathName_Vid + VideoPath;
 
         video_player_view = (VideoView) findViewById(R.id.video_player_view);
         media_Controller = new MediaController(this);
@@ -47,13 +59,37 @@ public class VideoPlayerActivity extends Activity {
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
         int height = dm.heightPixels;
         int width = dm.widthPixels;
-        video_player_view.setMinimumWidth(width);
-        video_player_view.setMinimumHeight(height);
-        video_player_view.setMediaController(media_Controller);
-        video_player_view.setVideoURI(Uri.parse(strPath));
-        video_player_view.start();
-        video_player_view.requestFocus();
 
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+//                Log.i(TAG, "view online");
+            if (cd.isNetworkAvailable()) {
+                //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
+                String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                        + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/video/"
+                        + VideoPath;
+//                    Log.i(TAG, "server file name: " + filepath);
+                video_player_view.setMinimumWidth(width);
+                video_player_view.setMinimumHeight(height);
+                video_player_view.setMediaController(media_Controller);
+                video_player_view.setVideoURI(Uri.parse(filepath));
+                video_player_view.start();
+                video_player_view.requestFocus();
+            } else {
+                video_player_view.setMinimumWidth(width);
+                video_player_view.setMinimumHeight(height);
+                video_player_view.setMediaController(media_Controller);
+                video_player_view.setVideoURI(Uri.parse(strPath));
+                video_player_view.start();
+                video_player_view.requestFocus();
+            }
+        } else {
+            video_player_view.setMinimumWidth(width);
+            video_player_view.setMinimumHeight(height);
+            video_player_view.setMediaController(media_Controller);
+            video_player_view.setVideoURI(Uri.parse(strPath));
+            video_player_view.start();
+            video_player_view.requestFocus();
+        }
     }
 
 

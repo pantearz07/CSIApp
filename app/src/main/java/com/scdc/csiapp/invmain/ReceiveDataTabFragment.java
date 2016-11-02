@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,9 +54,11 @@ import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.TimeDialog;
 import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
@@ -135,6 +139,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     List<TbSceneInvestigation> tbSceneInvestigations = null;
     ListView listViewAddSceneInvestDateTime, listViewInvestigator;
     List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
+    String address, amphur, province, country, postalCode, knownName = "null";
 
     @Nullable
     @Override
@@ -208,7 +213,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("00:00:00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editReceiveCaseTime.setText("");
-            }else {
+            } else {
                 editReceiveCaseTime.setText(currentDT[1]);
             }
         } else {
@@ -222,7 +227,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             if (CSIDataTabFragment.mode == "view") {
 
                 editHappenCaseDate.setText("");
-            }else {
+            } else {
                 editHappenCaseDate.setText(currentDT[0]);
             }
         } else {
@@ -235,7 +240,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("00:00:00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editHappenCaseTime.setText("");
-            }else{
+            } else {
                 editHappenCaseTime.setText(currentDT[1]);
             }
         } else {
@@ -248,7 +253,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("0000-00-00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editKnowCaseDate.setText("");
-            }else{
+            } else {
                 editKnowCaseDate.setText(currentDT[1]);
             }
         } else {
@@ -261,7 +266,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("00:00:00")) {
             if (CSIDataTabFragment.mode == "view") {
                 editKnowCaseTime.setText("");
-            }else{
+            } else {
                 editKnowCaseTime.setText(currentDT[1]);
             }
         } else {
@@ -330,21 +335,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     break;
                 }
             }
-            mAmphurArray = dbHelper.SelectAmphur(provinceid);
-            if (mAmphurArray != null) {
-                String[] mAmphurArray2 = new String[mAmphurArray.length];
-                for (int i = 0; i < mAmphurArray.length; i++) {
-                    mAmphurArray2[i] = mAmphurArray[i][2];
-                    Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
-                }
-                ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
-                spinnerAmphur.setAdapter(adapterAmphur);
-            } else {
-                spinnerAmphur.setAdapter(null);
-                selectedAmphur = null;
-                Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
-            }
+            setSelectAmphur(provinceid);
+            Log.i(TAG, " show  provinceid " + provinceid);
+
         }
         spinnerDistrict.setOnItemSelectedListener(new RecOnItemSelectedListener());
         spinnerProvince.setOnItemSelectedListener(new RecOnItemSelectedListener());
@@ -471,6 +464,24 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             edtVehicleDetail.setEnabled(false);
         }
         return viewReceiveCSI;
+    }
+
+    private void setSelectAmphur(String provinceid) {
+        mAmphurArray = dbHelper.SelectAmphur(provinceid);
+        if (mAmphurArray != null) {
+            String[] mAmphurArray2 = new String[mAmphurArray.length];
+            for (int i = 0; i < mAmphurArray.length; i++) {
+                mAmphurArray2[i] = mAmphurArray[i][2];
+//                Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
+            }
+            ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
+            spinnerAmphur.setAdapter(adapterAmphur);
+        } else {
+            spinnerAmphur.setAdapter(null);
+            selectedAmphur = null;
+            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+        }
     }
 
     public class ListviewSetOnTouchListener implements ListView.OnTouchListener {
@@ -606,6 +617,95 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
         Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+
+        Geocoder gcd = new Geocoder(context, Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+            if (addresses != null && addresses.size() > 0) {
+
+
+                address = addresses.get(0).getAddressLine(0);
+                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                amphur = addresses.get(0).getLocality();
+                province = addresses.get(0).getAdminArea();
+                country = addresses.get(0).getCountryName();
+                postalCode = addresses.get(0).getPostalCode();
+                knownName = addresses.get(0).getFeatureName();
+
+                Log.d(TAG, "get mLastLocation address" + address);
+                Log.d(TAG, "get mLastLocation amphur " + amphur);
+                Log.d(TAG, "get mLastLocation province " + province);
+                Log.d(TAG, "get mLastLocation country " + country);
+                Log.d(TAG, "get mLastLocation postalCode " + postalCode);
+                Log.d(TAG, "get mLastLocation knownName " + knownName);
+
+            }
+            if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+                if (province != null || province != "null") {
+                    for (int i = 0; i < mProvinceArray.length; i++) {
+                        if (province.trim().equals(mProvinceArray[i][2])) {
+                            spinnerProvince.setSelection(i);
+                            provinceid = mProvinceArray[i][0];
+
+                            oldProvince = false;
+                            break;
+                        }
+                    }
+                    setSelectAmphur(provinceid);
+                    Log.i(TAG, " show province " + province + " provinceid " + provinceid);
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID = provinceid;
+                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID);
+                } else {
+                    spinnerProvince.setSelection(0);
+                }
+            }
+            if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+
+                if (amphur != null || amphur != "null") {
+                    amphur = amphur.replace("อำเภอ", "");
+                    Log.i(TAG, "have amphur" + amphur);
+                    for (int i = 0; i < mAmphurArray.length; i++) {
+                        if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
+                            spinnerAmphur.setSelection(i);
+                            amphurid = mAmphurArray[i][0];
+                            sAmphurName = mAmphurArray[i][2].toString();
+                            Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = amphurid;
+                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
+                            break;
+                        }
+                    }
+                } else {
+                    spinnerAmphur.setSelection(0);
+                }
+            }
+            if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+
+                if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
+                    knownName = knownName.replace("ตำบล", "");
+                    Log.i(TAG, "have knownName" + knownName);
+                    for (int i = 0; i < mDistrictArray.length; i++) {
+                        if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
+                            spinnerDistrict.setSelection(i);
+                            districtid = mDistrictArray[i][0];
+                            sDistrictName = mDistrictArray[i][2].toString();
+                            Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = districtid;
+                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
+                            break;
+                        }
+                    }
+                } else {
+                    spinnerDistrict.setSelection(0);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "get mLastLocation error" + e.getMessage());
+        }
     }
 
     private class SummaryOnClickListener implements View.OnClickListener {
@@ -928,7 +1028,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 view = inflater.inflate(R.layout.list_sceneinvestigation, null);
             }
             final String sInvOfficialID = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().getInvOfficialID();
-            Log.i(TAG , " show "+sInvOfficialID);
+            Log.i(TAG, " show " + sInvOfficialID);
             final String sRank = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getRank();
             final String sFirstName = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getFirstName();
             final String sLastName = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getLastName();

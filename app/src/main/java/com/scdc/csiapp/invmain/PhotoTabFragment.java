@@ -3,6 +3,7 @@ package com.scdc.csiapp.invmain;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.ActivityResultBus;
@@ -61,7 +63,10 @@ public class PhotoTabFragment extends Fragment {
     GetDateTime getDateTime;
 
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
-
+    Context mContext;
+    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    String defaultIP = "180.183.251.32/mcsi";
+    ConnectionDetector cd;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,13 +75,14 @@ public class PhotoTabFragment extends Fragment {
         View viewPhotosTab = inflater.inflate(R.layout.photo_tab_layout, container, false);
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
         getDateTime = new GetDateTime();
-
+        cd = new ConnectionDetector(getActivity());
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewPhoto = (GridView) viewPhotosTab.findViewById(R.id.gridViewPhoto);
         txtPhotoNum = (TextView) viewPhotosTab.findViewById(R.id.txtPhotoNum);
-
+        mContext = viewPhotosTab.getContext();
         showAllPhoto();
-
+        SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
 
         fabBtn = (FloatingActionButton) viewPhotosTab.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new PhotoOnClickListener());
@@ -148,30 +154,41 @@ public class PhotoTabFragment extends Fragment {
  /*           textView.setText(lis[position][3].toString() + "\n"
                     + lis[position][4].toString());
   */
-            String root = Environment.getExternalStorageDirectory().toString();
-            String strPath = root + "/CSIFiles/Pictures/"
-                    + tbMultimediaFileList.get(position).FilePath.toString();
+//            String root = Environment.getExternalStorageDirectory().toString();
+            String strPath = strSDCardPathName_Pic + tbMultimediaFileList.get(position).FilePath.toString();
             Log.i("strPath ", strPath);
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
 
-            Picasso.with(getActivity())
-                    .load(new File(strPath))
-                    .resize(50, 50)
-                    .centerCrop()
-                    .into(imageView);
-//            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-//
-//            int width1 = bmpSelectedImage.getWidth();
-//            int height1 = bmpSelectedImage.getHeight();
-//            Log.i("size", width1 + " " + height1);
-//            int width = width1 / 13;
-//            int height = height1 / 13;
-//            Log.i("resize", width + " " + height);
-//            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage,
-//                    width, height, true);
-//            imageView.setImageBitmap(resizedbitmap);
+
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+//                Log.i(TAG, "view online");
+                if (cd.isNetworkAvailable()) {
+                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
+                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                            + tbMultimediaFileList.get(position).FilePath.toString();
+//                    Log.i(TAG, "server file name: " + filepath);
+                    Picasso.with(getActivity())
+                            .load(filepath)
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(imageView);
+                } else {
+                    Picasso.with(getActivity())
+                            .load(new File(strPath))
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(imageView);
+                }
+            } else {
+                Picasso.with(getActivity())
+                        .load(new File(strPath))
+                        .resize(50, 50)
+                        .centerCrop()
+                        .into(imageView);
+            }
             return convertView;
 
         }
@@ -225,7 +242,26 @@ public class PhotoTabFragment extends Fragment {
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         tbMultimediaFileList = new ArrayList<>();
-        tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "photo");
+
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            if (cd.isNetworkAvailable()) {
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equals("photo")) {
+                            tbMultimediaFileList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                        }
+                    }
+                }
+                Log.i(TAG, "tbMultimediaFileList " + String.valueOf(tbMultimediaFileList.size()));
+            } else {
+                tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "photo");
+
+            }
+        } else {
+            tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "photo");
+            Log.i(TAG, "tbMultimediaFileList offline " + String.valueOf(tbMultimediaFileList.size()));
+        }
         if (tbMultimediaFileList != null) {
             Log.i("tbMultimediaFileList", String.valueOf(tbMultimediaFileList.size()));
             txtPhotoNum.setText(String.valueOf(tbMultimediaFileList.size()));
@@ -237,7 +273,12 @@ public class PhotoTabFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-                    showViewPic(tbMultimediaFileList.get(position).FilePath.toString());
+//                    showViewPic(tbMultimediaFileList.get(position).FilePath.toString());
+                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("photopath", tbMultimediaFileList.get(position).FilePath.toString());
+                    intent.putExtras(extras);
+                    startActivity(intent);
                 }
             });
 

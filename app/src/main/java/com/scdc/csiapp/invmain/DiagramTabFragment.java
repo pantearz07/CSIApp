@@ -4,6 +4,8 @@ package com.scdc.csiapp.invmain;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,12 +32,15 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.MainActivity;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +69,10 @@ public class DiagramTabFragment extends Fragment {
     public static String Bundle_mode = "mode";
     public static String Bundle_MediaDescription = "mode";
     public static List<TbMultimediaFile> tbDiagramFileList = null;
+    Context mContext;
+    ConnectionDetector cd;
+    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    String defaultIP = "180.183.251.32/mcsi";
 
     @Nullable
     @Override
@@ -74,9 +83,11 @@ public class DiagramTabFragment extends Fragment {
         dbHelper = new DBHelper(getActivity());
         getDateTime = new GetDateTime();
         View viewDiagramTab = inflater.inflate(R.layout.diagram_tab_layout, container, false);
-
+        cd = new ConnectionDetector(getActivity());
         gViewPic = (GridView) viewDiagramTab.findViewById(R.id.gridViewShowMedia);
         rootLayout = (CoordinatorLayout) viewDiagramTab.findViewById(R.id.rootLayout);
+        SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
 
         if (CSIDataTabFragment.apiCaseScene.getApiMultimedia() == null) {
             apiMultimediaList = new ArrayList<>();
@@ -105,7 +116,25 @@ public class DiagramTabFragment extends Fragment {
     public void showAllPic() {
         // TODO Auto-generated method stub
         tbDiagramFileList = new ArrayList<>();
-        tbDiagramFileList = dbHelper.selectedMediafiles(caseReportID, "diagram");
+
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+            Log.i(TAG, "view online tbDiagramFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            if (cd.isNetworkAvailable()) {
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equals("diagram")) {
+                            tbDiagramFileList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                        }
+                    }
+                }
+                Log.i(TAG, "tbDiagramFileList " + String.valueOf(tbDiagramFileList.size()));
+            } else {
+                tbDiagramFileList = dbHelper.selectedMediafiles(caseReportID, "diagram");
+            }
+        } else {
+            tbDiagramFileList = dbHelper.selectedMediafiles(caseReportID, "diagram");
+            Log.i(TAG, "tbDiagramFileList offline " + String.valueOf(tbDiagramFileList.size()));
+        }
         if (tbDiagramFileList != null) {
             Log.i(TAG, "gViewPic SelectDataMultimediaFile " + String.valueOf(tbDiagramFileList.size()));
             gViewPic.setVisibility(View.VISIBLE);
@@ -120,7 +149,12 @@ public class DiagramTabFragment extends Fragment {
                             getActivity(),
                             "Your selected : " + tbDiagramFileList.get(position).FilePath.toString(),
                             Toast.LENGTH_SHORT).show();
-                    showViewPic(tbDiagramFileList.get(position).FilePath.toString());
+//                    showViewPic(tbDiagramFileList.get(position).FilePath.toString());
+                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("photopath", tbDiagramFileList.get(position).FilePath.toString());
+                    intent.putExtras(extras);
+                    startActivity(intent);
                 }
             });
         } else {
@@ -249,8 +283,7 @@ public class DiagramTabFragment extends Fragment {
 
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
-            String root = Environment.getExternalStorageDirectory().toString();
-            String strPath = root + "/CSIFiles/Pictures/" + tbDiagramFileList.get(position).FilePath.toString();
+            String strPath = strSDCardPathName_Pic + tbDiagramFileList.get(position).FilePath.toString();
             Log.i(TAG, strPath);
 
             textView.setText(tbDiagramFileList.get(position).FilePath.toString() + "\n"
@@ -260,15 +293,42 @@ public class DiagramTabFragment extends Fragment {
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
 
-            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-            int width1 = bmpSelectedImage.getWidth();
-            int height1 = bmpSelectedImage.getHeight();
-            Log.i(TAG, "size " + width1 + " "
-                    + height1);
-            int width = width1 / 4;
-            int height = height1 / 4;
-            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage, width, height, true);
-            imageView.setImageBitmap(resizedbitmap);
+            if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+//                Log.i(TAG, "view online");
+                if (cd.isNetworkAvailable()) {
+                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
+                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                            + tbDiagramFileList.get(position).FilePath.toString();
+//                    Log.i(TAG, "server file name: " + filepath);
+                    Picasso.with(getActivity())
+                            .load(filepath)
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(imageView);
+                } else {
+                    Picasso.with(getActivity())
+                            .load(new File(strPath))
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(imageView);
+                }
+            } else {
+                Picasso.with(getActivity())
+                        .load(new File(strPath))
+                        .resize(50, 50)
+                        .centerCrop()
+                        .into(imageView);
+            }
+//            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
+//            int width1 = bmpSelectedImage.getWidth();
+//            int height1 = bmpSelectedImage.getHeight();
+//            Log.i(TAG, "size " + width1 + " "
+//                    + height1);
+//            int width = width1 / 4;
+//            int height = height1 / 4;
+//            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage, width, height, true);
+//            imageView.setImageBitmap(resizedbitmap);
 
             return convertView;
 

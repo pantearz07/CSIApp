@@ -566,10 +566,8 @@ public class ApiConnect {
                 .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
                 .add("Password", WelcomeActivity.profile.getTbUsers().pass)
                 .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
-                .add("NoticeCaseID", tbNoticeCase.getNoticeCaseID())
                 .add("tbNoticeCase", gson1.toJson(tbNoticeCase))
                 .build();
-//        Log.d(TAG, "tbNoticeCase toJson " + gson1.toJson(tbNoticeCase));
         Log.d(TAG, "NoticeCaseID " + tbNoticeCase.getNoticeCaseID());
         Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
         Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);

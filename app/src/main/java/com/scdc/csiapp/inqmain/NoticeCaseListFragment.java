@@ -176,7 +176,7 @@ public class NoticeCaseListFragment extends Fragment {
                 dialog.setCancelable(true);
                 // Current Date
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4];
+                final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
 
 
                 dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
