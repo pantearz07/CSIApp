@@ -480,7 +480,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         } else {
             spinnerAmphur.setAdapter(null);
             selectedAmphur = null;
-            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+//            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
         }
     }
 
@@ -513,13 +513,13 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         if (listAdapter != null) {
 
             int numberOfItems = listAdapter.getCount();
-            Log.i("inside", String.valueOf(numberOfItems));
+//            Log.i("inside", String.valueOf(numberOfItems));
             // Get total height of all items.
             int totalItemsHeight = 0;
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
                 View item = listAdapter.getView(itemPos, null, listView);
                 item.measure(0, 0);
-                Log.i("inside", String.valueOf(item.getMeasuredHeight()));
+//                Log.i("inside", String.valueOf(item.getMeasuredHeight()));
                 totalItemsHeight += item.getMeasuredHeight();
             }
 
@@ -532,7 +532,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             ViewGroup.LayoutParams params = listView.getLayoutParams();
             //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
             params.height = totalHeight;
-            Log.i("inside totalHeight", String.valueOf(totalHeight));
+//            Log.i("inside totalHeight", String.valueOf(totalHeight));
             //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
             listView.setLayoutParams(params);
             listView.requestLayout();
@@ -1028,7 +1028,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 view = inflater.inflate(R.layout.list_sceneinvestigation, null);
             }
             final String sInvOfficialID = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().getInvOfficialID();
-            Log.i(TAG, " show " + sInvOfficialID);
+//            Log.i(TAG, " show " + sInvOfficialID);
             final String sRank = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getRank();
             final String sFirstName = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getFirstName();
             final String sLastName = CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbOfficial().getLastName();

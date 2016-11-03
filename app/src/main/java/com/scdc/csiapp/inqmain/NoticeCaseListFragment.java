@@ -340,7 +340,7 @@ public class NoticeCaseListFragment extends Fragment {
         public void onItemClick(View view, int position) {
             final ApiNoticeCase apiNoticeCase = caseList.get(position);
             final String caserepTD = apiNoticeCase.getTbNoticeCase().getNoticeCaseID().toString();
-
+            final String mode = apiNoticeCase.getMode().toString();
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(getActivity());
             builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepTD);
@@ -360,12 +360,36 @@ public class NoticeCaseListFragment extends Fragment {
                 builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Bundle i = new Bundle();
-                        i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
-                        i.putString(emergencyTabFragment.Bundle_mode, "edit");
-                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                        emergencyTabFragment.setArguments(i);
-                        fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                        if (mode.equals("online")) {
+                            boolean isSuccess = mDbHelper.saveNoticeCase(apiNoticeCase.getTbNoticeCase());
+                            if (isSuccess) {
+                                Bundle i = new Bundle();
+                                i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+                                i.putString(emergencyTabFragment.Bundle_mode, "edit");
+                                FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                emergencyTabFragment.setArguments(i);
+                                fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                            } else {
+                                if (snackbar == null || !snackbar.isShown()) {
+                                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+
+                                                }
+                                            });
+                                    snackbar.show();
+                                }
+                            }
+                        } else {
+                            Bundle i = new Bundle();
+                            i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+                            i.putString(emergencyTabFragment.Bundle_mode, "edit");
+                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                            emergencyTabFragment.setArguments(i);
+                            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                        }
                     }
                 });
             }

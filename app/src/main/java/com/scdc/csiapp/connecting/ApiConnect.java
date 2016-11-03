@@ -389,33 +389,20 @@ public class ApiConnect {
                                 String LastUpdateDateTime_end = temp_sql.getTbNoticeCase().LastUpdateDate + " " + temp_sql.getTbNoticeCase().LastUpdateTime;
                                 checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
                                 Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
-                                if(checkDateTime == 1){
-//                                    boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
-                                    Log.d(TAG, "update from server to mobile saveNoticeCase ");
-//                                if (isSuccess) {
-//                                    Log.d(TAG, "update saveNoticeCase ");
-                                    break;
-//                                }
-                                }else if(checkDateTime == 2){
+                                if (checkDateTime == 1) {
+                                    boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
+                                    if (isSuccess) {
+                                        Log.d(TAG, "update from server to mobile saveNoticeCase ");
+                                        break;
+                                    }
+                                } else if (checkDateTime == 2) {
                                     Log.d(TAG, "update from mobile to server saveNoticeCase ");
                                     break;
-                                }else{
+                                } else {
                                     Log.d(TAG, "no update saveNoticeCase ");
                                     break;
                                 }
                             }
-//                            if (temp_ser.getTbNoticeCase().LastUpdateDate.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateDate)
-//                                    && temp_ser.getTbNoticeCase().LastUpdateTime.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateTime)) {
-//                                break;
-//                            } else {
-//                                Log.d(TAG, "temp_ser " + temp_ser.getTbNoticeCase().LastUpdateTime + "" +
-//                                        " temp_sql " + temp_sql.getTbNoticeCase().LastUpdateTime);
-//                                boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
-//                                if (isSuccess) {
-//                                    Log.d(TAG, "update saveNoticeCase ");
-//                                    break;
-//                                }
-//                            }
                         }
 
                     }
@@ -427,7 +414,7 @@ public class ApiConnect {
                 response.close();
                 return apiListNoticeCaseSQLite;
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "Not Success listNoticecase" + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -477,16 +464,24 @@ public class ApiConnect {
                         temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
                         if (temp_ser.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_sql.getTbCaseScene().CaseReportID)) {
                             flag_have = true;
-                            if (temp_ser.getTbCaseScene().LastUpdateDate.equalsIgnoreCase(temp_sql.getTbCaseScene().LastUpdateDate)
-                                    && temp_ser.getTbCaseScene().LastUpdateTime.equalsIgnoreCase(temp_sql.getTbCaseScene().LastUpdateTime)) {
-                                break;
-                            } else {
-
-                                Log.d(TAG, "temp_ser " + temp_ser.getTbCaseScene().LastUpdateTime + "" +
-                                        " temp_sql " + temp_sql.getTbCaseScene().LastUpdateTime);
-                                boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
-                                if (isSuccess) {
-                                    Log.d(TAG, "updateAlldataCase ");
+                            if (temp_ser.getTbCaseScene().LastUpdateDate != null && temp_sql.getTbCaseScene().LastUpdateDate != null
+                                    && temp_ser.getTbCaseScene().LastUpdateTime != null && temp_sql.getTbCaseScene().LastUpdateTime != null) {
+                                int checkDateTime = 0;
+                                String LastUpdateDateTime_start = temp_ser.getTbCaseScene().LastUpdateDate + " " + temp_ser.getTbCaseScene().LastUpdateTime;
+                                String LastUpdateDateTime_end = temp_sql.getTbCaseScene().LastUpdateDate + " " + temp_sql.getTbCaseScene().LastUpdateTime;
+                                checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
+                                Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+                                if (checkDateTime == 1) {
+                                    boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
+                                    if (isSuccess) {
+                                        Log.d(TAG, "update from server to mobile updateAlldataCase ");
+                                        break;
+                                    }
+                                } else if (checkDateTime == 2) {
+                                    Log.d(TAG, "update from mobile to server updateAlldataCase ");
+                                    break;
+                                } else {
+                                    Log.d(TAG, "no update updateAlldataCase ");
                                     break;
                                 }
                             }
@@ -501,7 +496,7 @@ public class ApiConnect {
                 response.close();
                 return apiListCaseSceneSQLite;
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "Not Success listCasescene" + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -534,7 +529,7 @@ public class ApiConnect {
                 Gson gson = new GsonBuilder().create();
                 return gson.fromJson(response.body().string(), ApiStatus.class);
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "Not Success getRegistrationGCM" + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -573,7 +568,7 @@ public class ApiConnect {
                 Gson gson = new GsonBuilder().create();
                 return gson.fromJson(response.body().string(), ApiStatus.class);
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "Not Success updateStatusCase" + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -609,7 +604,7 @@ public class ApiConnect {
                 Gson gson = new GsonBuilder().create();
                 return gson.fromJson(response.body().string(), ApiStatusResult.class);
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "Not Success saveNewNoticeCase" + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -667,7 +662,7 @@ public class ApiConnect {
                 response.close();
                 return apiListOfficialSQLite;
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "Not Success listOfficial" + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -749,32 +744,9 @@ public class ApiConnect {
         formBuilder1.addFormDataPart("tbPropertyLosses", gson1.toJson(apiCaseScene.getTbPropertyLosses()));
         formBuilder1.addFormDataPart("apiMultimedia", gson1.toJson(apiCaseScene.getApiMultimedia()));
         Log.d(TAG, "getApiMultimedia size" + String.valueOf(apiCaseScene.getApiMultimedia().size()));
+
         for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
-//            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
-//                File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-//                if (filePic.exists()) {
-//                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-//                            RequestBody.create(MEDIA_TYPE_JPEG, filePic));
-//                }
-//            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
-//                File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-//                if (filePic.exists()) {
-//                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-//                            RequestBody.create(MEDIA_TYPE_JPEG, filePic));
-//                }
-//            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
-//                File fileVid = new File(strSDCardPathName_Vid, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-//                if (fileVid.exists()) {
-//                    formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-//                            RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
-//                }
-//            } else if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
-//                File fileVoi = new File(strSDCardPathName_Voi, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-//                if (fileVoi.exists()) {
-//                    formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-//                            RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
-//                }
-//            }
+
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
                 File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
@@ -811,6 +783,7 @@ public class ApiConnect {
                     formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", null);
                 }
             }
+
         }
         RequestBody formBody1 = formBuilder1.build();
 
@@ -822,9 +795,9 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request1).execute();
             ApiStatusData apiStatus = new ApiStatusData();
-
+//            Log.d(TAG, "post data" + response.body().string());
             if (response.isSuccessful()) {
-//                Log.d(TAG, "post data" + response.body().string());
+                Log.d(TAG, "post data" + response.body().string());
                 Gson gson = new GsonBuilder().create();
                 try {
                     apiStatus = gson.fromJson(response.body().string(), ApiStatusData.class);
@@ -837,7 +810,7 @@ public class ApiConnect {
                 response.close();
                 return apiStatus;
             } else {
-                Log.d(TAG, "Not Success " + response.code());
+                Log.d(TAG, "saveCaseReport Not Success " + response.code());
                 return null;
             }
         } catch (IOException e) {
@@ -885,8 +858,8 @@ public class ApiConnect {
 
         try {
             Response response = okHttpClient.newCall(request).execute();
-//            Log.d(TAG, "post data" + response.body().string());
             ApiStatusResult apiStatusResult = new ApiStatusResult();
+//            Log.d(TAG, "post data" + response.body().string());
 
             if (response.isSuccessful()) {
 
