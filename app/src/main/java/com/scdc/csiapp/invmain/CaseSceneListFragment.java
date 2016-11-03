@@ -236,6 +236,7 @@ public class CaseSceneListFragment extends Fragment {
 
                             boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
                             if (isSuccess1) {
+                                
                                 Bundle i = new Bundle();
                                 i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
                                 i.putString(csiDataTabFragment.Bundle_mode, "edit");
