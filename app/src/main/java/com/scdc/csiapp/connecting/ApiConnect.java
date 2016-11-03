@@ -24,6 +24,7 @@ import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusData;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
+import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.syncmodel.SyncAmphur;
 import com.scdc.csiapp.syncmodel.SyncCaseSceneType;
@@ -76,6 +77,7 @@ public class ApiConnect {
     private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/mp4");
     private static final MediaType MEDIA_TYPE_VOICE = MediaType.parse("audio/3gp");
     private Context mContext;
+    GetDateTime getDateTime;
     private OkHttpClient okHttpClient = new OkHttpClient();
     // เตรียมไว้ใช้เวลาจะดึงค่าจาก SQLite
     DBHelper mDbHelper;
@@ -86,6 +88,7 @@ public class ApiConnect {
         mContext = context;
         mManager = new PreferenceData(mContext);
         updateApiConnect();
+        getDateTime = new GetDateTime();
     }
 
     // ใช้ดึงค่า IP ปัจจุบันที่เชื่อมต่ออยู่ตอนนั้น
@@ -379,18 +382,40 @@ public class ApiConnect {
                         temp_sql = apiListNoticeCaseSQLite.getData().getResult().get(j);
                         if (temp_ser.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_sql.getTbNoticeCase().NoticeCaseID)) {
                             flag_have = true;
-                            if (temp_ser.getTbNoticeCase().LastUpdateDate.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateDate)
-                                    && temp_ser.getTbNoticeCase().LastUpdateTime.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateTime)) {
-                                break;
-                            } else {
-                                Log.d(TAG, "temp_ser " + temp_ser.getTbNoticeCase().LastUpdateTime + "" +
-                                        " temp_sql " + temp_sql.getTbNoticeCase().LastUpdateTime);
-                                boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
-                                if (isSuccess) {
-                                    Log.d(TAG, "update saveNoticeCase ");
+                            if (temp_ser.getTbNoticeCase().LastUpdateDate != null && temp_sql.getTbNoticeCase().LastUpdateDate != null
+                                    && temp_ser.getTbNoticeCase().LastUpdateTime != null && temp_sql.getTbNoticeCase().LastUpdateTime != null) {
+                                int checkDateTime = 0;
+                                String LastUpdateDateTime_start = temp_ser.getTbNoticeCase().LastUpdateDate + " " + temp_ser.getTbNoticeCase().LastUpdateTime;
+                                String LastUpdateDateTime_end = temp_sql.getTbNoticeCase().LastUpdateDate + " " + temp_sql.getTbNoticeCase().LastUpdateTime;
+                                checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
+                                Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+                                if(checkDateTime == 1){
+//                                    boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
+                                    Log.d(TAG, "update from server to mobile saveNoticeCase ");
+//                                if (isSuccess) {
+//                                    Log.d(TAG, "update saveNoticeCase ");
+                                    break;
+//                                }
+                                }else if(checkDateTime == 2){
+                                    Log.d(TAG, "update from mobile to server saveNoticeCase ");
+                                    break;
+                                }else{
+                                    Log.d(TAG, "no update saveNoticeCase ");
                                     break;
                                 }
                             }
+//                            if (temp_ser.getTbNoticeCase().LastUpdateDate.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateDate)
+//                                    && temp_ser.getTbNoticeCase().LastUpdateTime.equalsIgnoreCase(temp_sql.getTbNoticeCase().LastUpdateTime)) {
+//                                break;
+//                            } else {
+//                                Log.d(TAG, "temp_ser " + temp_ser.getTbNoticeCase().LastUpdateTime + "" +
+//                                        " temp_sql " + temp_sql.getTbNoticeCase().LastUpdateTime);
+//                                boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
+//                                if (isSuccess) {
+//                                    Log.d(TAG, "update saveNoticeCase ");
+//                                    break;
+//                                }
+//                            }
                         }
 
                     }

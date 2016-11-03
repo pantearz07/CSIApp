@@ -18,6 +18,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -556,14 +557,6 @@ public class DetailsTabFragment extends Fragment {
                         .rotate(90)
                         .resize(width, height)
                         .into(imageView);
-//                Bitmap bmpSelectedImage = BitmapFactory.decodeFile(filepath);
-//                int width1 = bmpSelectedImage.getWidth();
-//                int height1 = bmpSelectedImage.getHeight();
-//                Matrix matrix = new Matrix();
-//                matrix.postRotate(90);
-//                Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-//                        width1, height1, matrix, true);
-//                imageView.setImageBitmap(resizedBitmap);
             } else {
                 Picasso.with(getActivity())
                         .load(new File(strPath))
@@ -573,12 +566,8 @@ public class DetailsTabFragment extends Fragment {
                         .into(imageView);
             }
         } else {
-            Picasso.with(getActivity())
-                    .load(new File(strPath))
-                    .centerInside()
-                    .rotate(90)
-                    .resize(width, height)
-                    .into(imageView);
+
+
         }
 
 
@@ -629,33 +618,52 @@ public class DetailsTabFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-
+            final File curfile = new File(strPath);
+            final String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                    + tbPhotoList.get(position).FilePath.toString();
             if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-//                Log.i(TAG, "view online");
                 if (cd.isNetworkAvailable()) {
-                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
-                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
-                            + tbPhotoList.get(position).FilePath.toString();
-//                    Log.i(TAG, "server file name: " + filepath);
                     Picasso.with(getActivity())
                             .load(filepath)
                             .resize(50, 50)
                             .centerCrop()
                             .into(imageView);
                 } else {
+
+                    if (curfile.exists()) {
+                        Picasso.with(getActivity())
+                                .load(curfile)
+                                .resize(50, 50)
+                                .centerCrop()
+//                            .placeholder(R.drawable.user_placeholder)
+//                            .error(R.drawable.user_placeholder_error)
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
+                    }
+                }
+            } else {
+
+                if (curfile.exists()) {
                     Picasso.with(getActivity())
-                            .load(new File(strPath))
+                            .load(curfile)
                             .resize(50, 50)
                             .centerCrop()
                             .into(imageView);
+                } else {
+                    if (cd.isNetworkAvailable()) {
+                        Picasso.with(getActivity())
+                                .load(filepath)
+                                .resize(50, 50)
+                                .centerCrop()
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
+
+                    }
                 }
-            } else {
-                Picasso.with(getActivity())
-                        .load(new File(strPath))
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(imageView);
+
             }
             return convertView;
 
