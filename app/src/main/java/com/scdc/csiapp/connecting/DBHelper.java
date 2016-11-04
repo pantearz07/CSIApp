@@ -3925,7 +3925,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             SQLiteDatabase db;
             db = this.getWritableDatabase(); // Write Data
-
+            db.beginTransaction();
             long rows = db.delete(tableName,
                     colName + " = ?",
                     new String[]{String.valueOf(id)});
@@ -3933,7 +3933,7 @@ public class DBHelper extends SQLiteAssetHelper {
             db.endTransaction();
 
             db.close();
-            Log.i(TAG, "delete " + tableName + ": " + String.valueOf(rows) + " " + id);
+            Log.i(TAG, "delete " + tableName + ": " + String.valueOf(rows) + " " + id + " " + String.valueOf(rows));
             return rows; // return rows deleted.
 
         } catch (Exception e) {
@@ -4113,11 +4113,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public List<ApiMultimedia> SelectDataPhotoOfInside(String sFeatureInsideID,
                                                        String sFileType) {
+        List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+
         // TODO Auto-generated method stub
         try {
             SQLiteDatabase db;
             db = this.getReadableDatabase(); // Read Data
-            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
                     TB_MultimediaFile + "." + COL_FileID + " , " +
                     TB_MultimediaFile + "." + COL_CaseReportID + " , " +
@@ -4132,14 +4133,13 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i(TAG, "show SelectDataPhotoOfInside" + strSQL);
-            ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                if (apiMultimediaList == null) {
-                    apiMultimediaList = new ArrayList<>(cursor2.getCount());
-                }
+
                 if (cursor2.getCount() > 0) {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
+                        ApiMultimedia apiMultimedia = new ApiMultimedia();
+
                         TbMultimediaFile temp15 = new TbMultimediaFile();
                         temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
                         temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
@@ -4182,11 +4182,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public List<ApiMultimedia> SelectDataPhotoOfPropertyLoss(String sPLID,
                                                              String sFileType) {
+        List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+
         // TODO Auto-generated method stub
         try {
             SQLiteDatabase db;
             db = this.getReadableDatabase(); // Read Data
-            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
                     TB_MultimediaFile + "." + COL_FileID + " , " +
                     TB_MultimediaFile + "." + COL_CaseReportID + " , " +
@@ -4201,14 +4202,13 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i(TAG, "SelectDataPhotoOfPropertyLoss " + strSQL);
-            ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                if (apiMultimediaList == null) {
-                    apiMultimediaList = new ArrayList<>(cursor2.getCount());
-                }
+
                 if (cursor2.getCount() > 0) {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
+                        ApiMultimedia apiMultimedia = new ApiMultimedia();
+
                         TbMultimediaFile temp15 = new TbMultimediaFile();
                         temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
                         temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
@@ -4251,11 +4251,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public List<ApiMultimedia> SelectDataPhotoOfEvidence(String sEVID,
                                                          String sFileType) {
+        List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+
         // TODO Auto-generated method stub
         try {
             SQLiteDatabase db;
             db = this.getReadableDatabase(); // Read Data
-            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
                     TB_MultimediaFile + "." + COL_FileID + " , " +
                     TB_MultimediaFile + "." + COL_CaseReportID + " , " +
@@ -4270,14 +4271,13 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i("show", strSQL);
-            ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                if (apiMultimediaList == null) {
-                    apiMultimediaList = new ArrayList<>(cursor2.getCount());
-                }
+
                 if (cursor2.getCount() > 0) {
                     cursor2.moveToPosition(-1);
                     while (cursor2.moveToNext()) {
+                        ApiMultimedia apiMultimedia = new ApiMultimedia();
+
                         TbMultimediaFile temp15 = new TbMultimediaFile();
                         temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
                         temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
@@ -4320,11 +4320,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public List<ApiMultimedia> SelectDataPhotoOfResultscene(String sRSID,
                                                             String sFileType) {
+        List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+
         // TODO Auto-generated method stub
         try {
             SQLiteDatabase db;
             db = this.getReadableDatabase(); // Read Data
-            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             String strSQL = "SELECT " +
                     TB_MultimediaFile + "." + COL_FileID + " , " +
                     TB_MultimediaFile + "." + COL_CaseReportID + " , " +
@@ -4339,47 +4340,50 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
             Log.i("show", strSQL);
-            ApiMultimedia apiMultimedia = new ApiMultimedia();
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
-                if (apiMultimediaList == null) {
-                    apiMultimediaList = new ArrayList<>(cursor2.getCount());
-                }
+
                 if (cursor2.getCount() > 0) {
-                    cursor2.moveToPosition(-1);
-                    while (cursor2.moveToNext()) {
-                        TbMultimediaFile temp15 = new TbMultimediaFile();
-                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
-                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
-                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
-                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
-                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
-                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
-                        apiMultimedia.setTbMultimediaFile(temp15);
-                        if (temp15.FileID != null) {
-                            strSQL = "SELECT * FROM " + TB_photoofresultscene
-                                    + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
+                cursor2.moveToPosition(-1);
+                while (cursor2.moveToNext()) {
+                    ApiMultimedia apiMultimedia = new ApiMultimedia();
 
-                            try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
+                    TbMultimediaFile temp15 = new TbMultimediaFile();
+                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
+                    apiMultimedia.setTbMultimediaFile(temp15);
+                    if (temp15.FileID != null) {
+                        strSQL = "SELECT * FROM " + TB_photoofresultscene
+                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
-                                if (cursor3.getCount() == 1) {
-                                    cursor3.moveToFirst();
-                                    TbPhotoOfResultscene tbPhotoOfResultscene = new TbPhotoOfResultscene();
-                                    tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
-                                    tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
-                                    apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
-                                    Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
-                                } else {
-                                    apiMultimedia.setTbPhotoOfEvidence(null);
-                                }
+                        try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
+
+                            if (cursor3.getCount() == 1) {
+                                cursor3.moveToFirst();
+                                TbPhotoOfResultscene tbPhotoOfResultscene = new TbPhotoOfResultscene();
+                                tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
+                                apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
+                                Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
+                            } else {
+                                apiMultimedia.setTbPhotoOfEvidence(null);
                             }
                         }
-                        apiMultimediaList.add(apiMultimedia);
                     }
+                    apiMultimediaList.add(apiMultimedia);
+                }
 
                 }
             }
 
             db.close();
+            Log.i(TAG, "apiMultimediaList resultscene :" + String.valueOf(apiMultimediaList.size()));
+            for (int i = 0; i < apiMultimediaList.size(); i++) {
+                Log.i(TAG, apiMultimediaList.get(i).getTbMultimediaFile().FileID);
+            }
             return apiMultimediaList;
 
         } catch (Exception e) {

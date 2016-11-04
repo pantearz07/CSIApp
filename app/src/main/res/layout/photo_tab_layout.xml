@@ -27,24 +27,26 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
                 <TextView
                     android:id="@+id/txtPhotoNum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:layout_gravity="right"
                     android:gravity="right"
-                    android:layout_gravity="right"/>
+                    android:text="0" />
+
                 <GridView
                     android:id="@+id/gridViewPhoto"
                     android:layout_width="match_parent"
-android:scrollbars="none"
                     android:layout_height="match_parent"
-                    android:columnWidth="100dp"
+                    android:columnWidth="80dp"
                     android:gravity="center"
-                    android:horizontalSpacing="1dp"
+                    android:horizontalSpacing="3dp"
                     android:numColumns="auto_fit"
+                    android:scrollbars="none"
                     android:stretchMode="columnWidth"
-                    android:verticalSpacing="1dp"></GridView>
+                    android:verticalSpacing="5dp"></GridView>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 

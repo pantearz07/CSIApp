@@ -75,6 +75,11 @@
     <string name="start_recording">Record</string>
     <string name="stop_recording">Stop</string>
     <string name="audio_format">Format</string>
+    <string name="savepic">บันทึกภาพ</string>
+    <string name="deletepic">ลบรูปภาพ</string>
+    <string name="delete_photo_success">ลบภาพเรียบร้อยเเล้ว</string>
+    <string name="no_photo">ไม่มีไฟล์ภาพนี้ในหน่วยความจำเครื่อง</string>
+    <string name="save_photo_success">บันทึกภาพเเล้ว</string>
 
 
     <string-array name="accesstype">

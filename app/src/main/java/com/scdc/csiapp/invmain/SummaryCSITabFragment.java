@@ -308,8 +308,8 @@ public class SummaryCSITabFragment extends Fragment {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime + " น.");
         }
         //วันเวลาที่ตรวจคดีเสร็จ
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate.equals("")
-                || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate.equals("0000-00-00")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
             edtCompleteSceneDateTime.setText("-");
 
         } else {
@@ -317,8 +317,8 @@ public class SummaryCSITabFragment extends Fragment {
 
         }
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate == null || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("")
-                || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate.equals("0000-00-00")) {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate.equals("")
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate.equals("0000-00-00")) {
             edtUpdateDateTime.setText("-");
 
         } else {

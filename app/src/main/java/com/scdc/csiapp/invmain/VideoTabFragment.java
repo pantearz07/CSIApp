@@ -154,27 +154,38 @@ public class VideoTabFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
+            final File curfile = new File(strPath);
+            final String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/video/"
+                    + tbMultimediaFileList.get(position).FilePath.toString();
             Bitmap bmThumbnail = null;
 
             if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
 //                Log.i(TAG, "view online");
                 if (cd.isNetworkAvailable()) {
-                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/video/"
-                            + tbMultimediaFileList.get(position).FilePath.toString();
+
 //                    bmThumbnail = ThumbnailUtils.createVideoThumbnail(filepath,
 //                            MediaStore.Video.Thumbnails.MICRO_KIND);
                     imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
 
                 } else {
+                    if (curfile.exists()) {
+                        bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
+                                MediaStore.Video.Thumbnails.MICRO_KIND);
+                        imageView.setImageBitmap(bmThumbnail);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
+                    }
+                }
+            } else {
+                if (curfile.exists()) {
                     bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
                             MediaStore.Video.Thumbnails.MICRO_KIND);
                     imageView.setImageBitmap(bmThumbnail);
+                } else {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
                 }
-            } else {
-                bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
-                        MediaStore.Video.Thumbnails.MICRO_KIND);
-                imageView.setImageBitmap(bmThumbnail);
+
             }
 
 
@@ -219,6 +230,8 @@ public class VideoTabFragment extends Fragment {
                             VideoPlayerActivity.class);
                     VideoPlayActivity.putExtra("VideoPath",
                             tbMultimediaFileList.get(position).FilePath.toString());
+                    VideoPlayActivity.putExtra("fileid",
+                            tbMultimediaFileList.get(position).FileID.toString());
                     startActivity(VideoPlayActivity);
 
                 }
@@ -278,6 +291,7 @@ public class VideoTabFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        showAllVideo();
         ActivityResultBus.getInstance().register(mActivityResultSubscriber);
     }
 
@@ -301,7 +315,7 @@ public class VideoTabFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i("onResume Video", "resume");
-        //  showAllVideo();
+          showAllVideo();
     }
 
     private class VideoOnClickListener implements View.OnClickListener {

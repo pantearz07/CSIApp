@@ -17,6 +17,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -153,6 +154,7 @@ public class DiagramTabFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
                     Bundle extras = new Bundle();
                     extras.putString("photopath", tbDiagramFileList.get(position).FilePath.toString());
+                    extras.putString("fileid", tbDiagramFileList.get(position).FileID.toString());
                     intent.putExtras(extras);
                     startActivity(intent);
                 }
@@ -293,45 +295,72 @@ public class DiagramTabFragment extends Fragment {
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
 
+            final File curfile = new File(strPath);
+            final String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                    + tbDiagramFileList.get(position).FilePath.toString();
             if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-//                Log.i(TAG, "view online");
                 if (cd.isNetworkAvailable()) {
-                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
-                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
-                            + tbDiagramFileList.get(position).FilePath.toString();
-//                    Log.i(TAG, "server file name: " + filepath);
                     Picasso.with(getActivity())
                             .load(filepath)
                             .resize(50, 50)
                             .centerCrop()
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
                             .into(imageView);
                 } else {
-                    Picasso.with(getActivity())
-                            .load(new File(strPath))
-                            .resize(50, 50)
-                            .centerCrop()
-                            .into(imageView);
+
+                    if (curfile.exists()) {
+                        Picasso.with(getActivity())
+                                .load(curfile)
+                                .resize(50, 50)
+                                .centerCrop()
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
+                    }
                 }
             } else {
-                Picasso.with(getActivity())
-                        .load(new File(strPath))
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(imageView);
+
+                if (curfile.exists()) {
+                    Picasso.with(getActivity())
+                            .load(curfile)
+                            .resize(50, 50)
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
+                            .centerCrop()
+                            .into(imageView);
+                } else {
+                    if (cd.isNetworkAvailable()) {
+                        Picasso.with(getActivity())
+                                .load(filepath)
+                                .resize(50, 50)
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
+                                .centerCrop()
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
+                    }
+                }
+
             }
-//            Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-//            int width1 = bmpSelectedImage.getWidth();
-//            int height1 = bmpSelectedImage.getHeight();
-//            Log.i(TAG, "size " + width1 + " "
-//                    + height1);
-//            int width = width1 / 4;
-//            int height = height1 / 4;
-//            Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage, width, height, true);
-//            imageView.setImageBitmap(resizedbitmap);
 
             return convertView;
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showAllPic();
+    }
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart");
+        showAllPic();
     }
 }

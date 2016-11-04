@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.DisplayMetrics;
@@ -88,6 +89,7 @@ public class AddFindEvidenceFragment extends Fragment {
     private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
+
     public AddFindEvidenceFragment() {
 
     }
@@ -385,7 +387,8 @@ public class AddFindEvidenceFragment extends Fragment {
                 for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
                     if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
                         if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null) {
-                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID.equals(sEVID)) {
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FindEvidenceID.equals(sEVID)
+                                    && CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID.equals(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)) {
                                 apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
                                 apiMultimedia.setTbPhotoOfEvidence(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence());
                                 apiMultimediaList.add(apiMultimedia);
@@ -440,6 +443,7 @@ public class AddFindEvidenceFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
                     Bundle extras = new Bundle();
                     extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
+                    extras.putString("fileid", apiMultimediaList.get(position).getTbMultimediaFile().FileID.toString());
                     intent.putExtras(extras);
                     startActivity(intent);
                 }
@@ -494,31 +498,57 @@ public class AddFindEvidenceFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
+            final File curfile = new File(strPath);
+            final String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                    + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
             if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
                 if (cd.isNetworkAvailable()) {
-                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
-                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
-                            + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
-//                    Log.i(TAG, "server file name: " + filepath);
                     Picasso.with(getActivity())
                             .load(filepath)
                             .resize(50, 50)
                             .centerCrop()
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
                             .into(imageView);
                 } else {
-                    Picasso.with(getActivity())
-                            .load(new File(strPath))
-                            .resize(50, 50)
-                            .centerCrop()
-                            .into(imageView);
+
+                    if (curfile.exists()) {
+                        Picasso.with(getActivity())
+                                .load(curfile)
+                                .resize(50, 50)
+                                .centerCrop()
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
+                    }
                 }
             } else {
-                Picasso.with(getActivity())
-                        .load(new File(strPath))
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(imageView);
+
+                if (curfile.exists()) {
+                    Picasso.with(getActivity())
+                            .load(curfile)
+                            .resize(50, 50)
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
+                            .centerCrop()
+                            .into(imageView);
+                } else {
+                    if (cd.isNetworkAvailable()) {
+                        Picasso.with(getActivity())
+                                .load(filepath)
+                                .resize(50, 50)
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
+                                .centerCrop()
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
+                    }
+                }
+
             }
 
             return convertView;

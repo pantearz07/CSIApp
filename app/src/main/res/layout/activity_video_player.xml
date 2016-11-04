@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:background="@color/black"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/video_frame"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#ffffff">
+        android:layout_height="fill_parent">
 
         <VideoView
             android:id="@+id/video_player_view"
@@ -16,4 +16,13 @@
             android:layout_height="fill_parent" />
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/nofile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="ไม่มีไฟล์วิดีโอ"
+        android:textColor="@color/white"
+        android:visibility="gone" />
 </RelativeLayout> 

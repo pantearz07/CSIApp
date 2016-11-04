@@ -455,7 +455,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             spinnerAmphur.setEnabled(false);
             spinnerDistrict.setEnabled(false);
             btnButtonSearchLatLong.setEnabled(false);
-
+            btn_property.setEnabled(false);
+            btn_property.setVisibility(View.GONE);
             spinnerAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);

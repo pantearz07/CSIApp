@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.DisplayMetrics;
@@ -325,7 +326,7 @@ public class AddFeatureInsideFragment extends Fragment {
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         apiMultimediaList = new ArrayList<>();
-        apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
+//        apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
         if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
             Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
             if (cd.isNetworkAvailable()) {
@@ -334,11 +335,14 @@ public class AddFeatureInsideFragment extends Fragment {
                 for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
                     if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
                         if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null) {
-                            apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
-                            apiMultimedia.setTbPhotoOfInside(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside());
+                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FeatureInsideID.equals(sFeatureInsideID)
+                                    && CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID.equals(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)) {
+                                apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                                apiMultimedia.setTbPhotoOfInside(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside());
 
-                            apiMultimediaList.add(apiMultimedia);
-                            //apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
+                                apiMultimediaList.add(apiMultimedia);
+                                //apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
+                            }
                         }
                     }
                 }
@@ -353,7 +357,7 @@ public class AddFeatureInsideFragment extends Fragment {
         }
         int photolength = 0;
         if (apiMultimediaList != null) {
-            Log.i(TAG, "arrDataPhoto_Outside " + String.valueOf(apiMultimediaList.size()));
+            Log.i(TAG, "arrDataPhoto_inside " + String.valueOf(apiMultimediaList.size()));
             photolength = apiMultimediaList.size();
             // Calculated single Item Layout Width for each grid element ....
             int width = 70;
@@ -385,6 +389,7 @@ public class AddFeatureInsideFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
                     Bundle extras = new Bundle();
                     extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
+                    extras.putString("fileid", apiMultimediaList.get(position).getTbMultimediaFile().FileID.toString());
                     intent.putExtras(extras);
                     startActivity(intent);
                 }
@@ -438,37 +443,62 @@ public class AddFeatureInsideFragment extends Fragment {
 
             String strPath = strSDCardPathName_Pic
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
-
+            Log.i(TAG, "strPath " + strPath);
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
+            final File curfile = new File(strPath);
+            final String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                    + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
             if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
                 if (cd.isNetworkAvailable()) {
-                    //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
-                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
-                            + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
-//                    Log.i(TAG, "server file name: " + filepath);
                     Picasso.with(getActivity())
                             .load(filepath)
                             .resize(50, 50)
                             .centerCrop()
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
                             .into(imageView);
                 } else {
+
+                    if (curfile.exists()) {
+                        Picasso.with(getActivity())
+                                .load(new File(strPath))
+                                .resize(50, 50)
+                                .centerCrop()
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
+                    }
+                }
+            } else {
+
+                if (curfile.exists()) {
                     Picasso.with(getActivity())
                             .load(new File(strPath))
                             .resize(50, 50)
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
                             .centerCrop()
                             .into(imageView);
+                } else {
+                    if (cd.isNetworkAvailable()) {
+                        Picasso.with(getActivity())
+                                .load(filepath)
+                                .resize(50, 50)
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
+                                .centerCrop()
+                                .into(imageView);
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
+                    }
                 }
-            } else {
-                Picasso.with(getActivity())
-                        .load(new File(strPath))
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(imageView);
-            }
 
+            }
             return convertView;
 
         }

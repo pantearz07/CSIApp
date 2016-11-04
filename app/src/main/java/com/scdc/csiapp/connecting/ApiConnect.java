@@ -752,8 +752,6 @@ public class ApiConnect {
                 if (filePic.exists()) {
                     formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
-                } else {
-                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", null);
                 }
             }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
@@ -761,8 +759,6 @@ public class ApiConnect {
                 if (filePic.exists()) {
                     formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
-                } else {
-                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", null);
                 }
             }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
@@ -770,8 +766,6 @@ public class ApiConnect {
                 if (fileVid.exists()) {
                     formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
-                } else {
-                    formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", null);
                 }
             }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
@@ -779,8 +773,6 @@ public class ApiConnect {
                 if (fileVoi.exists()) {
                     formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
-                } else {
-                    formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", null);
                 }
             }
 
@@ -797,7 +789,6 @@ public class ApiConnect {
             ApiStatusData apiStatus = new ApiStatusData();
 //            Log.d(TAG, "post data" + response.body().string());
             if (response.isSuccessful()) {
-                Log.d(TAG, "post data" + response.body().string());
                 Gson gson = new GsonBuilder().create();
                 try {
                     apiStatus = gson.fromJson(response.body().string(), ApiStatusData.class);

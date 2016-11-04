@@ -516,6 +516,7 @@ public class DetailsTabFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
                     Bundle extras = new Bundle();
                     extras.putString("photopath", tbPhotoList.get(position).FilePath.toString());
+                    extras.putString("fileid", tbPhotoList.get(position).FileID.toString());
                     intent.putExtras(extras);
                     startActivity(intent);
 
@@ -628,6 +629,8 @@ public class DetailsTabFragment extends Fragment {
                             .load(filepath)
                             .resize(50, 50)
                             .centerCrop()
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
                             .into(imageView);
                 } else {
 
@@ -636,11 +639,11 @@ public class DetailsTabFragment extends Fragment {
                                 .load(curfile)
                                 .resize(50, 50)
                                 .centerCrop()
-//                            .placeholder(R.drawable.user_placeholder)
-//                            .error(R.drawable.user_placeholder_error)
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
                                 .into(imageView);
                     } else {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
                     }
                 }
             } else {
@@ -649,6 +652,8 @@ public class DetailsTabFragment extends Fragment {
                     Picasso.with(getActivity())
                             .load(curfile)
                             .resize(50, 50)
+                            .placeholder(R.drawable.ic_imagefile)
+                            .error(R.drawable.ic_imagefile)
                             .centerCrop()
                             .into(imageView);
                 } else {
@@ -656,11 +661,12 @@ public class DetailsTabFragment extends Fragment {
                         Picasso.with(getActivity())
                                 .load(filepath)
                                 .resize(50, 50)
+                                .placeholder(R.drawable.ic_imagefile)
+                                .error(R.drawable.ic_imagefile)
                                 .centerCrop()
                                 .into(imageView);
                     } else {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_videofile));
-
+                        imageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_imagefile));
                     }
                 }
 
