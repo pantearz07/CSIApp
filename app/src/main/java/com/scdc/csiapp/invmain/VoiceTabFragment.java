@@ -508,6 +508,25 @@ public class VoiceTabFragment extends Fragment {
         btn4.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.i(TAG, "Delete file voice");
+                long saveStatus = dbHelper.DeleteMediaFile(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, sVoiceID);
+                if (saveStatus <= 0) {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            getString(R.string.save_error),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "ลบไฟล์เสียงเรียบร้อยเเล้ว",
+                            Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
+                            CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                            Log.i(TAG, "delete file name " + sVoiceID);
+                            curfile.delete();
+                        }
+                    }
+                }
+
+                showListVoiceRecord();
             }
         });
 
