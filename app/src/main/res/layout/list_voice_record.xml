@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayout1"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="5dp">
 
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="15dp"
+        android:background="@color/transparent"
+
+        android:src="@drawable/ic_expand_menu" />
 
     <TextView
         android:id="@+id/txtVoiceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_gravity="left|center_vertical"
-
+        android:layout_alignBaseline="@+id/btnMenu"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:text="ชื่อไฟล์ : "
-        android:textSize="@dimen/ssmall_text" />
+        android:textSize="@dimen/small_text"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtVoiceDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_gravity="center_vertical"
+        android:layout_below="@+id/txtVoiceName"
         android:text="คำอธิบาย"
         android:textSize="@dimen/ssmall_text" />
 
-</LinearLayout>
+</RelativeLayout>

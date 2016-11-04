@@ -459,7 +459,8 @@ public class VoiceTabFragment extends Fragment {
         final Button btn1 = (Button) dialog.findViewById(R.id.button1); // Start
         final Button btn2 = (Button) dialog.findViewById(R.id.button2); // Pause
         final Button btn3 = (Button) dialog.findViewById(R.id.button3); // Stop
-        final Button btn4 = (Button) dialog.findViewById(R.id.button4); // Delete
+
+
         // Start
         btn1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -505,30 +506,39 @@ public class VoiceTabFragment extends Fragment {
             }
         });
         // delete
-        btn4.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.i(TAG, "Delete file voice");
-                long saveStatus = dbHelper.DeleteMediaFile(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, sVoiceID);
-                if (saveStatus <= 0) {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            getString(R.string.save_error),
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "ลบไฟล์เสียงเรียบร้อยเเล้ว",
-                            Toast.LENGTH_LONG).show();
-                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
-                            CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
-                            Log.i(TAG, "delete file name " + sVoiceID);
-                            curfile.delete();
-                        }
-                    }
-                }
-
-                showListVoiceRecord();
-            }
-        });
+//        btn4.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                mMedia.pause();
+//                Log.i(TAG, "Delete file voice");
+////                String strPath = strSDCardPathName_Voi + sVoiceName;
+//                File curfile = new File(filepath);
+//                if(curfile.exists()) {
+//                    long saveStatus = dbHelper.DeleteMediaFile(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, sVoiceID);
+//                    if (saveStatus <= 0) {
+//                        Toast.makeText(getActivity().getApplicationContext(),
+//                                getString(R.string.save_error),
+//                                Toast.LENGTH_LONG).show();
+//                    } else {
+//                        Toast.makeText(getActivity().getApplicationContext(),
+//                                "ลบไฟล์เสียงเรียบร้อยเเล้ว",
+//                                Toast.LENGTH_LONG).show();
+//                        for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+//                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
+//                                CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+//                                Log.i(TAG, "delete file name " + sVoiceID);
+//                                curfile.delete();
+//                            }
+//                        }
+//                    }
+//                }else{
+//                    Toast.makeText(getActivity().getApplicationContext(),
+//                            "ไม่มีไฟล์เสียง ไม่สามารถลบได้",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//                dialog.dismiss();
+//                showListVoiceRecord();
+//            }
+//        });
 
         dialog.show();
     }

@@ -334,8 +334,9 @@ public class ProfileFragment extends Fragment {
 
                 String title = "เลือกรูปภาพโปรไฟล์";
                 CharSequence[] itemlist = {"ถ่ายรูป",
-                        "เลือกจากอัลบั้มภาพ",
-                        "เปิดจากไฟล์"};
+                        "เลือกจากอัลบั้มภาพ"
+//                        , "เปิดจากไฟล์"
+                };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 //                builder.setIcon(R.drawable.icon_app);
@@ -776,9 +777,9 @@ public class ProfileFragment extends Fragment {
                     getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
 
                     break;
-                case 2:// Choose Existing File
-                    // Do Pick file here
-                    break;
+//                case 2:// Choose Existing File
+//                    // Do Pick file here
+//                    break;
                 default:
                     break;
             }
