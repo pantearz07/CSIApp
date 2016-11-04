@@ -76,11 +76,6 @@ public class FullScreenPhoto extends Activity {
         btnMenu = (ImageButton) findViewById(R.id.btnMenu);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         nofile = (TextView) findViewById(R.id.nofile);
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                FullScreenPhoto.this.finish();
-            }
-        });
         dm = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
         int height = dm.heightPixels;
@@ -125,6 +120,7 @@ public class FullScreenPhoto extends Activity {
                 }
             }
         }
+        btnClose.setOnClickListener(new MenuOnClickListener());
         btnMenu.setOnClickListener(new MenuOnClickListener());
     }
 
@@ -132,6 +128,9 @@ public class FullScreenPhoto extends Activity {
     private class MenuOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            if(view == btnClose){
+                FullScreenPhoto.this.finish();
+            }
             if (view == btnMenu) {
                 //Creating the instance of PopupMenu
                 PopupMenu popup = new PopupMenu(FullScreenPhoto.this, btnMenu);
@@ -144,7 +143,7 @@ public class FullScreenPhoto extends Activity {
                         //noinspection SimplifiableIfStatement
                         if (id == R.id.savephoto) {
                             if (curfile.exists()) {
-                                Toast.makeText(FullScreenPhoto.this, "มีไฟล์ภาพนี้เเล้ว", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(FullScreenPhoto.this, R.string.got_photo, Toast.LENGTH_SHORT).show();
                             } else {
                                 if (cd.isNetworkAvailable()) {
                                     int count;

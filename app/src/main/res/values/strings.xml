@@ -80,7 +80,11 @@
     <string name="delete_photo_success">ลบภาพเรียบร้อยเเล้ว</string>
     <string name="no_photo">ไม่มีไฟล์ภาพนี้ในหน่วยความจำเครื่อง</string>
     <string name="save_photo_success">บันทึกภาพเเล้ว</string>
-
+    <string name="delete_video_success">ลบวิดีโอเรียบร้อยเเล้ว</string>
+    <string name="save_video_success">บันทึกวิดีโอเเล้ว</string>
+    <string name="no_video">ไม่มีไฟล์วิดีโอนี้ในหน่วยความจำเครื่อง</string>
+    <string name="got_video">มีไฟล์วิดีโอนี้เเล้ว</string>
+    <string name="got_photo">มีไฟล์ภาพนี้เเล้ว</string>
 
     <string-array name="accesstype">
         <item>ผู้ตรวจสถานที่เกิดเหตุ</item>

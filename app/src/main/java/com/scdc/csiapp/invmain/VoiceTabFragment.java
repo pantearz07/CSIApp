@@ -374,11 +374,52 @@ public class VoiceTabFragment extends Fragment {
                             .toString();
                     String sVoiceName = tbMultimediaFileList.get(position).FilePath
                             .toString();
-                    Toast.makeText(getActivity(),
-                            "Your selected : " + strPath,
-                            Toast.LENGTH_SHORT).show();
+                    String sVoiceID = tbMultimediaFileList.get(position).FileID
+                            .toString();
 
-                    showPlayDialog(sVoiceName);
+                    final File curfile = new File(strSDCardPathName_Voi + sVoiceName);
+                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
+                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/"
+                            + sVoiceName;
+                    if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+                        if (cd.isNetworkAvailable()) {
+                            Toast.makeText(getActivity(),
+                                    "เลือกไฟล์เสียง : " + strPath,
+                                    Toast.LENGTH_SHORT).show();
+                            showPlayDialog(filepath, sVoiceID);
+                        } else {
+                            if (curfile.exists()) {
+                                Toast.makeText(getActivity(),
+                                        "เลือกไฟล์เสียง : " + strPath,
+                                        Toast.LENGTH_SHORT).show();
+                                showPlayDialog(strPath, sVoiceID);
+                            } else {
+                                Toast.makeText(getActivity(),
+                                        "ไม่มีไฟล์เสียงนี้บนเครื่อง",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } else {
+                        if (curfile.exists()) {
+                            Toast.makeText(getActivity(),
+                                    "เลือกไฟล์เสียง : " + strPath,
+                                    Toast.LENGTH_SHORT).show();
+                            showPlayDialog(strPath, sVoiceID);
+                        } else {
+                            if (cd.isNetworkAvailable()) {
+                                Toast.makeText(getActivity(),
+                                        "เลือกไฟล์เสียง : " + strPath,
+                                        Toast.LENGTH_SHORT).show();
+                                showPlayDialog(filepath, sVoiceID);
+                                Log.i(TAG, "ไม่มีไฟล์เสียง เล่นจาก server");
+                            } else {
+                                Toast.makeText(getActivity(),
+                                        "ไม่มีไฟล์เสียงนี้บนเครื่อง",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
 
                 }
             });
@@ -391,17 +432,17 @@ public class VoiceTabFragment extends Fragment {
         }
     }
 
-    public void showPlayDialog(String sVoiceName) {
+    public void showPlayDialog(final String filepath, final String sVoiceID) {
         // TODO Auto-generated method stub
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.voiceplay_dialog);
         dialog.setTitle("ฟังเสียง");
-        final String sVoiceName1 = sVoiceName;
         final TextView textView1 = (TextView) dialog
                 .findViewById(R.id.textView1);
-        textView1.setText("ชื่อไฟล์ : " + sVoiceName1);
+        textView1.setText("ชื่อไฟล์ : " + sVoiceID);
 
-        Uri uri = Uri.parse(strSDCardPathName_Voi + sVoiceName1);
+        Uri uri = Uri.parse(filepath);
+
         mMedia = new MediaPlayer();
         mMedia = MediaPlayer.create(getActivity(), uri);
         mMedia.start();
@@ -418,10 +459,11 @@ public class VoiceTabFragment extends Fragment {
         final Button btn1 = (Button) dialog.findViewById(R.id.button1); // Start
         final Button btn2 = (Button) dialog.findViewById(R.id.button2); // Pause
         final Button btn3 = (Button) dialog.findViewById(R.id.button3); // Stop
+        final Button btn4 = (Button) dialog.findViewById(R.id.button4); // Delete
         // Start
         btn1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                textView1.setText("Playing : " + sVoiceName1 + "....");
+                textView1.setText("Playing : " + sVoiceID + "....");
                 mMedia.start();
                 startPlayProgressUpdater();
                 btn1.setEnabled(false);
@@ -433,7 +475,7 @@ public class VoiceTabFragment extends Fragment {
         // Pause
         btn2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                textView1.setText("Pause : " + sVoiceName1 + "....");
+                textView1.setText("Pause : " + sVoiceID + "....");
                 mMedia.pause();
                 btn1.setEnabled(true);
                 btn2.setEnabled(false);
@@ -444,7 +486,7 @@ public class VoiceTabFragment extends Fragment {
         // Stop
         btn3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                textView1.setText("Stop Play : " + sVoiceName1);
+                textView1.setText("Stop Play : " + sVoiceID);
                 mMedia.stop();
                 btn1.setEnabled(true);
                 btn2.setEnabled(false);
@@ -462,6 +504,13 @@ public class VoiceTabFragment extends Fragment {
 
             }
         });
+        // delete
+        btn4.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i(TAG, "Delete file voice");
+            }
+        });
+
         dialog.show();
     }
 
@@ -492,33 +541,33 @@ public class VoiceTabFragment extends Fragment {
         int menuItemIndex = item.getItemId();
         String[] menuItems = Cmd;
         String CmdName = menuItems[menuItemIndex];
-        String sVoiceRecordID = tbMultimediaFileList.get(info.position).FileID.toString();
+        String sVoiceID = tbMultimediaFileList.get(info.position).FileID.toString();
         String sReportID = tbMultimediaFileList.get(info.position).CaseReportID.toString();
-        String sVoiceRecordPath = tbMultimediaFileList.get(info.position).FilePath
+        String sVoiceName = tbMultimediaFileList.get(info.position).FilePath
                 .toString();
-
+        String strPath = strSDCardPathName_Voi + sVoiceName;
+        File curfile = new File(strPath);
         // Check Event Command
         if ("Play".equals(CmdName)) {
-            String root = Environment.getExternalStorageDirectory().toString();
 
-            String sVoiceName = tbMultimediaFileList.get(info.position).FilePath.toString();
-            String strPath = strSDCardPathName_Voi + sVoiceName;
-            Toast.makeText(getActivity(), "Your selected : " + strPath,
-                    Toast.LENGTH_SHORT).show();
-
-            showPlayDialog(sVoiceName);
+            showPlayDialog(sVoiceName, sVoiceID);
         } else if ("Delete".equals(CmdName)) {
-
-
-            long saveStatus = dbHelper.DeleteMediaFile(sReportID, sVoiceRecordID);
+            long saveStatus = dbHelper.DeleteMediaFile(sReportID, sVoiceID);
             if (saveStatus <= 0) {
-
-
-                Log.i("Recieve", "Null!! ");
+                Toast.makeText(getActivity().getApplicationContext(),
+                        getString(R.string.save_error),
+                        Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getActivity().getApplicationContext(),
-                        "ลบไฟล์เสียง " + sVoiceRecordPath + " เรียบร้อยเเล้ว",
+                        "ลบไฟล์เสียงเรียบร้อยเเล้ว",
                         Toast.LENGTH_LONG).show();
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
+                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                        Log.i(TAG, "delete file name " + sVoiceID);
+                        curfile.delete();
+                    }
+                }
             }
 
             showListVoiceRecord();
