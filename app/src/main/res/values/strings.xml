@@ -90,7 +90,8 @@
     <string name="delete_voice">ลบไฟล์เสียง</string>
     <string name="delete_error">ลบข้อมูลไม่สำเร็จ</string>
     <string name="save_voice_success">บันทึกไฟล์เสียงเเล้ว</string>
-
+    <string name="call">โทร</string>
+    <string name="view">ดู</string>
     <string-array name="accesstype">
         <item>ผู้ตรวจสถานที่เกิดเหตุ</item>
         <item>พนักงานสอบสวน</item>

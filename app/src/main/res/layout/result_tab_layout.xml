@@ -76,7 +76,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/orange">
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtCriminalGate"
@@ -143,7 +143,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:divider="@color/orange"
+                            android:divider="@color/navy"
                             android:dividerHeight="@dimen/divider_height"
                             android:padding="5dp"
                             android:textSize="@dimen/small_text" />
@@ -152,7 +152,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/orange">
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtCriminalClue"
@@ -217,7 +217,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:divider="@color/orange"
+                            android:divider="@color/navy"
                             android:dividerHeight="@dimen/view_height"
                             android:padding="10dp"
                             android:textSize="@dimen/small_text" />
@@ -226,7 +226,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/orange">
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtPropertyLoss"
@@ -292,7 +292,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:divider="@color/orange"
+                            android:divider="@color/navy"
                             android:dividerHeight="@dimen/view_height"
                             android:padding="10dp"
                             android:textSize="@dimen/small_text" />
@@ -301,7 +301,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/orange">
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtRealEvidences"
@@ -351,7 +351,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:divider="@color/orange"
+                            android:divider="@color/navy"
                             android:dividerHeight="@dimen/view_height"
                             android:padding="10dp"
                             android:textSize="@dimen/small_text" />
@@ -433,7 +433,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
-                        android:background="@color/orange">
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtCriminalInformation"
@@ -611,7 +611,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_line"
                             android:layout_weight="1"
-                            android:background="@color/orange"
+                            android:background="@color/navy"
                             android:padding="5dp"
                             android:text="6. การพันธนาการผู้เสียหาย"
                             android:textAppearance="@style/SectionText" />
@@ -657,7 +657,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_line"
                             android:layout_weight="1"
-                            android:background="@color/orange"
+                            android:background="@color/navy"
                             android:padding="5dp"
                             android:text="7. ตรวจสถานที่เกิดเหตุเสร็จเมื่อ"
                             android:textAppearance="@style/SectionText" />
@@ -701,7 +701,7 @@
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_saveas_wh"
-            app:backgroundTint="@color/red_pink"
+            app:backgroundTint="@color/orange"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />

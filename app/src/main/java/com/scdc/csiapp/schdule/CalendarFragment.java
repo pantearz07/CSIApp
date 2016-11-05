@@ -116,7 +116,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         oneDayDecorator.setDate(date.getDate());
         widget.invalidateDecorators();
-        textView.setText("รายชื่อผุ้ตรวจประจำวันที่ " + getSelectedDatesString());
+        textView.setText("รายชื่อผู้ตรวจประจำวันที่ " + getSelectedDatesString());
         getSelectedDates();
     }
 

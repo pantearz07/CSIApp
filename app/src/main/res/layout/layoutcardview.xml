@@ -30,7 +30,7 @@
                 android:id="@+id/person_name"
                 android:layout_toRightOf="@+id/person_photo"
                 android:layout_alignParentTop="true"
-                android:textSize="@dimen/mmedium_text"
+                android:textSize="@dimen/medium_text"
                 android:text="ชื่อ"/>
 
             <TextView

@@ -52,7 +52,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_line"
                             android:layout_weight="1"
-                            android:background="@color/orange"
+                            android:background="@color/navy"
                             android:padding="5dp"
                             android:text="ลักษณะภายนอก"
                             android:textAppearance="@style/SectionText" />
@@ -241,53 +241,55 @@
 
                     </TableRow>
 
-        <!--            <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/pink">
+                    <!--            <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/pink">
 
-                        <TextView
-                            android:id="@+id/txtOutsideAround1"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_line"
-                            android:layout_weight="1"
-                            android:background="@color/pink"
-                            android:padding="5dp"
-                            android:text="สภาพโดยรอบเมื่อหันหน้าเข้า"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/small_text" />
-                        <Button
-                            android:id="@+id/btn_camera"
-                            android:layout_width="@dimen/icon_image"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right|center_vertical"
-                            android:layout_marginRight="10dp"
-                            android:background="@drawable/ic_camera_wh"
-                             />
-                    </TableRow>-->
+                                    <TextView
+                                        android:id="@+id/txtOutsideAround1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/margin_line"
+                                        android:layout_weight="1"
+                                        android:background="@color/pink"
+                                        android:padding="5dp"
+                                        android:text="สภาพโดยรอบเมื่อหันหน้าเข้า"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/small_text" />
+                                    <Button
+                                        android:id="@+id/btn_camera"
+                                        android:layout_width="@dimen/icon_image"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right|center_vertical"
+                                        android:layout_marginRight="10dp"
+                                        android:background="@drawable/ic_camera_wh"
+                                         />
+                                </TableRow>-->
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/pink">
+                        android:background="@color/lightgray">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
 
                             android:layout_weight="1"
-                            android:padding="5dp"
+                            android:padding="8dp"
                             android:text="สภาพโดยรอบเมื่อหันหน้าเข้า"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/small_text"/>
-                        <ImageButton
-                            android:id="@+id/btn_camera"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_camera_wh"
-                            android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent" />
+                            android:textColor="@color/navy"
+                            android:textSize="@dimen/small_text" />
+
+                        <!--<ImageButton-->
+                        <!--android:id="@+id/btn_camera"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="right|center_vertical"-->
+                        <!--android:background="@color/transparent"-->
+                        <!--android:src="@drawable/ic_camera_wh" />-->
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -406,13 +408,25 @@
                             android:layout_width="@dimen/icon_image"
                             android:layout_height="@dimen/icon_image"
                             android:layout_gravity="right|center_vertical"
+                            android:layout_marginBottom="@dimen/margin_line"
                             android:layout_marginRight="10dp"
                             android:background="@drawable/ic_delete"
-                            android:visibility="gone"
-                            android:layout_marginBottom="@dimen/margin_line"/>
+                            android:visibility="gone" />
 
                     </TableRow>
 
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/btn_camera"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_camera_add" />
 
                         <HorizontalScrollView
                             android:id="@+id/horizontalScrollViewOutside"
@@ -431,35 +445,39 @@
                                     android:id="@+id/horizontal_gridView_Outside"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:columnWidth="70dp"
                                     android:gravity="center_vertical"
-                                    android:columnWidth="70dp" android:horizontalSpacing="1dp" />
+                                    android:horizontalSpacing="1dp" />
                             </LinearLayout>
                         </HorizontalScrollView>
+
+                    </LinearLayout>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/orange"
-                        android:layout_marginTop="@dimen/padding_m">
+                        android:layout_marginTop="@dimen/padding_m"
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtFeatureInside"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
 
-                            android:layout_weight="1"
-
                             android:layout_gravity="center_vertical"
+
+                            android:layout_weight="1"
                             android:padding="5dp"
                             android:text="ลักษณะภายใน"
                             android:textAppearance="@style/SectionText" />
+
                         <ImageButton
                             android:id="@+id/btnShowHide1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_maxlayout"
                             android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent" />
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_maxlayout" />
                     </TableRow>
 
 
@@ -475,8 +493,8 @@
                             android:layout_weight="1"
                             android:background="@drawable/selector_button"
                             android:padding="5dp"
-                            android:textColor="@color/white"
                             android:text="เพิ่มลักษณะภายใน"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/small_text" />
 
                     </TableRow>
@@ -488,18 +506,18 @@
                         android:layout_marginTop="@dimen/margin_line">
 
 
-
-                            <ListView
-                                android:id="@+id/listViewAddFeatureInside"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content"
-                                android:divider="@color/ocean"
-                                android:dividerHeight="@dimen/divider_height"
-                                android:padding="5dp"
-                                android:textSize="@dimen/small_text" />
+                        <ListView
+                            android:id="@+id/listViewAddFeatureInside"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:divider="@color/ocean"
+                            android:dividerHeight="@dimen/divider_height"
+                            android:padding="5dp"
+                            android:textSize="@dimen/small_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -532,6 +550,7 @@
                             android:visibility="gone" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -581,7 +600,7 @@
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_saveas_wh"
-            app:backgroundTint="@color/red_pink"
+            app:backgroundTint="@color/orange"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />

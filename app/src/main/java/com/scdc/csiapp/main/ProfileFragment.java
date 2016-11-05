@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiProfile;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -57,7 +58,7 @@ public class ProfileFragment extends Fragment {
     private PreferenceData mManager;
     ConnectionDetector cd;
     private CoordinatorLayout rootLayout;
-    String officialID, sDisplayPicpath;
+    String officialID, sDisplayPicpath, Username_old, Username_new;
     TextView tMemberID, tAccessType, txtChangePassword, txtCenter, change_display;
     EditText edtUsername, edtPassword, edtFirstName, edtLastName, edtEmail,
             editTextPhone, edtPosition;
@@ -94,6 +95,7 @@ public class ProfileFragment extends Fragment {
         dbHelper = new DBHelper(getActivity());
         getDateTime = new GetDateTime();
 // txtMemberID,txtMemberID,txtUsername,txtPassword,txtName,txtEmail,txtTel
+        Username_old = mManager.getPreferenceData(dbHelper.COL_id_users);
         txtChangePassword = (TextView) view.findViewById(R.id.txtChangePassword);
         tMemberID = (TextView) view.findViewById(R.id.txtMemberID);
         edtUsername = (EditText) view.findViewById(R.id.edtUsername);
@@ -213,7 +215,13 @@ public class ProfileFragment extends Fragment {
             }
 
         }
+        if (cd.isNetworkAvailable()) {
+            edtUsername.setEnabled(true);
+        } else {
+            edtUsername.setEnabled(false);
+        }
         if (WelcomeActivity.profile.getTbUsers() != null) {
+
             edtUsername.setText(WelcomeActivity.profile.getTbUsers().id_users);
             edtPassword.setText(WelcomeActivity.profile.getTbUsers().pass);
         }
@@ -222,27 +230,15 @@ public class ProfileFragment extends Fragment {
         change_display.setOnClickListener(new ProfileOnClickListener());
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
-//            Picasso.with(getActivity())
-//                    .load(R.drawable.avatar)
-//                    .resize(76, 76)
-//                    .centerCrop()
-//                    .into(profile_image);
         } else {
 
             File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
             if (avatarfile.exists()) {
                 Picasso.with(getActivity())
                         .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                        .resize(50, 50)
+                        .resize(100, 100)
                         .centerCrop()
                         .into(profile_image);
-            } else {
-
-//                Picasso.with(getActivity())
-//                        .load(R.drawable.avatar)
-//                        .resize(76, 76)
-//                        .centerCrop()
-//                        .into(profile_image);
             }
         }
 
@@ -284,9 +280,12 @@ public class ProfileFragment extends Fragment {
                 WelcomeActivity.profile.getTbUsers().setSurname(edtLastName.getText().toString());
                 Log.i(TAG, "LastName " + WelcomeActivity.profile.getTbOfficial().LastName);
             } else if (editable == edtUsername.getEditableText()) {
-                WelcomeActivity.profile.getTbOfficial().setId_users(edtUsername.getText().toString());
-                WelcomeActivity.profile.getTbUsers().setId_users(edtUsername.getText().toString());
-                Log.i(TAG, "id_users " + WelcomeActivity.profile.getTbOfficial().id_users);
+                Username_new = edtUsername.getText().toString();
+                Log.i(TAG, "id_users " + edtUsername.getText().toString());
+                if (cd.isNetworkAvailable()) {
+                    CheckUsername checkUsername = new CheckUsername();
+                    checkUsername.execute(edtUsername.getText().toString());
+                }
             }
 //            else if (editable == edtPosition.getEditableText()) {
 //                WelcomeActivity.profile.getTbOfficial().setSubPossition(edtPosition.getText().toString());
@@ -300,7 +299,26 @@ public class ProfileFragment extends Fragment {
         @Override
         public void onClick(View view) {
             if (view == txtChangePassword) {
-                MainActivity.setFragment(changePassFragment, 1);
+                if (cd.isNetworkAvailable()) {
+                    if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
+                        MainActivity.setFragment(changePassFragment, 1);
+                    } else {
+                        InqMainActivity.setFragment(changePassFragment, 1);
+                    }
+                } else {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
+                                , Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+
+                                    }
+                                });
+                        snackbar.show();
+                    }
+                }
             }
             if (view == change_display) {
 
@@ -348,64 +366,24 @@ public class ProfileFragment extends Fragment {
             }
             if (view == fabBtn) {
                 if (cd.isNetworkAvailable()) {
-                    if (WelcomeActivity.profile.getTbOfficial() != null) {
+                    if (WelcomeActivity.profile != null) {
                         //save to server
                         EditProfile editProfile = new EditProfile();
                         editProfile.execute(WelcomeActivity.profile);
 
                     }
                 } else {
-
-                    if (WelcomeActivity.profile.getTbOfficial() != null) {
-                        boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
-                        if (isSuccess) {
-                            boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
-                            if (isSuccess2) {
-                                if (snackbar == null || !snackbar.isShown()) {
-                                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode)
-                                                    + "/n" + getString(R.string.save_complete)
-                                                    + "/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString()
-                                            , Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-
-                                                }
-                                            });
-                                    snackbar.show();
-                                }
-                            } else {
-                                Toast.makeText(getActivity(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
-                                if (snackbar == null || !snackbar.isShown()) {
-                                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
-                                                    + "และบันทึก pref ไม่สำเร็จ/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString()
-                                            , Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
+                                , Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
 
 
-                                                }
-                                            });
-                                    snackbar.show();
-                                }
-                            }
-
-                        } else {
-                            if (snackbar == null || !snackbar.isShown()) {
-                                snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
-                                                + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString()
-                                        , Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-
-
-                                            }
-                                        });
-                                snackbar.show();
-                            }
-                        }
+                                    }
+                                });
+                        snackbar.show();
                     }
                 }
 
@@ -478,7 +456,7 @@ public class ProfileFragment extends Fragment {
             Log.d(TAG, apiStatus.getStatus());
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
-                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile, Username_old);
                 if (isSuccess) {
 
                     boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
@@ -495,6 +473,7 @@ public class ProfileFragment extends Fragment {
                                     });
                             snackbar.show();
                         }
+
                     } else {
                         Toast.makeText(getActivity(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
                         if (snackbar == null || !snackbar.isShown()) {
@@ -541,6 +520,60 @@ public class ProfileFragment extends Fragment {
                             });
                     snackbar.show();
                 }
+            }
+        }
+    }
+
+    class CheckUsername extends AsyncTask<String, Void, ApiStatus> {
+
+        @Override
+        protected ApiStatus doInBackground(String... strings) {
+            return WelcomeActivity.api.checkUsername(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+
+            Log.d(TAG, apiStatus.getStatus());
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Log.d(TAG, apiStatus.getData().getReason());
+
+                if (apiStatus.getData().getReason() != null) {
+                    String status = apiStatus.getData().getReason();
+                    if (status.equals("0")) { //"ชื่อ Username เดิม";
+
+                        Toast.makeText(getActivity(),
+                                "ชื่อ Username เดิม",
+                                Toast.LENGTH_SHORT).show();
+                        WelcomeActivity.profile.getTbOfficial().setId_users(Username_old);
+                        WelcomeActivity.profile.getTbUsers().setId_users(Username_old);
+                    }
+                    if (status.equals("1")) { //"สามารถใช้ Username นี้ได้";
+
+                        Toast.makeText(getActivity(),
+                                "สามารถใช้ Username นี้ได้",
+                                Toast.LENGTH_SHORT).show();
+                        WelcomeActivity.profile.getTbOfficial().setId_users(Username_new);
+                        WelcomeActivity.profile.getTbUsers().setId_users(Username_new);
+                    }
+                    if (status.equals("2")) { //"มีผู้ใช้ Username นี้เเล้ว";
+                        Toast.makeText(getActivity(),
+                                "มีผู้ใช้ Username นี้เเล้ว",
+                                Toast.LENGTH_SHORT).show();
+                        WelcomeActivity.profile.getTbOfficial().setId_users(Username_old);
+                        WelcomeActivity.profile.getTbUsers().setId_users(Username_old);
+                    }
+                } else {
+
+                    Toast.makeText(getActivity(),
+                            "เเกิดข้อผิดพลาด",
+                            Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getActivity(),
+                        apiStatus.getData().getReason().toString(),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -611,13 +644,13 @@ public class ProfileFragment extends Fragment {
                                     source.delete();
                                     WelcomeActivity.profile.getTbOfficial().setOfficialDisplayPic(sDisplayPicpath);
                                     WelcomeActivity.profile.getTbUsers().setPicture(sDisplayPicpath);
-                                    boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                                    boolean isSuccess = dbHelper.updateDisplayProfile(WelcomeActivity.profile);
                                     if (isSuccess) {
                                         Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
                                         Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
                                         Picasso.with(getActivity())
                                                 .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                                                .resize(76, 76)
+                                                .resize(100, 100)
                                                 .centerCrop()
                                                 .into(profile_image);
                                     }
@@ -690,17 +723,17 @@ public class ProfileFragment extends Fragment {
                                 Log.i(TAG, "transferFrom " + e.getMessage());
                             }
                             if (destination.exists()) {
-                                source.delete();
+//                                source.delete();
                                 Log.i(TAG, "source.delete ");
                                 WelcomeActivity.profile.getTbOfficial().setOfficialDisplayPic(sDisplayPicpath);
                                 WelcomeActivity.profile.getTbUsers().setPicture(sDisplayPicpath);
-                                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                                boolean isSuccess = dbHelper.updateDisplayProfile(WelcomeActivity.profile);
                                 if (isSuccess) {
                                     Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
                                     Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
                                     Picasso.with(getActivity())
                                             .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                                            .resize(76, 76)
+                                            .resize(100, 100)
                                             .centerCrop()
                                             .into(profile_image);
                                 }

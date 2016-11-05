@@ -206,7 +206,7 @@ public class DiagramTabFragment extends Fragment {
 
                 View Viewlayout = inflaterDialog.inflate(R.layout.add_media_dialog,
                         (ViewGroup) findViewById(R.id.layout_media_dialog));
-                addDialog.setIcon(R.drawable.paint);
+                addDialog.setIcon(R.drawable.ic_drawing);
                 addDialog.setTitle("วาดภาพแผนผังสถานที่เกิดเหตุ");
                 addDialog.setView(Viewlayout);
 
@@ -221,7 +221,7 @@ public class DiagramTabFragment extends Fragment {
                 editMediaDescription.setHint("คำอธิบายภาพ");
 
                 // Button OK
-                addDialog.setPositiveButton("Save",
+                addDialog.setPositiveButton(getString(R.string.save),
                         new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int which) {
@@ -236,7 +236,7 @@ public class DiagramTabFragment extends Fragment {
                             }
                         })
                         // Button Cancel
-                        .setNegativeButton("Cancel",
+                        .setNegativeButton(getString(R.string.cancel),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
@@ -303,7 +303,7 @@ public class DiagramTabFragment extends Fragment {
                 if (cd.isNetworkAvailable()) {
                     Picasso.with(getActivity())
                             .load(filepath)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .centerCrop()
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
@@ -313,7 +313,7 @@ public class DiagramTabFragment extends Fragment {
                     if (curfile.exists()) {
                         Picasso.with(getActivity())
                                 .load(curfile)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
@@ -327,7 +327,7 @@ public class DiagramTabFragment extends Fragment {
                 if (curfile.exists()) {
                     Picasso.with(getActivity())
                             .load(curfile)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
                             .centerCrop()
@@ -336,7 +336,7 @@ public class DiagramTabFragment extends Fragment {
                     if (cd.isNetworkAvailable()) {
                         Picasso.with(getActivity())
                                 .load(filepath)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
                                 .centerCrop()

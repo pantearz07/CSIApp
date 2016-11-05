@@ -1,6 +1,9 @@
 package com.scdc.csiapp.main;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,7 +46,7 @@ public class ChangePassFragment extends Fragment {
     Context mContext;
     Button btnSaveNewPassword;
     EditText edtPasswordOld, edtPasswordNew, edtPasswordNewConfirm;
-    String sPasswordOld, txtPasswordOld, txtPasswordNew, txtPasswordNewConfirm;
+    String Username_old,sPasswordOld, txtPasswordOld, txtPasswordNew, txtPasswordNewConfirm;
 
     @Nullable
     @Override
@@ -58,7 +61,7 @@ public class ChangePassFragment extends Fragment {
         cd = new ConnectionDetector(getActivity());
         dbHelper = new DBHelper(getActivity());
         getDateTime = new GetDateTime();
-
+        Username_old = mManager.getPreferenceData(dbHelper.COL_id_users);
         btnSaveNewPassword = (Button) view.findViewById(R.id.btnSaveNewPassword);
         edtPasswordOld = (EditText) view.findViewById(R.id.edtPasswordOld);
         edtPasswordNew = (EditText) view.findViewById(R.id.edtPasswordNew);
@@ -158,7 +161,18 @@ public class ChangePassFragment extends Fragment {
                             Toast.makeText(getActivity(),
                                     getString(R.string.offline_mode),
                                     Toast.LENGTH_SHORT).show();
+                            if (snackbar == null || !snackbar.isShown()) {
+                                snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
+                                        , Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
 
+
+                                            }
+                                        });
+                                snackbar.show();
+                            }
                         }
                     } else {
                         Toast.makeText(getActivity(), "ยืนยันรหัสผ่านเใหม่ ไม่ตรงกัน", Toast.LENGTH_LONG).show();
@@ -187,16 +201,24 @@ public class ChangePassFragment extends Fragment {
 
             if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatusResult.getData().getReason());
-                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile);
+                boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile,Username_old);
                 if (isSuccess) {
 
                     boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
                     if (isSuccess2) {
                         Toast.makeText(getActivity(),
                                 getString(R.string.save_complete)
-                                        + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString(),
+                                        + "กำลังทำการเข้าสู่ระบบใหม่อีกครั้ง" + WelcomeActivity.profile.getTbOfficial().id_users.toString(),
                                 Toast.LENGTH_SHORT).show();
-
+                        Boolean status = mManager.clearLoggedInOfficial();
+                        Log.d("clear logout", String.valueOf(status));
+                        Intent mStartActivity = new Intent(getActivity(), WelcomeActivity.class);
+                        int mPendingIntentId = 123456;
+                        PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                        AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 500, mPendingIntent);
+//                        getActivity().startActivity(i);
+                        System.exit(0);
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.save_error)
                                 + "และบันทึก pref ไม่สำเร็จ/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString(), Toast.LENGTH_LONG).show();

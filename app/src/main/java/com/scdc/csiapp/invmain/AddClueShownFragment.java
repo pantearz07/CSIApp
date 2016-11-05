@@ -1,12 +1,8 @@
 package com.scdc.csiapp.invmain;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -418,7 +414,7 @@ public class AddClueShownFragment extends Fragment {
                 if (cd.isNetworkAvailable()) {
                     Picasso.with(getActivity())
                             .load(filepath)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .centerCrop()
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
@@ -428,7 +424,7 @@ public class AddClueShownFragment extends Fragment {
                     if (curfile.exists()) {
                         Picasso.with(getActivity())
                                 .load(curfile)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
@@ -442,7 +438,7 @@ public class AddClueShownFragment extends Fragment {
                 if (curfile.exists()) {
                     Picasso.with(getActivity())
                             .load(curfile)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
                             .centerCrop()
@@ -451,7 +447,7 @@ public class AddClueShownFragment extends Fragment {
                     if (cd.isNetworkAvailable()) {
                         Picasso.with(getActivity())
                                 .load(filepath)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
                                 .centerCrop()
@@ -468,27 +464,6 @@ public class AddClueShownFragment extends Fragment {
         }
     }
 
-    public void showViewPic(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String root = Environment.getExternalStorageDirectory().toString();
-        String strPath = root + "/CSIFiles/Pictures/" + sPicPath;
-
-        // Image Resource
-        ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-                width, height, matrix, true);
-        imageView.setImageBitmap(resizedBitmap);
-        dialog.show();
-    }
 
     private Object mActivityResultSubscriber = new Object() {
         @Subscribe

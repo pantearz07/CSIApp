@@ -19,10 +19,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
@@ -297,29 +300,31 @@ public class InquiryOfficialListFragment extends Fragment {
         @Override
         public void onItemClick(View view, int position) {
             final ApiOfficial apiOfficial = apiOfficialList.get(position);
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(getActivity());
-            builder.setMessage("โทร. " + apiOfficial.getTbOfficial().getPhoneNumber().toString());
-            builder.setPositiveButton("โทร", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    try {
-                        Intent callIntent = new Intent(Intent.ACTION_CALL);
-                        callIntent.setData(Uri.parse("tel:" + apiOfficial.getTbOfficial().getPhoneNumber().toString()));
-                        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(callIntent);
-                    } catch (ActivityNotFoundException activityException) {
-                        Log.e("Calling a Phone Number", "Call failed", activityException);
-                    }
-                }
-            });
-            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create();
-            builder.show();
+            //Creating the instance of PopupMenu
+            PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
+            //Inflating the Popup using xml file
+            popup.getMenuInflater().inflate(R.menu.official_menu, popup.getMenu());
+            //registering popup with OnMenuItemClickListener
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                                 public boolean onMenuItemClick(MenuItem item) {
+                                                     switch (item.getItemId()) {
+                                                         case R.id.call:
+                                                             try {
+                                                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                                                 callIntent.setData(Uri.parse("tel:" + apiOfficial.getTbOfficial().getPhoneNumber().toString()));
+                                                                 callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                 getActivity().startActivity(callIntent);
+                                                             } catch (ActivityNotFoundException activityException) {
+                                                                 Log.e("Calling a Phone Number", "Call failed", activityException);
+                                                             }
+                                                             break;
+
+                                                     }
+                                                     return true;
+                                                 }
+                                             }
+            );
+            popup.show();
         }
     };
 }

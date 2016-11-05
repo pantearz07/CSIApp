@@ -136,6 +136,9 @@ public class VideoPlayerActivity extends Activity {
             }
         }
         btnClose.setOnClickListener(new MenuOnClickListener());
+        if (CSIDataTabFragment.mode.equals("view")) {
+            btnMenu.setVisibility(View.GONE);
+        }
         btnMenu.setOnClickListener(new MenuOnClickListener());
     }
 

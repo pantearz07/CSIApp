@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     //รายชื่อเจ้าหน้าที่ตำรวจ
     PoliceListFragment policeListFragment;
     //รายการตารางเวร
-    ScheduleInvestigatorsFragment scheduleInvestigatorsFragment;
     CalendarFragment calendarFragment;
     SettingFragment settingFragment;
 
@@ -130,23 +129,12 @@ public class MainActivity extends AppCompatActivity {
         txtusername.setText(username);
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
-            Picasso.with(this)
-                    .load(R.drawable.avatar)
-                    .resize(76, 76)
-                    .centerCrop()
-                    .into(avatar);
         } else {
             File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
             if (avatarfile.exists()) {
                 Picasso.with(this)
                         .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                        .resize(76, 76)
-                        .centerCrop()
-                        .into(avatar);
-            } else {
-                Picasso.with(this)
-                        .load(R.drawable.avatar)
-                        .resize(76, 76)
+                        .resize(100, 100)
                         .centerCrop()
                         .into(avatar);
             }
@@ -163,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
         caseSceneListFragment = new CaseSceneListFragment();
 
         policeListFragment = new PoliceListFragment();
-        scheduleInvestigatorsFragment = new ScheduleInvestigatorsFragment();
         calendarFragment = new CalendarFragment();
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();

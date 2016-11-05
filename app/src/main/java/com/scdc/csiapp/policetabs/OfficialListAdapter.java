@@ -1,5 +1,7 @@
 package com.scdc.csiapp.policetabs;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.CardView;
@@ -12,7 +14,10 @@ import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiOfficial;
+import com.scdc.csiapp.connecting.ConnectionDetector;
+import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -24,8 +29,11 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
     Cursor mCursor;
+    ConnectionDetector cd;
+    Context context;
     List<ApiOfficial> apiOfficialList;
     OnItemClickListener mItemClickListener;
+    String defaultIP = "180.183.251.32/mcsi";
 
     OfficialListAdapter(List<ApiOfficial> apiOfficialList) {
         this.apiOfficialList = apiOfficialList;
@@ -36,7 +44,6 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
         CardView cv;
         TextView personName;
         TextView personPosition;
-
         TextView personTel;
         TextView personAgencyname;
         TextView personStationname;
@@ -56,6 +63,7 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
             iv_mode = (ImageView) itemView.findViewById(R.id.iv_mode);
 
             cv.setOnClickListener(this);
+
         }
 
         @Override
@@ -76,22 +84,28 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
 
     @Override
     public OfficialViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layoutcardview, viewGroup, false);
+        context = viewGroup.getContext();
+        View v = LayoutInflater.from(context).inflate(R.layout.layoutcardview, viewGroup, false);
         OfficialViewHolder officialvh = new OfficialViewHolder(v);
+        cd = new ConnectionDetector(viewGroup.getContext());
+        SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_IP, context.MODE_PRIVATE);
+        defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
+
+
         return officialvh;
     }
 
     @Override
     public void onBindViewHolder(final OfficialViewHolder OfficialViewHolder, int position) {
-        ApiOfficial apiOfficial = apiOfficialList.get(position);
+        final ApiOfficial apiOfficial = apiOfficialList.get(position);
 
-        if (apiOfficial.getMode() != null && apiOfficial.getMode().equalsIgnoreCase("online")) {
-            OfficialViewHolder.iv_mode.setImageResource(R.drawable.ic_router_black_24dp);
-        } else if (apiOfficial.getMode() != null && apiOfficial.getMode().equalsIgnoreCase("offline")) {
-            OfficialViewHolder.iv_mode.setImageResource(R.drawable.ic_phone_android_black_24dp);
-        } else {
-            OfficialViewHolder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
-        }
+//        if (apiOfficial.getMode() != null && apiOfficial.getMode().equalsIgnoreCase("online")) {
+//            OfficialViewHolder.iv_mode.setImageResource(R.drawable.ic_router_black_24dp);
+//        } else if (apiOfficial.getMode() != null && apiOfficial.getMode().equalsIgnoreCase("offline")) {
+//            OfficialViewHolder.iv_mode.setImageResource(R.drawable.ic_phone_android_black_24dp);
+//        } else {
+//            OfficialViewHolder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
+//        }
         if (apiOfficial.getTbOfficial() != null) {
             OfficialViewHolder.personName.setText(apiOfficial.getTbOfficial().Rank + " " + apiOfficial.getTbOfficial().FirstName + " " + apiOfficial.getTbOfficial().LastName);
 
@@ -102,13 +116,32 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
                 OfficialViewHolder.personAgencyname.setText(apiOfficial.getTbSCDCagency().SCDCAgencyName);
                 OfficialViewHolder.personStationname.setVisibility(View.GONE);
             } else {
-                OfficialViewHolder.personStationname.setText("สภ. "+apiOfficial.getTbPoliceStation().PoliceStationName);
+                OfficialViewHolder.personStationname.setText("สภ. " + apiOfficial.getTbPoliceStation().PoliceStationName);
                 OfficialViewHolder.personAgencyname.setVisibility(View.GONE);
             }
         }
+        if (apiOfficial.getTbOfficial().OfficialDisplayPic != null) {
 
+            final String filepath = "http://" + defaultIP + "/assets/img/users/"
+                    + apiOfficial.getTbOfficial().OfficialDisplayPic.toString();
 
-//        OfficialViewHolder.personPhoto.setImageResource(apiOfficial.getTbOfficial().OfficialDisplayPic);
+            if (cd.isNetworkAvailable()) {
+                Picasso.with(context)
+                        .load(filepath)
+                        .resize(100, 100)
+                        .centerCrop()
+                        .placeholder(R.drawable.avatar)
+                        .error(R.drawable.avatar)
+                        .into(OfficialViewHolder.personPhoto);
+            }
+        }
+        final String PhoneNumber = apiOfficial.getTbOfficial().PhoneNumber;
+        if (PhoneNumber == null || PhoneNumber.equals("")) {
+            OfficialViewHolder.iv_mode.setVisibility(View.GONE);
+        } else {
+            OfficialViewHolder.iv_mode.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override

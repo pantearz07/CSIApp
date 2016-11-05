@@ -133,7 +133,7 @@ public class VoiceTabFragment extends Fragment {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View Viewlayout = inflaterDialog.inflate(R.layout.add_media_dialog, viewByIdaddVoice);
-        addDialog.setIcon(android.R.drawable.btn_star_big_on);
+        addDialog.setIcon(R.drawable.ic_record);
         addDialog.setTitle("เพิ่มไฟล์บันทึกเสียง");
         addDialog.setView(Viewlayout);
 
@@ -151,7 +151,7 @@ public class VoiceTabFragment extends Fragment {
         editMediaDescription.setHint("คำอธิบายไฟล์เสียง");
 
         // Button OK
-        addDialog.setPositiveButton("Save",
+        addDialog.setPositiveButton(getString(R.string.save),
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
@@ -176,7 +176,7 @@ public class VoiceTabFragment extends Fragment {
                 })
 
                 // Button Cancel
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
@@ -583,6 +583,9 @@ public class VoiceTabFragment extends Fragment {
                     + sVoiceName;
             final File curfile = new File(strPath);
             final ImageView btnExpandmenu = (ImageView) convertView.findViewById(R.id.btnExpandmenu);
+            if (CSIDataTabFragment.mode.equals("view")) {
+                btnExpandmenu.setVisibility(View.GONE);
+            }
             btnExpandmenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

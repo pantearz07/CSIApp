@@ -2,7 +2,6 @@ package com.scdc.csiapp.invmain;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -530,51 +529,6 @@ public class DetailsTabFragment extends Fragment {
         }
     }
 
-    public void showViewPic(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String strPath = strSDCardPathName_Pic + sPicPath;
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels;
-        int width = displaymetrics.widthPixels;
-        // Image Resource
-        ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-//        imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-//                Log.i(TAG, "view online");
-            if (cd.isNetworkAvailable()) {
-                //C:\xampp\htdocs\mCSI\assets\csifiles\CR04_000001\pictures
-                String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                        + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
-                        + sPicPath;
-//                    Log.i(TAG, "server file name: " + filepath);
-                Picasso.with(getActivity())
-                        .load(filepath)
-                        .centerInside()
-                        .rotate(90)
-                        .resize(width, height)
-                        .into(imageView);
-            } else {
-                Picasso.with(getActivity())
-                        .load(new File(strPath))
-                        .centerInside()
-                        .rotate(90)
-                        .resize(width, height)
-                        .into(imageView);
-            }
-        } else {
-
-
-        }
-
-
-        dialog.show();
-    }
-
     public class PhotoAdapter extends BaseAdapter {
         private Context context;
 
@@ -627,7 +581,7 @@ public class DetailsTabFragment extends Fragment {
                 if (cd.isNetworkAvailable()) {
                     Picasso.with(getActivity())
                             .load(filepath)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .centerCrop()
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
@@ -637,7 +591,7 @@ public class DetailsTabFragment extends Fragment {
                     if (curfile.exists()) {
                         Picasso.with(getActivity())
                                 .load(curfile)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
@@ -651,7 +605,7 @@ public class DetailsTabFragment extends Fragment {
                 if (curfile.exists()) {
                     Picasso.with(getActivity())
                             .load(curfile)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
                             .centerCrop()
@@ -660,7 +614,7 @@ public class DetailsTabFragment extends Fragment {
                     if (cd.isNetworkAvailable()) {
                         Picasso.with(getActivity())
                                 .load(filepath)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
                                 .centerCrop()

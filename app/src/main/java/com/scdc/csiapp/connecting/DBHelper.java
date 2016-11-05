@@ -1855,10 +1855,15 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
-    public boolean updateProfile(ApiProfile apiProfile) {
+    public boolean updateProfile(ApiProfile apiProfile, String Username_old) {
         if (apiProfile == null) {
             return false;
         }
+        if (Username_old == null) {
+            return false;
+        }
+        String username_old = Username_old;
+        Log.d(TAG, "Not Username_old " + username_old + " new " + apiProfile.getTbUsers().id_users);
         try {
             mDb = this.getReadableDatabase();
             SQLiteDatabase db;
@@ -1868,7 +1873,31 @@ public class DBHelper extends SQLiteAssetHelper {
             String strSQL;
             db.beginTransaction();
             sOfficialID = apiProfile.getTbOfficial().OfficialID;
-            id_users = apiProfile.getTbUsers().id_users;
+//            id_users = apiProfile.getTbUsers().id_users;
+            //บันทึกข้อมูลลง users
+            strSQL = "SELECT * FROM users WHERE "
+                    + "id_users = '" + username_old + "'";
+            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                ContentValues Val = new ContentValues();
+                Val.put(COL_id_users, apiProfile.getTbUsers().id_users);
+                Val.put(COL_id_permission, apiProfile.getTbUsers().id_permission);
+                Val.put(COL_pass, apiProfile.getTbUsers().pass);
+                Val.put(COL_id_system, apiProfile.getTbUsers().id_system);
+                Val.put(COL_title, apiProfile.getTbUsers().title);
+                Val.put(COL_name, apiProfile.getTbUsers().name);
+                Val.put(COL_surname, apiProfile.getTbUsers().surname);
+                Val.put(COL_position, apiProfile.getTbUsers().position);
+                Val.put(COL_picture, apiProfile.getTbUsers().picture);
+                Val.put(COL_last_login, apiProfile.getTbUsers().last_login);
+                Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("users", null, Val);
+                    Log.d(TAG, "Sync Table users: Insert ");
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("users", Val, " id_users = ?", new String[]{String.valueOf(username_old)});
+                    Log.d(TAG, "Sync Table users: Update ");
+                }
+            }
             //บันทึกข้อมูลลง official
             strSQL = "SELECT * FROM official WHERE "
                     + "OfficialID = '" + sOfficialID + "'";
@@ -1897,21 +1926,55 @@ public class DBHelper extends SQLiteAssetHelper {
                     Log.d(TAG, "Sync Table official: Update ");
                 }
             }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in updateProfile " + e.getMessage().toString());
+            return false;
+        }
+    }
+
+    public boolean updateDisplayProfile(ApiProfile apiProfile) {
+        if (apiProfile == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+
+            String sOfficialID, id_users;
+            String strSQL;
+            db.beginTransaction();
+            sOfficialID = apiProfile.getTbOfficial().OfficialID;
+            id_users = apiProfile.getTbUsers().id_users;
+            //บันทึกข้อมูลลง official
+            strSQL = "SELECT * FROM official WHERE "
+                    + "OfficialID = '" + sOfficialID + "'";
+            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                ContentValues Val = new ContentValues();
+
+                Val.put(COL_OfficialDisplayPic, apiProfile.getTbOfficial().OfficialDisplayPic);
+
+                Log.d(TAG, "official FirstName" + apiProfile.getTbOfficial().FirstName);
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("official", null, Val);
+                    Log.d(TAG, "Sync Table official: Insert ");
+                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                    db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(sOfficialID)});
+                    Log.d(TAG, "Sync Table official: Update ");
+                }
+            }
             //บันทึกข้อมูลลง users
             strSQL = "SELECT * FROM users WHERE "
                     + "id_users = '" + id_users + "'";
             try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
                 ContentValues Val = new ContentValues();
-                Val.put(COL_id_users, apiProfile.getTbUsers().id_users);
-                Val.put(COL_id_permission, apiProfile.getTbUsers().id_permission);
-                Val.put(COL_pass, apiProfile.getTbUsers().pass);
-                Val.put(COL_id_system, apiProfile.getTbUsers().id_system);
-                Val.put(COL_title, apiProfile.getTbUsers().title);
-                Val.put(COL_name, apiProfile.getTbUsers().name);
-                Val.put(COL_surname, apiProfile.getTbUsers().surname);
-                Val.put(COL_position, apiProfile.getTbUsers().position);
                 Val.put(COL_picture, apiProfile.getTbUsers().picture);
-                Val.put(COL_last_login, apiProfile.getTbUsers().last_login);
                 Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("users", null, Val);
@@ -4343,38 +4406,38 @@ public class DBHelper extends SQLiteAssetHelper {
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                 if (cursor2.getCount() > 0) {
-                cursor2.moveToPosition(-1);
-                while (cursor2.moveToNext()) {
-                    ApiMultimedia apiMultimedia = new ApiMultimedia();
+                    cursor2.moveToPosition(-1);
+                    while (cursor2.moveToNext()) {
+                        ApiMultimedia apiMultimedia = new ApiMultimedia();
 
-                    TbMultimediaFile temp15 = new TbMultimediaFile();
-                    temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
-                    temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
-                    temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
-                    temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
-                    temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
-                    temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
-                    apiMultimedia.setTbMultimediaFile(temp15);
-                    if (temp15.FileID != null) {
-                        strSQL = "SELECT * FROM " + TB_photoofresultscene
-                                + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
+                        TbMultimediaFile temp15 = new TbMultimediaFile();
+                        temp15.FileID = cursor2.getString(cursor2.getColumnIndex(COL_FileID));
+                        temp15.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        temp15.FileType = cursor2.getString(cursor2.getColumnIndex(COL_FileType));
+                        temp15.FilePath = cursor2.getString(cursor2.getColumnIndex(COL_FilePath));
+                        temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
+                        temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
+                        apiMultimedia.setTbMultimediaFile(temp15);
+                        if (temp15.FileID != null) {
+                            strSQL = "SELECT * FROM " + TB_photoofresultscene
+                                    + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
 
-                        try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
+                            try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 
-                            if (cursor3.getCount() == 1) {
-                                cursor3.moveToFirst();
-                                TbPhotoOfResultscene tbPhotoOfResultscene = new TbPhotoOfResultscene();
-                                tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
-                                tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
-                                apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
-                                Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
-                            } else {
-                                apiMultimedia.setTbPhotoOfEvidence(null);
+                                if (cursor3.getCount() == 1) {
+                                    cursor3.moveToFirst();
+                                    TbPhotoOfResultscene tbPhotoOfResultscene = new TbPhotoOfResultscene();
+                                    tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
+                                    tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
+                                    apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
+                                    Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
+                                } else {
+                                    apiMultimedia.setTbPhotoOfEvidence(null);
+                                }
                             }
                         }
+                        apiMultimediaList.add(apiMultimedia);
                     }
-                    apiMultimediaList.add(apiMultimedia);
-                }
 
                 }
             }

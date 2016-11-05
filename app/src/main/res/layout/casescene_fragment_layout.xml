@@ -61,7 +61,7 @@
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_plus"
-            app:backgroundTint="@color/red_pink"
+            app:backgroundTint="@color/orange"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />

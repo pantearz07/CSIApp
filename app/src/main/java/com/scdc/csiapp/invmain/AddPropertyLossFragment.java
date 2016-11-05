@@ -27,9 +27,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -73,7 +73,7 @@ public class AddPropertyLossFragment extends Fragment {
     int position = 0;
     String sPhotoID, timeStamp;
     List<ApiMultimedia> apiMultimediaList;
-    Button btnTakePhotoPL;
+    ImageButton btnTakePhotoPL;
     public static final int REQUEST_CAMERA_PROPERTYLOSS = 777;
     private String mCurrentPhotoPath;
     Uri uri;
@@ -112,7 +112,7 @@ public class AddPropertyLossFragment extends Fragment {
 
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
         fabBtnDetails = (FloatingActionButton) view.findViewById(R.id.fabBtnDetails);
-        btnTakePhotoPL = (Button) view.findViewById(R.id.btnTakePhotoPL);
+        btnTakePhotoPL = (ImageButton) view.findViewById(R.id.btnTakePhotoPL);
         editPropertyLossName = (EditText) view.findViewById(R.id.editPropertyLossName);
         editPropertyLossAmount = (EditText) view.findViewById(R.id.editPropertyLossAmount);
         autoPropertyLossUnit = (AutoCompleteTextView) view.findViewById(R.id.autoPropertyLossUnit);

@@ -818,14 +818,15 @@ public class ApiConnect {
 
     public ApiStatusResult editProfile(ApiProfile apiProfile) {
         mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        String txt_Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
 
-        Log.d(TAG, "Not User " + apiProfile.getTbUsers().id_users);
-        Log.d(TAG, "Not Pass " + txt_pass);
+        Log.d(TAG, "Not Username_old " + txt_Username_old);
+        Log.d(TAG, "Not Pass_old " + txt_pass);
         Log.d(TAG, "Not OffID " + apiProfile.getTbOfficial().OfficialID);
         MultipartBody.Builder formBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("Username_old", apiProfile.getTbOfficial().id_users)
+                .addFormDataPart("Username_old", txt_Username_old)
                 .addFormDataPart("Password_old", txt_pass);//apiProfile.getTbUsers().pass
         Gson gson1 = new GsonBuilder().create();
         formBuilder.addFormDataPart("tbOfficial", gson1.toJson(apiProfile.getTbOfficial()));
@@ -873,6 +874,56 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
+
+            return null;
+        }
+    }
+
+    public ApiStatus checkUsername(String Username_new) {
+        mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        String Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
+        String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
+
+        Log.d(TAG, "Not Username_old " + Username_old);
+        Log.d(TAG, "Not Username_new " + Username_new);
+        MultipartBody.Builder formBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("Username_old", Username_old)
+                .addFormDataPart("Username_new", Username_new)
+                .addFormDataPart("Password_old", txt_pass);//apiProfile.getTbUsers().pass
+
+        RequestBody formBody = formBuilder.build();
+
+        Request request = new Request.Builder()
+                .url(urlMobileIP + "checkUsername")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            ApiStatus apiStatus = new ApiStatus();
+//            Log.d(TAG, "post data" + response.body().string());
+
+            if (response.isSuccessful()) {
+
+                Gson gson = new GsonBuilder().create();
+                try {
+                    apiStatus = gson.fromJson(response.body().string(), ApiStatus.class);
+                    Log.d(TAG, "checkUsername Reason " + apiStatus.getData().getReason());
+                    return apiStatus;
+                } catch (JsonParseException e) {
+                    Log.d(TAG, "checkUsername fail format");
+                    apiStatus.setStatus("fail");
+                }
+                response.close();
+                return apiStatus;
+            } else {
+                Log.d(TAG, "Not Success checkUsername " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in checkUsername : " + e.getMessage());
 
             return null;
         }

@@ -103,23 +103,12 @@ public class InqMainActivity extends AppCompatActivity {
         Log.i("login", officialID);
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
-            Picasso.with(this)
-                    .load(R.drawable.avatar)
-                    .resize(76, 76)
-                    .centerCrop()
-                    .into(avatar);
         } else {
             File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
             if (avatarfile.exists()) {
                 Picasso.with(this)
                         .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                        .resize(76, 76)
-                        .centerCrop()
-                        .into(avatar);
-            } else {
-                Picasso.with(this)
-                        .load(R.drawable.avatar)
-                        .resize(76, 76)
+                        .resize(100, 100)
                         .centerCrop()
                         .into(avatar);
             }

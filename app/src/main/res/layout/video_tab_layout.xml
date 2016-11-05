@@ -27,13 +27,15 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
                 <TextView
                     android:id="@+id/txtVideoNum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0"
-android:gravity="right"
-                    android:layout_gravity="right"/>
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:text="0" />
+
                 <GridView
                     android:id="@+id/gridViewVideo"
                     android:layout_width="match_parent"
@@ -56,7 +58,7 @@ android:gravity="right"
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_video_wh"
-            app:backgroundTint="@color/red_pink"
+            app:backgroundTint="@color/orange"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />

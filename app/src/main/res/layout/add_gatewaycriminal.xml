@@ -45,7 +45,7 @@
                             android:layout_height="wrap_content"
                             android:text="ทางเข้า-ออกของคนร้าย ตรวจพบ"
                             android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold" />
 
                     </TableRow>
 
@@ -85,96 +85,124 @@
                     </TableRow>
                 </TableLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/ocean"
-                        android:gravity="center_horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/ocean"
+                    android:gravity="center_horizontal"
+                    android:visibility="gone">
 
-                        <ImageButton
-                            android:id="@+id/btnTakePhotoGC"
-                            android:layout_width="@dimen/icon_image_l"
-                            android:layout_height="@dimen/icon_image_l"
-                            android:layout_marginRight="10dp"
-
-                            android:gravity="center|center_horizontal"
-                            android:background="@drawable/ic_camera_wh"/>
-
-                        <ImageButton
-                            android:id="@+id/btnVideoGC"
-                            android:layout_width="@dimen/icon_image_l"
+                    <ImageButton
+                        android:id="@+id/btnTakePhotoGCx"
+                        android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"
-                        android:gravity="center|center_horizontal"
+                        android:layout_marginRight="10dp"
+
+                        android:background="@drawable/ic_camera_wh"
+                        android:gravity="center|center_horizontal" />
+
+                    <ImageButton
+                        android:id="@+id/btnVideoGCx"
+                        android:layout_width="@dimen/icon_image_l"
+                        android:layout_height="@dimen/icon_image_l"
                         android:layout_gravity="center_horizontal"
                         android:background="@drawable/ic_video_wh"
-                            android:visibility="gone"/>
-                        />
-                    </LinearLayout>
+                        android:gravity="center|center_horizontal"
+                        android:visibility="gone" />
+                    />
+                </LinearLayout>
 
 
                 <TextView
                     android:id="@+id/txtPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/orange"
-                    android:padding="5dp"
+                    android:background="@color/navy"
+                    android:padding="8dp"
                     android:text="รูปภาพ"
                     android:textAppearance="@style/SectionText" />
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontalScrollViewGC"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    android:fillViewport="false"
-                    android:scrollbars="horizontal">
+                    <ImageButton
+                        android:id="@+id/btnTakePhotoGC"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_camera_add" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:id="@+id/horizontalScrollViewGC"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <GridView
-                            android:id="@+id/horizontal_gridView_GC"
-                            android:layout_width="match_parent"
+                        android:fillViewport="false"
+                        android:scrollbars="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:columnWidth="100dp"
-                            android:gravity="center_vertical"
-                            android:horizontalSpacing="1dp" />
-                    </LinearLayout>
-                </HorizontalScrollView>
+                            android:orientation="horizontal">
+
+                            <GridView
+                                android:id="@+id/horizontal_gridView_GC"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:columnWidth="100dp"
+                                android:gravity="center_vertical"
+                                android:horizontalSpacing="1dp" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txtVideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/orange"
-                    android:padding="5dp"
+                    android:background="@color/navy"
+                    android:padding="8dp"
                     android:text="วิดีโอ"
                     android:textAppearance="@style/SectionText" />
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontalScrollView_GC_video"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
-                    android:fillViewport="false"
-                    android:scrollbars="horizontal">
+                    <ImageButton
+                        android:id="@+id/btnVideoGC"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_video" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:id="@+id/horizontalScrollView_GC_video"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <GridView
-                            android:id="@+id/horizontal_gridView_GC_video"
-                            android:layout_width="match_parent"
+                        android:fillViewport="false"
+                        android:scrollbars="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:columnWidth="100dp"
-                            android:gravity="center_vertical"
-                            android:horizontalSpacing="1dp" />
-                    </LinearLayout>
-                </HorizontalScrollView>
+                            android:orientation="horizontal">
+
+                            <GridView
+                                android:id="@+id/horizontal_gridView_GC_video"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:columnWidth="100dp"
+                                android:gravity="center_vertical"
+                                android:horizontalSpacing="1dp" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
@@ -186,7 +214,7 @@
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_saveas_wh"
-            app:backgroundTint="@color/red_pink"
+            app:backgroundTint="@color/orange"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />

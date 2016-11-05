@@ -1,12 +1,8 @@
 package com.scdc.csiapp.invmain;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,9 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -70,7 +66,7 @@ public class AddFeatureInsideFragment extends Fragment {
     CSIDataTabFragment csiDataTabFragment;
     String sFeatureInsideID, mode;
     int position = 0;
-    Button btnTakePhotoInside;
+    ImageButton btnTakePhotoInside;
     public static final int REQUEST_CAMERA_OUTSIDE = 333;
     private String mCurrentPhotoPath;
     Uri uri;
@@ -114,7 +110,7 @@ public class AddFeatureInsideFragment extends Fragment {
 
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
         fabBtnDetails = (FloatingActionButton) view.findViewById(R.id.fabBtnDetails);
-        btnTakePhotoInside = (Button) view.findViewById(R.id.btnTakePhotoInside);
+        btnTakePhotoInside = (ImageButton) view.findViewById(R.id.btnTakePhotoInside);
         editFeatureInsideFloor = (EditText) view.findViewById(R.id.editFeatureInsideFloor);
         editFeatureInsideCave = (EditText) view.findViewById(R.id.editFeatureInsideCave);
         editFeatureInsideClassBack = (EditText) view.findViewById(R.id.editFeatureInsideClassBack);
@@ -455,7 +451,7 @@ public class AddFeatureInsideFragment extends Fragment {
                 if (cd.isNetworkAvailable()) {
                     Picasso.with(getActivity())
                             .load(filepath)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .centerCrop()
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
@@ -465,7 +461,7 @@ public class AddFeatureInsideFragment extends Fragment {
                     if (curfile.exists()) {
                         Picasso.with(getActivity())
                                 .load(new File(strPath))
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
@@ -479,7 +475,7 @@ public class AddFeatureInsideFragment extends Fragment {
                 if (curfile.exists()) {
                     Picasso.with(getActivity())
                             .load(new File(strPath))
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
                             .centerCrop()
@@ -488,7 +484,7 @@ public class AddFeatureInsideFragment extends Fragment {
                     if (cd.isNetworkAvailable()) {
                         Picasso.with(getActivity())
                                 .load(filepath)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
                                 .centerCrop()
@@ -502,28 +498,6 @@ public class AddFeatureInsideFragment extends Fragment {
             return convertView;
 
         }
-    }
-
-    public void showViewPic(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String root = Environment.getExternalStorageDirectory().toString();
-        String strPath = root + "/CSIFiles/Pictures/" + sPicPath;
-
-        // Image Resource
-        ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-                width, height, matrix, true);
-        imageView.setImageBitmap(resizedBitmap);
-        dialog.show();
     }
 
     public void onStart() {

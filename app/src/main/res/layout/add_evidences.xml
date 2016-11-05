@@ -37,7 +37,7 @@
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:id="@+id/txtEvidenceType"
@@ -50,7 +50,7 @@
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <Spinner
                             android:id="@+id/spinnerEvidenceType"
@@ -61,22 +61,22 @@
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
-                   <!-- <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                    <!-- <TableRow
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content" >
 
-                        <EditText
-                            android:id="@+id/editEvidenceType"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="วัตถุพยานอื่นๆ"
-                            android:textSize="@dimen/small_text" />
-                    </TableRow>-->
+                         <EditText
+                             android:id="@+id/editEvidenceType"
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="1"
+                             android:hint="วัตถุพยานอื่นๆ"
+                             android:textSize="@dimen/small_text" />
+                     </TableRow>-->
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
                     <TableRow
                         android:id="@+id/tableRow39"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <EditText
                             android:id="@+id/editFindEvidenceZone"
@@ -115,10 +115,11 @@
                             android:hint="บริเวณที่พบ"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRow40"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <EditText
                             android:id="@+id/editMarking"
@@ -128,10 +129,11 @@
                             android:hint="การทำเครื่องหมาย"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRow41"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <EditText
                             android:id="@+id/editParceling"
@@ -141,10 +143,11 @@
                             android:hint="การบรรจุหีบห่อ"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
+
                     <TableRow
                         android:id="@+id/tableRow42"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <EditText
                             android:id="@+id/editEvidencePerformed"
@@ -155,97 +158,125 @@
                             android:textSize="@dimen/small_text" />
                     </TableRow>
                 </TableLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/ocean"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:visibility="gone">
 
                     <ImageButton
-                        android:id="@+id/btnTakePhotoEV"
+                        android:id="@+id/btnTakePhotoEVx"
                         android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"
                         android:layout_marginRight="10dp"
 
-                        android:gravity="center|center_horizontal"
-                        android:background="@drawable/ic_camera_wh"/>
+                        android:background="@drawable/ic_camera_wh"
+                        android:gravity="center|center_horizontal" />
 
                     <ImageButton
-                        android:id="@+id/btnVideoEV"
+                        android:id="@+id/btnVideoEVx"
                         android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"
-                        android:gravity="center|center_horizontal"
                         android:layout_gravity="center_horizontal"
                         android:background="@drawable/ic_video_wh"
-                        android:visibility="gone"/>
+                        android:gravity="center|center_horizontal"
+                        android:visibility="gone" />
                     />
                 </LinearLayout>
-
 
 
                 <TextView
                     android:id="@+id/txtPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/orange"
-                    android:padding="5dp"
+                    android:background="@color/navy"
+                    android:padding="8dp"
                     android:text="รูปภาพ"
                     android:textAppearance="@style/SectionText" />
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontalScrollViewEV_photo"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    android:fillViewport="false"
-                    android:scrollbars="horizontal">
+                    <ImageButton
+                        android:id="@+id/btnTakePhotoEV"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_camera_add" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:id="@+id/horizontalScrollViewEV_photo"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <GridView
-                            android:id="@+id/horizontal_gridView_EV"
-                            android:layout_width="match_parent"
+                        android:fillViewport="false"
+                        android:scrollbars="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:columnWidth="100dp"
-                            android:gravity="center_vertical"
-                            android:horizontalSpacing="1dp" />
-                    </LinearLayout>
-                </HorizontalScrollView>
+                            android:orientation="horizontal">
+
+                            <GridView
+                                android:id="@+id/horizontal_gridView_EV"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:columnWidth="100dp"
+                                android:gravity="center_vertical"
+                                android:horizontalSpacing="1dp" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txtVideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/orange"
-                    android:padding="5dp"
+                    android:background="@color/navy"
+                    android:padding="8dp"
                     android:text="วิดีโอ"
                     android:textAppearance="@style/SectionText" />
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontalScrollView_EV_video"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
-                    android:fillViewport="false"
-                    android:scrollbars="horizontal">
+                    <ImageButton
+                        android:id="@+id/btnVideoEV"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/transparent"
+                        android:src="@drawable/ic_video" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:id="@+id/horizontalScrollView_EV_video"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <GridView
-                            android:id="@+id/horizontal_gridView_EV_video"
-                            android:layout_width="match_parent"
+                        android:fillViewport="false"
+                        android:scrollbars="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:columnWidth="100dp"
-                            android:gravity="center_vertical"
-                            android:horizontalSpacing="1dp" />
-                    </LinearLayout>
-                </HorizontalScrollView>
+                            android:orientation="horizontal">
+
+                            <GridView
+                                android:id="@+id/horizontal_gridView_EV_video"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:columnWidth="100dp"
+                                android:gravity="center_vertical"
+                                android:horizontalSpacing="1dp" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
@@ -257,7 +288,7 @@
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_saveas_wh"
-            app:backgroundTint="@color/red_pink"
+            app:backgroundTint="@color/orange"
             app:fabSize="normal"
             app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
             app:rippleColor="#FFF" />

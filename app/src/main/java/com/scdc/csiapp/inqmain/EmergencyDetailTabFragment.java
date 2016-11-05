@@ -158,7 +158,13 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
         editTextPhone1.addTextChangedListener(new EmerTextWatcher(editTextPhone1));
         ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone1);
+        if(EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
+            ic_telphone1.setEnabled(true);
+        }else{
+            ic_telphone1.setEnabled(false);
+        }
         ic_telphone1.setOnClickListener(new EmergencyDetailTabFragment());
+
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
         if (EmergencyTabFragment.tbNoticeCase.LocaleName != "") {
@@ -207,7 +213,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
             }
             setSelectAmphur(provinceid);
-            Log.i(TAG, " show  provinceid " + provinceid );
+            Log.i(TAG, " show  provinceid " + provinceid);
         }
         spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spinnerProvince.setOnItemSelectedListener(new EmerOnItemSelectedListener());
@@ -380,9 +386,16 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         } else {
             editTextSuffererPhone.setText(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
         }
+
         editTextSuffererPhone.addTextChangedListener(new EmerTextWatcher(editTextSuffererPhone));
         ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
+        if(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
+            ic_telphone2.setEnabled(true);
+        }else{
+            ic_telphone2.setEnabled(false);
+        }
         ic_telphone2.setOnClickListener(new EmergencyDetailTabFragment());
+
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (emergencyTabFragment.mode == "view") {
             CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
@@ -583,23 +596,27 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
                 break;
             case R.id.ic_telphone1:
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + editTextPhone1.getText().toString()));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                if(EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
+                    try {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                        callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.CaseTel.toString()));
+                        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getActivity().startActivity(callIntent);
+                    } catch (ActivityNotFoundException activityException) {
+                        Log.e("Calling a Phone Number", "Call failed", activityException);
+                    }
                 }
                 break;
             case R.id.ic_telphone2:
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                if(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
+                    try {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                        callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum));
+                        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getActivity().startActivity(callIntent);
+                    } catch (ActivityNotFoundException activityException) {
+                        Log.e("Calling a Phone Number", "Call failed", activityException);
+                    }
                 }
                 break;
         }
@@ -638,94 +655,95 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         mLastLocation.set(location);
         Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLongitude());
         Geocoder gcd = new Geocoder(context, Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+        if (cd.isNetworkAvailable()) {
+            List<Address> addresses = null;
+            try {
+                // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-            if (addresses != null && addresses.size() > 0) {
+                if (addresses != null && addresses.size() > 0) {
 
 
-                address = addresses.get(0).getAddressLine(0);
-                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                amphur = addresses.get(0).getLocality();
-                province = addresses.get(0).getAdminArea();
-                country = addresses.get(0).getCountryName();
-                postalCode = addresses.get(0).getPostalCode();
-                knownName = addresses.get(0).getFeatureName();
+                    address = addresses.get(0).getAddressLine(0);
+                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    amphur = addresses.get(0).getLocality();
+                    province = addresses.get(0).getAdminArea();
+                    country = addresses.get(0).getCountryName();
+                    postalCode = addresses.get(0).getPostalCode();
+                    knownName = addresses.get(0).getFeatureName();
 
-                Log.d(TAG, "get mLastLocation address" + address);
-                Log.d(TAG, "get mLastLocation amphur " + amphur);
-                Log.d(TAG, "get mLastLocation province " + province);
-                Log.d(TAG, "get mLastLocation country " + country);
-                Log.d(TAG, "get mLastLocation postalCode " + postalCode);
-                Log.d(TAG, "get mLastLocation knownName " + knownName);
+                    Log.d(TAG, "get mLastLocation address" + address);
+                    Log.d(TAG, "get mLastLocation amphur " + amphur);
+                    Log.d(TAG, "get mLastLocation province " + province);
+                    Log.d(TAG, "get mLastLocation country " + country);
+                    Log.d(TAG, "get mLastLocation postalCode " + postalCode);
+                    Log.d(TAG, "get mLastLocation knownName " + knownName);
 
-            }
-            if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
-                if (province != null || province != "null") {
-                    for (int i = 0; i < mProvinceArray.length; i++) {
-                        if (province.trim().equals(mProvinceArray[i][2])) {
-                            spinnerProvince.setSelection(i);
-                            provinceid = mProvinceArray[i][0];
-
-                            oldProvince = false;
-                            break;
-                        }
-                    }
-                    setSelectAmphur(provinceid);
-                    Log.i(TAG, " show province " + province + " provinceid " + provinceid);
-                    EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = provinceid;
-                    Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
-                } else {
-                    spinnerProvince.setSelection(0);
                 }
-            }
-            if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+                if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+                    if (province != null || province != "null") {
+                        for (int i = 0; i < mProvinceArray.length; i++) {
+                            if (province.trim().equals(mProvinceArray[i][2])) {
+                                spinnerProvince.setSelection(i);
+                                provinceid = mProvinceArray[i][0];
 
-                if (amphur != null || amphur != "null") {
-                    amphur = amphur.replace("อำเภอ", "");
-                    Log.i(TAG, "have amphur" + amphur);
-                    for (int i = 0; i < mAmphurArray.length; i++) {
-                        if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
-                            spinnerAmphur.setSelection(i);
-                            amphurid = mAmphurArray[i][0];
-                            sAmphurName = mAmphurArray[i][2].toString();
-                            Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
-                            EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = amphurid;
-                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
-                            break;
+                                oldProvince = false;
+                                break;
+                            }
                         }
+                        setSelectAmphur(provinceid);
+                        Log.i(TAG, " show province " + province + " provinceid " + provinceid);
+                        EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = provinceid;
+                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+                    } else {
+                        spinnerProvince.setSelection(0);
                     }
-                } else {
-                    spinnerAmphur.setSelection(0);
                 }
-            }
-            if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+                if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
 
-                if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
-                    knownName = knownName.replace("ตำบล", "");
-                    Log.i(TAG, "have knownName" + knownName);
-                    for (int i = 0; i < mDistrictArray.length; i++) {
-                        if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
-                            spinnerDistrict.setSelection(i);
-                            districtid = mDistrictArray[i][0];
-                            sDistrictName = mDistrictArray[i][2].toString();
-                            Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
-                            EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = districtid;
-                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
-                            break;
+                    if (amphur != null || amphur != "null") {
+                        amphur = amphur.replace("อำเภอ", "");
+                        Log.i(TAG, "have amphur" + amphur);
+                        for (int i = 0; i < mAmphurArray.length; i++) {
+                            if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
+                                spinnerAmphur.setSelection(i);
+                                amphurid = mAmphurArray[i][0];
+                                sAmphurName = mAmphurArray[i][2].toString();
+                                Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+                                EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = amphurid;
+                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+                                break;
+                            }
                         }
+                    } else {
+                        spinnerAmphur.setSelection(0);
                     }
-                } else {
-                    spinnerDistrict.setSelection(0);
                 }
+                if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+
+                    if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
+                        knownName = knownName.replace("ตำบล", "");
+                        Log.i(TAG, "have knownName" + knownName);
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
+                                spinnerDistrict.setSelection(i);
+                                districtid = mDistrictArray[i][0];
+                                sDistrictName = mDistrictArray[i][2].toString();
+                                Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+                                EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = districtid;
+                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+                                break;
+                            }
+                        }
+                    } else {
+                        spinnerDistrict.setSelection(0);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "get mLastLocation error" + e.getMessage());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(TAG, "get mLastLocation error" + e.getMessage());
         }
-
     }
 
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
@@ -896,6 +914,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         public void afterTextChanged(Editable s) {
             if (s == editTextPhone1.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.CaseTel = editTextPhone1.getText().toString();
+                ic_telphone1.setEnabled(true);
                 Log.i(TAG, "CaseTel " + EmergencyTabFragment.tbNoticeCase.CaseTel);
             } else if (s == editAddrDetail.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.LocaleName = editAddrDetail.getText().toString();
@@ -908,6 +927,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 Log.i(TAG, "SuffererStatus " + EmergencyTabFragment.tbNoticeCase.SuffererStatus);
             } else if (s == editTextSuffererPhone.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
+                ic_telphone2.setEnabled(true);
                 Log.i(TAG, "SuffererPhoneNum " + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
             } else if (s == editCircumstanceOfCaseDetail.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();

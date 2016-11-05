@@ -20,10 +20,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
@@ -202,87 +206,113 @@ public class CaseSceneListFragment extends Fragment {
             final ApiCaseScene apiNoticeCase = caseList.get(position);
             final String caserepID = apiNoticeCase.getTbCaseScene().getCaseReportID().toString();
             final String mode = apiNoticeCase.getMode().toString();
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(getActivity());
-            builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepID);
+//            AlertDialog.Builder builder =
+//                    new AlertDialog.Builder(getActivity());
+//            builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepID);
+//
+//            builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int id) {
 
-            builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    Bundle i = new Bundle();
-                    //สถานะคดี
-                    if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
-                        i.putSerializable(assignTabFragment.Bundle_Key, apiNoticeCase);
-                        i.putString(assignTabFragment.Bundle_mode, "view");
-                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                        assignTabFragment.setArguments(i);
-                        fragmentTransaction.replace(R.id.containerView, assignTabFragment).addToBackStack(null).commit();
+//                }
+//            });
+//
+//            if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept") || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")) {
+//                builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
 
-                    } else {
-
-                        i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
-                        i.putString(csiDataTabFragment.Bundle_mode, "view");
-                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                        csiDataTabFragment.setArguments(i);
-                        fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
-                    }
-                }
-            });
-
-            if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept") || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")) {
-                builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mode.equals("online")) {
-
-                            boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
-                            if (isSuccess1) {
-                                Bundle i = new Bundle();
-                                i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
-                                i.putString(csiDataTabFragment.Bundle_mode, "edit");
-                                FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                                csiDataTabFragment.setArguments(i);
-                                fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
-
-                            } else {
-                                if (snackbar == null || !snackbar.isShown()) {
-                                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiNoticeCase.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-
-
-                                                }
-                                            });
-                                    snackbar.show();
-                                }
-                            }
-
-                        } else {
-                            Bundle i = new Bundle();
-                            i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
-                            i.putString(csiDataTabFragment.Bundle_mode, "edit");
-                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                            csiDataTabFragment.setArguments(i);
-                            fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
-                        }
-                    }
-                });
-            }
-
-
-            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create();
-            builder.show();
+//                    }
+//                });
+//            }
+//
+//
+//            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();
+//                }
+//            });
+//            builder.create();
+//            builder.show();
 
             //Snackbar.make(view, "Clicked " + csidata.caseReportID, Snackbar.LENGTH_LONG)
             //       .setAction("Action", null).show();
 
+//Creating the instance of PopupMenu
+            PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
+            //Inflating the Popup using xml file
+            popup.getMenuInflater().inflate(R.menu.csi_menu_1, popup.getMenu());
+            Menu popupMenu = popup.getMenu();
+            popupMenu.findItem(R.id.edit).setVisible(false);
+            if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept") || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")) {
+                popupMenu.findItem(R.id.edit).setVisible(true);
+            }
+            //registering popup with OnMenuItemClickListener
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                                 public boolean onMenuItemClick(MenuItem item) {
+                                                     final Bundle i = new Bundle();
 
+                                                     switch (item.getItemId()) {
+                                                         case R.id.view:
+                                                             Log.d(TAG, "view");
+//
+                                                             //สถานะคดี
+                                                             if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
+                                                                 i.putSerializable(assignTabFragment.Bundle_Key, apiNoticeCase);
+                                                                 i.putString(assignTabFragment.Bundle_mode, "view");
+                                                                 FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                                                 assignTabFragment.setArguments(i);
+                                                                 fragmentTransaction.replace(R.id.containerView, assignTabFragment).addToBackStack(null).commit();
+
+                                                             } else {
+
+                                                                 i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
+                                                                 i.putString(csiDataTabFragment.Bundle_mode, "view");
+                                                                 FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                                                 csiDataTabFragment.setArguments(i);
+                                                                 fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+                                                             }
+                                                             break;
+                                                         case R.id.edit:
+                                                             Log.d(TAG, "edit");
+                                                             if (mode.equals("online")) {
+
+                                                                 boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
+                                                                 if (isSuccess1) {
+                                                                     i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
+                                                                     i.putString(csiDataTabFragment.Bundle_mode, "edit");
+                                                                     FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                                                     csiDataTabFragment.setArguments(i);
+                                                                     fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+
+                                                                 } else {
+                                                                     if (snackbar == null || !snackbar.isShown()) {
+                                                                         snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiNoticeCase.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                                                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                                                                     @Override
+                                                                                     public void onClick(View view) {
+
+
+                                                                                     }
+                                                                                 });
+                                                                         snackbar.show();
+                                                                     }
+                                                                 }
+
+                                                             } else {
+                                                                 i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
+                                                                 i.putString(csiDataTabFragment.Bundle_mode, "edit");
+                                                                 FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                                                 csiDataTabFragment.setArguments(i);
+                                                                 fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+                                                             }
+                                                             break;
+                                                     }
+                                                     return true;
+                                                 }
+                                             }
+            );
+            popup.show();
         }
     };
 
