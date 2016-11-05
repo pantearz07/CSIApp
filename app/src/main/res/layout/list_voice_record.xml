@@ -4,24 +4,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="5dp">
-
-    <ImageButton
-        android:id="@+id/btnMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="15dp"
-        android:background="@color/transparent"
-
-        android:src="@drawable/ic_expand_menu" />
+    android:padding="8dp" >
 
     <TextView
         android:id="@+id/txtVoiceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnMenu"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:text="ชื่อไฟล์ : "
@@ -36,4 +24,13 @@
         android:text="คำอธิบาย"
         android:textSize="@dimen/ssmall_text" />
 
+    <ImageView
+        android:id="@+id/btnExpandmenu"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_expand_menu"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

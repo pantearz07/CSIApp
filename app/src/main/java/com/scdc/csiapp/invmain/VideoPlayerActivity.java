@@ -220,6 +220,10 @@ public class VideoPlayerActivity extends Activity {
                                             VideoPlayerActivity.this.finish();
                                         }
                                     }
+                                }else{
+                                    Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
+                                            getString(R.string.delete_error),
+                                            Toast.LENGTH_LONG).show();
                                 }
                             } else {
                                 Toast.makeText(VideoPlayerActivity.this, getString(R.string.no_video), Toast.LENGTH_SHORT).show();

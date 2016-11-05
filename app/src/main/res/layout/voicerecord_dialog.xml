@@ -1,53 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="250dp"
-    android:padding="20dip"
     android:gravity="center_vertical"
-    >
+    android:orientation="vertical"
+    android:padding="20dip">
 
 
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text=""
         android:layout_marginBottom="10dp"
-        android:textSize="20sp"/>
-    <TextView
-        android:id="@+id/txtTime"
+        android:text="ชื่อไฟล์"
+        android:textSize="@dimen/small_text" />
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:gravity="center_horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:layout_marginBottom="10dp"
-        android:textSize="20sp"/>
+        android:textSize="50dp"
+        />
+
     <View
         android:id="@+id/view1"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/view_height"
+        android:layout_height="1dp"
         android:layout_marginBottom="@dimen/margin_line"
         android:layout_marginTop="@dimen/margin_line"
         android:background="@color/orange" />
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        >
-
-        <Button
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_cancel"/>
+        <View
+            android:id="@+id/view2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+
+            android:background="@color/orange" />
+        <ImageButton
             android:id="@+id/btnStart"
-            android:text="@string/start_recording"
-            android:layout_weight="1.0"/>
-
-        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_record"/>
+        <ImageButton
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_pause"/>
+        <View
+            android:id="@+id/view3"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+
+            android:background="@color/orange" />
+        <ImageButton
             android:id="@+id/btnStop"
-            android:text="@string/stop_recording"
-            android:layout_weight="1.0"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_stop" />
 
     </LinearLayout>
+
 </LinearLayout>

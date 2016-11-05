@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:gravity="center" >
+    android:gravity="center">
 
     <TextView
         android:id="@+id/textView1"
@@ -10,40 +10,62 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:text="TextView" />
 
     <SeekBar
         android:id="@+id/seekBar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"   />
+        android:layout_below="@+id/textView1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/seekBar1"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Play" />
+            android:layout_margin="10dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_play" />
 
-        <Button
+        <View
+            android:id="@+id/view2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/orange" />
+
+        <ImageButton
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pause" />
+            android:layout_margin="10dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_pause" />
 
-        <Button
+        <View
+            android:id="@+id/view3"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/orange" />
+
+        <ImageButton
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stop" />  />
+            android:layout_margin="10dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_stop" />
     </LinearLayout>
 
 </RelativeLayout>

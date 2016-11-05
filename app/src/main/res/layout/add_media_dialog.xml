@@ -5,33 +5,38 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="15dp" >
+    android:padding="15dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/txtMediaName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ชื่อไฟล์ : "
-            android:textSize="@dimen/ssmall_text" />
+            android:textSize="@dimen/small_text" />
 
         <TextView
             android:id="@+id/editMediaName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ชื่อไฟล์"
-            android:textSize="@dimen/ssmall_text" />
+            android:textSize="@dimen/small_text" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/editMediaDescription"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/editMediaDescriptionLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="คำอธิบาย"
-        android:textSize="@dimen/ssmall_text" />
+        android:layout_height="wrap_content">
 
+        <EditText
+            android:id="@+id/editMediaDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="คำอธิบาย"
+            android:textSize="@dimen/ssmall_text" />
+    </android.support.design.widget.TextInputLayout>
 </LinearLayout>

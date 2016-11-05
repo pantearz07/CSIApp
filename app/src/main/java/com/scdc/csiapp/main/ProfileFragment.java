@@ -233,7 +233,7 @@ public class ProfileFragment extends Fragment {
             if (avatarfile.exists()) {
                 Picasso.with(getActivity())
                         .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                        .resize(76, 76)
+                        .resize(50, 50)
                         .centerCrop()
                         .into(profile_image);
             } else {

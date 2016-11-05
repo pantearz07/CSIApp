@@ -85,6 +85,11 @@
     <string name="no_video">ไม่มีไฟล์วิดีโอนี้ในหน่วยความจำเครื่อง</string>
     <string name="got_video">มีไฟล์วิดีโอนี้เเล้ว</string>
     <string name="got_photo">มีไฟล์ภาพนี้เเล้ว</string>
+    <string name="got_voice">มีไฟล์เสียงนี้เเล้ว</string>
+    <string name="download_voice">ดาวน์โหลดไฟล์เสียง</string>
+    <string name="delete_voice">ลบไฟล์เสียง</string>
+    <string name="delete_error">ลบข้อมูลไม่สำเร็จ</string>
+    <string name="save_voice_success">บันทึกไฟล์เสียงเเล้ว</string>
 
     <string-array name="accesstype">
         <item>ผู้ตรวจสถานที่เกิดเหตุ</item>

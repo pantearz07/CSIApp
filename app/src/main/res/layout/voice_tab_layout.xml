@@ -37,7 +37,9 @@
                 <ListView
                     android:id="@+id/gridViewVoiceRecord"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@color/lightgray"
+                    android:dividerHeight="1dp"></ListView>
             <!--    <GridView
                     android:id="@+id/gridViewVoiceRecord"
                     android:layout_width="match_parent"

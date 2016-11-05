@@ -206,6 +206,10 @@ public class FullScreenPhoto extends Activity {
                                             FullScreenPhoto.this.finish();
                                         }
                                     }
+                                }else {
+                                    Toast.makeText(FullScreenPhoto.this.getApplicationContext(),
+                                            getString(R.string.delete_error),
+                                            Toast.LENGTH_LONG).show();
                                 }
                             } else {
                                 Toast.makeText(FullScreenPhoto.this, getString(R.string.no_photo), Toast.LENGTH_SHORT).show();
@@ -224,15 +228,14 @@ public class FullScreenPhoto extends Activity {
 
     protected int deletefile(String fileid) {
         int flag = 0;
-        long flg1 = dbHelper.DeleteSelectedData("multimediafile", "FileID", fileid);
         long flg2 = dbHelper.DeleteSelectedData("photoofinside", "FileID", fileid);
         long flg3 = dbHelper.DeleteSelectedData("photoofoutside", "FileID", fileid);
         long flg4 = dbHelper.DeleteSelectedData("photoofevidence", "FileID", fileid);
         long flg5 = dbHelper.DeleteSelectedData("photoofpropertyless", "FileID", fileid);
         long flg6 = dbHelper.DeleteSelectedData("photoofresultscene", "FileID", fileid);
-        if (flg1 > 0) {
-            flag++;
-        }
+        long flg1 = dbHelper.DeleteSelectedData("multimediafile", "FileID", fileid);
+
+
         if (flg2 > 0) {
             flag++;
         }
@@ -246,6 +249,9 @@ public class FullScreenPhoto extends Activity {
             flag++;
         }
         if (flg6 > 0) {
+            flag++;
+        }
+        if (flg1 > 0) {
             flag++;
         }
         Log.i(TAG, "  delete file name flag " + String.valueOf(flag));

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/savephoto"
+        android:id="@+id/downloadvoice"
         android:icon="@drawable/ic_download_file"
-        android:title="@string/savepic" />
+        android:title="@string/download_voice" />
 
     <item
-        android:id="@+id/deletephoto"
+        android:id="@+id/deletevoice"
         android:icon="@drawable/ic_delete_file"
-        android:title="@string/deletepic" />
+        android:title="@string/delete_voice" />
 </menu>
