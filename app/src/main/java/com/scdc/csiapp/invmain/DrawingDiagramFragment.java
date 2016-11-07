@@ -274,9 +274,8 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                             // save drawing
                             drawView.setDrawingCacheEnabled(true);
                             Bitmap finalBitmap = drawView.getDrawingCache();
-                            String root = Environment
-                                    .getExternalStorageDirectory().toString();
-                            File myDir = new File(root + "/CSIFiles/Pictures/");
+
+                            File myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"/CSIFiles/");
                             myDir.mkdirs();
                             String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                             String timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];

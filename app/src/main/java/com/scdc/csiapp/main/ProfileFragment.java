@@ -79,8 +79,8 @@ public class ProfileFragment extends Fragment {
     private String mCurrentPhotoPath;
     public static final int REQUEST_CAMERA_OUTSIDE = 0;
     public static final int REQUEST_GALLERY = 1;
-    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
-    private static String strSDCardPathName_temps = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/temps/";
+    private static String strSDCardPathName_temp = "/CSIFiles/temp/";
+    private static String strSDCardPathName_temps = "/CSIFiles/temp/temps/";
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -232,10 +232,11 @@ public class ProfileFragment extends Fragment {
 
         } else {
 
-            File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
             if (avatarfile.exists()) {
                 Picasso.with(getActivity())
-                        .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                        .load(avatarfile)
                         .resize(100, 100)
                         .centerCrop()
                         .into(profile_image);
@@ -322,27 +323,27 @@ public class ProfileFragment extends Fragment {
             }
             if (view == change_display) {
 
-                File folder = new File(strSDCardPathName_temp);
+                File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp);
                 try {
                     // Create folder
                     if (!folder.exists()) {
                         folder.mkdir();
-                        Log.i(TAG, "mkdir" + strSDCardPathName_temp);
+                        Log.i(TAG, "mkdir folder temp" + folder.getPath());
                     } else {
-                        Log.i(TAG, "folder.exists" + strSDCardPathName_temp);
+                        Log.i(TAG, "folder.exists" + folder.getPath());
 
                     }
                 } catch (Exception ex) {
                     Log.i(TAG, "mkdir" + ex.getMessage());
                 }
-                File folder_temps = new File(strSDCardPathName_temps);
+                File folder_temps = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temps);
                 try {
                     // Create folder
                     if (!folder_temps.exists()) {
                         folder_temps.mkdir();
-                        Log.i(TAG, "mkdir" + strSDCardPathName_temps);
+                        Log.i(TAG, "mkdir folder_temps" + folder_temps.getPath());
                     } else {
-                        Log.i(TAG, "folder.exists" + strSDCardPathName_temps);
+                        Log.i(TAG, "folder.exists" + folder_temps.getPath());
 
                     }
                 } catch (Exception ex) {
@@ -453,7 +454,7 @@ public class ProfileFragment extends Fragment {
         protected void onPostExecute(ApiStatusResult apiStatus) {
             super.onPostExecute(apiStatus);
 
-            Log.d(TAG, apiStatus.getStatus());
+//            Log.d(TAG, apiStatus.getStatus());
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
                 boolean isSuccess = dbHelper.updateProfile(WelcomeActivity.profile, Username_old);
@@ -507,19 +508,9 @@ public class ProfileFragment extends Fragment {
                 }
 
             } else {
-                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason().toString()
-                                    + "\n " + apiStatus.getData().getResult().toString()
-                            , Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-
-                                }
-                            });
-                    snackbar.show();
-                }
+                Toast.makeText(getActivity(),
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -535,7 +526,7 @@ public class ProfileFragment extends Fragment {
         protected void onPostExecute(ApiStatus apiStatus) {
             super.onPostExecute(apiStatus);
 
-            Log.d(TAG, apiStatus.getStatus());
+//            Log.d(TAG, apiStatus.getStatus());
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
 
@@ -572,8 +563,8 @@ public class ProfileFragment extends Fragment {
                 }
             } else {
                 Toast.makeText(getActivity(),
-                        apiStatus.getData().getReason().toString(),
-                        Toast.LENGTH_SHORT).show();
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -621,11 +612,11 @@ public class ProfileFragment extends Fragment {
 //                    String path = uri.getPath();
 //                    Log.i(TAG, "path Photo from camera " + path);
                     try {
-                        File sd = Environment.getExternalStorageDirectory();
-                        File data1 = Environment.getExternalStorageDirectory();
+                        File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                        File data1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
                         if (sd.canWrite()) {
-                            String sourceImagePath = "/CSIFiles/temp/temps/" + sDisplayPicpath;
-                            String destinationImagePath = "/CSIFiles/temp/" + sDisplayPicpath;
+                            String sourceImagePath = strSDCardPathName_temp + sDisplayPicpath;
+                            String destinationImagePath = strSDCardPathName_temps + sDisplayPicpath;
                             File source = new File(data1, sourceImagePath);
                             File destination = new File(sd, destinationImagePath);
                             if (source.exists()) {
@@ -649,7 +640,8 @@ public class ProfileFragment extends Fragment {
                                         Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
                                         Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
                                         Picasso.with(getActivity())
-                                                .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                                                .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                                        , strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
                                                 .resize(100, 100)
                                                 .centerCrop()
                                                 .into(profile_image);
@@ -703,11 +695,12 @@ public class ProfileFragment extends Fragment {
                 Log.i(TAG, "Photo from gallery " + picturePath);
 
                 try {
-                    File sd = Environment.getExternalStorageDirectory();
-                    File datadest = Environment.getExternalStorageDirectory();
+                    File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                    File datadest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+
                     if (sd.canWrite()) {
 //                        String sourceImagePath = "/path/to/source/file.jpg";
-                        String destinationImagePath = "/CSIFiles/temp/" + sDisplayPicpath;
+                        String destinationImagePath = strSDCardPathName_temp + sDisplayPicpath;
                         File source = new File(picturePath);
 
                         File destination = new File(datadest, destinationImagePath);
@@ -732,7 +725,8 @@ public class ProfileFragment extends Fragment {
                                     Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
                                     Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
                                     Picasso.with(getActivity())
-                                            .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                                            .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                                                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
                                             .resize(100, 100)
                                             .centerCrop()
                                             .into(profile_image);
@@ -780,7 +774,7 @@ public class ProfileFragment extends Fragment {
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
 
-                    newfile = new File(strSDCardPathName_temps + sDisplayPicpath);
+                    newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + sDisplayPicpath);
                     if (newfile.exists())
                         newfile.delete();
                     try {

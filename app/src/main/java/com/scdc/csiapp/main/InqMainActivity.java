@@ -40,7 +40,7 @@ public class InqMainActivity extends AppCompatActivity {
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
 
-    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
+    private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     static FragmentManager mFragmentManager;
@@ -104,10 +104,10 @@ public class InqMainActivity extends AppCompatActivity {
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
         } else {
-            File avatarfile = new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
             if (avatarfile.exists()) {
                 Picasso.with(this)
-                        .load(new File(strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+                        .load(avatarfile)
                         .resize(100, 100)
                         .centerCrop()
                         .into(avatar);

@@ -90,8 +90,9 @@ public class LoginActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean isReceiverRegistered;
 
-    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
-    private static String strSDCardPathName_temps = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/temps/";
+    private static String strSDCardPathName_temp = "/CSIFiles" + "/temp/";
+    private static String strSDCardPathName_temps = "/CSIFiles" + "/temp/temps/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,10 +214,10 @@ public class LoginActivity extends AppCompatActivity {
         // ซ่อน Keyborad หลังจากกด Login แล้ว
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        
+
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
 
@@ -294,7 +295,7 @@ public class LoginActivity extends AppCompatActivity {
                     WelcomeActivity.profile.setSCDCAgencyCode(apiLoginStatus.getData().getResult().getOfficial().getSCDCAgencyCode());
                 }
                 WelcomeActivity.profile.setTbUsers(users);
-                Log.i(TAG,  "password :"+users.pass.toString());
+                Log.i(TAG, "password :" + users.pass.toString());
                 Toast.makeText(getApplicationContext(), apiLoginStatus.getData().getReason(), Toast.LENGTH_LONG).show();
                 boolean isSuccess = mManager.registerUser(users, official);
                 if (isSuccess) {
@@ -302,9 +303,9 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
                 }
-                if(apiLoginStatus.getData().getResult().getUsers().getPicture() == null || apiLoginStatus.getData().getResult().getUsers().getPicture().equals("")){
+                if (apiLoginStatus.getData().getResult().getUsers().getPicture() == null || apiLoginStatus.getData().getResult().getUsers().getPicture().equals("")) {
 
-                }else{
+                } else {
                     DownloadDocFile downloadDocFile = new DownloadDocFile();
                     downloadDocFile.execute(apiLoginStatus.getData().getResult().getUsers().getPicture());
                 }
@@ -598,12 +599,12 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             int count;
-            Log.i(TAG, "DownloadDocFile display file name "+ String.valueOf(params[0]));
+            Log.i(TAG, "DownloadDocFile display file name " + String.valueOf(params[0]));
             File myDir;
             String fileoutput = "";
             try {
-
-                myDir = new File(strSDCardPathName_temp);
+                myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp);
+//                myDir = new File(strSDCardPathName_temp);
                 myDir.mkdirs();
                 //http://localhost/mCSI/assets/csifiles/CR04_000002/docs/
                 String defaultIP = "180.183.251.32/mcsi";
@@ -620,11 +621,16 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "Lenght of file: " + lenghtOfFile);
 
                 InputStream input = new BufferedInputStream(url.openStream());
+                File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + params[0]);
+                if (filePic.exists()) {
+                    filePic.delete();
+                }
+                filePic.createNewFile();
 
                 // Get File Name from URL
-                fileoutput = strSDCardPathName_temp + params[0];
-                Log.i(TAG, "fileoutput : " + fileoutput);
-                OutputStream output = new FileOutputStream(fileoutput);
+//                fileoutput = strSDCardPathName_temp + params[0];
+                Log.i(TAG, "filePic : " + filePic.getPath());
+                OutputStream output = new FileOutputStream(filePic);
                 //OutputStream output = new FileOutputStream("/sdcard/Download/"+fileName+".doc");
 
                 byte data[] = new byte[1024];
@@ -636,7 +642,9 @@ public class LoginActivity extends AppCompatActivity {
                     //publishProgress("" + (int) ((total * 100) / lenghtOfFile));
                     output.write(data, 0, count);
                 }
-
+                if(total > 0){
+//                    Toast.makeText(LoginActivity.this, getString(R.string.save_photo_success), Toast.LENGTH_SHORT).show();
+                }
                 output.flush();
                 output.close();
                 input.close();
@@ -650,7 +658,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
+
     protected void onPostExecute(final String arrData) {
-        Log.i(TAG, "DownloadDocFile display"+ String.valueOf(arrData));
+        Log.i(TAG, "DownloadDocFile display" + String.valueOf(arrData));
     }
 }

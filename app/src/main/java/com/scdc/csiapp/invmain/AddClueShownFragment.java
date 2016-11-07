@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.scdc.csiapp.invmain.ResultTabFragment.strSDCardPathName;
+
 /**
  * Created by Pantearz07 on 6/10/2559.
  */
@@ -79,7 +81,6 @@ public class AddClueShownFragment extends Fragment {
     ConnectionDetector cd;
     private Context mContext;
 
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
     String defaultIP = "180.183.251.32/mcsi";
 
     public AddClueShownFragment() {
@@ -178,14 +179,14 @@ public class AddClueShownFragment extends Fragment {
             }
             if (v == btnTakePhotoClueShown) {
                 File newfile;
-                ResultTabFragment.createFolder("Pictures");
+                ResultTabFragment.createFolder();
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                String sPhotoPath = sPhotoID + ".jpg";
-                newfile = new File(ResultTabFragment.strSDCardPathName, "Pictures/" + sPhotoPath);
+                String sPhotoPath = strSDCardPathName + sPhotoID + ".jpg";
+                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), sPhotoPath);
                 if (newfile.exists())
                     newfile.delete();
                 try {
@@ -267,7 +268,7 @@ public class AddClueShownFragment extends Fragment {
                     Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
-                        Log.i(TAG, "PHOTO saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");
+                        Log.i(TAG, "PHOTO saved to Gallery! : " + sPhotoID + ".jpg");
 
                     }
                     showAllPhoto();
@@ -347,7 +348,6 @@ public class AddClueShownFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-//                    showViewPic(apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
                     Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
                     Bundle extras = new Bundle();
                     extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
@@ -401,12 +401,12 @@ public class AddClueShownFragment extends Fragment {
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
             textView.setVisibility(View.GONE);
-            String strPath = strSDCardPathName_Pic
+            String strPath = strSDCardPathName
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();

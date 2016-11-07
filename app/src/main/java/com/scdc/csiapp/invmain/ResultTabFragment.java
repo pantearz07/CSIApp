@@ -116,7 +116,6 @@ public class ResultTabFragment extends Fragment {
     ImageButton btnShowHide1, btnShowHide2, btnShowHide3, btnShowHide4;
     private boolean viewGroupIsVisible = true;
     private static final String TAG = "DEBUG-ResultTabFragment";
-    public static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles/";
     public static String Bundle_ID = "dataid";
     public static String Bundle_TB = "datatb";
     public static String Bundle_mode = "mode";
@@ -128,6 +127,7 @@ public class ResultTabFragment extends Fragment {
     AddGatewayFragment addGatewayFragment;
     AddClueShownFragment addClueShownFragment;
 
+    public static String strSDCardPathName = "/CSIFiles/";
 
     @Nullable
     @Override
@@ -1086,7 +1086,7 @@ public class ResultTabFragment extends Fragment {
             final TextView txtPropertyLossAmount = (TextView) convertView
                     .findViewById(R.id.txtPropertyLossAmount);
             txtPropertyLossAmount.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber()
-            +" "+CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossUnit());
+                    + " " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossUnit());
 
             final TextView txtPropertyLossPosition = (TextView) convertView
                     .findViewById(R.id.txtPropertyLossPosition);
@@ -1602,15 +1602,15 @@ public class ResultTabFragment extends Fragment {
         }
     }
 
-    public static void createFolder(String pathType) {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+    public static void createFolder() {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName);
         try {
             // Create folder
             if (!folder.exists()) {
                 folder.mkdir();
-                Log.i("mkdir", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+                Log.i(TAG, "mkdir" + folder.getAbsolutePath());
             } else {
-                Log.i("folder.exists", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+                Log.i(TAG, "folder.exists");
 
             }
         } catch (Exception ex) {

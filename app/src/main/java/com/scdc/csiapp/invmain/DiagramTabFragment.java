@@ -72,7 +72,7 @@ public class DiagramTabFragment extends Fragment {
     public static List<TbMultimediaFile> tbDiagramFileList = null;
     Context mContext;
     ConnectionDetector cd;
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
 
     @Nullable
@@ -295,7 +295,7 @@ public class DiagramTabFragment extends Fragment {
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
 
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
                     + tbDiagramFileList.get(position).FilePath.toString();

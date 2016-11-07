@@ -73,11 +73,10 @@ public class AddFeatureInsideFragment extends Fragment {
     String sPhotoID, timeStamp;
     List<ApiMultimedia> apiMultimediaList;
     Context mContext;
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
 
-    //    static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     public AddFeatureInsideFragment() {
 
     }
@@ -188,14 +187,14 @@ public class AddFeatureInsideFragment extends Fragment {
             }
             if (v == btnTakePhotoInside) {
                 File newfile;
-                DetailsTabFragment.createFolder("Pictures");
+                DetailsTabFragment.createFolder();
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                String sPhotoPath = sPhotoID + ".jpg";
-                newfile = new File(DetailsTabFragment.strSDCardPathName, "Pictures/" + sPhotoPath);
+                String sPhotoPath = strSDCardPathName_Pic+sPhotoID + ".jpg";
+                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),  sPhotoPath);
                 if (newfile.exists())
                     newfile.delete();
                 try {
@@ -291,7 +290,7 @@ public class AddFeatureInsideFragment extends Fragment {
                     CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
-                        Log.i(TAG, "PHOTO saved to Gallery!" + DetailsTabFragment.strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");
+                        Log.i(TAG, "PHOTO saved to Gallery! : " + sPhotoID + ".jpg");
 
                     }
                     showAllPhoto();
@@ -443,7 +442,7 @@ public class AddFeatureInsideFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
@@ -460,7 +459,7 @@ public class AddFeatureInsideFragment extends Fragment {
 
                     if (curfile.exists()) {
                         Picasso.with(getActivity())
-                                .load(new File(strPath))
+                                .load(curfile)
                                 .resize(100, 100)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_imagefile)
@@ -474,7 +473,7 @@ public class AddFeatureInsideFragment extends Fragment {
 
                 if (curfile.exists()) {
                     Picasso.with(getActivity())
-                            .load(new File(strPath))
+                            .load(curfile)
                             .resize(100, 100)
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)

@@ -46,7 +46,7 @@ public class VideoPlayerActivity extends Activity {
     SurfaceView sur_View;
     MediaController media_Controller;
     Context mContext;
-    private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
+    private static String strSDCardPathName_Vid = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
     TextView nofile;
@@ -87,7 +87,7 @@ public class VideoPlayerActivity extends Activity {
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
         int height = dm.heightPixels;
         int width = dm.widthPixels;
-        curfile = new File(strPath);
+        curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strPath);
         filepath = "http://" + defaultIP + "/assets/csifiles/"
                 + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/video/"
                 + VideoPath;
@@ -105,7 +105,7 @@ public class VideoPlayerActivity extends Activity {
                     video_player_view.setMinimumWidth(width);
                     video_player_view.setMinimumHeight(height);
                     video_player_view.setMediaController(media_Controller);
-                    video_player_view.setVideoURI(Uri.parse(strPath));
+                    video_player_view.setVideoURI(Uri.parse(curfile.getAbsolutePath()));
                     video_player_view.start();
                     video_player_view.requestFocus();
                 } else {
@@ -118,7 +118,7 @@ public class VideoPlayerActivity extends Activity {
                 video_player_view.setMinimumWidth(width);
                 video_player_view.setMinimumHeight(height);
                 video_player_view.setMediaController(media_Controller);
-                video_player_view.setVideoURI(Uri.parse(strPath));
+                video_player_view.setVideoURI(Uri.parse(curfile.getAbsolutePath()));
                 video_player_view.start();
                 video_player_view.requestFocus();
             } else {
@@ -167,7 +167,7 @@ public class VideoPlayerActivity extends Activity {
                                     File myDir;
                                     String fileoutput = "";
                                     try {
-                                        myDir = new File(strSDCardPathName_Vid);
+                                        myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName_Vid);
                                         myDir.mkdirs();
                                         Log.i(TAG, "display file name: " + filepath);
 
@@ -179,11 +179,14 @@ public class VideoPlayerActivity extends Activity {
                                         Log.d(TAG, "Lenght of file: " + lenghtOfFile);
 
                                         InputStream input = new BufferedInputStream(url.openStream());
-
                                         // Get File Name from URL
                                         fileoutput = strSDCardPathName_Vid + VideoPath;
-                                        Log.i(TAG, "fileoutput : " + fileoutput);
-                                        OutputStream output = new FileOutputStream(fileoutput);
+                                        File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), fileoutput);
+                                        if (filePic.exists()) {
+                                            filePic.delete();
+                                        }
+                                        filePic.createNewFile();
+                                        OutputStream output = new FileOutputStream(filePic);
 
                                         byte data[] = new byte[1024];
                                         long total = 0;
@@ -191,7 +194,7 @@ public class VideoPlayerActivity extends Activity {
                                             total += count;
                                             output.write(data, 0, count);
                                         }
-                                        Log.i(TAG, "DownloadFile display" + fileoutput);
+                                        Log.i(TAG, "DownloadFile display" + filePic.getPath());
                                         if (total > 0) {
                                             Toast.makeText(VideoPlayerActivity.this, getString(R.string.save_video_success), Toast.LENGTH_SHORT).show();
                                         }
@@ -223,7 +226,7 @@ public class VideoPlayerActivity extends Activity {
                                             VideoPlayerActivity.this.finish();
                                         }
                                     }
-                                }else{
+                                } else {
                                     Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
                                             getString(R.string.delete_error),
                                             Toast.LENGTH_LONG).show();

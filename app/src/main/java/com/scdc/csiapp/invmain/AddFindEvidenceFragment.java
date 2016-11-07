@@ -1,12 +1,8 @@
 package com.scdc.csiapp.invmain;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,6 +50,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.scdc.csiapp.invmain.ResultTabFragment.createFolder;
+import static com.scdc.csiapp.invmain.ResultTabFragment.strSDCardPathName;
+
 /**
  * Created by Pantearz07 on 6/10/2559.
  */
@@ -86,7 +85,6 @@ public class AddFindEvidenceFragment extends Fragment {
     public static final int REQUEST_CAMERA = 777;
     private String mCurrentPhotoPath;
     Context mContext;
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
 
@@ -225,14 +223,14 @@ public class AddFindEvidenceFragment extends Fragment {
             }
             if (v == btnTakePhotoEV) {
                 File newfile;
-                ResultTabFragment.createFolder("Pictures");
+                createFolder();
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                String sPhotoPath = sPhotoID + ".jpg";
-                newfile = new File(ResultTabFragment.strSDCardPathName, "Pictures/" + sPhotoPath);
+                String sPhotoPath = strSDCardPathName + sPhotoID + ".jpg";
+                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), sPhotoPath);
                 if (newfile.exists())
                     newfile.delete();
                 try {
@@ -493,12 +491,12 @@ public class AddFindEvidenceFragment extends Fragment {
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
             textView.setVisibility(View.GONE);
-            String strPath = strSDCardPathName_Pic
+            String strPath = strSDCardPathName
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
                     + apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString();
@@ -554,28 +552,6 @@ public class AddFindEvidenceFragment extends Fragment {
             return convertView;
 
         }
-    }
-
-    public void showViewPic(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String root = Environment.getExternalStorageDirectory().toString();
-        String strPath = root + "/CSIFiles/Pictures/" + sPicPath;
-
-        // Image Resource
-        ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-                width, height, matrix, true);
-        imageView.setImageBitmap(resizedBitmap);
-        dialog.show();
     }
 
     private Object mActivityResultSubscriber = new Object() {

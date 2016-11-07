@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -68,10 +67,8 @@ public class ApiConnect {
     public static String urlMobileIP = "http://180.183.251.32/mcsi/C_mobile/";
     private String defaultIP = "180.183.251.32/mcsi";
     private String TAG = "DEBUG-ApiConnect";
-    private static String strSDCardPathName_temp = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/temp/";
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
-    private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
-    private static String strSDCardPathName_Voi = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/VoiceRecorder/";
+    private static String strSDCardPathName_temp = "/CSIFiles/temp/";
+    private static String strSDCardPathName = "/CSIFiles/";
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private static final MediaType MEDIA_TYPE_IMG = MediaType.parse("image/*");
     private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/mp4");
@@ -778,28 +775,28 @@ public class ApiConnect {
         for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
 
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
-                File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
                     formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
                 }
             }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
-                File filePic = new File(strSDCardPathName_Pic, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (filePic.exists()) {
                     formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_JPEG, filePic));
                 }
             }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
-                File fileVid = new File(strSDCardPathName_Vid, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                File fileVid = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (fileVid.exists()) {
                     formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
                 }
             }
             if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
-                File fileVoi = new File(strSDCardPathName_Voi, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                File fileVoi = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
                 if (fileVoi.exists()) {
                     formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
                             RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
@@ -864,10 +861,11 @@ public class ApiConnect {
         formBuilder.addFormDataPart("tbOfficial", gson1.toJson(apiProfile.getTbOfficial()));
         formBuilder.addFormDataPart("tbUsers", gson1.toJson(apiProfile.getTbUsers()));
         if (apiProfile.getTbOfficial().OfficialDisplayPic != null) {
-            final String MEDIA_TYPE = MimeTypeMap.getFileExtensionFromUrl(strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
-            File filePic = new File(strSDCardPathName_temp, apiProfile.getTbOfficial().OfficialDisplayPic);
+//            final String MEDIA_TYPE = MimeTypeMap.getFileExtensionFromUrl(strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
+            File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                    strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
             if (filePic.exists()) {
-                Log.d(TAG, "MEDIA_TYPE " + MEDIA_TYPE + " filename: " + apiProfile.getTbOfficial().OfficialDisplayPic);
+//                Log.d(TAG, "MEDIA_TYPE " + MEDIA_TYPE + " filename: " + apiProfile.getTbOfficial().OfficialDisplayPic);
                 formBuilder.addFormDataPart("filedisplay", apiProfile.getTbOfficial().OfficialDisplayPic,
 //                        RequestBody.create(MediaType.parse("image/"+MEDIA_TYPE), filePic));
                         RequestBody.create(MEDIA_TYPE_IMG, filePic));

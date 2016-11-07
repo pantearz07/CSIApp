@@ -80,7 +80,7 @@ public class VoiceTabFragment extends Fragment {
     GetDateTime getDateTime;
     List<TbMultimediaFile> tbMultimediaFileList = null;
     Context mContext;
-    private static String strSDCardPathName_Voi = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/VoiceRecorder/";
+    private static String strSDCardPathName_Voi = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
 
@@ -295,20 +295,7 @@ public class VoiceTabFragment extends Fragment {
 
             }
         });
-        btnDelete.setOnClickListener(new ImageButton.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopRecording();
-                myChronometer.setBase(SystemClock.elapsedRealtime());
-                myChronometer.stop();
-                File voicefile = new File(getFilename(sVoiceID1));
-                if(voicefile.exists()){
-                    voicefile.delete();
-                    Log.i(TAG, "voice exists delete");
-                }
-                dialog.dismiss();
-            }
-        });
+
         dialog.show();
     }
 
@@ -365,14 +352,14 @@ public class VoiceTabFragment extends Fragment {
     }
 
     private String getFilename(String sVoiceID1) {
-        String filepath = Environment.getExternalStorageDirectory().toString();
-        File file = new File(filepath + "/CSIFiles/VoiceRecorder/");
+
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi);
 
         if (!file.exists()) {
             file.mkdirs();
         }
 
-        return (file.getAbsolutePath() + "/" + sVoiceID1 + ".3gp");
+        return file.getPath() + "/" + sVoiceID1 + ".3gp";
     }
 
     private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
@@ -447,68 +434,72 @@ public class VoiceTabFragment extends Fragment {
 
         mMedia = new MediaPlayer();
         mMedia = MediaPlayer.create(getActivity(), uri);
-        mMedia.start();
+        if(mMedia != null) {
+            mMedia.start();
 
-        seekBar = (SeekBar) dialog.findViewById(R.id.seekBar1);
-        seekBar.setMax(mMedia.getDuration());
-        seekBar.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                UpdateseekChange(v);
-                return false;
-            }
-        });
-        startPlayProgressUpdater();
-        final ImageButton btn1 = (ImageButton) dialog.findViewById(R.id.button1); // Start
-        final ImageButton btn2 = (ImageButton) dialog.findViewById(R.id.button2); // Pause
-        final ImageButton btn3 = (ImageButton) dialog.findViewById(R.id.button3); // Stop
-
-
-        // Start
-        btn1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                textView1.setText("Playing : " + sVoiceID + "....");
-                mMedia.start();
-                startPlayProgressUpdater();
-                btn1.setEnabled(false);
-                btn2.setEnabled(true);
-                btn3.setEnabled(true);
-            }
-        });
-
-        // Pause
-        btn2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                textView1.setText("Pause : " + sVoiceID + "....");
-                mMedia.pause();
-                btn1.setEnabled(true);
-                btn2.setEnabled(false);
-                btn3.setEnabled(false);
-            }
-        });
-
-        // Stop
-        btn3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                textView1.setText("Stop Play : " + sVoiceID);
-                mMedia.stop();
-                btn1.setEnabled(true);
-                btn2.setEnabled(false);
-                btn3.setEnabled(false);
-                try {
-                    mMedia.prepare();
-                    mMedia.seekTo(0);
-                } catch (IllegalStateException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+            seekBar = (SeekBar) dialog.findViewById(R.id.seekBar1);
+            seekBar.setMax(mMedia.getDuration());
+            seekBar.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    UpdateseekChange(v);
+                    return false;
                 }
+            });
+            startPlayProgressUpdater();
+            final ImageButton btn1 = (ImageButton) dialog.findViewById(R.id.button1); // Start
+            final ImageButton btn2 = (ImageButton) dialog.findViewById(R.id.button2); // Pause
+            final ImageButton btn3 = (ImageButton) dialog.findViewById(R.id.button3); // Stop
 
-            }
-        });
 
-        dialog.show();
+            // Start
+            btn1.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    textView1.setText("Playing : " + sVoiceID + "....");
+                    mMedia.start();
+                    startPlayProgressUpdater();
+                    btn1.setEnabled(false);
+                    btn2.setEnabled(true);
+                    btn3.setEnabled(true);
+                }
+            });
+
+            // Pause
+            btn2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    textView1.setText("Pause : " + sVoiceID + "....");
+                    mMedia.pause();
+                    btn1.setEnabled(true);
+                    btn2.setEnabled(false);
+                    btn3.setEnabled(false);
+                }
+            });
+
+            // Stop
+            btn3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    textView1.setText("Stop Play : " + sVoiceID);
+                    mMedia.stop();
+                    btn1.setEnabled(true);
+                    btn2.setEnabled(false);
+                    btn3.setEnabled(false);
+                    try {
+                        mMedia.prepare();
+                        mMedia.seekTo(0);
+                    } catch (IllegalStateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+            dialog.show();
+        }else{
+            Toast.makeText(getActivity(), R.string.no_voice, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void UpdateseekChange(View v) {
@@ -581,7 +572,7 @@ public class VoiceTabFragment extends Fragment {
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/"
                     + sVoiceName;
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strPath);
             final ImageView btnExpandmenu = (ImageView) convertView.findViewById(R.id.btnExpandmenu);
             if (CSIDataTabFragment.mode.equals("view")) {
                 btnExpandmenu.setVisibility(View.GONE);
@@ -606,9 +597,8 @@ public class VoiceTabFragment extends Fragment {
                                     if (cd.isNetworkAvailable()) {
                                         int count;
                                         File myDir;
-                                        String fileoutput = "";
                                         try {
-                                            myDir = new File(strSDCardPathName_Voi);
+                                            myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi);
                                             myDir.mkdirs();
                                             Log.i(TAG, "display file name: " + filepath);
 
@@ -620,9 +610,13 @@ public class VoiceTabFragment extends Fragment {
                                             Log.d(TAG, "Lenght of file: " + lenghtOfFile);
 
                                             InputStream input = new BufferedInputStream(url.openStream());
-
+                                            File filevoi = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strPath);
+                                            if (filevoi.exists()) {
+                                                filevoi.delete();
+                                            }
+                                            filevoi.createNewFile();
                                             // Get File Name from URL
-                                            OutputStream output = new FileOutputStream(strPath);
+                                            OutputStream output = new FileOutputStream(filevoi);
 
                                             byte data[] = new byte[1024];
                                             long total = 0;
@@ -630,7 +624,7 @@ public class VoiceTabFragment extends Fragment {
                                                 total += count;
                                                 output.write(data, 0, count);
                                             }
-                                            Log.i(TAG, "DownloadFile voice " + fileoutput);
+                                            Log.i(TAG, "DownloadFile voice " + filevoi.getPath());
                                             if (total > 0) {
                                                 Toast.makeText(getActivity(), getString(R.string.save_voice_success), Toast.LENGTH_SHORT).show();
                                             }
@@ -727,7 +721,7 @@ public class VoiceTabFragment extends Fragment {
             String sVoiceID = tbMultimediaFileList.get(position).FileID
                     .toString();
 
-            final File curfile = new File(strSDCardPathName_Voi + sVoiceName);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strPath);
             String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/"
                     + sVoiceName;
@@ -742,7 +736,7 @@ public class VoiceTabFragment extends Fragment {
                         Toast.makeText(getActivity(),
                                 "เลือกไฟล์เสียง : " + strPath,
                                 Toast.LENGTH_SHORT).show();
-                        showPlayDialog(strPath, sVoiceID);
+                        showPlayDialog(curfile.getAbsolutePath(), sVoiceID);
                     } else {
                         Toast.makeText(getActivity(),
                                 "ไม่มีไฟล์เสียงนี้บนเครื่อง",
@@ -754,7 +748,7 @@ public class VoiceTabFragment extends Fragment {
                     Toast.makeText(getActivity(),
                             "เลือกไฟล์เสียง : " + strPath,
                             Toast.LENGTH_SHORT).show();
-                    showPlayDialog(strPath, sVoiceID);
+                    showPlayDialog(curfile.getAbsolutePath(), sVoiceID);
                 } else {
                     if (cd.isNetworkAvailable()) {
                         Toast.makeText(getActivity(),

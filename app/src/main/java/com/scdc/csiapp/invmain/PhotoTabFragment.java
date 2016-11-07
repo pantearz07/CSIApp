@@ -51,7 +51,6 @@ public class PhotoTabFragment extends Fragment {
     public static final int REQUEST_CAMERA = 111;
     private String mCurrentPhotoPath;
     TextView txtPhotoNum;
-    static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     String sPhotoID, timeStamp;
     DBHelper dbHelper;
     private GridView gViewPhoto;
@@ -65,7 +64,7 @@ public class PhotoTabFragment extends Fragment {
 
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     Context mContext;
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
 
@@ -100,14 +99,14 @@ public class PhotoTabFragment extends Fragment {
     }
 
     public static void createFolder(String pathType) {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
         try {
             // Create folder
             if (!folder.exists()) {
                 folder.mkdir();
-                Log.i("mkdir", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+                Log.i("mkdir", folder.getAbsolutePath());
             } else {
-                Log.i("folder.exists", Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+                Log.i("folder.exists", folder.getAbsolutePath());
 
             }
         } catch (Exception ex) {
@@ -162,7 +161,7 @@ public class PhotoTabFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
                     + tbMultimediaFileList.get(position).FilePath.toString();
@@ -247,7 +246,7 @@ public class PhotoTabFragment extends Fragment {
                     Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
-                        Log.i(TAG, "PHOTO saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Pictures/" + " : " + sPhotoID + ".jpg");
+                        Log.i(TAG, "PHOTO saved to Gallery!  : " + sPhotoID + ".jpg");
 
                     }
                     showAllPhoto();
@@ -381,8 +380,8 @@ public class PhotoTabFragment extends Fragment {
                 sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                String sPhotoPath = sPhotoID + ".jpg";
-                newfile = new File(ResultTabFragment.strSDCardPathName, "Pictures/" + sPhotoPath);
+                String sPhotoPath = strSDCardPathName_Pic + sPhotoID + ".jpg";
+                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), sPhotoPath);
                 if (newfile.exists())
                     newfile.delete();
                 try {

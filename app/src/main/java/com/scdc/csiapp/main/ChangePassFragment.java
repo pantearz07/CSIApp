@@ -235,9 +235,8 @@ public class ChangePassFragment extends Fragment {
 
             } else {
                 Toast.makeText(getActivity(),
-                        apiStatusResult.getData().getReason().toString()
-                                + " " + WelcomeActivity.profile.getTbOfficial().id_users.toString(),
-                        Toast.LENGTH_SHORT).show();
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
 
 
             }

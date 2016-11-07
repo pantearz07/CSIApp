@@ -39,7 +39,7 @@ public class FullScreenPhoto extends Activity {
     DisplayMetrics dm;
     ConnectionDetector cd;
     ImageView imgPhoto;
-    private static String strSDCardPathName_Pic = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Pictures/";
+    private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     private static final String TAG = "DEBUG-FullScreenPhoto";
     private Context mContext;
@@ -68,7 +68,7 @@ public class FullScreenPhoto extends Activity {
         Log.i(TAG, "fileid " + fileid);
         Log.i(TAG, "file name: " + photopath);
         String strPath = strSDCardPathName_Pic + photopath;
-        curfile = new File(strPath);
+        curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
         filepath = "http://" + defaultIP + "/assets/csifiles/"
                 + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
                 + photopath.toString();
@@ -131,7 +131,7 @@ public class FullScreenPhoto extends Activity {
     private class MenuOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if(view == btnClose){
+            if (view == btnClose) {
                 FullScreenPhoto.this.finish();
             }
             if (view == btnMenu) {
@@ -151,9 +151,8 @@ public class FullScreenPhoto extends Activity {
                                 if (cd.isNetworkAvailable()) {
                                     int count;
                                     File myDir;
-                                    String fileoutput = "";
                                     try {
-                                        myDir = new File(strSDCardPathName_Pic);
+                                        myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
                                         myDir.mkdirs();
                                         Log.i(TAG, "display file name: " + filepath);
 
@@ -165,11 +164,13 @@ public class FullScreenPhoto extends Activity {
                                         Log.d(TAG, "Lenght of file: " + lenghtOfFile);
 
                                         InputStream input = new BufferedInputStream(url.openStream());
-
+                                        File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic + photopath);
+                                        if (filePic.exists()) {
+                                            filePic.delete();
+                                        }
+                                        filePic.createNewFile();
                                         // Get File Name from URL
-                                        fileoutput = strSDCardPathName_Pic + photopath;
-                                        Log.i(TAG, "fileoutput : " + fileoutput);
-                                        OutputStream output = new FileOutputStream(fileoutput);
+                                        OutputStream output = new FileOutputStream(filePic);
 
                                         byte data[] = new byte[1024];
                                         long total = 0;
@@ -177,8 +178,8 @@ public class FullScreenPhoto extends Activity {
                                             total += count;
                                             output.write(data, 0, count);
                                         }
-                                        Log.i(TAG, "DownloadFile display" + fileoutput);
-                                        if(total > 0){
+                                        Log.i(TAG, "DownloadFile display" + filePic.getPath());
+                                        if (total > 0) {
                                             Toast.makeText(FullScreenPhoto.this, getString(R.string.save_photo_success), Toast.LENGTH_SHORT).show();
                                         }
                                         output.flush();
@@ -209,7 +210,7 @@ public class FullScreenPhoto extends Activity {
                                             FullScreenPhoto.this.finish();
                                         }
                                     }
-                                }else {
+                                } else {
                                     Toast.makeText(FullScreenPhoto.this.getApplicationContext(),
                                             getString(R.string.delete_error),
                                             Toast.LENGTH_LONG).show();
@@ -226,7 +227,6 @@ public class FullScreenPhoto extends Activity {
             }
         }
     }
-
 
 
     protected int deletefile(String fileid) {

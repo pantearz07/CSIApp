@@ -48,7 +48,6 @@ public class VideoTabFragment extends Fragment {
     private static final String TAG = "DEBUG-VideoTabFragment";
     public static final int REQUEST_VIDEO = 222;
     private String mCurrentVideoPath;
-    static String strSDCardPathName = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/";
     String caseReportID, sVideoID, timeStamp;
     DBHelper dbHelper;
     SQLiteDatabase mDb;
@@ -62,7 +61,7 @@ public class VideoTabFragment extends Fragment {
     GetDateTime getDateTime;
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     Context mContext;
-    private static String strSDCardPathName_Vid = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Video/";
+    private static String strSDCardPathName_Vid = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
 
@@ -96,8 +95,8 @@ public class VideoTabFragment extends Fragment {
         return viewPhotosTab;
     }
 
-    public static void createFolder(String pathType) {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/CSIFiles/" + pathType + "/");
+    public static void createFolder() {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName_Vid);
         try {
             // Create folder
             if (!folder.exists()) {
@@ -154,7 +153,7 @@ public class VideoTabFragment extends Fragment {
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
-            final File curfile = new File(strPath);
+            final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strPath);
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/video/"
                     + tbMultimediaFileList.get(position).FilePath.toString();
@@ -170,7 +169,7 @@ public class VideoTabFragment extends Fragment {
 
                 } else {
                     if (curfile.exists()) {
-                        bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
+                        bmThumbnail = ThumbnailUtils.createVideoThumbnail(curfile.getPath(),
                                 MediaStore.Video.Thumbnails.MICRO_KIND);
                         imageView.setImageBitmap(bmThumbnail);
                     } else {
@@ -179,7 +178,7 @@ public class VideoTabFragment extends Fragment {
                 }
             } else {
                 if (curfile.exists()) {
-                    bmThumbnail = ThumbnailUtils.createVideoThumbnail(strPath,
+                    bmThumbnail = ThumbnailUtils.createVideoThumbnail(curfile.getPath(),
                             MediaStore.Video.Thumbnails.MICRO_KIND);
                     imageView.setImageBitmap(bmThumbnail);
                 } else {
@@ -269,7 +268,7 @@ public class VideoTabFragment extends Fragment {
                     Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
-                        Log.i(TAG, "video saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Video/" + " : " + sVideoID + ".mp4");
+                        Log.i(TAG, "video saved to Gallery! Video/" + " : " + sVideoID + ".mp4");
 
                     }
                     showAllVideo();
@@ -315,7 +314,7 @@ public class VideoTabFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i("onResume Video", "resume");
-          showAllVideo();
+        showAllVideo();
     }
 
     private class VideoOnClickListener implements View.OnClickListener {
@@ -323,14 +322,14 @@ public class VideoTabFragment extends Fragment {
         public void onClick(View v) {
             if (v == fabBtn) {
                 File newfile;
-                createFolder("Video");
+                createFolder();
                 Intent intentvideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 sVideoID = "VID_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                String sVideoPath = sVideoID + ".mp4";
-                newfile = new File(strSDCardPathName, "Video/" + sVideoPath);
+                String sVideoPath = strSDCardPathName_Vid + sVideoID + ".mp4";
+                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), sVideoPath);
                 if (newfile.exists())
                     newfile.delete();
                 try {
@@ -343,7 +342,7 @@ public class VideoTabFragment extends Fragment {
                     intentvideo.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                     getActivity().startActivityForResult(intentvideo, REQUEST_VIDEO);
                     String sVideoDescription = "";
-                    Log.i("show", "Video saved to Gallery!" + strSDCardPathName + "Video/" + " : " + sVideoPath);
+                    Log.i("show", "Video saved to Gallery! Video/" + " : " + sVideoPath);
                 }
             }
         }
