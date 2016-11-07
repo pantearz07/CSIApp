@@ -2450,8 +2450,9 @@ public class DBHelper extends SQLiteAssetHelper {
             String strSQL, strSQL_main;
 
             strSQL_main = "SELECT * FROM noticecase "
-                    + " WHERE InquiryOfficialID = '" + OfficeID + "'";
-
+                    + " WHERE InquiryOfficialID = '" + OfficeID + "'" +
+                    " ORDER BY ReceivingCaseDate DESC, ReceivingCaseTime DESC," +
+                    " LastUpdateDate DESC, LastUpdateTime DESC";
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
                 cursor.moveToPosition(-1);
                 while (cursor.moveToNext()) {
@@ -2785,8 +2786,8 @@ public class DBHelper extends SQLiteAssetHelper {
             db = this.getReadableDatabase(); // Read Data
             String strSQL, strSQL_main;
             strSQL_main = "SELECT * FROM scheduleinvestigates "
-                    + " WHERE SCDCAgencyCode = '" + SCDCAgencyCode + "'" +
-                    " ORDER BY ScheduleDate ASC";
+                    + " WHERE SCDCAgencyCode = '" + SCDCAgencyCode + "'";
+//                    + " ORDER BY ScheduleDate ASC";
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
 
                 Log.d(TAG, "strSQL_main" + strSQL_main + " " + String.valueOf(cursor.getCount()));
@@ -2815,7 +2816,7 @@ public class DBHelper extends SQLiteAssetHelper {
                                 tbSCDCagency.SCDCCenterID = cursor4.getString(cursor4.getColumnIndex(COL_SCDCCenterID));
                                 tbSCDCagency.SCDCAgencyName = cursor4.getString(cursor4.getColumnIndex(COL_SCDCAgencyName));
                                 apiScheduleInvestigates.setTbSCDCagency(tbSCDCagency);
-                                Log.d(TAG, "SCDCAgencyName" + apiScheduleInvestigates.getTbSCDCagency().SCDCAgencyName);
+//                                Log.d(TAG, "SCDCAgencyName" + apiScheduleInvestigates.getTbSCDCagency().SCDCAgencyName);
                             }
                         }
                     }
@@ -2829,22 +2830,24 @@ public class DBHelper extends SQLiteAssetHelper {
                             if (cursor2.getCount() > 0) {
                                 Log.d(TAG, "schedulegroup  " + strSQL);
                                 cursor2.moveToPosition(-1);
-                                int i = 0;
                                 while (cursor2.moveToNext()) {
                                     ApiScheduleGroup apiScheduleGroup = new ApiScheduleGroup();
                                     TbScheduleGroup tbScheduleGroup = new TbScheduleGroup();
                                     tbScheduleGroup.ScheduleGroupID = cursor2.getString(cursor2.getColumnIndex(COL_ScheduleGroupID));
                                     tbScheduleGroup.ScheduleInvestigateID = cursor2.getString(cursor2.getColumnIndex(COL_ScheduleInvestigateID));
                                     apiScheduleGroup.setTbScheduleGroup(tbScheduleGroup);
+//                                    Log.d(TAG, "ScheduleGroupID " + apiScheduleGroup.getTbScheduleGroup().ScheduleGroupID);
+
                                     List<ApiScheduleInvInGroup> apiScheduleInvInGroupList = new ArrayList<>();
                                     String strSQL2 = "SELECT * FROM scheduleinvingroup "
                                             + " WHERE ScheduleGroupID = '" + tbScheduleGroup.ScheduleGroupID + "'"
-                                            + " ORDER BY InvOfficialID ASC";
-                                    Log.d(TAG, "scheduleinvingroup  " + strSQL2);
+                                            + " ORDER BY InvOfficialID DESC";
+//                                    Log.d(TAG, "scheduleinvingroup  " + strSQL2);
                                     try (Cursor cursor3 = db.rawQuery(strSQL2, null)) {
+                                        Log.d(TAG, "scheduleinvingroup  " + String.valueOf(cursor3.getCount()));
+
                                         if (cursor3.getCount() > 0) {
                                             cursor3.moveToPosition(-1);
-                                            int j = 0;
                                             while (cursor3.moveToNext()) {
                                                 ApiScheduleInvInGroup apiScheduleInvInGroup = new ApiScheduleInvInGroup();
 
@@ -2853,6 +2856,7 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbScheduleInvInGroup.InvOfficialID = cursor3.getString(cursor3.getColumnIndex(COL_InvOfficialID));
                                                 apiScheduleInvInGroup.setTbScheduleInvInGroup(tbScheduleInvInGroup);
 
+//                                                Log.d(TAG, "InvOfficialID " + apiScheduleInvInGroup.getTbScheduleInvInGroup().InvOfficialID);
                                                 if (tbScheduleInvInGroup.InvOfficialID != null) {
                                                     // Index tbOfficial ดึงจากตาราง official
                                                     strSQL = "SELECT * FROM official "
@@ -2880,30 +2884,27 @@ public class DBHelper extends SQLiteAssetHelper {
                                                     }
                                                 }
                                                 apiScheduleInvInGroupList.add(apiScheduleInvInGroup);
-//                                                apiScheduleInvInGroupList.set(j, apiScheduleInvInGroup);
-                                                j++;
                                             }
                                         }
                                     }
                                     apiScheduleGroup.setApiScheduleInvInGroup(apiScheduleInvInGroupList);
                                     apiScheduleGroupList.add(apiScheduleGroup);
                                     apiScheduleInvestigates.setApiScheduleGroup(apiScheduleGroupList);
-                                    i++;
+
                                 }
                             }
                         }
                     }
                     apiScheduleInvestigates.setMode("offline");
                     apiScheduleInvestigatesList.add(apiScheduleInvestigates);
-                    Log.d(TAG, "--" + apiScheduleInvestigates.getTbScheduleInvestigates().ScheduleInvestigateID);
                 }
             }
             db.close();
-            // รวมข้อมูลที่ได้ทั้งหมดลง apiScheduleInvestigatesList ก่อนส่งกลับไปใช้
-            Log.d(TAG, "apiScheduleInvestigatesList:" + apiScheduleInvestigatesList.size());
-            for (int i = 0; i < apiScheduleInvestigatesList.size(); i++) {
-                Log.d(TAG, "////--" + apiScheduleInvestigatesList.get(i).getTbScheduleInvestigates().ScheduleInvestigateID);
-            }
+//            // รวมข้อมูลที่ได้ทั้งหมดลง apiScheduleInvestigatesList ก่อนส่งกลับไปใช้
+//            Log.d(TAG, "apiScheduleInvestigatesList:" + apiScheduleInvestigatesList.size());
+//            for (int i = 0; i < apiScheduleInvestigatesList.size(); i++) {
+//                Log.d(TAG, "////--" + apiScheduleInvestigatesList.get(i).getTbScheduleInvestigates().ScheduleInvestigateID);
+//            }
             dataEntity.setResult(apiScheduleInvestigatesList);
             apiListScheduleInvestigates.setData(dataEntity);
             return apiListScheduleInvestigates;
@@ -2951,7 +2952,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     db.update("scheduleinvestigates", Val, " SCDCAgencyCode = ?", new String[]{String.valueOf(PRIMARY_KEY)});
                     update++;
                 }
-                Log.d(TAG, "Sync Table scheduleinvestigates: Insert " + insert + ", Update " + update);
+//                Log.d(TAG, "Sync Table scheduleinvestigates: Insert " + insert + ", Update " + update);
                 cursor.close();
                 if (apiScheduleInvestigates.get(i).getApiScheduleGroup() != null) {
                     int sizeApiScheduleGroup = apiScheduleInvestigates.get(i).getApiScheduleGroup().size();
@@ -2975,29 +2976,36 @@ public class DBHelper extends SQLiteAssetHelper {
                             db.update("schedulegroup", Val2, " ScheduleInvestigateID = ?", new String[]{sScheduleInvestigateID});
                             update2++;
                         }
-                        Log.d(TAG, "Sync Table schedulegroup: Insert " + insert2 + ", Update " + update2);
+//                        Log.d(TAG, "Sync Table schedulegroup: Insert " + insert2 + ", Update " + update2);
                         cursor2.close();
                         if (apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup() != null) {
                             int sizeApiScheduleInvInGroup = apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().size();
                             int insert3 = 0;
                             int update3 = 0;
+//                            Log.d(TAG, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID
+//                                    + " sizeApiScheduleInvInGroup" + String.valueOf(sizeApiScheduleInvInGroup));
                             for (int k = 0; k < sizeApiScheduleInvInGroup; k++) {
+                                String sScheduleGroupID = apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().ScheduleGroupID;
                                 String sInvOfficialID = apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID;
                                 strSQL = "SELECT * FROM scheduleinvingroup "
-                                        + " WHERE InvOfficialID = '" + sInvOfficialID + "'";
+                                        + " WHERE InvOfficialID = '" + sInvOfficialID + "' " +
+                                        "AND ScheduleGroupID = '" + sScheduleGroupID + "'";
                                 Cursor cursor3 = mDb.rawQuery(strSQL, null);
                                 ContentValues Val3 = new ContentValues();
-                                Val3.put(COL_ScheduleGroupID, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().ScheduleGroupID);
-                                Val3.put(COL_InvOfficialID, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID);
+                                Val3.put(COL_ScheduleGroupID, sScheduleGroupID);
+                                Val3.put(COL_InvOfficialID, sInvOfficialID);
+//                                Log.d(TAG, apiScheduleInvestigates.get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID);
                                 if (cursor3.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                                     db.insert("scheduleinvingroup", null, Val3);
+                                    Log.d(TAG, "insert Table scheduleinvingroup: " + sInvOfficialID);
                                     insert3++;
                                 } else if (cursor3.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                                     // ต้องตรวจสอบก่อนว่าข้อมูลที่ได้มานั้นใหม่กว่าที่อยู่ใน SQLite จริงๆ
-                                    db.update("scheduleinvingroup", Val3, " InvOfficialID = ?", new String[]{sInvOfficialID});
+                                    db.update("scheduleinvingroup", Val3, " InvOfficialID = ? AND ScheduleGroupID = ?", new String[]{sInvOfficialID, sScheduleGroupID});
+//                                    Log.d(TAG, "update Table scheduleinvingroup: sInvOfficialID " + sInvOfficialID +" ScheduleGroupID "+sScheduleGroupID);
                                     update3++;
                                 }
-                                Log.d(TAG, "Sync Table scheduleinvingroup: Insert " + insert3 + ", Update " + update3);
+//                                Log.d(TAG, "Sync Table scheduleinvingroup: Insert " + insert3 + ", Update " + update3);
                                 cursor3.close();
                             }
                         }
@@ -3031,7 +3039,9 @@ public class DBHelper extends SQLiteAssetHelper {
             String strSQL, strSQL_main;
 
             strSQL_main = "SELECT * FROM casescene "
-                    + " WHERE InvestigatorOfficialID = '" + OfficeID + "'";
+                    + " WHERE InvestigatorOfficialID = '" + OfficeID + "'" +
+                    " ORDER BY ReceivingCaseDate DESC, ReceivingCaseTime DESC," +
+                    " LastUpdateDate DESC, LastUpdateTime DESC";
 
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
                 cursor.moveToPosition(-1);

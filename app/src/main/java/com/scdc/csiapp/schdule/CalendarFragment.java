@@ -20,6 +20,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -105,7 +107,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         } else {
             selectApiScheduleInvestigatesSQLite();
         }
-        textView.setText("รายชื่อผุ้ตรวจประจำวันที่ " + getSelectedDatesString());
+        textView.setText("รายชื่อผู้ตรวจประจำวันที่ " + getSelectedDatesString());
         getSelectedDates();
         new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
 //        new ApiSimulator2().executeOnExecutor(Executors.newSingleThreadExecutor());
@@ -269,7 +271,13 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     public void selectApiScheduleInvestigatesSQLite() {
         ApiListScheduleInvestigates apiListScheduleInvestigates = mDbHelper.selectApiScheduleInvestigates(WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
+
         if (apiListScheduleInvestigates != null) {
+            //
+            Gson gson = new GsonBuilder().create();
+            String listdata = gson.toJson(apiListScheduleInvestigates);
+            Log.i(TAG, "apiListScheduleInvestigates " + listdata);
+            //
             Log.d(TAG, apiListScheduleInvestigates.getStatus());
             Log.d(TAG, "Update apiListScheduleInvestigates SQLite");
             apiScheduleInvestigatesList = apiListScheduleInvestigates.getData().getResult();

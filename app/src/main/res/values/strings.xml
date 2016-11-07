@@ -3,13 +3,16 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="offline_mode_status">โหมดออฟไลน์</string>
     <string name="network_unavailable">กรุณาเชื่อมต่ออินเตอร์เน็ตก่อนใช้งาน</string>
     <string name="cannot_connect_server">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองเปลี่ยน IP</string>
     <string name="cannot_connect_server_offline">โหมดออฟไลน์ ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองเปลี่ยน IP ใหม่</string>
     <string name="offline_mode">โหมดออฟไลน์ กรุณาตรวจสอบการเชื่อมต่อ</string>
     <string name="please_input_data">กรุณาป้อนข้อมูล</string>
     <string name="save">บันทึก</string>
+    <string name="network_error">กรุณาตรวจสอบการเชื่อมต่อ</string>
+
+    <string name="error_data">เกิดเข้อผิดพลาดบางประการ</string>
     <string name="save_complete">บันทึกเรียบร้อย</string>
     <string name="delete_complete">ลบข้อมูลเรียบร้อย</string>
     <string name="download_complete">ดาวน์โหลดเรียบร้อย</string>
@@ -20,7 +23,8 @@
     <string name="please_input_username">กรุณากรอก Username</string>
     <string name="please_input_password">กรุณากรอก Password</string>
     <string name="authenticating">ตรวจสอบสิทธิ์...</string>
-    <string name="send_token">เตรียมระบบแจ้งเตือน...</string>
+    <string name="send_token">กำลังเตรียมข้อมูลระบบ...</string>
+    <string name="processing">กำลังดำเนินการ...</string>
     <string name="update_database">อัพเดทฐานข้อมูล...</string>
     <string name="delete_noticecase">ยืนยันเพื่อลบคดีนี้</string>
     <string name="send_noticecase">ส่งเรื่องเเจ้งเหตุไปยัง...</string>

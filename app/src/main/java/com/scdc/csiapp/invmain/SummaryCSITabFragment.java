@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +33,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
@@ -64,6 +66,7 @@ public class SummaryCSITabFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
+    boolean statusConnect = false;
     GetDateTime getDateTime;
     EditText edtReportNo;
     private static String strSDCardPathName_Doc = Environment.getExternalStorageDirectory() + "/CSIFiles" + "/Documents/";
@@ -86,6 +89,9 @@ public class SummaryCSITabFragment extends Fragment {
     Button btnNoticecase, btnDownloadfile, btnAcceptCase;
     View layoutButton1, layoutButton, layoutSceneNoticeDate;
     boolean oldselectedCT, oldselectedSubCT = false;
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 10; //10 second
+    boolean status_savecase = false;
 
     @Nullable
     @Override
@@ -288,12 +294,14 @@ public class SummaryCSITabFragment extends Fragment {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-            if (isSuccess) {
-                Log.i(TAG, "accept to investigating");
-                SaveCaseReport statusCase = new SaveCaseReport();
-                statusCase.execute(CSIDataTabFragment.apiCaseScene);
-                edtStatus.setText("กำลังดำเนินการตรวจ");
+            SaveCaseReport statusCase = new SaveCaseReport();
+            statusCase.execute(CSIDataTabFragment.apiCaseScene);
+            if (status_savecase = true) {
+
+                    Log.i(TAG, "accept to investigating");
+                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+                    edtStatus.setText("กำลังดำเนินการตรวจ");
+
             }
         } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("investigated")) {
             edtStatus.setText("ตรวจเสร็จแล้ว");
@@ -313,7 +321,7 @@ public class SummaryCSITabFragment extends Fragment {
             edtCompleteSceneDateTime.setText("-");
 
         } else {
-            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneTime + " น.");
+            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
 
         }
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
@@ -322,7 +330,7 @@ public class SummaryCSITabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
 
         } else {
-            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime + " น.");
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
         }
 //
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
@@ -343,15 +351,10 @@ public class SummaryCSITabFragment extends Fragment {
             btnNoticecase.setVisibility(View.GONE);
 
         } else if (CSIDataTabFragment.mode == "edit") {
-            //btnDownloadfile.setEnabled(false);
             layoutButton1.setVisibility(View.GONE);
-            //layoutButton.setVisibility(View.VISIBLE);
         }
-
-
         return viewSummaryCSI;
     }
-
 
     public void onStart() {
         super.onStart();
@@ -384,21 +387,13 @@ public class SummaryCSITabFragment extends Fragment {
                         // uploadDataToServer();
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
-//                        if (snackbar == null || !snackbar.isShown()) {
-//                            snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
-//                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(View view) {
-//
-//
-//                                        }
-//                                    });
-//                            snackbar.show();
-//                        }
-                        boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                        if (isSuccess) {
-                            SaveCaseReport statusCase = new SaveCaseReport();
-                            statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                        SaveCaseReport statusCase = new SaveCaseReport();
+                        statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                        if (status_savecase = true) {
+
+                                edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                                        + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+
                         }
                     }
                 });
@@ -429,21 +424,12 @@ public class SummaryCSITabFragment extends Fragment {
                         } else {
                             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
-//                            if (snackbar == null || !snackbar.isShown()) {
-//                                snackbar = Snackbar.make(rootLayout, getString(R.string.upload_progress), Snackbar.LENGTH_INDEFINITE)
-//                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View view) {
-//
-//
-//                                            }
-//                                        });
-//                                snackbar.show();
-//                            }
-                            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                            if (isSuccess) {
-                                SaveCaseReport statusCase = new SaveCaseReport();
-                                statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                            SaveCaseReport statusCase = new SaveCaseReport();
+                            statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                            if (status_savecase = true) {
+
+                                    edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
+                                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
 
                             }
                         }
@@ -452,7 +438,6 @@ public class SummaryCSITabFragment extends Fragment {
                 });
                 dialog.create();
                 dialog.show();
-
             }
             if (v == btnDownloadfile) {
                 Log.i(TAG, "btnDownloadfile");
@@ -745,34 +730,45 @@ public class SummaryCSITabFragment extends Fragment {
             progressDialog.dismiss();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
-                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                }
-                            });
-                    snackbar.show();
+                status_savecase = true;
+                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                if (isSuccess) {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                    }
+                                });
+                        snackbar.show();
+                    }
                 }
-
             } else {
-                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-
-                                }
-                            });
-                    snackbar.show();
-                }
+                status_savecase = false;
+                Toast.makeText(getActivity(),
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
             }
 
         }
     }
 
     class DownloadDocFile extends AsyncTask<ApiCaseScene, Void, ApiStatusResult> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.processing));
+            progressDialog.show();
+        }
         @Override
         protected ApiStatusResult doInBackground(ApiCaseScene... params) {
             return WelcomeActivity.api.saveDocFile(params[0]);
@@ -781,6 +777,7 @@ public class SummaryCSITabFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiStatusResult apiStatusResult) {
             super.onPostExecute(apiStatusResult);
+            progressDialog.dismiss();
             if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatusResult.getStatus().toString());
                 Log.d(TAG, apiStatusResult.getData().getResult().toString());
@@ -789,8 +786,12 @@ public class SummaryCSITabFragment extends Fragment {
 
             } else {
                 Log.d(TAG, "error");
+                Toast.makeText(getActivity(),
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
+
 
 }

@@ -1,6 +1,7 @@
 package com.scdc.csiapp.inqmain;
 
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -29,8 +31,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -51,6 +55,7 @@ public class SummaryEmerTabFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
+    boolean statusConnect = false;
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
     GetDateTime getDateTime;
@@ -78,6 +83,10 @@ public class SummaryEmerTabFragment extends Fragment {
     View layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
     NoticeCaseListFragment noticeCaseListFragment;
     String InqTel, InvTel;
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 10; //10 second
+    boolean status_deletecase = false;
+    boolean status_noticecase = false;
 
     @Nullable
     @Override
@@ -155,7 +164,7 @@ public class SummaryEmerTabFragment extends Fragment {
             String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
             for (int i = 0; i < mCaseTypeArray.length; i++) {
                 mCaseTypeArray2[i] = mCaseTypeArray[i][1];
-                  Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
+                Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
             }
             ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
                     getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -321,6 +330,7 @@ public class SummaryEmerTabFragment extends Fragment {
         return viewSummaryCSI;
     }
 
+
     public void onStart() {
         super.onStart();
         Log.i("Check", "onStartSummary");
@@ -337,6 +347,7 @@ public class SummaryEmerTabFragment extends Fragment {
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
             if (v == btnNoticecase) {
+
                 Log.i(TAG, "btnNoticecase " + WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                 LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -408,8 +419,6 @@ public class SummaryEmerTabFragment extends Fragment {
                                 SendNewNoticeCase noticeCase = new SendNewNoticeCase();
                                 noticeCase.execute(EmergencyTabFragment.tbNoticeCase);
 
-                                btnNoticecase.setVisibility(View.GONE);
-                                btnDownloadfile.setVisibility(View.GONE);
                             } else {
                                 if (snackbar == null || !snackbar.isShown()) {
                                     snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString(), Snackbar.LENGTH_INDEFINITE)
@@ -442,20 +451,21 @@ public class SummaryEmerTabFragment extends Fragment {
 
                 dialog.create();
                 dialog.show();
+
             }
             if (v == btnDownloadfile) {
+
                 if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive") || EmergencyTabFragment.mode == "new") {
                     Log.i(TAG, "ลบคดี");
+
                     if (snackbar == null || !snackbar.isShown()) {
                         snackbar = Snackbar.make(rootLayout, getString(R.string.delete_noticecase), Snackbar.LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        boolean isSuccess = dbHelper.DeleteNoticeCase(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
-                                        if (isSuccess) {
-                                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                                            fragmentTransaction.replace(R.id.containerView, noticeCaseListFragment).addToBackStack(null).commit();
-                                        }
+                                        DeleteNoticeCase deleteNoticeCase = new DeleteNoticeCase();
+                                        deleteNoticeCase.execute(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
+
                                     }
                                 });
                         snackbar.show();
@@ -465,6 +475,7 @@ public class SummaryEmerTabFragment extends Fragment {
                 } else {
                     Log.i(TAG, "btnDownloadfile");
                 }
+
             }
             if (v == fabBtn) {
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
@@ -527,7 +538,21 @@ public class SummaryEmerTabFragment extends Fragment {
     }
 
     class SendNewNoticeCase extends AsyncTask<TbNoticeCase, Void, ApiStatusResult> {
+        ProgressDialog progressDialog;
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.processing));
+            progressDialog.show();
+        }
         @Override
         protected ApiStatusResult doInBackground(TbNoticeCase... params) {
             return WelcomeActivity.api.sendNewNoticeCase(params[0]);
@@ -536,11 +561,12 @@ public class SummaryEmerTabFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiStatusResult apiStatusResult) {
             super.onPostExecute(apiStatusResult);
-            Log.d(TAG, apiStatusResult.getData().getResult());
-            Log.d(TAG, apiStatusResult.getData().getReason());
+            progressDialog.dismiss();
             if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
-
+                status_noticecase = true;
                 EmergencyTabFragment.tbNoticeCase.NoticeCaseID = apiStatusResult.getData().getResult();
+                btnNoticecase.setVisibility(View.GONE);
+                btnDownloadfile.setVisibility(View.GONE);
                 boolean isSuccess = dbHelper.updateNoticeCaseID(EmergencyTabFragment.tbNoticeCase);
                 if (isSuccess) {
                     if (snackbar == null || !snackbar.isShown()) {
@@ -550,7 +576,8 @@ public class SummaryEmerTabFragment extends Fragment {
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-
+                                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                        fragmentTransaction.replace(R.id.containerView, noticeCaseListFragment).addToBackStack(null).commit();
                                     }
                                 });
                         snackbar.show();
@@ -558,16 +585,13 @@ public class SummaryEmerTabFragment extends Fragment {
                     }
                 }
             } else {
-                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, apiStatusResult.getData().getReason(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-
-                                }
-                            });
-                    snackbar.show();
+                status_noticecase = false;
+                EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
+                boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+                if (isSuccess) {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.error_data) + " " + getString(R.string.network_error),
+                            Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -705,4 +729,49 @@ public class SummaryEmerTabFragment extends Fragment {
             }
         }
     }
+
+    class DeleteNoticeCase extends AsyncTask<String, Void, ApiStatus> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.processing));
+            progressDialog.show();
+        }
+        @Override
+        protected ApiStatus doInBackground(String... strings) {
+            return WelcomeActivity.api.deleteNoticeCase(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            progressDialog.dismiss();
+            if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
+                status_deletecase = true;
+                Toast.makeText(getActivity(),
+                        apiStatus.getData().getReason().toString(),
+                        Toast.LENGTH_SHORT).show();
+                boolean isSuccess = dbHelper.DeleteNoticeCase(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
+                if (isSuccess) {
+                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.containerView, noticeCaseListFragment).addToBackStack(null).commit();
+                }
+            } else {
+                status_deletecase = false;
+                Toast.makeText(getActivity(),
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 }

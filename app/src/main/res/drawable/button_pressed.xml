@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid
-        android:color="@color/red_btnpres"/>
-<!--#d28080-->
-</shape>
+    <!-- Bottom 2dp Shadow -->
+    <item>
+        <shape android:shape="rectangle">
+
+            <solid android:color="#d8d8d8" />
+            <corners android:radius="7dp" />
+
+        </shape>
+    </item>
+
+    <item android:bottom="3px">
+        <shape android:shape="rectangle">
+
+            <corners android:radius="5dp" />
+            <solid android:color="@color/dark_red" />
+            <stroke
+                android:width="1dip"
+                android:color="#971E05" />
+        </shape>
+    </item>
+</layer-list>

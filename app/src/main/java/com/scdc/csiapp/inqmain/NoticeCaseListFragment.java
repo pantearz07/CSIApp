@@ -345,33 +345,7 @@ public class NoticeCaseListFragment extends Fragment {
             final ApiNoticeCase apiNoticeCase = caseList.get(position);
             final String caserepTD = apiNoticeCase.getTbNoticeCase().getNoticeCaseID().toString();
             final String mode = apiNoticeCase.getMode().toString();
-//            AlertDialog.Builder builder =
-//                    new AlertDialog.Builder(getActivity());
-//            builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepTD);
-//
-//            builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int id) {
 
-//                }
-//            });
-//
-//            if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("receive")) {
-//                builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-
-//                    }
-//                });
-//            }
-//
-//            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.dismiss();
-//                }
-//            });
-//            builder.create();
-//            builder.show();
 
             PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
             //Inflating the Popup using xml file

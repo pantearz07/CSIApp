@@ -15,33 +15,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
-            android:layout_marginTop="100dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/logo_csi" />
-
+                android:src="@drawable/logo_csi"
+                android:layout_gravity="center_horizontal"/>
             <TextView
                 android:id="@+id/txtTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:gravity="center_horizontal"
-                android:text="Management System"
+                android:layout_marginTop="5dp"
                 android:textColor="@color/dark_red_2"
-                android:textSize="@dimen/small_text" />
-
+                android:textSize="@dimen/small_text"
+                android:text="Management System"/>
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/usernameEdtLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" >
+                android:layout_marginTop="10dp">
 
                 <EditText
                     android:id="@+id/usernameEdt"
@@ -54,7 +51,6 @@
                 android:id="@+id/passwordEdtLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_below="@+id/usernameEdtLayout">
 
                 <EditText
@@ -67,49 +63,41 @@
 
             <Button
                 android:id="@+id/loginButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/passwordEdtLayout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:text="เข้าสู่ระบบ"
-                style="@style/buttonStyle" />
+                android:text="เข้าสู่ระบบ" />
 
+            <Button
+                android:id="@+id/settingip_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/loginButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="@string/setip" />
 
+            <TextView
+                android:id="@+id/txt_ipvalue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/ssmall_text"
+
+                android:layout_marginTop="5dp"
+                android:text="ip"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_ipvalue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|bottom"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:gravity="right"
-            android:text="ip............"
-            android:paddingEnd="60dp"
-            android:textSize="@dimen/ssmall_text" />
-
-        <ImageButton
-            android:id="@+id/settingip_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="right|bottom"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/transparent"
-            android:scaleType="fitStart"
-            android:src="@drawable/ic_ipaddress"
-            android:text="@string/setip" />
         <!--<android.support.v7.widget.Toolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
-        <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
-        <!--app:title="@string/login" />-->
+            <!--android:id="@+id/toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+            <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+            <!--app:title="@string/login" />-->
 
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

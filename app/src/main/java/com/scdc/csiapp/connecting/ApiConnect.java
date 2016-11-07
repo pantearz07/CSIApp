@@ -525,18 +525,27 @@ public class ApiConnect {
                 .build();
         try {
             Response response = okHttpClient.newCall(request).execute();
+            ApiStatus apiStatus = new ApiStatus();
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
-                return gson.fromJson(response.body().string(), ApiStatus.class);
+                try {
+                    return gson.fromJson(response.body().string(), ApiStatus.class);
+                } catch (JsonSyntaxException e) {
+                    Log.d(TAG, "getRegistrationGCM fail format");
+                    apiStatus.setStatus("fail");
+                }
             } else {
                 Log.d(TAG, "Not Success getRegistrationGCM" + response.code());
-                return null;
+                apiStatus.setStatus("fail");
             }
+            response.close();
+            return apiStatus;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
-
-            return null;
+            Log.d(TAG, "ERROR in getRegistrationGCM : " + e.getMessage());
+            ApiStatus apiStatus = new ApiStatus();
+            apiStatus.setStatus("fail");
+            return apiStatus;
         }
     }
 
@@ -564,18 +573,27 @@ public class ApiConnect {
                 .build();
         try {
             Response response = okHttpClient.newCall(request).execute();
+            ApiStatus apiStatus = new ApiStatus();
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
-                return gson.fromJson(response.body().string(), ApiStatus.class);
+                try {
+                    return gson.fromJson(response.body().string(), ApiStatus.class);
+                } catch (JsonSyntaxException e) {
+                    Log.d(TAG, "updateStatusCase fail format");
+                    apiStatus.setStatus("fail");
+                }
             } else {
                 Log.d(TAG, "Not Success updateStatusCase" + response.code());
-                return null;
+                apiStatus.setStatus("fail");
             }
+            response.close();
+            return apiStatus;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
-
-            return null;
+            Log.d(TAG, "ERROR in updateStatusCase : " + e.getMessage());
+            ApiStatus apiStatus = new ApiStatus();
+            apiStatus.setStatus("fail");
+            return apiStatus;
         }
     }
 
@@ -600,18 +618,28 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
 //            Log.d(TAG, "post data" + response.body().string());
+            ApiStatusResult apiStatusResult = new ApiStatusResult();
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
-                return gson.fromJson(response.body().string(), ApiStatusResult.class);
+                try {
+                    return gson.fromJson(response.body().string(), ApiStatusResult.class);
+                } catch (JsonParseException e) {
+                    Log.d(TAG, "saveNewNoticeCase fail format");
+                    apiStatusResult.setStatus("fail");
+                }
+
             } else {
                 Log.d(TAG, "Not Success saveNewNoticeCase" + response.code());
-                return null;
+                apiStatusResult.setStatus("fail");
             }
+            response.close();
+            return apiStatusResult;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
-
-            return null;
+            Log.d(TAG, "ERROR in saveNewNoticeCase : " + e.getMessage());
+            ApiStatusResult apiStatusResult = new ApiStatusResult();
+            apiStatusResult.setStatus("fail");
+            return apiStatusResult;
         }
     }
 
@@ -702,20 +730,22 @@ public class ApiConnect {
                     Log.d(TAG, "downloadDocFile" + apiStatusResult.getData().getReason());
                     Log.d(TAG, "downloadDocFile" + apiStatusResult.getData().getResult());
                 } catch (JsonParseException e) {
-                    Log.d(TAG, "checkConnect fail format");
+                    Log.d(TAG, "downloadDocFile fail format");
                     apiStatusResult.setStatus("fail");
                 }
-                response.close();
-                return apiStatusResult;
+
             } else {
-                Log.d(TAG, "Not Success " + response.code());
-                return null;
+                Log.d(TAG, "Not Success downloadDocFile" + response.code());
+                apiStatusResult.setStatus("fail");
             }
+            response.close();
+            return apiStatusResult;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
-
-            return null;
+            Log.d(TAG, "ERROR in downloadDocFile : " + e.getMessage());
+            ApiStatusResult apiStatusResult = new ApiStatusResult();
+            apiStatusResult.setStatus("fail");
+            return apiStatusResult;
         }
     }
 
@@ -795,20 +825,22 @@ public class ApiConnect {
                     Log.d(TAG, apiStatus.getData().getReason());
                     return apiStatus;
                 } catch (JsonParseException e) {
-                    Log.d(TAG, "checkConnect fail format");
+                    Log.d(TAG, "saveCaseReport fail format");
                     apiStatus.setStatus("fail");
                 }
-                response.close();
-                return apiStatus;
+
             } else {
                 Log.d(TAG, "saveCaseReport Not Success " + response.code());
-                return null;
+                apiStatus.setStatus("fail");
             }
+            response.close();
+            return apiStatus;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
-
-            return null;
+            Log.d(TAG, "ERROR in saveCaseReport : " + e.getMessage());
+            ApiStatusData apiStatus = new ApiStatusData();
+            apiStatus.setStatus("fail");
+            return apiStatus;
         }
     }
     //** ใช้อัปเดทข้อมูล User , Official ผ่าน function editProfile
@@ -862,20 +894,22 @@ public class ApiConnect {
                     Log.d(TAG, "editProfile Result " + apiStatusResult.getData().getResult());
                     return apiStatusResult;
                 } catch (JsonParseException e) {
-                    Log.d(TAG, "checkConnect fail format");
+                    Log.d(TAG, "editProfile fail format");
                     apiStatusResult.setStatus("fail");
                 }
-                response.close();
-                return apiStatusResult;
+
             } else {
-                Log.d(TAG, "Not Success " + response.code());
-                return null;
+                Log.d(TAG, "Not Success editProfile" + response.code());
+                apiStatusResult.setStatus("fail");
             }
+            response.close();
+            return apiStatusResult;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "ERROR in login : " + e.getMessage());
-
-            return null;
+            Log.d(TAG, "ERROR in editProfile : " + e.getMessage());
+            ApiStatusResult apiStatusResult = new ApiStatusResult();
+            apiStatusResult.setStatus("fail");
+            return apiStatusResult;
         }
     }
 
@@ -915,17 +949,67 @@ public class ApiConnect {
                     Log.d(TAG, "checkUsername fail format");
                     apiStatus.setStatus("fail");
                 }
-                response.close();
-                return apiStatus;
+
             } else {
                 Log.d(TAG, "Not Success checkUsername " + response.code());
-                return null;
+                apiStatus.setStatus("fail");
             }
+            response.close();
+            return apiStatus;
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in checkUsername : " + e.getMessage());
+            ApiStatus apiStatus = new ApiStatus();
+            apiStatus.setStatus("fail");
+            return apiStatus;
+        }
+    }
 
-            return null;
+    public ApiStatus deleteNoticeCase(String Mobile_CaseID) {
+        mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        String Username = mManager.getPreferenceData(mDbHelper.COL_id_users);
+        String Password = mManager.getPreferenceData(mDbHelper.COL_pass);
+
+        MultipartBody.Builder formBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("Username", Username)
+                .addFormDataPart("Password", Password)
+                .addFormDataPart("Mobile_CaseID", Mobile_CaseID);
+
+        RequestBody formBody = formBuilder.build();
+
+        Request request = new Request.Builder()
+                .url(urlMobileIP + "deleteNoticeCase")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            ApiStatus apiStatus = new ApiStatus();
+//            Log.d(TAG, "post data" + response.body().string());
+            if (response.isSuccessful()) {
+
+                Gson gson = new GsonBuilder().create();
+                try {
+                    apiStatus = gson.fromJson(response.body().string(), ApiStatus.class);
+                    Log.d(TAG, "deleteNoticeCase Reason " + apiStatus.getData().getReason());
+                    return apiStatus;
+                } catch (JsonParseException e) {
+                    Log.d(TAG, "deleteNoticeCase fail format");
+                    apiStatus.setStatus("fail");
+                }
+            } else {
+                Log.d(TAG, "Not Success deleteNoticeCase " + response.code());
+                apiStatus.setStatus("fail");
+            }
+            response.close();
+            return apiStatus;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in deleteNoticeCase : " + e.getMessage());
+            ApiStatus apiStatus = new ApiStatus();
+            apiStatus.setStatus("fail");
+            return apiStatus;
         }
     }
 
@@ -956,7 +1040,7 @@ public class ApiConnect {
                     String x = apiListScheduleInvestigatesServer.getData().getResult().get(i).getTbScheduleInvestigates().ScheduleInvestigateID;
                     Log.d(TAG, "ScheduleInvestigateID :" + x);
                     String w = gson.toJson(apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup());
-                    Log.d(TAG, "toJson " + w);
+//                    Log.d(TAG, "toJson " + w);
                     for (int j = 0; j < apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().size(); j++) {
 
                         String y = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID;

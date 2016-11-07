@@ -10,6 +10,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -32,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -111,6 +113,10 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
     String address, amphur, province, country, postalCode, knownName = "null";
 
+    boolean statusConnect = false;
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 10; //10 second
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -158,9 +164,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
         editTextPhone1.addTextChangedListener(new EmerTextWatcher(editTextPhone1));
         ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone1);
-        if(EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
+        if (EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
             ic_telphone1.setEnabled(true);
-        }else{
+        } else {
             ic_telphone1.setEnabled(false);
         }
         ic_telphone1.setOnClickListener(new EmergencyDetailTabFragment());
@@ -389,9 +395,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
         editTextSuffererPhone.addTextChangedListener(new EmerTextWatcher(editTextSuffererPhone));
         ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
-        if(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
+        if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
             ic_telphone2.setEnabled(true);
-        }else{
+        } else {
             ic_telphone2.setEnabled(false);
         }
         ic_telphone2.setOnClickListener(new EmergencyDetailTabFragment());
@@ -448,6 +454,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
         }
     }
+
 
     public void onStart() {
         super.onStart();
@@ -538,32 +545,43 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchMap:
-//                lat = EmergencyTabFragment.tbNoticeCase.Latitude;
-//                lng = EmergencyTabFragment.tbNoticeCase.Longitude;
-                if (lat != null || lng != null) {
-                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                if (cd.isNetworkAvailable()) {
+                    if (lat != null || lng != null) {
+                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
-                } else {
-                    //Searches for 'Locale name' province amphur district
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q="
-                            + EmergencyTabFragment.tbNoticeCase.LocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    } else {
+                        //Searches for 'Locale name' province amphur district
+                        Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q="
+                                + EmergencyTabFragment.tbNoticeCase.LocaleName + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+
+                    }
+                }else {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.network_unavailable),
+                            Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btnButtonSearchLatLong:
-                lat = String.valueOf(mLastLocation.getLatitude());
-                lng = String.valueOf(mLastLocation.getLongitude());
-                Log.d(TAG, "Go to Google map " + lat + " " + lng);
-                valueLat.setText(lat);
-                valueLong.setText(lng);
-                EmergencyTabFragment.tbNoticeCase.Latitude = lat;
-                EmergencyTabFragment.tbNoticeCase.Longitude = lng;
+                if (cd.isNetworkAvailable()) {
+                    lat = String.valueOf(mLastLocation.getLatitude());
+                    lng = String.valueOf(mLastLocation.getLongitude());
+                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                    valueLat.setText(lat);
+                    valueLong.setText(lng);
+                    EmergencyTabFragment.tbNoticeCase.Latitude = lat;
+                    EmergencyTabFragment.tbNoticeCase.Longitude = lng;
+                }else {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.network_unavailable),
+                            Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.editReceiveCaseDate:
                 Log.i("Click ReceiveCaseDate", "null");
@@ -596,7 +614,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
                 break;
             case R.id.ic_telphone1:
-                if(EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
+                if (EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
                     try {
                         Intent callIntent = new Intent(Intent.ACTION_CALL);
                         callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.CaseTel.toString()));
@@ -608,7 +626,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.ic_telphone2:
-                if(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
+                if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
                     try {
                         Intent callIntent = new Intent(Intent.ACTION_CALL);
                         callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum));
@@ -691,10 +709,14 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 break;
                             }
                         }
-                        setSelectAmphur(provinceid);
                         Log.i(TAG, " show province " + province + " provinceid " + provinceid);
-                        EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = provinceid;
-                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+
+                        if (provinceid != null) {
+                            setSelectAmphur(provinceid);
+
+                            EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = provinceid;
+                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+                        }
                     } else {
                         spinnerProvince.setSelection(0);
                     }
@@ -709,11 +731,15 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 spinnerAmphur.setSelection(i);
                                 amphurid = mAmphurArray[i][0];
                                 sAmphurName = mAmphurArray[i][2].toString();
-                                Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
-                                EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = amphurid;
-                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+
                                 break;
                             }
+                        }
+                        Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+
+                        if (amphurid != null) {
+                            EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = amphurid;
+                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
                         }
                     } else {
                         spinnerAmphur.setSelection(0);
@@ -729,11 +755,14 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 spinnerDistrict.setSelection(i);
                                 districtid = mDistrictArray[i][0];
                                 sDistrictName = mDistrictArray[i][2].toString();
-                                Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
-                                EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = districtid;
-                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
                                 break;
                             }
+                        }
+                        Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+
+                        if (districtid != null) {
+                            EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = districtid;
+                            Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
                         }
                     } else {
                         spinnerDistrict.setSelection(0);

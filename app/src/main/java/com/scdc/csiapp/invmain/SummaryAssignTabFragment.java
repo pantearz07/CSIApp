@@ -1,6 +1,7 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +27,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
@@ -49,6 +52,9 @@ public class SummaryAssignTabFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
+    Handler mHandler = new Handler();
+    boolean statusConnect = false;
+    private final static int INTERVAL = 1000 * 10; //10 second
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
     GetDateTime getDateTime;
@@ -77,6 +83,7 @@ public class SummaryAssignTabFragment extends Fragment {
     CSIDataTabFragment csiDataTabFragment;
     TextView editSceneNoticeDate, editSceneNoticeTime;
     String InqTel, InvTel;
+    boolean status_updatecase = false;
 
     @Nullable
     @Override
@@ -254,7 +261,7 @@ public class SummaryAssignTabFragment extends Fragment {
                 || AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate.equals("0000-00-00")) {
             edtSceneNoticeDateTime.setText("-");
 
-        }  else {
+        } else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate + " น.");
         }
 
@@ -289,14 +296,13 @@ public class SummaryAssignTabFragment extends Fragment {
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
             btnNoticecase.setEnabled(false);
-        } else if (AssignTabFragment.mode == "edit") {
-            btnDownloadfile.setEnabled(false);
         }
 
         fabBtn.setOnClickListener(new SummaryOnClickListener());
 
         return viewSummaryCSI;
     }
+
 
     public void onStart() {
         super.onStart();
@@ -312,6 +318,21 @@ public class SummaryAssignTabFragment extends Fragment {
     }
 
     class UpdateStatusCase extends AsyncTask<ApiCaseScene, Void, ApiStatus> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.processing));
+            progressDialog.show();
+        }
 
         @Override
         protected ApiStatus doInBackground(ApiCaseScene... params) {
@@ -321,38 +342,49 @@ public class SummaryAssignTabFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiStatus apiStatus) {
             super.onPostExecute(apiStatus);
-//            Log.d(TAG, apiStatus.getStatus());
+            progressDialog.dismiss();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                status_updatecase = true;
                 Log.d(TAG, apiStatus.getData().getReason());
-                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.edit), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Bundle i = new Bundle();
-                                    i.putSerializable(csiDataTabFragment.Bundle_Key, AssignTabFragment.apiCaseScene);
-                                    i.putString(csiDataTabFragment.Bundle_mode, "edit");
-                                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                                    csiDataTabFragment.setArguments(i);
-                                    fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+                boolean isSuccess = dbHelper.updateAlldataCase(AssignTabFragment.apiCaseScene);
+                if (isSuccess) {
+                    //แก้ไขตารางในเซิฟก่อน แล้วเด้งไปหน้าใหม่
+                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.edit), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Bundle i = new Bundle();
+                                        i.putSerializable(csiDataTabFragment.Bundle_Key, AssignTabFragment.apiCaseScene);
+                                        i.putString(csiDataTabFragment.Bundle_mode, "edit");
+                                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                                        csiDataTabFragment.setArguments(i);
+                                        fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
 
-                                }
-                            });
-                    snackbar.show();
+                                    }
+                                });
+                        snackbar.show();
+                    }
+                } else {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+
+                                    }
+                                });
+                        snackbar.show();
+                    }
                 }
 
             } else {
-                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason() + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-
-                                }
-                            });
-                    snackbar.show();
-                }
+                status_updatecase = false;
+                Toast.makeText(getActivity(),
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -361,6 +393,7 @@ public class SummaryAssignTabFragment extends Fragment {
         public void onClick(View v) {
 
             if (v == btnAcceptCase) {
+
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                 AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "accept";
 
@@ -382,37 +415,11 @@ public class SummaryAssignTabFragment extends Fragment {
                 AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 AssignTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
                 //save ลงมือถือ
-//                boolean isSuccess1 = dbHelper.saveCaseScene(AssignTabFragment.apiCaseScene.getTbCaseScene());
-//                if (isSuccess1) {
-                boolean isSuccess = dbHelper.updateAlldataCase(AssignTabFragment.apiCaseScene);
-                if (isSuccess) {
-                    //แก้ไขตารางในเซิฟก่อน แล้วเด้งไปหน้าใหม่
-                    UpdateStatusCase statusCase = new UpdateStatusCase();
-                    statusCase.execute(AssignTabFragment.apiCaseScene);
-
-
-                } else {
-                    if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-
-                                    }
-                                });
-                        snackbar.show();
-                    }
-                }
-            }
-            if (v == btnDownloadfile) {
-                Log.i(TAG, "btnDownloadfile");
-                // new DownloadFileAsync().execute(reportID);
-                //
-            }
-            if (v == fabBtn) {
+                UpdateStatusCase statusCase = new UpdateStatusCase();
+                statusCase.execute(AssignTabFragment.apiCaseScene);
 
             }
+
             if (v == editSceneNoticeDate) {
                 Log.i("Click SceneNoticeDate", editSceneNoticeDate.getText().toString());
                 DateDialog dialogKnowCaseDate = new DateDialog(v);

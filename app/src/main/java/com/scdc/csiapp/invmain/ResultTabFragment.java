@@ -21,7 +21,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -92,23 +91,23 @@ public class ResultTabFragment extends Fragment {
     // gatewaycriminal : ทางเข้าออกของคนร้าย
     private ArrayList<HashMap<String, String>> gatewaycriminalList;
     private ListView listViewGatewayCriminal;
-    private Button btnAddGatewayCriminal;
+    private ImageButton btnAddGatewayCriminal;
     public static List<TbGatewayCriminal> tbGatewayCriminals = null;
     // clueshown : ร่องรอยที่ปรากฏ
     private ArrayList<HashMap<String, String>> clueShownList;
     private ListView listViewClueShown;
-    private Button btnAddClueShown;
+    private ImageButton btnAddClueShown;
     public static List<TbClueShown> tbClueShowns = null;
     public static List<TbResultScene> tbResultScenes = null;
     // property
     private ArrayList<HashMap<String, String>> propertylossList;
     private ListView listViewPropertyLoss;
-    private Button btnPropertyLoss;
+    private ImageButton btnPropertyLoss;
     public static List<TbPropertyLoss> tbPropertyLosses = null;
     // btnAddEvidences
     private ArrayList<HashMap<String, String>> evidencesList;
     private ListView listViewEvidences;
-    private Button btnAddEvidences;
+    private ImageButton btnAddEvidences;
     public static List<TbFindEvidence> tbFindEvidences = null;
     String sRSID;
     TextView txtPhoto, txtVideo;
@@ -313,7 +312,7 @@ public class ResultTabFragment extends Fragment {
         listViewGatewayCriminal.setVisibility(View.GONE);
         listViewGatewayCriminal.setOnTouchListener(new ListviewSetOnTouchListener());
         ShowSelectedGatewayCriminal();
-        btnAddGatewayCriminal = (Button) viewDetails.findViewById(R.id.btnAddGatewayCriminal);
+        btnAddGatewayCriminal = (ImageButton) viewDetails.findViewById(R.id.btnAddGatewayCriminal);
         btnAddGatewayCriminal.setOnClickListener(new ResultOnClickListener());
 // ร่องรอยที่ปรากฏ ตรวจพบร่องรอยการรื้อค้น/งัดแงะบริเวณ clueshown
         if (CSIDataTabFragment.apiCaseScene.getTbClueShowns() == null) {
@@ -330,7 +329,7 @@ public class ResultTabFragment extends Fragment {
         listViewClueShown.setVisibility(View.GONE);
         listViewClueShown.setOnTouchListener(new ListviewSetOnTouchListener());
         ShowSelectedClueShown();
-        btnAddClueShown = (Button) viewDetails.findViewById(R.id.btnAddClueShown);
+        btnAddClueShown = (ImageButton) viewDetails.findViewById(R.id.btnAddClueShown);
         btnAddClueShown.setOnClickListener(new ResultOnClickListener());
 
 // รายการทรัพย์สินที่คนร้ายโจรกรรม
@@ -346,7 +345,7 @@ public class ResultTabFragment extends Fragment {
         listViewPropertyLoss.setVisibility(View.GONE);
         listViewPropertyLoss.setOnTouchListener(new ListviewSetOnTouchListener());
         ShowSelectedPropertyloss();
-        btnPropertyLoss = (Button) viewDetails.findViewById(R.id.btnPropertyLoss);
+        btnPropertyLoss = (ImageButton) viewDetails.findViewById(R.id.btnPropertyLoss);
         btnPropertyLoss.setOnClickListener(new ResultOnClickListener());
 
 
@@ -363,7 +362,7 @@ public class ResultTabFragment extends Fragment {
         listViewEvidences.setVisibility(View.GONE);
         listViewEvidences.setOnTouchListener(new ListviewSetOnTouchListener());
         ShowSelectedFindEvidence();
-        btnAddEvidences = (Button) viewDetails.findViewById(R.id.btnAddEvidences);
+        btnAddEvidences = (ImageButton) viewDetails.findViewById(R.id.btnAddEvidences);
         btnAddEvidences.setOnClickListener(new ResultOnClickListener());
 
 
@@ -1086,10 +1085,9 @@ public class ResultTabFragment extends Fragment {
             txtPropertyLossName.setText(String.valueOf(position + 1) + ") " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossName());
             final TextView txtPropertyLossAmount = (TextView) convertView
                     .findViewById(R.id.txtPropertyLossAmount);
-            txtPropertyLossAmount.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber());
-            final TextView txtPropertyLossUnit = (TextView) convertView
-                    .findViewById(R.id.txtPropertyLossUnit);
-            txtPropertyLossUnit.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossUnit());
+            txtPropertyLossAmount.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber()
+            +" "+CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossUnit());
+
             final TextView txtPropertyLossPosition = (TextView) convertView
                     .findViewById(R.id.txtPropertyLossPosition);
             txtPropertyLossPosition.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossPosition());

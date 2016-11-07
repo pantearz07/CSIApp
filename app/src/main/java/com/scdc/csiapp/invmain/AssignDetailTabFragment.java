@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -33,6 +34,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -57,7 +59,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     // Google play services
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-
+    boolean statusConnect = false;
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -103,7 +105,8 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
 
     private static final String TAG = "DEBUG-AssignDetailTabFragment";
-
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 10; //10 second
     View viewReceiveCSI;
     Context context;
     ListView listViewInvestigator;
@@ -417,7 +420,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             editTextSuffererPhone.setText("");
         } else {
             editTextSuffererPhone.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
-            phone =AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum;
+            phone = AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum;
         }
         ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
         ic_telphone2.setOnClickListener(new AssignDetailTabFragment());
@@ -472,6 +475,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         return viewReceiveCSI;
     }
 
+
     public void onStart() {
         super.onStart();
         if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
@@ -511,21 +515,27 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
 
                 break;
             case R.id.btnButtonSearchMap:
-                lat = AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude;
-                lng = AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude;
-                if (lat != null || lng != null) {
-                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                if (cd.isNetworkAvailable()) {
+                    lat = AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude;
+                    lng = AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude;
+                    if (lat != null || lng != null) {
+                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    } else {
+                        //Searches for 'Locale name' province amphur district
+                        Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + editAddrDetail.getText().toString() + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    }
                 } else {
-                    //Searches for 'Locale name' province amphur district
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + editAddrDetail.getText().toString() + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+                    Toast.makeText(getActivity(),
+                            getString(R.string.network_unavailable),
+                            Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btnButtonSearchLatLong:

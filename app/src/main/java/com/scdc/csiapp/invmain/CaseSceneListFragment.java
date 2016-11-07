@@ -77,7 +77,7 @@ public class CaseSceneListFragment extends Fragment {
     TbOfficial tbOfficial;
     TbUsers tbUsers;
     Handler mHandler = new Handler();
-    private final static int INTERVAL = 1000 * 20; //20 second
+    private final static int INTERVAL = 1000 * 10; //10 second
 
     @Nullable
     @Override

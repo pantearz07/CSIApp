@@ -17,8 +17,8 @@ public class HighlightWeekendsDecorator implements DayViewDecorator {
 
     private final Calendar calendar = Calendar.getInstance();
     private final Drawable highlightDrawable;
-    private static final int color = Color.parseColor("#228BC34A");
-
+    private static final int color = Color.parseColor("#30ec971f");
+//    228BC34A
     public HighlightWeekendsDecorator() {
         highlightDrawable = new ColorDrawable(color);
     }

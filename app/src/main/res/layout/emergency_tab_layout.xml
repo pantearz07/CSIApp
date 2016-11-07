@@ -342,12 +342,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/selector_button"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
                         android:text="บันทึกพิกัดที่เกิดเหตุ"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/small_text" />
+                        style="@style/buttonStyle"  />
 
                     <Button
                         android:id="@+id/btnButtonSearchMap"
@@ -355,12 +353,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/selector_button"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
                         android:text="นำเส้นทาง"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/small_text" />
+                        style="@style/buttonStyle" />
 
                 </LinearLayout>
 

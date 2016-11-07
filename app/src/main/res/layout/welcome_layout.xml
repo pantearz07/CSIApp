@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/dark_red"
-    android:orientation="vertical"
+    android:id="@+id/welcome_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_brown"
     android:gravity="center_vertical|center_horizontal"
-    android:id="@+id/welcome_root_view">
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/logo_csi" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-
         android:gravity="center_vertical|center_horizontal"
-        android:text="CSI\nManagement\nSystem"
+        android:text="Management System"
         android:textColor="@color/white"
-        android:textSize="50sp"
-        android:textStyle="bold"/>
+        android:textSize="30dp"
+        android:textStyle="bold" />
 </LinearLayout>

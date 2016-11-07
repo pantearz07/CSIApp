@@ -14,6 +14,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -39,6 +40,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -127,6 +129,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     String[][] mSelectDataInvestigatorArray = null;
     private ArrayList<HashMap<String, String>> InvestigatorList;
 
+    boolean statusConnect = false;
     ViewGroup viewByIdaddsufferer;
     View viewReceiveCSI;
     Context context;
@@ -140,6 +143,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     ListView listViewAddSceneInvestDateTime, listViewInvestigator;
     List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
     String address, amphur, province, country, postalCode, knownName = "null";
+
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 10; //10 second
 
     @Nullable
     @Override
@@ -464,8 +470,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             editCircumstanceOfCaseDetail.setEnabled(false);
             edtVehicleDetail.setEnabled(false);
         }
+
         return viewReceiveCSI;
     }
+
 
     private void setSelectAmphur(String provinceid) {
         mAmphurArray = dbHelper.SelectAmphur(provinceid);
@@ -618,94 +626,105 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
         Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+        if (cd.isNetworkAvailable()) {
+            Geocoder gcd = new Geocoder(context, Locale.getDefault());
+            List<Address> addresses = null;
+            try {
+                // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-        Geocoder gcd = new Geocoder(context, Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-            if (addresses != null && addresses.size() > 0) {
+                if (addresses != null && addresses.size() > 0) {
 
 
-                address = addresses.get(0).getAddressLine(0);
-                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                amphur = addresses.get(0).getLocality();
-                province = addresses.get(0).getAdminArea();
-                country = addresses.get(0).getCountryName();
-                postalCode = addresses.get(0).getPostalCode();
-                knownName = addresses.get(0).getFeatureName();
+                    address = addresses.get(0).getAddressLine(0);
+                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    amphur = addresses.get(0).getLocality();
+                    province = addresses.get(0).getAdminArea();
+                    country = addresses.get(0).getCountryName();
+                    postalCode = addresses.get(0).getPostalCode();
+                    knownName = addresses.get(0).getFeatureName();
 
-                Log.d(TAG, "get mLastLocation address" + address);
-                Log.d(TAG, "get mLastLocation amphur " + amphur);
-                Log.d(TAG, "get mLastLocation province " + province);
-                Log.d(TAG, "get mLastLocation country " + country);
-                Log.d(TAG, "get mLastLocation postalCode " + postalCode);
-                Log.d(TAG, "get mLastLocation knownName " + knownName);
+                    Log.d(TAG, "get mLastLocation address" + address);
+                    Log.d(TAG, "get mLastLocation amphur " + amphur);
+                    Log.d(TAG, "get mLastLocation province " + province);
+                    Log.d(TAG, "get mLastLocation country " + country);
+                    Log.d(TAG, "get mLastLocation postalCode " + postalCode);
+                    Log.d(TAG, "get mLastLocation knownName " + knownName);
 
-            }
-            if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
-                if (province != null || province != "null") {
-                    for (int i = 0; i < mProvinceArray.length; i++) {
-                        if (province.trim().equals(mProvinceArray[i][2])) {
-                            spinnerProvince.setSelection(i);
-                            provinceid = mProvinceArray[i][0];
-
-                            oldProvince = false;
-                            break;
-                        }
-                    }
-                    setSelectAmphur(provinceid);
-                    Log.i(TAG, " show province " + province + " provinceid " + provinceid);
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID = provinceid;
-                    Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID);
-                } else {
-                    spinnerProvince.setSelection(0);
                 }
-            }
-            if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+                if (provinceid == null || provinceid.equals("") || provinceid.equals("null")) {
+                    if (province != null || province != "null") {
+                        for (int i = 0; i < mProvinceArray.length; i++) {
+                            if (province.trim().equals(mProvinceArray[i][2])) {
+                                spinnerProvince.setSelection(i);
+                                provinceid = mProvinceArray[i][0];
 
-                if (amphur != null || amphur != "null") {
-                    amphur = amphur.replace("อำเภอ", "");
-                    Log.i(TAG, "have amphur" + amphur);
-                    for (int i = 0; i < mAmphurArray.length; i++) {
-                        if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
-                            spinnerAmphur.setSelection(i);
-                            amphurid = mAmphurArray[i][0];
-                            sAmphurName = mAmphurArray[i][2].toString();
-                            Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+                                oldProvince = false;
+                                break;
+                            }
+                        }
+                        Log.i(TAG, " show province " + province + " provinceid " + provinceid);
+
+                        if (provinceid != null) {
+                            setSelectAmphur(provinceid);
+                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID = provinceid;
+                            Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID);
+                        }
+                    } else {
+                        spinnerProvince.setSelection(0);
+                    }
+                }
+                if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
+
+                    if (amphur != null || amphur != "null") {
+                        amphur = amphur.replace("อำเภอ", "");
+                        Log.i(TAG, "have amphur" + amphur);
+                        for (int i = 0; i < mAmphurArray.length; i++) {
+                            if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
+                                spinnerAmphur.setSelection(i);
+                                amphurid = mAmphurArray[i][0];
+                                sAmphurName = mAmphurArray[i][2].toString();
+
+
+                                break;
+                            }
+                        }
+                        Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+                        if (amphurid != null) {
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = amphurid;
                             Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
-                            break;
                         }
+                    } else {
+                        spinnerAmphur.setSelection(0);
                     }
-                } else {
-                    spinnerAmphur.setSelection(0);
                 }
-            }
-            if (districtid == null || districtid.equals("") || districtid.equals("null")) {
+                if (districtid == null || districtid.equals("") || districtid.equals("null")) {
 
-                if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
-                    knownName = knownName.replace("ตำบล", "");
-                    Log.i(TAG, "have knownName" + knownName);
-                    for (int i = 0; i < mDistrictArray.length; i++) {
-                        if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
-                            spinnerDistrict.setSelection(i);
-                            districtid = mDistrictArray[i][0];
-                            sDistrictName = mDistrictArray[i][2].toString();
-                            Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+                    if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
+                        knownName = knownName.replace("ตำบล", "");
+                        Log.i(TAG, "have knownName" + knownName);
+                        for (int i = 0; i < mDistrictArray.length; i++) {
+                            if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
+                                spinnerDistrict.setSelection(i);
+                                districtid = mDistrictArray[i][0];
+                                sDistrictName = mDistrictArray[i][2].toString();
+
+                                break;
+                            }
+                        }
+                        Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+                        if (districtid != null) {
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = districtid;
                             Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
-                            break;
                         }
+                    } else {
+                        spinnerDistrict.setSelection(0);
                     }
-                } else {
-                    spinnerDistrict.setSelection(0);
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "get mLastLocation error" + e.getMessage());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(TAG, "get mLastLocation error" + e.getMessage());
         }
     }
 
@@ -772,38 +791,49 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
             }
             if (v == btnButtonSearchMap) {
+                if (cd.isNetworkAvailable()) {
+                    if (lat != null || lng != null) {
+                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
-                if (lat != null || lng != null) {
-                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    } else {
+                        //Searches for 'Locale name' province amphur district
 
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+                        Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q="
+                                + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName
+                                + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    }
                 } else {
-                    //Searches for 'Locale name' province amphur district
-
-                    Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q="
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName
-                            + "+" + sDistrictName + "+" + sAmphurName + "+" + sProvinceName);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+                    Toast.makeText(getActivity(),
+                            getString(R.string.network_unavailable),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
             if (v == btnButtonSearchLatLong) {
-                lat = String.valueOf(mLastLocation.getLatitude());
+                if (cd.isNetworkAvailable()) {
+                    lat = String.valueOf(mLastLocation.getLatitude());
 //                lat = "16.438052";
-                lng = String.valueOf(mLastLocation.getLongitude());
+                    lng = String.valueOf(mLastLocation.getLongitude());
 //                lng = "102.799998";
-                Log.d(TAG, "Go to Google map " + lat + " " + lng);
-                valueLat.setText(lat);
-                valueLong.setText(lng);
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude = lat.toString();
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude = lng.toString();
+                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+                    valueLat.setText(lat);
+                    valueLong.setText(lng);
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude = lat.toString();
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude = lng.toString();
 
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().Latitude = lat.toString();
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().Longitude = lng.toString();
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().Latitude = lat.toString();
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().Longitude = lng.toString();
+                } else {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.network_unavailable),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
             if (v == editHappenCaseDate) {
                 Log.i("ClickHappenCaseDate", "null");

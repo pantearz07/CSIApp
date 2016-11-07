@@ -7,6 +7,7 @@
     <color name="orange">#FA0</color>
     <color name="white">#FFF</color>
     <color name="dark_red">#c0392b</color>
+    <color name="dark_red_2">#8A0808</color>
     <!--#8A0808-->
     <color name="dark_brown">#190707</color>
     <color name="red_pink">#FA5858</color>
@@ -23,6 +24,6 @@
     <color name="casestatus5">#286090</color>
     <color name="casestatus6">#D7DBDD</color>
     <color name="navy">#34495e</color>
-
+    <color name="gray_hint">#666666</color>
     <color name="lightgray">#D7DBDD</color>
 </resources>

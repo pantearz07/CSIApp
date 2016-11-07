@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,7 +63,8 @@ import java.util.Date;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    Button loginButton, settingip_btn;
+    Button loginButton;
+    ImageButton settingip_btn;
     private EditText mUsername;
     private EditText mPassword;
     private Context mContext;
@@ -106,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         getDateTime = new GetDateTime();
 
         loginButton = (Button) findViewById(R.id.loginButton);
-        settingip_btn = (Button) findViewById(R.id.settingip_btn);
+        settingip_btn = (ImageButton) findViewById(R.id.settingip_btn);
         loginButton.setEnabled(false);// ปิดการทำงานไว้จนกว่าจะตรวจว่าเชื่อมเซิร์ฟเวอร์ได้จริง
 
         mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์
@@ -431,8 +433,56 @@ public class LoginActivity extends AppCompatActivity {
                     snackbar = Snackbar.make(rootView, getString(R.string.cannot_connect_server), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
-                                public void onClick(View view) {
+                                public void onClick(View v) {
+                                    if (cd.isNetworkAvailable()) {
+                                        AlertDialog.Builder builder =
+                                                new AlertDialog.Builder(LoginActivity.this);
+                                        LayoutInflater inflater = getLayoutInflater();
 
+                                        View view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                                        builder.setView(view);
+                                        final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+
+                                        builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (ipvalueEdt.getText().equals("")) {
+                                                    Toast.makeText(getApplicationContext(),
+                                                            getString(R.string.please_input_data),
+                                                            Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    String ipvalue = ipvalueEdt.getText().toString();
+                                                    WelcomeActivity.api.updateIP(ipvalue);
+
+                                                    if (snackbar != null) {
+                                                        snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                                    }
+                                                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+                                                    txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
+
+                                                    Toast.makeText(getApplicationContext(),
+                                                            getString(R.string.save_complete),
+                                                            Toast.LENGTH_SHORT).show();
+                                                    dialog.dismiss();
+                                                }
+                                            }
+                                        });
+
+                                        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+
+                                        builder.show();
+
+                                    } else {
+                                        Toast.makeText(getBaseContext(),
+                                                getString(R.string.network_unavailable),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             });
                     snackbar.show();

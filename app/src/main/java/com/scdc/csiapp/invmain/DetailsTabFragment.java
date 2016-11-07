@@ -126,7 +126,7 @@ public class DetailsTabFragment extends Fragment {
     public static String Bundle_Inside_mode = "mode";
     public static String Bundle_Index = "position";
     public static List<TbSceneFeatureInSide> tbSceneFeatureInSideList = null;
-    Button btnAddFeatureInside;
+    ImageButton btnAddFeatureInside;
     ListView listViewAddFeatureInside;
     AddFeatureInsideFragment addFeatureInsideFragment;
     public static List<TbMultimediaFile> tbMultimediaFiles = null;
@@ -342,7 +342,7 @@ public class DetailsTabFragment extends Fragment {
         editDetailInside.addTextChangedListener(new DetailTextWatcher(editDetailInside));
         listViewAddFeatureInside = (ListView) viewDetails
                 .findViewById(R.id.listViewAddFeatureInside);
-        btnAddFeatureInside = (Button) viewDetails
+        btnAddFeatureInside = (ImageButton) viewDetails
                 .findViewById(R.id.btnAddFeatureInside);
 
         listViewAddFeatureInside.setVisibility(View.GONE);
