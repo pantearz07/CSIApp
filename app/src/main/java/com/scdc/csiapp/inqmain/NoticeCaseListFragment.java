@@ -44,7 +44,10 @@ import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -463,17 +466,21 @@ public class NoticeCaseListFragment extends Fragment {
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListNoticeCase.getData().getResult();
                 //caseList.get(2).setMode("online");
-                for (int i = 0; i < caseList.size(); i++) {
-                    Log.d(TAG, caseList.get(i).getMode());
-                }
 
-                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncNoticeCase ปิดไว้ก่อน เพราะไม่ต้องดึงมาทั้งหมดไม่งั้นจะหนักเครื่องเฉยๆ
-                //int size = caseList.size();
-                //List<TbNoticeCase> tbNoticeCases = new ArrayList<>(size);
-                //for (int i = 0; i < size; i++) {
-                //    tbNoticeCases.add(caseList.get(i).getTbNoticeCase());
-                //}
-                //mDbHelper.syncNoticeCase(tbNoticeCases);
+                Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
+                    @Override
+                    public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                        SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + obj1.getTbNoticeCase().ReceivingCaseTime;
+                        String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + obj2.getTbNoticeCase().ReceivingCaseTime;
+                        try {
+                            return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return 0;
+                        }
+                    }
+                });
 
                 // เอาข้อมูลไปแสดงใน RV
                 apiNoticeCaseListAdapter.notifyDataSetChanged();

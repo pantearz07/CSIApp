@@ -99,49 +99,52 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_layout);
         mContext = this;
         mManager = new PreferenceData(this);
-
-        txt_username = mManager.getPreferenceData(mManager.KEY_USERNAME);
-
         cd = new ConnectionDetector(getApplicationContext());
-
         mDbHelper = new DBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
 
-        loginButton = (Button) findViewById(R.id.loginButton);
-        settingip_btn = (ImageButton) findViewById(R.id.settingip_btn);
+        bindView();
+
+        txt_username = mManager.getPreferenceData(mDbHelper.COL_id_users);
+
         loginButton.setEnabled(false);// ปิดการทำงานไว้จนกว่าจะตรวจว่าเชื่อมเซิร์ฟเวอร์ได้จริง
 
         mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์
 
+        loginButton.setOnClickListener(new LoginOnClickListener());
+        settingip_btn.setOnClickListener(new LoginOnClickListener());
+
+    }
+
+    private void bindView() {
         //เเสดงค่า IP ล่าสุด
         txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
         txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
-
+        loginButton = (Button) findViewById(R.id.loginButton);
+        settingip_btn = (ImageButton) findViewById(R.id.settingip_btn);
         mUsername = (EditText) findViewById(R.id.usernameEdt);
         mPassword = (EditText) findViewById(R.id.passwordEdt);
         mUsername.setText(txt_username);
         username = mUsername.getText().toString().trim().toLowerCase();
         password = mPassword.getText().toString().trim();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
+
+    private class LoginOnClickListener implements View.OnClickListener {
+        public void onClick(View v) {
+            if (v == loginButton) {
                 if (cd.isNetworkAvailable()) {
                     login();
                 } else {
                     switchPageToMain();
                 }
             }
-        });
-
-        //*** ส่วนการทำงานปุ่มตั้งค่า IP ***ฝฝ
-        // คำสั่งทั้งหมดในการทำงานของปุ่มตั่งค่า ทั้ง แสดง Dialog
-        // บันทึกการเปลี่ยนแปลงผ่าน updateIP จาก ApiConnect
-        // ปิดการแจ้งเตือนเก่า สั่งส่วนตรวจสอบให้ตรวจใหม่อีกครั้ง
-        settingip_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            if (v == settingip_btn) {
+                //*** ส่วนการทำงานปุ่มตั้งค่า IP ***ฝฝ
+                // คำสั่งทั้งหมดในการทำงานของปุ่มตั่งค่า ทั้ง แสดง Dialog
+                // บันทึกการเปลี่ยนแปลงผ่าน updateIP จาก ApiConnect
+                // ปิดการแจ้งเตือนเก่า สั่งส่วนตรวจสอบให้ตรวจใหม่อีกครั้ง
                 if (cd.isNetworkAvailable()) {
                     AlertDialog.Builder builder =
                             new AlertDialog.Builder(LoginActivity.this);
@@ -192,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        }
     }
 
     protected void switchPageToMain() {
@@ -353,16 +356,6 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         }
-
-    }
-
-    //อันเก่า
-    private void _Login() {
-        username = mUsername.getText().toString().trim();
-        password = mPassword.getText().toString().trim();
-        // Toast.makeText(mContext, "Username: " + username + " Password: " + password + " \nสถานะ: " + selectedaccesstype[0], Toast.LENGTH_SHORT).show();
-        //new SimpleTask().execute(username, password, selectedaccesstype[0]);
-
 
     }
 
@@ -642,7 +635,7 @@ public class LoginActivity extends AppCompatActivity {
                     //publishProgress("" + (int) ((total * 100) / lenghtOfFile));
                     output.write(data, 0, count);
                 }
-                if(total > 0){
+                if (total > 0) {
 //                    Toast.makeText(LoginActivity.this, getString(R.string.save_photo_success), Toast.LENGTH_SHORT).show();
                 }
                 output.flush();

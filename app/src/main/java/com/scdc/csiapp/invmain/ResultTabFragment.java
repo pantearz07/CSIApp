@@ -1458,7 +1458,7 @@ public class ResultTabFragment extends Fragment {
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
                 View item = listAdapter.getView(itemPos, null, listView);
                 item.measure(0, 0);
-                Log.i("inside getHeight", String.valueOf(item.getMeasuredHeight()));
+                Log.i("inside getHeight ", String.valueOf(itemPos) +" - "+ String.valueOf(item.getMeasuredHeight() ));
                 totalItemsHeight += item.getMeasuredHeight();
             }
 

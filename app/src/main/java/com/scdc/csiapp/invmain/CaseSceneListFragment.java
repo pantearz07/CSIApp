@@ -42,7 +42,10 @@ import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -369,6 +372,23 @@ public class CaseSceneListFragment extends Fragment {
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListCaseScene.getData().getResult();
+                //sort caselist
+
+                Collections.sort(caseList, new Comparator<ApiCaseScene>() {
+                    @Override
+                    public int compare(ApiCaseScene obj1, ApiCaseScene obj2) {
+                        SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String date_source = obj1.getTbCaseScene().ReceivingCaseDate + " " + obj1.getTbCaseScene().ReceivingCaseTime;
+                        String date_des = obj2.getTbCaseScene().ReceivingCaseDate + " " + obj2.getTbCaseScene().ReceivingCaseTime;
+                        try {
+                            Log.i("Compare" , String.valueOf(dfDate.parse(date_source).compareTo(dfDate.parse(date_des))));
+                            return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return 0;
+                        }
+                    }
+                });
 
                 // เอาข้อมูลไปแสดงใน RV
                 apiCaseSceneListAdapter.notifyDataSetChanged();

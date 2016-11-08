@@ -2422,6 +2422,32 @@ public class DBHelper extends SQLiteAssetHelper {
                     }
                 }
             }
+            // บันทึกข้อมูลลง InvestigatorsInScenes
+            if (apiCaseScene.getApiInvestigatorsInScenes() != null) {
+                Log.d(TAG, "getApiInvestigatorsInScenes " + String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().size()));
+                for (int i = 0; i < apiCaseScene.getApiInvestigatorsInScenes().size(); i++) {
+                    strSQL = "SELECT * FROM investigatorsinscene "
+                            + " WHERE CaseReportID = '" + sCaseReportID + "'"
+                            + " AND InvOfficialID = '" + apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID + "' ";
+                    Log.d(TAG, strSQL+" InvOfficialID " + String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID));
+                    try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
+                        ContentValues Val = new ContentValues();
+                        Val.put(COL_CaseReportID, apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().CaseReportID);
+                        Val.put(COL_InvOfficialID, apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID);
+                        Val.put(COL_InvType, apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvType);
+
+                        if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                            db.insert("investigatorsinscene", null, Val);
+                            Log.d(TAG, "Sync Table investigatorsinscene [" + i + "]: Insert ");
+                        } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                            db.update("investigatorsinscene", Val, " CaseReportID = ? AND InvOfficialID = ?",
+                                    new String[]{String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().CaseReportID),
+                                            String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID)});
+                            Log.d(TAG, "Sync Table investigatorsinscene [" + i + "]: Update ");
+                        }
+                    }
+                }
+            }
             db.setTransactionSuccessful();
             db.endTransaction();
 
@@ -3385,8 +3411,9 @@ public class DBHelper extends SQLiteAssetHelper {
                     if (temp.CaseReportID != null) {
                         List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = new ArrayList<>();
                         strSQL = "SELECT * FROM investigatorsinscene "
-                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
-                        Log.i(TAG, strSQL);
+                                + " WHERE CaseReportID = '" + temp.CaseReportID + "'" +
+                                " ORDER BY InvOfficialID ASC";
+                        Log.i(TAG, "investigatorsinscene " + strSQL);
                         try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                             if (cursor2.getCount() > 0) {
@@ -3399,9 +3426,10 @@ public class DBHelper extends SQLiteAssetHelper {
                                     tbInvestigatorsInScene.InvOfficialID = cursor2.getString(cursor2.getColumnIndex(COL_InvOfficialID));
                                     tbInvestigatorsInScene.InvType = cursor2.getString(cursor2.getColumnIndex(COL_InvType));
                                     apiInvestigatorsInScene.setTbInvestigatorsInScene(tbInvestigatorsInScene);
+
                                     if (tbInvestigatorsInScene.InvOfficialID != null) {
-                                        strSQL = "SELECT * FROM " + TB_photoofoutside
-                                                + " WHERE " + COL_FileID + " = '" + tbInvestigatorsInScene.InvOfficialID + "'";
+                                        strSQL = "SELECT * FROM " + TB_official
+                                                + " WHERE " + COL_OfficialID + " = '" + tbInvestigatorsInScene.InvOfficialID + "'";
 
                                         try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
 

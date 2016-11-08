@@ -745,7 +745,7 @@ public class SummaryCSITabFragment extends Fragment {
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
                     if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
+                        snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

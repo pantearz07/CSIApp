@@ -1017,6 +1017,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     }
 
     private void showListInvestigators() {
+
         if (CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes() != null) {
             listViewInvestigator.setAdapter(new InvestigatorsAdapter(getActivity()));
             setListViewHeightBasedOnItems(listViewInvestigator);

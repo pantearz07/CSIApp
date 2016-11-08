@@ -126,20 +126,20 @@
 
                     </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line">
+                    <!--<TableRow-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="@dimen/margin_line">-->
 
-                        <TextView
-                            android:id="@+id/txtAddGatewayCriminal"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="ตรวจพบร่อยรอยทางเข้า-ออกของคนร้าย"
-                            android:textSize="@dimen/mmedium_text" />
+                        <!--<TextView-->
+                            <!--android:id="@+id/txtAddGatewayCriminal"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:text="ตรวจพบร่อยรอยทางเข้า-ออกของคนร้าย"-->
+                            <!--android:textSize="@dimen/mmedium_text" />-->
 
-                    </TableRow>
+                    <!--</TableRow>-->
 
                     <TableRow
                         android:id="@+id/tableRowAddGatewayCriminal"
@@ -211,20 +211,20 @@
 
                     </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line">
+                    <!--<TableRow-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="@dimen/margin_line">-->
 
-                        <TextView
-                            android:id="@+id/txtAddClueShown"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="ตรวจพบร่องรอยการรื้อค้น/งัดแงะบริเวณ"
-                            android:textSize="@dimen/mmedium_text" />
+                        <!--<TextView-->
+                            <!--android:id="@+id/txtAddClueShown"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:text="ตรวจพบร่องรอยการรื้อค้น/งัดแงะบริเวณ"-->
+                            <!--android:textSize="@dimen/mmedium_text" />-->
 
-                    </TableRow>
+                    <!--</TableRow>-->
 
                     <TableRow
                         android:id="@+id/tableRowAddClueShown"
@@ -297,20 +297,20 @@
 
                     </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line">
+                    <!--<TableRow-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="@dimen/margin_line">-->
 
-                        <TextView
-                            android:id="@+id/txtPropertyLossDetail"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="คนร้ายโจรกรรมทรัพย์สินมีค่า ดังต่อไปนี้"
-                            android:textSize="@dimen/mmedium_text" />
+                        <!--<TextView-->
+                            <!--android:id="@+id/txtPropertyLossDetail"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:text="คนร้ายโจรกรรมทรัพย์สินมีค่า ดังต่อไปนี้"-->
+                            <!--android:textSize="@dimen/mmedium_text" />-->
 
-                    </TableRow>
+                    <!--</TableRow>-->
 
                     <TableRow
                         android:id="@+id/tableRowPropertyLoss"
