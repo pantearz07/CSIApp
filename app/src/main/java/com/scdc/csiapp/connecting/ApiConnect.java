@@ -71,8 +71,8 @@ public class ApiConnect {
     private static String strSDCardPathName = "/CSIFiles/";
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private static final MediaType MEDIA_TYPE_IMG = MediaType.parse("image/*");
-    private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/mp4");
-    private static final MediaType MEDIA_TYPE_VOICE = MediaType.parse("audio/3gp");
+    private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/*");
+    private static final MediaType MEDIA_TYPE_VOICE = MediaType.parse("audio/*");
     private Context mContext;
     GetDateTime getDateTime;
     private OkHttpClient okHttpClient = new OkHttpClient();
@@ -770,39 +770,34 @@ public class ApiConnect {
         formBuilder1.addFormDataPart("tbClueShowns", gson1.toJson(apiCaseScene.getTbClueShowns()));
         formBuilder1.addFormDataPart("tbPropertyLosses", gson1.toJson(apiCaseScene.getTbPropertyLosses()));
         formBuilder1.addFormDataPart("apiMultimedia", gson1.toJson(apiCaseScene.getApiMultimedia()));
-        Log.d(TAG, "getApiMultimedia size" + String.valueOf(apiCaseScene.getApiMultimedia().size()));
+//        Log.d(TAG, "getApiMultimedia size" + String.valueOf(apiCaseScene.getApiMultimedia().size()));
+//        Log.d(TAG, "apiMultimedia" + gson1.toJson(apiCaseScene.getApiMultimedia()));
+        if (apiCaseScene.getApiMultimedia() != null) {
+            for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
 
-        for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
-
-            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo")) {
-                File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-                if (filePic.exists()) {
-                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-                            RequestBody.create(MEDIA_TYPE_JPEG, filePic));
+                if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("photo") ||
+                        apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
+                    File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                    if (filePic.exists()) {
+                        formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                                RequestBody.create(MEDIA_TYPE_IMG, filePic));
+                    }
+                }
+                if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
+                    File fileVid = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                    if (fileVid.exists()) {
+                        formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                                RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
+                    }
+                }
+                if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
+                    File fileVoi = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
+                    if (fileVoi.exists()) {
+                        formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
+                                RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
+                    }
                 }
             }
-            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("diagram")) {
-                File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-                if (filePic.exists()) {
-                    formBuilder1.addFormDataPart("filepic[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-                            RequestBody.create(MEDIA_TYPE_JPEG, filePic));
-                }
-            }
-            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("video")) {
-                File fileVid = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-                if (fileVid.exists()) {
-                    formBuilder1.addFormDataPart("filevid[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-                            RequestBody.create(MEDIA_TYPE_VIDEO, fileVid));
-                }
-            }
-            if (apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equalsIgnoreCase("voice")) {
-                File fileVoi = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-                if (fileVoi.exists()) {
-                    formBuilder1.addFormDataPart("filevoi[" + String.valueOf(i) + "]", apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FilePath,
-                            RequestBody.create(MEDIA_TYPE_VOICE, fileVoi));
-                }
-            }
-
         }
         RequestBody formBody1 = formBuilder1.build();
 

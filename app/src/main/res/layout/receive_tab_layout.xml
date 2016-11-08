@@ -213,7 +213,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_line"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:background="@color/lightgray">
 
                         <TextView
                             android:id="@+id/txtSceneInvestDateTime1"
@@ -222,6 +223,8 @@
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
                             android:gravity="left"
+                            android:padding="8dp"
+                            android:textColor="@color/navy"
                             android:text="วันเวลาที่ทำการตรวจสถานที่เกิดเหตุ"
                             android:textSize="@dimen/small_text" />
 
@@ -229,6 +232,7 @@
                             android:id="@+id/btn_property"
                             android:layout_width="@dimen/width_btn"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
                             android:layout_gravity="right|center_vertical"
                             android:background="@color/transparent"
                             android:src="@drawable/ic_property" />

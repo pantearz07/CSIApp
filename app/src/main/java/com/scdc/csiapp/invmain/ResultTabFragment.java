@@ -273,7 +273,7 @@ public class ResultTabFragment extends Fragment {
                 .findViewById(R.id.editCompleteSceneDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")
-                || AssignTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
 
             editCompleteSceneDate.setText("");
 
@@ -286,7 +286,7 @@ public class ResultTabFragment extends Fragment {
                 .findViewById(R.id.editCompleteSceneTime);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime == null
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime.equals("")
-                || AssignTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime.equals("00:00:00")) {
+                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime.equals("00:00:00")) {
 
             editCompleteSceneTime.setText("");
 
