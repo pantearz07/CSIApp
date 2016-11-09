@@ -6,133 +6,83 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-    <TableLayout
-        android:id="@+id/tableClass"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-
-        <TableRow
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtPropertyLossName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_gravity="left|center_vertical"
+            android:layout_weight="1"
+            android:text="ทรัพย์สิน"
+            android:textSize="@dimen/small_text" />
 
-
-            <TextView
-                android:id="@+id/txtPropertyLossName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-                android:hint="ทรัพย์สิน"
-                android:textSize="@dimen/small_text" />
-
-            <ImageButton
-                android:id="@+id/imgEdit"
-                android:layout_width="@dimen/width_btn"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_edit" />
-            <ImageButton
-                android:id="@+id/imgDelete"
-                android:layout_width="@dimen/width_btn"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:layout_marginEnd="5dp"
-                android:layout_gravity="right|center_vertical"
-                android:src="@drawable/ic_drop" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/imgEdit"
+            android:layout_width="@dimen/width_btn"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/padding_s">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="จำนวน "
-                android:textSize="@dimen/small_text" />
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_edit" />
 
-            <TextView
-                android:id="@+id/txtPropertyLossAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/padding_m"
-                android:layout_marginRight="@dimen/padding_m"
-                android:text="1"
-                android:textSize="@dimen/small_text" />
-
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/imgDelete"
+            android:layout_width="@dimen/width_btn"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginEnd="5dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_drop" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/PropertyLossPosition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="บริเวณ : "
-                android:textSize="@dimen/small_text" />
+    <TextView
+        android:id="@+id/txtPropertyLossAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="@dimen/small_text" />
 
-            <TextView
-                android:id="@+id/txtPropertyLossPosition"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLines="@integer/medium_size"
-                android:textSize="@dimen/small_text" />
+    <TextView
+        android:id="@+id/txtPropertyLossPosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="@integer/small_size"
+        android:textSize="@dimen/small_text" />
 
-        </TableRow>
+    <TextView
+        android:id="@+id/txtPropertyInsurance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="@integer/small_size"
+        android:textSize="@dimen/small_text" />
 
-        <TableRow android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtPhoto"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/PropertyInsurance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="การประกันทรัพย์สิน : "
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txtPropertyInsurance"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLines="@integer/small_size"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
+            android:layout_weight="1"
+            android:text="รูปภาพ (0)"
+            android:textSize="@dimen/ssmall_text"
+            android:textStyle="bold|italic" />
 
 
-        <TableRow android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtVideo"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/txtPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-
-                android:text="รูปภาพ (0)"
-                android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic" />
-
-            <TextView
-                android:id="@+id/txtVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-
-                android:text="วิดีโอ (0)"
-                android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic" />
-
-        </TableRow>
-    </TableLayout>
-
+            android:layout_weight="1"
+            android:text="วิดีโอ (0)"
+            android:textSize="@dimen/ssmall_text"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
 </LinearLayout>

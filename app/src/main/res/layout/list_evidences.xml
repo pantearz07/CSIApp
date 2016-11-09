@@ -5,187 +5,104 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <TableRow
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtEvidenceType"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/txtEvidenceType"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-                android:layout_weight="1"
-
-                android:hint="วัตถุพยาน"
-                android:textSize="@dimen/small_text" />
+            android:layout_gravity="left|center_vertical"
+            android:layout_weight="1"
+            android:hint="วัตถุพยาน"
+            android:textSize="@dimen/small_text" />
 
 
-            <ImageButton
-                android:id="@+id/imgEdit"
-                android:layout_width="@dimen/width_btn"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:background="@color/transparent"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_edit" />
-
-            <ImageButton
-                android:id="@+id/imgDelete"
-                android:layout_width="@dimen/width_btn"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:background="@color/transparent"
-                android:layout_marginEnd="5dp"
-                android:src="@drawable/ic_drop" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="พบจำนวน "
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txtEvidenceNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0"
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txtEvidencesUnit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" แผ่น"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow39"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/FindEvidenceZone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="บริเวณที่พบ : "
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txtFindEvidenceZone"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow40"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/Marking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="การทำเครื่องหมาย : "
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txtMarking"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow41"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/Parceling"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="การบรรจุหีบห่อ : "
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txtParceling"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/imgEdit"
+            android:layout_width="@dimen/width_btn"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_edit" />
 
-            <TextView
-                android:id="@+id/txtEvidencePerformed1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="การดำเนินการเกี่ยวกับวัตุพยาน : "
-                android:maxLines="@integer/medium_size"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow42"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/txtEvidencePerformed"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
-                android:textSize="@dimen/small_text" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/imgDelete"
+            android:layout_width="@dimen/width_btn"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_s"
-            android:gravity="center_vertical">
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginEnd="5dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_drop" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+    <TextView
+        android:id="@+id/txtEvidenceNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="@dimen/small_text" />
 
-                android:layout_gravity="left|center_vertical"
-                android:text="รูปภาพ (0)"
-                android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/txtFindEvidenceZone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="@integer/small_size"
+        android:textSize="@dimen/small_text" />
 
-            <TextView
-                android:id="@+id/txtVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-                android:text="วิดีโอ (0)"
+    <TextView
+        android:id="@+id/txtMarking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/small_text" />
 
-                android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/txtParceling"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/small_text" />
 
-        </TableRow>
-    </TableLayout>
+    <TextView
+        android:id="@+id/txtEvidencePerformed1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="การดำเนินการเกี่ยวกับวัตุพยาน : "
+        android:textSize="@dimen/small_text" />
+
+    <TextView
+        android:id="@+id/txtEvidencePerformed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
+        android:maxLines="@integer/small_size"
+        android:textSize="@dimen/small_text" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtPhoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="รูปภาพ (0)"
+            android:textSize="@dimen/ssmall_text"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/txtVideo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="วิดีโอ (0)"
+            android:textSize="@dimen/ssmall_text"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -187,7 +187,8 @@ public class ResultTabFragment extends Fragment {
         btn_clear_txt_30 = (ImageButton) viewDetails.findViewById(R.id.btn_clear_txt_30);
 
         edtUpdateDateTime3 = (TextView) viewDetails.findViewById(R.id.edtUpdateDateTime3);
-        edtUpdateDateTime3.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+        edtUpdateDateTime3.setText(getString(R.string.updatedata) + " "
+                + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
 
 
 // การดำเนินการเกี่ยวกับวัตถุพยาน
@@ -550,40 +551,40 @@ public class ResultTabFragment extends Fragment {
             if (v == btnShowHide1) {
                 if (viewGroupIsVisible) {
                     mViewAddGatewayCriminal.setVisibility(View.VISIBLE);
-                    btnShowHide1.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide1.setImageResource(R.drawable.ic_minlayout);
                 } else {
                     mViewAddGatewayCriminal.setVisibility(View.GONE);
-                    btnShowHide1.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide1.setImageResource(R.drawable.ic_maxlayout);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btnShowHide2) {
                 if (viewGroupIsVisible) {
                     mViewAddClueShown.setVisibility(View.VISIBLE);
-                    btnShowHide2.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide2.setImageResource(R.drawable.ic_minlayout);
                 } else {
                     mViewAddClueShown.setVisibility(View.GONE);
-                    btnShowHide2.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide2.setImageResource(R.drawable.ic_maxlayout);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btnShowHide3) {
                 if (viewGroupIsVisible) {
                     mViewAddPropertyLoss.setVisibility(View.VISIBLE);
-                    btnShowHide3.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide3.setImageResource(R.drawable.ic_minlayout);
                 } else {
                     mViewAddPropertyLoss.setVisibility(View.GONE);
-                    btnShowHide3.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide3.setImageResource(R.drawable.ic_maxlayout);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btnShowHide4) {
                 if (viewGroupIsVisible) {
                     mViewAddEvidences.setVisibility(View.VISIBLE);
-                    btnShowHide4.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide4.setImageResource(R.drawable.ic_minlayout);
                 } else {
                     mViewAddEvidences.setVisibility(View.GONE);
-                    btnShowHide4.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide4.setImageResource(R.drawable.ic_maxlayout);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
@@ -1082,19 +1083,35 @@ public class ResultTabFragment extends Fragment {
 
             final TextView txtPropertyLossName = (TextView) convertView
                     .findViewById(R.id.txtPropertyLossName);
-            txtPropertyLossName.setText(String.valueOf(position + 1) + ") " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossName());
-            final TextView txtPropertyLossAmount = (TextView) convertView
-                    .findViewById(R.id.txtPropertyLossAmount);
-            txtPropertyLossAmount.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber()
-                    + " " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossUnit());
-
             final TextView txtPropertyLossPosition = (TextView) convertView
                     .findViewById(R.id.txtPropertyLossPosition);
-            txtPropertyLossPosition.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossPosition());
             final TextView txtPropertyInsurance = (TextView) convertView
                     .findViewById(R.id.txtPropertyInsurance);
-            txtPropertyInsurance.setText(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropInsurance());
+            final TextView txtPropertyLossAmount = (TextView) convertView
+                    .findViewById(R.id.txtPropertyLossAmount);
+            txtPropertyLossName.setText(String.valueOf(position + 1) + ") " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossName());
 
+            if (CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber().equals("")) {
+                txtPropertyLossAmount.setVisibility(View.GONE);
+            } else {
+                txtPropertyLossAmount.setText("จำนวน " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossNumber()
+                        + " " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossUnit());
+            }
+
+            if (CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossPosition() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossPosition().equals("")) {
+                txtPropertyLossPosition.setVisibility(View.GONE);
+            } else {
+                txtPropertyLossPosition.setText("บริเวณ: " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropertyLossPosition());
+            }
+
+            if (CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropInsurance() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropInsurance().equals("")) {
+                txtPropertyInsurance.setVisibility(View.GONE);
+            } else {
+                txtPropertyInsurance.setText("การประกันทรัพย์สิน: " + CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().get(position).getPropInsurance());
+            }
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
             txtVideo.setVisibility(View.GONE);
@@ -1220,7 +1237,6 @@ public class ResultTabFragment extends Fragment {
             });
             if (CSIDataTabFragment.mode == "view") {
                 imgDelete.setVisibility(View.GONE);
-                imgEdit.setVisibility(View.GONE);
             }
             return convertView;
 
@@ -1302,19 +1318,48 @@ public class ResultTabFragment extends Fragment {
 
             final TextView txtEvidenceNumber = (TextView) convertView
                     .findViewById(R.id.txtEvidenceNumber);
-            txtEvidenceNumber.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceNumber());
             final TextView txtFindEvidenceZone = (TextView) convertView
                     .findViewById(R.id.txtFindEvidenceZone);
-            txtFindEvidenceZone.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getFindEvidenceZone());
             final TextView txtMarking = (TextView) convertView
                     .findViewById(R.id.txtMarking);
-            txtMarking.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getMarking());
             final TextView txtParceling = (TextView) convertView
                     .findViewById(R.id.txtParceling);
-            txtParceling.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getParceling());
             final TextView txtEvidencePerformed = (TextView) convertView
                     .findViewById(R.id.txtEvidencePerformed);
-            txtEvidencePerformed.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidencePerformed());
+            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceNumber() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceNumber().equals("")) {
+                txtEvidenceNumber.setVisibility(View.GONE);
+            } else {
+                txtEvidenceNumber.setText("พบจำนวน " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidenceNumber() + "แผ่น");
+
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getFindEvidenceZone() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getFindEvidenceZone().equals("")) {
+                txtFindEvidenceZone.setVisibility(View.GONE);
+            } else {
+                txtFindEvidenceZone.setText("บริเวณที่พบ: " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getFindEvidenceZone());
+
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getMarking() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getMarking().equals("")) {
+                txtMarking.setVisibility(View.GONE);
+            } else {
+                txtMarking.setText("การทำเครื่องหมาย: " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getMarking());
+
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getParceling() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getParceling().equals("")) {
+                txtParceling.setVisibility(View.GONE);
+            } else {
+                txtParceling.setText("การบรรจุหีบห่อ: " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getParceling());
+
+            }
+            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidencePerformed() == null
+                    || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidencePerformed().equals("")) {
+                txtEvidencePerformed.setVisibility(View.GONE);
+            } else {
+                txtEvidencePerformed.setText(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).getEvidencePerformed());
+            }
 
             txtPhoto = (TextView) convertView.findViewById(R.id.txtPhoto);
             txtVideo = (TextView) convertView.findViewById(R.id.txtVideo);
@@ -1438,7 +1483,6 @@ public class ResultTabFragment extends Fragment {
             });
             if (CSIDataTabFragment.mode == "view") {
                 imgDelete.setVisibility(View.GONE);
-                imgEdit.setVisibility(View.GONE);
             }
             return convertView;
 
@@ -1458,7 +1502,7 @@ public class ResultTabFragment extends Fragment {
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
                 View item = listAdapter.getView(itemPos, null, listView);
                 item.measure(0, 0);
-                Log.i("inside getHeight ", String.valueOf(itemPos) +" - "+ String.valueOf(item.getMeasuredHeight() ));
+                Log.i("inside getHeight ", String.valueOf(itemPos) + " - " + String.valueOf(item.getMeasuredHeight()));
                 totalItemsHeight += item.getMeasuredHeight();
             }
 

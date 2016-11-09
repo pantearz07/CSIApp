@@ -112,7 +112,6 @@ public class DetailsTabFragment extends Fragment {
     String sPhotoID, timeStamp;
     String arrDataPhoto[][], arrDataPhoto2[][], arrDataVideo[][];
 
-    GridView horizontal_gridView_Inside_photo, horizontal_gridView_Inside_video;
     TextView txtPhoto, txtVideo;
     private View mViewAddFeatureInside;
     ImageButton btnShowHide1;
@@ -187,7 +186,9 @@ public class DetailsTabFragment extends Fragment {
         btnShowHide1.setOnClickListener(new DetailsOnClickListener());
 
         edtUpdateDateTime = (TextView) viewDetails.findViewById(R.id.edtUpdateDateTime);
-        edtUpdateDateTime.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+        edtUpdateDateTime.setText(getString(R.string.updatedata) + " "
+                + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
 
         // ลักษณะสถานที่เกิดเหตุ
         // ภายนอก
@@ -389,9 +390,9 @@ public class DetailsTabFragment extends Fragment {
             // Create folder
             if (!folder.exists()) {
                 folder.mkdir();
-                Log.i(TAG, "mkdir "+folder.getAbsolutePath());
+                Log.i(TAG, "mkdir " + folder.getAbsolutePath());
             } else {
-                Log.i(TAG,"folder.exists");
+                Log.i(TAG, "folder.exists");
 
             }
         } catch (Exception ex) {

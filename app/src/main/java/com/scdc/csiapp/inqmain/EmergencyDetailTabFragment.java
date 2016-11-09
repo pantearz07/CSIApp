@@ -149,7 +149,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         Log.i(TAG, " NoticeCaseID " + noticecaseid);
         //Show เวลาล่าสุดที่อัพเดต
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลล่าสุดเมื่อวันที่ " +
+        edtUpdateDateTime2.setText(getString(R.string.updatedata) + " " +
                 getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
                 + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
         //Show spinner สถานที่ตำรวจภูธร
@@ -196,7 +196,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             final String[] mProvinceArray2 = new String[mProvinceArray.length];
             for (int i = 0; i < mProvinceArray.length; i++) {
                 mProvinceArray2[i] = mProvinceArray[i][2];
-                Log.i(TAG + " show mProvinceArray2", mProvinceArray2[i].toString());
+//                Log.i(TAG + " show mProvinceArray2", mProvinceArray2[i].toString());
             }
             ArrayAdapter<String> adapterProvince = new ArrayAdapter<String>(
                     getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -219,7 +219,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
             }
             setSelectAmphur(provinceid);
-            Log.i(TAG, " show  provinceid " + provinceid);
+//            Log.i(TAG, " show  provinceid " + provinceid);
         }
         spinnerDistrict.setOnItemSelectedListener(new EmerOnItemSelectedListener());
         spinnerProvince.setOnItemSelectedListener(new EmerOnItemSelectedListener());
@@ -451,7 +451,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         } else {
             spinnerAmphur.setAdapter(null);
             selectedAmphur = null;
-            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+//            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
         }
     }
 
@@ -547,7 +547,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             case R.id.btnButtonSearchMap:
                 if (cd.isNetworkAvailable()) {
                     if (lat != null || lng != null) {
-                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
+//                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
                         Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
@@ -562,7 +562,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                         startActivity(mapIntent);
 
                     }
-                }else {
+                } else {
                     Toast.makeText(getActivity(),
                             getString(R.string.network_unavailable),
                             Toast.LENGTH_SHORT).show();
@@ -572,12 +572,12 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 if (cd.isNetworkAvailable()) {
                     lat = String.valueOf(mLastLocation.getLatitude());
                     lng = String.valueOf(mLastLocation.getLongitude());
-                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
+//                    Log.d(TAG, "Go to Google map " + lat + " " + lng);
                     valueLat.setText(lat);
                     valueLong.setText(lng);
                     EmergencyTabFragment.tbNoticeCase.Latitude = lat;
                     EmergencyTabFragment.tbNoticeCase.Longitude = lng;
-                }else {
+                } else {
                     Toast.makeText(getActivity(),
                             getString(R.string.network_unavailable),
                             Toast.LENGTH_SHORT).show();
@@ -709,7 +709,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 break;
                             }
                         }
-                        Log.i(TAG, " show province " + province + " provinceid " + provinceid);
+//                        Log.i(TAG, " show province " + province + " provinceid " + provinceid);
 
                         if (provinceid != null) {
                             setSelectAmphur(provinceid);
@@ -725,7 +725,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
                     if (amphur != null || amphur != "null") {
                         amphur = amphur.replace("อำเภอ", "");
-                        Log.i(TAG, "have amphur" + amphur);
+//                        Log.i(TAG, "have amphur" + amphur);
                         for (int i = 0; i < mAmphurArray.length; i++) {
                             if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
                                 spinnerAmphur.setSelection(i);
@@ -735,7 +735,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 break;
                             }
                         }
-                        Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+//                        Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
 
                         if (amphurid != null) {
                             EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = amphurid;
@@ -749,7 +749,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
                     if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
                         knownName = knownName.replace("ตำบล", "");
-                        Log.i(TAG, "have knownName" + knownName);
+//                        Log.i(TAG, "have knownName" + knownName);
                         for (int i = 0; i < mDistrictArray.length; i++) {
                             if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
                                 spinnerDistrict.setSelection(i);
@@ -758,7 +758,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 break;
                             }
                         }
-                        Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+//                        Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
 
                         if (districtid != null) {
                             EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = districtid;
@@ -810,7 +810,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 spinnerDistrict.setSelection(i);
                                 EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
                                 EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
-                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
+//                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.DISTRICT_ID);
                                 break;
                             }
                         }
@@ -821,9 +821,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
                         selectedAmphur = mAmphurArray[pos][0];
                         sAmphurName = mAmphurArray[pos][2].toString();
-                        Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+//                        Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
                         EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
-                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+//                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
 
                     } else {
                         for (int i = 0; i < mAmphurArray.length; i++) {
@@ -831,9 +831,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                                 spinnerAmphur.setSelection(i);
                                 selectedAmphur = mAmphurArray[i][0];
                                 sAmphurName = mAmphurArray[i][2].toString();
-                                Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
+//                                Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
                                 EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
-                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
+//                                Log.i(TAG, EmergencyTabFragment.tbNoticeCase.AMPHUR_ID);
                                 break;
                             }
                         }
@@ -858,9 +858,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     if (oldProvince == false) {
                         selectedProvince = mProvinceArray[pos][0];
                         sProvinceName = mProvinceArray[pos][2].toString();
-                        Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
+//                        Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
                         EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
-                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
+//                        Log.i(TAG, EmergencyTabFragment.tbNoticeCase.PROVINCE_ID);
                         //provinceid = selectedProvince[0];
                         //ดึงค่า amphur
                         mAmphurArray = dbHelper.SelectAmphur(selectedProvince);
@@ -868,7 +868,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                             String[] mAmphurArray2 = new String[mAmphurArray.length];
                             for (int i = 0; i < mAmphurArray.length; i++) {
                                 mAmphurArray2[i] = mAmphurArray[i][2];
-                                Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
+//                                Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
                             }
                             ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
                                     android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
@@ -876,7 +876,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                         } else {
                             spinnerAmphur.setAdapter(null);
                             selectedAmphur = null;
-                            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+//                            Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
                         }
 
                     }
@@ -884,7 +884,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 case R.id.spinnerAntecedent:
                     if (oldAntecedent == false) {
                         EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[pos]);
-                        Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
+//                        Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
                     }
                     break;
             }
@@ -898,24 +898,24 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 case R.id.spinnerDistrict:
                     selectedDistrict = mDistrictArray[0][0];
                     sDistrictName = mDistrictArray[0][2].toString();
-                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+//                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
                     EmergencyTabFragment.tbNoticeCase.DISTRICT_ID = selectedDistrict;
                     break;
                 case R.id.spinnerAmphur:
                     selectedAmphur = mAmphurArray[0][0];
                     sAmphurName = mAmphurArray[0][2].toString();
-                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+//                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
                     EmergencyTabFragment.tbNoticeCase.AMPHUR_ID = selectedAmphur;
                     break;
                 case R.id.spinnerProvince:
                     selectedProvince = mProvinceArray[0][0];
                     sProvinceName = mProvinceArray[0][2].toString();
-                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
+//                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
                     EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
                     break;
                 case R.id.spinnerAntecedent:
                     EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[0]);
-                    Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
+//                    Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
                     break;
             }
         }
@@ -947,20 +947,20 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 Log.i(TAG, "CaseTel " + EmergencyTabFragment.tbNoticeCase.CaseTel);
             } else if (s == editAddrDetail.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.LocaleName = editAddrDetail.getText().toString();
-                Log.i(TAG, "LocaleName " + EmergencyTabFragment.tbNoticeCase.LocaleName);
+//                Log.i(TAG, "LocaleName " + EmergencyTabFragment.tbNoticeCase.LocaleName);
             } else if (s == editSuffererName.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.SuffererName = editSuffererName.getText().toString();
-                Log.i(TAG, "SuffererName " + EmergencyTabFragment.tbNoticeCase.SuffererName);
+//                Log.i(TAG, "SuffererName " + EmergencyTabFragment.tbNoticeCase.SuffererName);
             } else if (s == autoCompleteSuffererStatus.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.SuffererStatus = autoCompleteSuffererStatus.getText().toString();
-                Log.i(TAG, "SuffererStatus " + EmergencyTabFragment.tbNoticeCase.SuffererStatus);
+//                Log.i(TAG, "SuffererStatus " + EmergencyTabFragment.tbNoticeCase.SuffererStatus);
             } else if (s == editTextSuffererPhone.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum = editTextSuffererPhone.getText().toString();
                 ic_telphone2.setEnabled(true);
                 Log.i(TAG, "SuffererPhoneNum " + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
             } else if (s == editCircumstanceOfCaseDetail.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-                Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
+//                Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
             }
         }
     }

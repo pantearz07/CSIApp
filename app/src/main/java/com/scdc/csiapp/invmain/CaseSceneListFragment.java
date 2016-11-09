@@ -19,7 +19,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -123,7 +122,7 @@ public class CaseSceneListFragment extends Fragment {
 
             public void onRefresh() {
                 if (cd.isNetworkAvailable()) {
-                    Log.i("log_show draft", "Refreshing!! ");
+//                    Log.i("log_show draft", "Refreshing!! ");
                     swipeContainer.setRefreshing(true);
                     mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
                     mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
@@ -141,7 +140,7 @@ public class CaseSceneListFragment extends Fragment {
                                 }
                             });
                     snackbar.show();
-                    Log.i("log_show draft", "fail network");
+//                    Log.i("log_show draft", "fail network");
                 }
 
             }
@@ -156,10 +155,10 @@ public class CaseSceneListFragment extends Fragment {
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                Log.i("log_show draft", "Runnable");
+//                Log.i("log_show draft", "Runnable");
 
                 if (cd.isNetworkAvailable()) {
-                    Log.i("log_show draft", "Refreshing!! ");
+//                    Log.i("log_show draft", "Refreshing!! ");
 
                     swipeContainer.setRefreshing(true);
                     mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
@@ -173,7 +172,7 @@ public class CaseSceneListFragment extends Fragment {
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
                     selectApiCaseSceneFromSQLite();
 
-                    Log.i("log_show draft", "fail network");
+//                    Log.i("log_show draft", "fail network");
                     snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
@@ -209,37 +208,6 @@ public class CaseSceneListFragment extends Fragment {
             final ApiCaseScene apiNoticeCase = caseList.get(position);
             final String caserepID = apiNoticeCase.getTbCaseScene().getCaseReportID().toString();
             final String mode = apiNoticeCase.getMode().toString();
-//            AlertDialog.Builder builder =
-//                    new AlertDialog.Builder(getActivity());
-//            builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepID);
-//
-//            builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int id) {
-
-//                }
-//            });
-//
-//            if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept") || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")) {
-//                builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-
-//                    }
-//                });
-//            }
-//
-//
-//            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.dismiss();
-//                }
-//            });
-//            builder.create();
-//            builder.show();
-
-            //Snackbar.make(view, "Clicked " + csidata.caseReportID, Snackbar.LENGTH_LONG)
-            //       .setAction("Action", null).show();
 
 //Creating the instance of PopupMenu
             PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
@@ -257,7 +225,7 @@ public class CaseSceneListFragment extends Fragment {
 
                                                      switch (item.getItemId()) {
                                                          case R.id.view:
-                                                             Log.d(TAG, "view");
+//                                                             Log.d(TAG, "view");
 //
                                                              //สถานะคดี
                                                              if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
@@ -277,7 +245,7 @@ public class CaseSceneListFragment extends Fragment {
                                                              }
                                                              break;
                                                          case R.id.edit:
-                                                             Log.d(TAG, "edit");
+//                                                             Log.d(TAG, "edit");
                                                              if (mode.equals("online")) {
 
                                                                  boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
@@ -345,7 +313,7 @@ public class CaseSceneListFragment extends Fragment {
     public void selectApiCaseSceneFromSQLite() {
         ApiListCaseScene apiListNoticeCase = mDbHelper.selectApiCaseScene(officialID);
         caseList = apiListNoticeCase.getData().getResult();
-        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
+//        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
 
         if (swipeContainer != null && swipeContainer.isRefreshing()) {
             swipeContainer.setRefreshing(false);
@@ -367,8 +335,8 @@ public class CaseSceneListFragment extends Fragment {
         protected void onPostExecute(ApiListCaseScene apiListCaseScene) {
             super.onPostExecute(apiListCaseScene);
             if (apiListCaseScene != null) {
-                Log.d(TAG, apiListCaseScene.getStatus());
-                Log.d(TAG, String.valueOf(apiListCaseScene.getData().getResult().size()));
+//                Log.d(TAG, apiListCaseScene.getStatus());
+//                Log.d(TAG, String.valueOf(apiListCaseScene.getData().getResult().size()));
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListCaseScene.getData().getResult();
@@ -381,7 +349,7 @@ public class CaseSceneListFragment extends Fragment {
                         String date_source = obj1.getTbCaseScene().ReceivingCaseDate + " " + obj1.getTbCaseScene().ReceivingCaseTime;
                         String date_des = obj2.getTbCaseScene().ReceivingCaseDate + " " + obj2.getTbCaseScene().ReceivingCaseTime;
                         try {
-                            Log.i("Compare" , String.valueOf(dfDate.parse(date_source).compareTo(dfDate.parse(date_des))));
+//                            Log.i("Compare" , String.valueOf(dfDate.parse(date_source).compareTo(dfDate.parse(date_des))));
                             return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -392,7 +360,7 @@ public class CaseSceneListFragment extends Fragment {
 
                 // เอาข้อมูลไปแสดงใน RV
                 apiCaseSceneListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "Update apiNoticeCaseListAdapter");
+//                Log.d(TAG, "Update apiNoticeCaseListAdapter");
 
                 if (swipeContainer.isRefreshing()) {
                     swipeContainer.setRefreshing(false);

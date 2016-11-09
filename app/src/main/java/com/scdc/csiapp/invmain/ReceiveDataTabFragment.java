@@ -179,7 +179,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
 
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+        edtUpdateDateTime2.setText(getString(R.string.updatedata) + " "
+                + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
 
         //โทรศัพท์ติดต่อ
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
@@ -663,7 +665,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                                 break;
                             }
                         }
-                        Log.i(TAG, " show province " + province + " provinceid " + provinceid);
+//                        Log.i(TAG, " show province " + province + " provinceid " + provinceid);
 
                         if (provinceid != null) {
                             setSelectAmphur(provinceid);
@@ -678,18 +680,16 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
                     if (amphur != null || amphur != "null") {
                         amphur = amphur.replace("อำเภอ", "");
-                        Log.i(TAG, "have amphur" + amphur);
+//                        Log.i(TAG, "have amphur" + amphur);
                         for (int i = 0; i < mAmphurArray.length; i++) {
                             if (amphur.trim().equals(mAmphurArray[i][2].toString())) {
                                 spinnerAmphur.setSelection(i);
                                 amphurid = mAmphurArray[i][0];
                                 sAmphurName = mAmphurArray[i][2].toString();
-
-
                                 break;
                             }
                         }
-                        Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
+//                        Log.i(TAG, "have amphur from location " + amphurid + " " + sAmphurName);
                         if (amphurid != null) {
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = amphurid;
                             Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
@@ -702,7 +702,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
                     if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
                         knownName = knownName.replace("ตำบล", "");
-                        Log.i(TAG, "have knownName" + knownName);
+//                        Log.i(TAG, "have knownName" + knownName);
                         for (int i = 0; i < mDistrictArray.length; i++) {
                             if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
                                 spinnerDistrict.setSelection(i);
@@ -712,7 +712,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                                 break;
                             }
                         }
-                        Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
+//                        Log.i(TAG, "have knownName from location " + districtid + " " + sDistrictName);
                         if (districtid != null) {
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = districtid;
                             Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID);
@@ -1008,7 +1008,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             final String sSceneInvestID = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(i).getSceneInvestID();
             final String sSceneInvestDate = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(i).getSceneInvestDate();
             final String sSceneInvestTime = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(i).getSceneInvestTime();
-            Log.i(TAG, " SceneInvestigation :" + sSceneInvestID);
+//            Log.i(TAG, " SceneInvestigation :" + sSceneInvestID);
             final String sceneInvestinfo = "ครั้งที่ " + String.valueOf(i + 1) + " วันที่ " + getDateTime.changeDateFormatToCalendar(sSceneInvestDate) + " เวลา " + sSceneInvestTime + " น.";
             final TextView txtSceneInvest = (TextView) view.findViewById(R.id.txtSceneInvest);
             txtSceneInvest.setText(sceneInvestinfo);
@@ -1117,7 +1117,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
                         selectedAmphur = mAmphurArray[pos][0];
                         sAmphurName = mAmphurArray[pos][2].toString();
-                        Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
+//                        Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
                         Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
@@ -1127,7 +1127,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                                 spinnerAmphur.setSelection(i);
                                 selectedAmphur = mAmphurArray[i][0];
                                 sAmphurName = mAmphurArray[i][2].toString();
-                                Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
+//                                Log.i(TAG, " show selectedAmphur" + selectedAmphur + " " + sAmphurName);
                                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
                                 Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID);
                                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
@@ -1149,7 +1149,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     } else {
                         spinnerDistrict.setAdapter(null);
                         selectedDistrict = null;
-                        Log.i(TAG, " show selectedDistrict " + String.valueOf(selectedDistrict));
+//                        Log.i(TAG, " show selectedDistrict " + String.valueOf(selectedDistrict));
                     }
 //                    }
                     break;
@@ -1157,7 +1157,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     if (oldProvince == false) {
                         selectedProvince = mProvinceArray[pos][0];
                         sProvinceName = mProvinceArray[pos][2].toString();
-                        Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
+//                        Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().PROVINCE_ID = selectedProvince;
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID = selectedProvince;
                         Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID);
@@ -1198,28 +1198,28 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 case R.id.spinnerDistrict:
                     selectedDistrict = mDistrictArray[0][0];
                     sDistrictName = mDistrictArray[0][2].toString();
-                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
+//                    Log.i(TAG + " show selectedDistrict", selectedDistrict + " " + sDistrictName);
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().DISTRICT_ID = selectedDistrict;
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().DISTRICT_ID = selectedDistrict;
                     break;
                 case R.id.spinnerAmphur:
                     selectedAmphur = mAmphurArray[0][0];
                     sAmphurName = mAmphurArray[0][2].toString();
-                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
+//                    Log.i(TAG + " show selectedAmphur", selectedAmphur + " " + sAmphurName);
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().AMPHUR_ID = selectedAmphur;
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().AMPHUR_ID = selectedAmphur;
                     break;
                 case R.id.spinnerProvince:
                     selectedProvince = mProvinceArray[0][0];
                     sProvinceName = mProvinceArray[0][2].toString();
-                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
+//                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().PROVINCE_ID = selectedProvince;
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID = selectedProvince;
                     break;
                 case R.id.spinnerAntecedent:
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename = String.valueOf(Antecedent[0]);
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename = String.valueOf(Antecedent[0]);
-                    Log.i(TAG, "spinnerAntecedent " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename);
+//                    Log.i(TAG, "spinnerAntecedent " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename);
                     break;
             }
         }
@@ -1251,25 +1251,25 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 Log.i(TAG, "CaseTel " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTel);
             } else if (s == editAddrDetail.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName = editAddrDetail.getText().toString();
-                Log.i(TAG, "LocaleName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName);
+//                Log.i(TAG, "LocaleName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LocaleName);
             } else if (s == editSuffererName.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName = editSuffererName.getText().toString();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererName = editSuffererName.getText().toString();
-                Log.i(TAG, "SuffererName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName);
+//                Log.i(TAG, "SuffererName " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName);
             } else if (s == autoCompleteSuffererStatus.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererStatus = autoCompleteSuffererStatus.getText().toString();
-                Log.i(TAG, "SuffererStatus " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus);
+//                Log.i(TAG, "SuffererStatus " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus);
             } else if (s == editTextSuffererPhone.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum = editTextSuffererPhone.getText().toString();
                 Log.i(TAG, "SuffererPhoneNum " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum);
             } else if (s == editCircumstanceOfCaseDetail.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
-                Log.i(TAG, "CircumstanceOfCaseDetail " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
+//                Log.i(TAG, "CircumstanceOfCaseDetail " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CircumstanceOfCaseDetail);
             } else if (s == edtVehicleDetail.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo = edtVehicleDetail.getText().toString();
-                Log.i(TAG, "VehicleInfo " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo);
+//                Log.i(TAG, "VehicleInfo " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo);
             }
         }
     }

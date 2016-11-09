@@ -136,22 +136,24 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                     .addOnConnectionFailedListener(this)
                     .addApi(API)
                     .build();
-            Log.d(TAG, "Create Google services");
+//            Log.d(TAG, "Create Google services");
         }
 
         updateDT = getDateTime.getDateTimeNow();
         String noticecaseid = AssignTabFragment.apiCaseScene.getTbNoticeCase().getNoticeCaseID();
-        Log.i(TAG, " NoticeCaseID " + noticecaseid);
+//        Log.i(TAG, " NoticeCaseID " + noticecaseid);
         //Show เวลาล่าสุดที่อัพเดต
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลล่าสุดเมื่อวันที่ " +
+        edtUpdateDateTime2.setText(getString(R.string.updatedata) + " " +
                 getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate)
                 + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
         //Show spinner สถานที่ตำรวจภูธร
 
 
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel != "") {
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel.equals("")) {
+            editTextPhone1.setText("");
+        } else {
             editTextPhone1.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().CaseTel);
         }
         editTextPhone1.addTextChangedListener(new TextWatcher() {
@@ -192,14 +194,14 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             final String[] mProvinceArray2 = new String[mProvinceArray.length];
             for (int i = 0; i < mProvinceArray.length; i++) {
                 mProvinceArray2[i] = mProvinceArray[i][2];
-                Log.i(TAG + " show mProvinceArray2", mProvinceArray2[i].toString());
+//                Log.i(TAG + " show mProvinceArray2", mProvinceArray2[i].toString());
             }
             ArrayAdapter<String> adapterProvince = new ArrayAdapter<String>(
                     getActivity(), android.R.layout.simple_dropdown_item_1line,
                     mProvinceArray2);
             spinnerProvince.setAdapter(adapterProvince);
         } else {
-            Log.i(TAG + " show mProvinceArray", "null");
+//            Log.i(TAG + " show mProvinceArray", "null");
         }
 
         //เเสดงค่าเดิม
@@ -217,7 +219,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                 String[] mAmphurArray2 = new String[mAmphurArray.length];
                 for (int i = 0; i < mAmphurArray.length; i++) {
                     mAmphurArray2[i] = mAmphurArray[i][2];
-                    Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
+//                    Log.i(TAG + " show mAmphurArray2", mAmphurArray2[i].toString());
                 }
                 ArrayAdapter<String> adapterAmphur = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, mAmphurArray2);
@@ -225,7 +227,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             } else {
                 spinnerAmphur.setAdapter(null);
                 selectedAmphur = null;
-                Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
+//                Log.i(TAG + " show mAmphurArray", String.valueOf(selectedAmphur));
             }
         }
         if (amphurid == null || amphurid.equals("") || amphurid.equals("null")) {
@@ -242,7 +244,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                 String[] mDistrictArray2 = new String[mDistrictArray.length];
                 for (int i = 0; i < mDistrictArray.length; i++) {
                     mDistrictArray2[i] = mDistrictArray[i][2];
-                    Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
+//                    Log.i(TAG + " show mDistrictArray2", mDistrictArray2[i].toString());
                 }
                 ArrayAdapter<String> adapterDistrict = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line, mDistrictArray2);
@@ -250,7 +252,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             } else {
                 spinnerDistrict.setAdapter(null);
                 selectedDistrict = null;
-                Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
+//                Log.i(TAG + " show selectedDistrict", String.valueOf(selectedDistrict));
             }
         }
         if (districtid == null || districtid.equals("") || districtid.equals("null")) {
@@ -430,10 +432,10 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                 .findViewById(R.id.listViewInvestigator);
         if (AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes() == null) {
             apiInvestigatorsInScenes = new ArrayList<>();
-            Log.i(TAG, "apiInvestigatorsInScenes null");
+//            Log.i(TAG, "apiInvestigatorsInScenes null");
         } else {
             apiInvestigatorsInScenes = AssignTabFragment.apiCaseScene.getApiInvestigatorsInScenes();
-            Log.i(TAG, "apiInvestigatorsInScenes not null");
+//            Log.i(TAG, "apiInvestigatorsInScenes not null");
             listViewInvestigator.setVisibility(View.VISIBLE);
 
         }
@@ -450,7 +452,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             p.height = 0;
             fabBtnRec.setLayoutParams(p);
             fabBtnRec.hide();
-//            editTextPhone1.setEnabled(false);
+            editTextPhone1.setEnabled(false);
             editReceiveCaseDate.setEnabled(false);
             editReceiveCaseTime.setEnabled(false);
             editHappenCaseDate.setEnabled(false);
@@ -466,7 +468,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             spinnerAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
-//            editTextSuffererPhone.setEnabled(false);
+            editTextSuffererPhone.setEnabled(false);
             editCircumstanceOfCaseDetail.setEnabled(false);
         }
 
@@ -481,7 +483,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
-        Log.i("Check", "onStart recieve");
+//        Log.i("Check", "onStart recieve");
     }
 
 
@@ -489,7 +491,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     public void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        Log.i("onPause", "onPause receive");
+//        Log.i("onPause", "onPause receive");
     }
 
     @Override
@@ -498,13 +500,13 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-        Log.i("onStop", "onStop receive");
+//        Log.i("onStop", "onStop receive");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i("onDestroyView", "onDestroyView receive");
+//        Log.i("onDestroyView", "onDestroyView receive");
 
     }
 
@@ -519,7 +521,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                     lat = AssignTabFragment.apiCaseScene.getTbNoticeCase().Latitude;
                     lng = AssignTabFragment.apiCaseScene.getTbNoticeCase().Longitude;
                     if (lat != null || lng != null) {
-                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
+//                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
 
                         Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
@@ -657,13 +659,13 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         if (listAdapter != null) {
 
             int numberOfItems = listAdapter.getCount();
-            Log.i("inside", String.valueOf(numberOfItems));
+//            Log.i("inside", String.valueOf(numberOfItems));
             // Get total height of all items.
             int totalItemsHeight = 0;
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
                 View item = listAdapter.getView(itemPos, null, listView);
                 item.measure(0, 0);
-                Log.i("inside", String.valueOf(item.getMeasuredHeight()));
+//                Log.i("inside", String.valueOf(item.getMeasuredHeight()));
                 totalItemsHeight += item.getMeasuredHeight();
             }
 
@@ -676,7 +678,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             ViewGroup.LayoutParams params = listView.getLayoutParams();
             //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
             params.height = totalHeight;
-            Log.i("inside totalHeight", String.valueOf(totalHeight));
+//            Log.i("inside totalHeight", String.valueOf(totalHeight));
             //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
             listView.setLayoutParams(params);
             listView.requestLayout();

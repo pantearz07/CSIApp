@@ -16,6 +16,7 @@ import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.R;
 import com.google.android.gms.gcm.GcmListenerService;
+import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 
 import java.util.Date;
@@ -31,11 +32,14 @@ public class GcmDownstreamService extends GcmListenerService {
     Context context;
     TbOfficial tbOfficial = new TbOfficial();
     DBHelper dbHelper;
+    GetDateTime getDateTime;
+
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
         dbHelper = new DBHelper(context);
+        getDateTime = new GetDateTime();
         mManager = new PreferenceData(context);
         officialID = mManager.getPreferenceData(dbHelper.COL_OfficialID);
         accesstype = mManager.getPreferenceData(dbHelper.COL_AccessType);
@@ -57,7 +61,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String CaseReportID = data.getString("gcm.notification.CaseReportID");
                     String SubCaseTypeName = data.getString("gcm.notification.SubCaseTypeName");
                     String PoliceStation = data.getString("gcm.notification.PoliceStation");
-                    String ReceivingCaseDate = data.getString("gcm.notification.ReceivingCaseDate");
+                    String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.ReceivingCaseDate"));
                     String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
                     String Address = data.getString("gcm.notification.Address");
                     String InquiryOfficial = data.getString("gcm.notification.InquiryOfficial");
@@ -82,7 +86,7 @@ public class GcmDownstreamService extends GcmListenerService {
 
                     String nameintent = "MainActivity";
 
-                    String scheduleDate = data.getString("gcm.notification.scheduleDate");
+                    String scheduleDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.scheduleDate"));
 
 
                     Log.e(TAG, "scheduleDate : " + scheduleDate);
@@ -101,7 +105,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String CaseReportID = data.getString("gcm.notification.CaseReportID");
                     String Investigator = data.getString("gcm.notification.Investigator");
 
-                    String ReceivingCaseDate = data.getString("gcm.notification.ReceivingCaseDate");
+                    String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.ReceivingCaseDate"));
                     String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
                     String Address = data.getString("gcm.notification.Address");
 
@@ -120,7 +124,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String CaseReportID = data.getString("gcm.notification.CaseReportID");
                     String SubCaseTypeName = data.getString("gcm.notification.SubCaseTypeName");
                     String PoliceStation = data.getString("gcm.notification.PoliceStation");
-                    String ReceivingCaseDate = data.getString("gcm.notification.ReceivingCaseDate");
+                    String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.ReceivingCaseDate"));
                     String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
                     String Address = data.getString("gcm.notification.Address");
 

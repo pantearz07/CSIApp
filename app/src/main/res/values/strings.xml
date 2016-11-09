@@ -15,7 +15,8 @@
     <string name="error_data">เกิดเข้อผิดพลาดบางประการ</string>
     <string name="save_complete">บันทึกเรียบร้อย</string>
     <string name="delete_complete">ลบข้อมูลเรียบร้อย</string>
-    <string name="download_complete">ดาวน์โหลดเรียบร้อย</string>
+    <string name="download_complete">ดาวน์โหลดไฟล์เรียบร้อย</string>
+    <string name="download_error">ดาวน์โหลดไฟล์ไม่สำเร็จ</string>
     <string name="cancel">ยกเลิก</string>
     <string name="ok">ตกลง</string>
     <string name="next">ถัดไป</string>
@@ -79,6 +80,7 @@
     <string name="start_recording">Record</string>
     <string name="stop_recording">Stop</string>
     <string name="audio_format">Format</string>
+
     <string name="savepic">บันทึกภาพ</string>
     <string name="deletepic">ลบรูปภาพ</string>
     <string name="delete_photo_success">ลบภาพเรียบร้อยเเล้ว</string>
@@ -94,10 +96,43 @@
     <string name="delete_voice">ลบไฟล์เสียง</string>
     <string name="delete_error">ลบข้อมูลไม่สำเร็จ</string>
     <string name="save_voice_success">บันทึกไฟล์เสียงเเล้ว</string>
-
     <string name="no_voice">ไม่มีไฟล์เสียงนี้ในหน่วยความจำเครื่อง</string>
+
     <string name="call">โทร</string>
     <string name="view">ดู</string>
+    <string name="receive_case">รับตรวจ</string>
+    <string name="notice_case">แจ้งเหตุ</string>
+    <string name="export_doc">ออกรายงานสรุปคดี</string>
+    <string name="report_no">รายงานที่</string>
+    <string name="report_no_2">เลขที่ / พ.ศ.</string>
+    <string name="case_type">คดีเกี่ยวกับ</string>
+    <string name="subcase_type">ประเภทคดี</string>
+    <string name="inquiry_txt">พนักงานสอบสวน:</string>
+    <string name="inv_txt">ผู้ตรวจสถานที่เกิดเหตุ:</string>
+    <string name="tel_2">โทร.</string>
+    <string name="police_station">สถานีตำรวจ:</string>
+    <string name="txtStatusTitle">สถานะคดี:</string>
+    <string name="txtSceneNoticeDateTime">วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ:</string>
+    <string name="edtCompleteSceneDateTimeTitle">วันเวลาที่ตรวจคดีเสร็จ:</string>
+    <string name="txtUpdateDateTimeTitle">วันเวลาที่แก้ไขข้อมูลล่าสุด:</string>
+    <string name="txtAssignDateTimeTitle">วันเวลาที่จ่ายงาน:</string>
+
+    <string name="edtStatus_1">รับแจ้ง</string>
+    <string name="edtStatus_2">แจ้งเหตุ</string>
+    <string name="edtStatus_3">รับเรื่อง</string>
+    <string name="edtStatus_4">รอตรวจ</string>
+    <string name="edtStatus_5">กำลังตรวจ</string>
+    <string name="edtStatus_6">ตรวจเสร็จ</string>
+    <string name="casestatus_1">receive</string>
+    <string name="casestatus_2">notice</string>
+    <string name="casestatus_3">assign</string>
+    <string name="casestatus_4">accept</string>
+    <string name="casestatus_5">investigating</string>
+    <string name="casestatus_6">investigated</string>
+    <string name="delete_case">ลบคดี</string>
+    <string name="searchlatlng">บันทึกพิกัดที่เกิดเหตุ</string>
+    <string name="searchmap">นำเส้นทาง</string>
+    <string name="updatedata">อัพเดทล่าสุด </string>
     <string-array name="accesstype">
         <item>ผู้ตรวจสถานที่เกิดเหตุ</item>
         <item>พนักงานสอบสวน</item>
@@ -186,7 +221,6 @@
         <item>รอยลายนิ้วมือ/ฝ่ามือแฝง</item>
         <item>รอยลายฝ่าเท้าแฝง</item>
         <item>รอยพื้นรองเท้า</item>
-
         <item>คราบสีแดงคล้ายโลหิต</item>
         <item>เส้นผม/เส้นขน</item>
         <item>เส้นใย</item>

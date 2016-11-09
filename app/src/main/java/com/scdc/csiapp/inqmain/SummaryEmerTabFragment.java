@@ -111,7 +111,9 @@ public class SummaryEmerTabFragment extends Fragment {
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
+        edtUpdateDateTime2.setText(getString(R.string.updatedata) + " " +
+                getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
+                + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
 
         linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
         linearLayoutReportNo.setVisibility(View.GONE);
@@ -130,7 +132,6 @@ public class SummaryEmerTabFragment extends Fragment {
 //สถานะคดี
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
 
-        edtInvestDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtInvestDateTime);
         edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         TextView edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
@@ -250,21 +251,20 @@ public class SummaryEmerTabFragment extends Fragment {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
 
-        if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigating")) {
-            edtStatus.setText("กำลังดำเนินการตรวจ");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("notice")) {
-            edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
-            btnNoticecase.setVisibility(View.GONE);
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("receive")) {
-            edtStatus.setText("รอส่งแจ้งเหตุ");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("assign")) {
-            edtStatus.setText("รอรับไปตรวจ");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("accept")) {
-            edtStatus.setText("รับเรื่องแล้ว");
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals("investigated")) {
-            edtStatus.setText("ตรวจเสร็จแล้ว");
+        if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_1)) {
+            edtStatus.setText(R.string.edtStatus_1);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_2)) {
+            edtStatus.setText(R.string.edtStatus_2);
+            btnNoticecase.setEnabled(false);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_3)) {
+            edtStatus.setText(R.string.edtStatus_3);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_4)) {
+            edtStatus.setText(R.string.edtStatus_4);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_5)) {
+            edtStatus.setText(R.string.edtStatus_5);
+        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_6)) {
+            edtStatus.setText(R.string.edtStatus_6);
         }
-
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         if (EmergencyTabFragment.tbNoticeCase.SceneNoticeDate == null || EmergencyTabFragment.tbNoticeCase.SceneNoticeDate.equals("")
                 || EmergencyTabFragment.tbNoticeCase.SceneNoticeDate.equals("0000-00-00")) {
@@ -308,7 +308,7 @@ public class SummaryEmerTabFragment extends Fragment {
             if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
                 btnNoticecase.setVisibility(View.VISIBLE);
                 btnDownloadfile.setVisibility(View.VISIBLE);
-                btnDownloadfile.setText("ลบคดี");
+                btnDownloadfile.setText(getString(R.string.delete_case));
             } else {
                 btnDownloadfile.setVisibility(View.GONE);
             }
@@ -316,13 +316,13 @@ public class SummaryEmerTabFragment extends Fragment {
             btnDownloadfile.setVisibility(View.GONE);
             if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
                 btnDownloadfile.setVisibility(View.VISIBLE);
-                btnDownloadfile.setText("ลบคดี");
+                btnDownloadfile.setText(getString(R.string.delete_case));
                 btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
             }
         } else {
             btnNoticecase.setVisibility(View.VISIBLE);
             btnDownloadfile.setVisibility(View.VISIBLE);
-            btnDownloadfile.setText("ลบคดี");
+            btnDownloadfile.setText(getString(R.string.delete_case));
         }
 
         fabBtn.setOnClickListener(new SummaryOnClickListener());

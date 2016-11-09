@@ -104,142 +104,7 @@ public class NoticeCaseListFragment extends Fragment {
         emergencyTabFragment = new EmergencyTabFragment();
         csiDataTabFragment = new CSIDataTabFragment();
         fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-
-                View view1 = inflater.inflate(R.layout.dialog_add_case, null);
-                dialog.setView(view1);
-
-                final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
-                final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
-                //ดึงค่าจาก TbCaseSceneType
-                final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
-                if (mCaseTypeArray != null) {
-                    String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
-                    for (int i = 0; i < mCaseTypeArray.length; i++) {
-                        mCaseTypeArray2[i] = mCaseTypeArray[i][1];
-                        Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
-                    }
-                    ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
-                            getActivity(), android.R.layout.simple_dropdown_item_1line,
-                            mCaseTypeArray2);
-                    spnCaseType.setAdapter(adapterTypeCase);
-                } else {
-                    Log.i(TAG + " show mCaseTypeArray", "null");
-                }
-                final String[] selectedCaseType = new String[1];
-                final String[] selectedSubCaseType = new String[1];
-                spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedCaseType[0] = mCaseTypeArray[position][0];
-                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
-                        //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                        //ดึงค่าจาก TbSubCaseSceneType
-                        final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                        if (mSubCaseTypeArray != null) {
-                            String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-                            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                                mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                                Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
-                            }
-                            ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                                    android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-                            spnSubCaseType.setAdapter(adapterSubCaseType);
-                        } else {
-                            spnSubCaseType.setAdapter(null);
-                            selectedSubCaseType[0] = null;
-                            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
-                        }
-
-                        spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
-                                Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-                            }
-
-                            public void onNothingSelected(AdapterView<?> parent) {
-                                selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
-                                Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-                            }
-                        });
-                    }
-
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        selectedCaseType[0] = mCaseTypeArray[0][0];
-                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
-                        //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                    }
-                });
-
-                dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
-                dialog.setIcon(R.drawable.ic_noti);
-                dialog.setCancelable(true);
-                // Current Date
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
-
-
-                dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                        String NoticeCaseID = "MC_" + saveDataTime;
-                        TbNoticeCase tbNoticeCase = new TbNoticeCase();
-                        tbNoticeCase.NoticeCaseID = NoticeCaseID;
-                        tbNoticeCase.Mobile_CaseID = NoticeCaseID;
-                        tbNoticeCase.InquiryOfficialID = officialID;
-                        tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
-                        tbNoticeCase.InvestigatorOfficialID = null;
-                        tbNoticeCase.SCDCAgencyCode = null;
-                        tbNoticeCase.CaseTypeID = selectedCaseType[0];
-                        tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
-                        tbNoticeCase.CaseStatus = "receive";
-                        tbNoticeCase.ReceivingCaseDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                        tbNoticeCase.ReceivingCaseTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                        tbNoticeCase.DISTRICT_ID = null;
-                        tbNoticeCase.AMPHUR_ID = null;
-                        tbNoticeCase.PROVINCE_ID = null;
-                        tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                        tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
-                        if (tbNoticeCase != null) {
-//                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
-//                            if (isSuccess) {
-                            Bundle i = new Bundle();
-                            i.putSerializable(Bundle_Key, tbNoticeCase);
-
-                            i.putString(emergencyTabFragment.Bundle_mode, "new");
-                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                            emergencyTabFragment.setArguments(i);
-                            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-                            //  fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
-//                            } else {
-//                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
-//                            }
-                        }
-
-
-                    }
-
-                });
-
-                dialog.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-
-                    }
-                });
-                dialog.create();
-                dialog.show();
-            }
-        });
+        fabBtn.setOnClickListener(new NoticeOnClickListener());
 
         caseList = new ArrayList<>();
         rvDraft = (RecyclerView) view.findViewById(R.id.rvDraft);
@@ -577,6 +442,144 @@ public class NoticeCaseListFragment extends Fragment {
                 snackbar.show();
 //                }
             }
+        }
+    }
+
+    private class NoticeOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+
+            View view1 = inflater.inflate(R.layout.dialog_add_case, null);
+            dialog.setView(view1);
+
+            final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
+            final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
+            //ดึงค่าจาก TbCaseSceneType
+            final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
+            if (mCaseTypeArray != null) {
+                String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
+                for (int i = 0; i < mCaseTypeArray.length; i++) {
+                    mCaseTypeArray2[i] = mCaseTypeArray[i][1];
+                    Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
+                }
+                ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
+                        getActivity(), android.R.layout.simple_dropdown_item_1line,
+                        mCaseTypeArray2);
+                spnCaseType.setAdapter(adapterTypeCase);
+            } else {
+                Log.i(TAG + " show mCaseTypeArray", "null");
+            }
+            final String[] selectedCaseType = new String[1];
+            final String[] selectedSubCaseType = new String[1];
+            spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selectedCaseType[0] = mCaseTypeArray[position][0];
+                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+                    //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                    //ดึงค่าจาก TbSubCaseSceneType
+                    final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                    if (mSubCaseTypeArray != null) {
+                        String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                        for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                            mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                            Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                        }
+                        ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                        spnSubCaseType.setAdapter(adapterSubCaseType);
+                    } else {
+                        spnSubCaseType.setAdapter(null);
+                        selectedSubCaseType[0] = null;
+                        Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
+                    }
+
+                    spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
+                            Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                        }
+
+                        public void onNothingSelected(AdapterView<?> parent) {
+                            selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
+                            Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                        }
+                    });
+                }
+
+                public void onNothingSelected(AdapterView<?> parent) {
+                    selectedCaseType[0] = mCaseTypeArray[0][0];
+                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+                    //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                }
+            });
+
+            dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
+            dialog.setIcon(R.drawable.ic_noti);
+            dialog.setCancelable(true);
+            // Current Date
+            final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+            final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
+
+
+            dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    String NoticeCaseID = "MC_" + saveDataTime;
+                    TbNoticeCase tbNoticeCase = new TbNoticeCase();
+                    tbNoticeCase.NoticeCaseID = NoticeCaseID;
+                    tbNoticeCase.Mobile_CaseID = NoticeCaseID;
+                    tbNoticeCase.InquiryOfficialID = officialID;
+                    tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
+                    tbNoticeCase.InvestigatorOfficialID = null;
+                    tbNoticeCase.SCDCAgencyCode = null;
+                    tbNoticeCase.CaseTypeID = selectedCaseType[0];
+                    tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
+                    tbNoticeCase.CaseStatus = "receive";
+                    tbNoticeCase.ReceivingCaseDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                    tbNoticeCase.ReceivingCaseTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                    tbNoticeCase.DISTRICT_ID = null;
+                    tbNoticeCase.AMPHUR_ID = null;
+                    tbNoticeCase.PROVINCE_ID = null;
+                    tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                    tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
+                    if (tbNoticeCase != null) {
+//                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
+//                            if (isSuccess) {
+                        Bundle i = new Bundle();
+                        i.putSerializable(Bundle_Key, tbNoticeCase);
+
+                        i.putString(emergencyTabFragment.Bundle_mode, "new");
+                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        emergencyTabFragment.setArguments(i);
+                        fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+                        //  fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
+//                            } else {
+//                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
+//                            }
+                    }
+
+
+                }
+
+            });
+
+            dialog.setCancelable(true);
+            dialog.setNeutralButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.create();
+            dialog.show();
         }
     }
 }

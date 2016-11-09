@@ -108,7 +108,8 @@ public class SummaryAssignTabFragment extends Fragment {
         Log.i("updateDataDateTime", updateDT[0] + " " + updateDT[1]);
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
+        edtUpdateDateTime2.setText(getString(R.string.updatedata) + " "
+                + getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
 
         linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
         linearLayoutReportNo.setVisibility(View.GONE);
@@ -127,7 +128,6 @@ public class SummaryAssignTabFragment extends Fragment {
 //สถานะคดี
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
 
-        edtInvestDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtInvestDateTime);
         edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         TextView edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
@@ -240,22 +240,22 @@ public class SummaryAssignTabFragment extends Fragment {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
 
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("investigating")) {
-            edtStatus.setText("กำลังดำเนินการตรวจ");
-        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("notice")) {
-            edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_1)) {
+            edtStatus.setText(R.string.edtStatus_1);
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_2)) {
+            edtStatus.setText(R.string.edtStatus_2);
             btnNoticecase.setEnabled(false);
-        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("receive")) {
-            edtStatus.setText("รอส่งแจ้งเหตุ");
-        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("assign")) {
-            edtStatus.setText("รอรับไปตรวจ");
-        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("accept")) {
-            edtStatus.setText("รับเรื่องแล้ว");
-        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals("investigated")) {
-            edtStatus.setText("ตรวจเสร็จแล้ว");
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_3)) {
+            edtStatus.setText(R.string.edtStatus_3);
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_4)) {
+            edtStatus.setText(R.string.edtStatus_4);
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_5)) {
+            edtStatus.setText(R.string.edtStatus_5);
+        } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_6)) {
+            edtStatus.setText(R.string.edtStatus_6);
         }
         TextView txtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.txtSceneNoticeDateTime);
-        txtSceneNoticeDateTime.setText("วันเวลาที่จ่ายงาน");
+        txtSceneNoticeDateTime.setText(R.string.txtAssignDateTimeTitle);
         //ววันเวลาที่จ่ายงานห
         if (AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate == null || AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate.equals("")
                 || AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate.equals("0000-00-00")) {

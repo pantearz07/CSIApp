@@ -114,15 +114,15 @@ public class SummaryCSITabFragment extends Fragment {
         noticeCaseID = CSIDataTabFragment.apiCaseScene.getTbNoticeCase().NoticeCaseID;
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
         if (noticeCaseID.equals("null") || noticeCaseID == null || noticeCaseID.equals("")) {
-            Log.i(TAG, " show noticeCaseID: ");
+//            Log.i(TAG, " show noticeCaseID: ");
         } else {
-            Log.i(TAG, " show noticeCaseID: " + noticeCaseID.toString());
+//            Log.i(TAG, " show noticeCaseID: " + noticeCaseID.toString());
         }
 
         if (caseReportID.equals("null") || caseReportID == null || caseReportID.equals("")) {
-            Log.i(TAG, " show caseReportID: ");
+//            Log.i(TAG, " show caseReportID: ");
         } else {
-            Log.i(TAG, " show caseReportID: " + caseReportID);
+//            Log.i(TAG, " show caseReportID: " + caseReportID);
         }
 
 
@@ -158,7 +158,9 @@ public class SummaryCSITabFragment extends Fragment {
         edtStatus = (TextView) viewSummaryCSI.findViewById(R.id.edtStatus);
 
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
-        edtUpdateDateTime2.setText("อัพเดทข้อมูลเมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+        edtUpdateDateTime2.setText(getString(R.string.updatedata) + " "
+                + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
         //วันเวลาที่ตรวจคดีเสร็จ
@@ -274,39 +276,41 @@ public class SummaryCSITabFragment extends Fragment {
         if (mTypePoliceStationArray != null) {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
-
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("investigating")) {
-            edtStatus.setText("กำลังดำเนินการตรวจ");
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("notice")) {
-            edtStatus.setText("แจ้งเหตุแล้ว รอจ่ายงาน");
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_1))) {
+            edtStatus.setText(getString(R.string.edtStatus_1));
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_2))) {
+            edtStatus.setText(getString(R.string.edtStatus_2));
             btnNoticecase.setEnabled(false);
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_3))) {
+            edtStatus.setText(getString(R.string.edtStatus_3));
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_4))) {
+            if (CSIDataTabFragment.mode.equals("view")) {
+                edtStatus.setText(getString(R.string.edtStatus_4));
+            } else {
+                edtStatus.setText(getString(R.string.edtStatus_5));
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = getString(R.string.casestatus_5);
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = getString(R.string.casestatus_5);
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                SaveCaseReport statusCase = new SaveCaseReport();
+                statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                if (status_savecase = true) {
 
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("receive")) {
-            edtStatus.setText("รอส่งแจ้งเหตุ");
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("assign")) {
-            edtStatus.setText("รอรับไปตรวจ");
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("accept")) {
-            edtStatus.setText("รับเรื่องแล้ว");
-            final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-            SaveCaseReport statusCase = new SaveCaseReport();
-            statusCase.execute(CSIDataTabFragment.apiCaseScene);
-            if (status_savecase = true) {
+                    Log.i(TAG, "accept to investigating");
+                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+                    edtStatus.setText(getString(R.string.edtStatus_5));
 
-                Log.i(TAG, "accept to investigating");
-                edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-                edtStatus.setText("กำลังดำเนินการตรวจ");
-
+                }
             }
-        } else if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().getReportStatus().equals("investigated")) {
-            edtStatus.setText("ตรวจเสร็จแล้ว");
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_5))) {
+            edtStatus.setText(getString(R.string.edtStatus_5));
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_6))) {
+            edtStatus.setText(getString(R.string.edtStatus_6));
         }
-//
+
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate == null || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate.equals("0000-00-00")) {
@@ -531,14 +535,14 @@ public class SummaryCSITabFragment extends Fragment {
                 SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
                 defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
                 String filepath = "http://" + defaultIP + "/assets/csifiles/" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/docs/" + params[0] + ".docx";
-                Log.i(TAG, "docs: " + filepath);
+//                Log.i(TAG, "docs: " + filepath);
 
                 URL url = new URL(filepath);
                 URLConnection conexion = url.openConnection();
                 conexion.connect();
 
                 int lenghtOfFile = conexion.getContentLength();
-                Log.d(TAG, "Lenght of file: " + lenghtOfFile);
+//                .Logd(TAG, "Lenght of file: " + lenghtOfFile);
 
                 InputStream input = new BufferedInputStream(url.openStream());
 
@@ -549,7 +553,7 @@ public class SummaryCSITabFragment extends Fragment {
                     fileDoc.delete();
                 }
                 fileDoc.createNewFile();
-                Log.i(TAG, "fileoutput : " + fileDoc.getPath());
+//                Log.i(TAG, "fileoutput : " + fileDoc.getPath());
                 OutputStream output = new FileOutputStream(fileDoc);
                 //OutputStream output = new FileOutputStream("/sdcard/Download/"+fileName+".doc");
 
@@ -568,7 +572,7 @@ public class SummaryCSITabFragment extends Fragment {
                 input.close();
                 return params[0];
             } catch (Exception e) {
-                Log.e("Error: ", e.getMessage());
+//                Log.e("Error: ", e.getMessage());
                 return "error";
             }
 
@@ -576,34 +580,42 @@ public class SummaryCSITabFragment extends Fragment {
         }
 
         protected void onPostExecute(final String arrData) {
-            final String CurrentDate_ID[] = getDateTime.getDateTimeCurrent();
-            String timestamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
-
-            ApiMultimedia apiMultimedia = new ApiMultimedia();
-            TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
-
-            tbMultimediaFile.setCaseReportID(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
-            tbMultimediaFile.setFileID(arrData);
-            tbMultimediaFile.setFilePath(arrData + ".docx");
-            tbMultimediaFile.setFileType("document");
-            tbMultimediaFile.setFileDescription("เลขที่รายงาน " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo);
-            tbMultimediaFile.setTimestamp(timestamp);
-            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
-            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
-            Log.i(TAG, String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
-            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-            if (isSuccess) {
+            if (arrData.equals("error")) {
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.download_complete) + "\n" + arrData.toString() + ".docx", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("เปิดดู", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if (arrData.toString() != "error") {
-                                        openDocument(arrData.toString());
-                                    }
-                                }
-                            });
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.download_error)
+                            , Snackbar.LENGTH_INDEFINITE);
                     snackbar.show();
+                }
+            } else {
+                final String CurrentDate_ID[] = getDateTime.getDateTimeCurrent();
+                String timestamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+
+                ApiMultimedia apiMultimedia = new ApiMultimedia();
+                TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+
+                tbMultimediaFile.setCaseReportID(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
+                tbMultimediaFile.setFileID(arrData);
+                tbMultimediaFile.setFilePath(arrData + ".docx");
+                tbMultimediaFile.setFileType("document");
+                tbMultimediaFile.setFileDescription("เลขที่รายงาน " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportNo);
+                tbMultimediaFile.setTimestamp(timestamp);
+                apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+                CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+//                Log.i(TAG, String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                if (isSuccess) {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.download_complete) + "\n" + arrData.toString() + ".docx", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("เปิดดู", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (arrData.toString() != "error") {
+                                            openDocument(arrData.toString());
+                                        }
+                                    }
+                                });
+                        snackbar.show();
+                    }
                 }
             }
         }
@@ -653,7 +665,7 @@ public class SummaryCSITabFragment extends Fragment {
                 case R.id.spnCaseType:
                     if (oldselectedCT == false) {
                         selectedCaseType = mCaseTypeArray[pos][0];
-                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
+//                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID = selectedCaseType;
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTypeID = selectedCaseType;
                         //ดึงค่าจาก TbSubCaseSceneType
@@ -672,9 +684,9 @@ public class SummaryCSITabFragment extends Fragment {
                             selectedSubCaseType = null;
                             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                             CSIDataTabFragment.apiCaseScene.getTbCaseScene().SubCaseTypeID = selectedSubCaseType;
-                            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
+//                            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType));
                         }
-                        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTypeID);
+//                        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTypeID);
                         spnSubCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
                     }
                     break;
@@ -684,7 +696,7 @@ public class SummaryCSITabFragment extends Fragment {
                         selectedSubCaseType = mSubCaseTypeArray[pos][0];
                         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                         CSIDataTabFragment.apiCaseScene.getTbCaseScene().SubCaseTypeID = selectedSubCaseType;
-                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
+//                        Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
                     }
                     break;
             }
@@ -697,7 +709,7 @@ public class SummaryCSITabFragment extends Fragment {
 
                 case R.id.spnCaseType:
                     selectedCaseType = mCaseTypeArray[0][0];
-                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
+//                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType);
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseTypeID = selectedCaseType;
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTypeID = selectedCaseType;
                     break;
@@ -705,7 +717,7 @@ public class SummaryCSITabFragment extends Fragment {
                     selectedSubCaseType = mSubCaseTypeArray[0][0];
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SubCaseTypeID = selectedSubCaseType;
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().SubCaseTypeID = selectedSubCaseType;
-                    Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
+//                    Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType);
                     break;
             }
         }
@@ -740,7 +752,7 @@ public class SummaryCSITabFragment extends Fragment {
             super.onPostExecute(apiStatus);
             progressDialog.dismiss();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                Log.d(TAG, apiStatus.getData().getReason());
+//                Log.d(TAG, apiStatus.getData().getReason());
                 status_savecase = true;
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
@@ -791,13 +803,13 @@ public class SummaryCSITabFragment extends Fragment {
             super.onPostExecute(apiStatusResult);
             progressDialog.dismiss();
             if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
-                Log.d(TAG, apiStatusResult.getStatus().toString());
-                Log.d(TAG, apiStatusResult.getData().getResult().toString());
+//                Log.d(TAG, apiStatusResult.getStatus().toString());
+//                Log.d(TAG, apiStatusResult.getData().getResult().toString());
 
                 new DownloadFile().execute(apiStatusResult.getData().getResult().toString());
 
             } else {
-                Log.d(TAG, "error");
+//                Log.d(TAG, "error");
                 Toast.makeText(getActivity(),
                         getString(R.string.error_data) + " " + getString(R.string.network_error),
                         Toast.LENGTH_LONG).show();

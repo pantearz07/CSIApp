@@ -6,73 +6,61 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-    <TableLayout
-        android:id="@+id/tableClass"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-
-        <TableRow
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtDetails"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_gravity="left|center_vertical"
+            android:layout_weight="1"
+            android:textSize="@dimen/small_text" />
 
-            <TextView
-                android:id="@+id/txtDetails"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-                android:layout_weight="1"
-                android:textSize="@dimen/small_text" />
-
-            <ImageButton
-                android:id="@+id/imgEdit"
-                android:layout_width="@dimen/width_btn"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginRight="8dp"
-                android:background="@color/transparent"
-                android:src="@drawable/ic_edit" />
-
-            <ImageButton
-                android:id="@+id/imgDelete"
-                android:layout_width="@dimen/width_btn"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginEnd="5dp"
-                android:background="@color/transparent"
-                android:src="@drawable/ic_drop" />
-
-        </TableRow>
-
-
-        <TableRow
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/imgEdit"
+            android:layout_width="@dimen/width_btn"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_s"
-            android:gravity="center_vertical">
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_edit" />
 
-            <TextView
-                android:id="@+id/txtPhoto"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="รูปภาพ (0)"
-                android:textSize="@dimen/ssmall_text"
-                android:textStyle="bold|italic" />
+        <ImageButton
+            android:id="@+id/imgDelete"
+            android:layout_width="@dimen/width_btn"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginEnd="5dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_drop" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="9dp">
+
+        <TextView
+            android:id="@+id/txtPhoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="รูปภาพ (0)"
+            android:textSize="@dimen/ssmall_text"
+            android:textStyle="bold|italic" />
 
 
-            <TextView
-                android:id="@+id/txtVideo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="วิดีโอ (0)"
-                android:textSize="@dimen/ssmall_text"
-
-                android:textStyle="bold|italic" />
-        </TableRow>
-
-    </TableLayout>
-
+        <TextView
+            android:id="@+id/txtVideo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="วิดีโอ (0)"
+            android:textSize="@dimen/ssmall_text"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
 </LinearLayout>

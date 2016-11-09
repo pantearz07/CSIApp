@@ -42,37 +42,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/editMorePeopleLayout"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <EditText
-                                android:id="@+id/editMorePeople"
-
-                                style="@style/edtMultiLine"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="บุคคลที่เกี่ยวข้องในสถานที่เกิดเหตุ"
-                                android:maxLines="3"
-                                android:minLines="2" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <ImageButton
-                            android:id="@+id/btn_clear_txt_24"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right|center_vertical"
-                            android:background="@color/transparent"
-                            android:src="@drawable/ic_delete"
-                            android:visibility="gone" />
-                    </TableRow>-->
-
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -104,47 +73,14 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_maxlayout" />
+                            android:src="@drawable/ic_minlayout" />
                     </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line"
-                        android:visibility="gone">
-
-                        <Button
-                            android:id="@+id/btnAddGatewayCriminalx"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:text="เพิ่มรายการ"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/small_text" />
-
-                    </TableRow>
-
-                    <!--<TableRow-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="@dimen/margin_line">-->
-
-                        <!--<TextView-->
-                            <!--android:id="@+id/txtAddGatewayCriminal"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:text="ตรวจพบร่อยรอยทางเข้า-ออกของคนร้าย"-->
-                            <!--android:textSize="@dimen/mmedium_text" />-->
-
-                    <!--</TableRow>-->
 
                     <TableRow
                         android:id="@+id/tableRowAddGatewayCriminal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_line"
                         android:layout_marginTop="@dimen/margin_line">
 
                         <ListView
@@ -153,8 +89,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:divider="@color/navy"
-                            android:dividerHeight="@dimen/divider_height"
-                            android:padding="5dp"
+                            android:dividerHeight="@dimen/view_height"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -189,47 +124,14 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_maxlayout" />
+                            android:src="@drawable/ic_minlayout" />
                     </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line"
-                        android:visibility="gone">
-
-                        <Button
-                            android:id="@+id/btnAddClueShownx"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:text="เพิ่มรายการ"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/small_text" />
-
-                    </TableRow>
-
-                    <!--<TableRow-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="@dimen/margin_line">-->
-
-                        <!--<TextView-->
-                            <!--android:id="@+id/txtAddClueShown"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:text="ตรวจพบร่องรอยการรื้อค้น/งัดแงะบริเวณ"-->
-                            <!--android:textSize="@dimen/mmedium_text" />-->
-
-                    <!--</TableRow>-->
 
                     <TableRow
                         android:id="@+id/tableRowAddClueShown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_line"
                         android:layout_marginTop="@dimen/margin_line">
 
                         <ListView
@@ -239,7 +141,6 @@
                             android:layout_weight="1"
                             android:divider="@color/navy"
                             android:dividerHeight="@dimen/view_height"
-                            android:padding="10dp"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -274,48 +175,15 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_maxlayout" />
+                            android:src="@drawable/ic_minlayout" />
                     </TableRow>
 
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line"
-                        android:visibility="gone">
-
-                        <Button
-                            android:id="@+id/btnPropertyLossx"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:text="เพิ่มรายการ"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/small_text" />
-
-                    </TableRow>
-
-                    <!--<TableRow-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="@dimen/margin_line">-->
-
-                        <!--<TextView-->
-                            <!--android:id="@+id/txtPropertyLossDetail"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:text="คนร้ายโจรกรรมทรัพย์สินมีค่า ดังต่อไปนี้"-->
-                            <!--android:textSize="@dimen/mmedium_text" />-->
-
-                    <!--</TableRow>-->
 
                     <TableRow
                         android:id="@+id/tableRowPropertyLoss"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_line"
                         android:layout_marginTop="@dimen/margin_line">
 
                         <ListView
@@ -325,7 +193,6 @@
                             android:layout_weight="1"
                             android:divider="@color/navy"
                             android:dividerHeight="@dimen/view_height"
-                            android:padding="10dp"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -360,32 +227,15 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_maxlayout" />
+                            android:src="@drawable/ic_minlayout" />
                     </TableRow>
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line"
-                        android:visibility="gone">
-
-                        <Button
-                            android:id="@+id/btnAddEvidencesx"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_button"
-                            android:padding="5dp"
-                            android:text="เพิ่มรายการ"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/small_text" />
-
-                    </TableRow>
 
                     <TableRow
                         android:id="@+id/tableRowAddEvidences"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_line"
                         android:layout_marginTop="@dimen/margin_line">
 
                         <ListView
@@ -395,14 +245,12 @@
                             android:layout_weight="1"
                             android:divider="@color/navy"
                             android:dividerHeight="@dimen/view_height"
-                            android:padding="10dp"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line">
+                        android:layout_height="wrap_content">
 
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/editEvidencePerformedLayout"
@@ -412,15 +260,11 @@
 
                             <EditText
                                 android:id="@+id/editEvidencePerformed"
-
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="การดำเนินการเกี่ยวกับวัตถุพยาน"
-
                                 android:minLines="3" />
-
-
                         </android.support.design.widget.TextInputLayout>
 
                         <ImageButton

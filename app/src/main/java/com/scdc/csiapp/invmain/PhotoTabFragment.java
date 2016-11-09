@@ -1,12 +1,8 @@
 package com.scdc.csiapp.invmain;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -79,7 +75,7 @@ public class PhotoTabFragment extends Fragment {
         cd = new ConnectionDetector(getActivity());
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewPhoto = (GridView) viewPhotosTab.findViewById(R.id.gridViewPhoto);
-        txtPhotoNum = (TextView) viewPhotosTab.findViewById(R.id.txtPhotoNum);
+//        txtPhotoNum = (TextView) viewPhotosTab.findViewById(R.id.txtPhotoNum);
         mContext = viewPhotosTab.getContext();
         showAllPhoto();
         SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
@@ -289,7 +285,7 @@ public class PhotoTabFragment extends Fragment {
         }
         if (tbMultimediaFileList != null) {
             Log.i("tbMultimediaFileList", String.valueOf(tbMultimediaFileList.size()));
-            txtPhotoNum.setText(String.valueOf(tbMultimediaFileList.size()));
+//            txtPhotoNum.setText(String.valueOf(tbMultimediaFileList.size()));
             gViewPhoto.setVisibility(View.VISIBLE);
             gViewPhoto.setAdapter(new PhotoAdapter(getActivity()));
             registerForContextMenu(gViewPhoto);
@@ -298,7 +294,6 @@ public class PhotoTabFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-//                    showViewPic(tbMultimediaFileList.get(position).FilePath.toString());
                     Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
                     Bundle extras = new Bundle();
                     extras.putString("photopath", tbMultimediaFileList.get(position).FilePath.toString());
@@ -314,28 +309,6 @@ public class PhotoTabFragment extends Fragment {
             Log.i("Recieve", "Null!! ");
 
         }
-    }
-
-    public void showViewPic(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String root = Environment.getExternalStorageDirectory().toString();
-        String strPath = root + "/CSIFiles/Pictures/" + sPicPath;
-
-        // Image Resource
-        ImageView imageView = (ImageView) dialog.findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-                width, height, matrix, true);
-        imageView.setImageBitmap(resizedBitmap);
-        dialog.show();
     }
 
     @Override

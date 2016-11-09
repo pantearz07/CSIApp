@@ -1385,14 +1385,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public String[][] SelectSubCaseType() {
         // TODO Auto-generated method stub
-        Log.i("show", "SelectSubCaseType");
         try {
             String arrData[][] = null;
 
             mDb = this.getReadableDatabase(); // Read Data
 
             String strSQL = "SELECT * FROM subcasescenetype";
-            Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
             if (cursor != null) {
@@ -1424,14 +1422,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public String[][] SelectSubCaseTypeByCaseType(String CaseTypeID) {
         // TODO Auto-generated method stub
-        Log.i("show", "SelectSubCaseType");
         try {
             String arrData[][] = null;
 
             mDb = this.getReadableDatabase(); // Read Data
 
             String strSQL = "SELECT * FROM subcasescenetype WHERE " + COL_CaseTypeID + " = '" + CaseTypeID + "'";
-            Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
             if (cursor != null) {
@@ -1472,7 +1468,6 @@ public class DBHelper extends SQLiteAssetHelper {
             String strSQL = "SELECT casescenetype.CaseTypeID FROM casescenetype,subcasescenetype WHERE " +
                     "subcasescenetype.SubCaseTypeID = '" + subCaseTypeID + "' " +
                     "AND casescenetype.CaseTypeID = subcasescenetype.CaseTypeID LIMIT 1";
-            Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -1505,7 +1500,6 @@ public class DBHelper extends SQLiteAssetHelper {
             String strSQL = "SELECT casescenetype.CaseTypeID,casescenetype.CaseTypeName FROM casescenetype,subcasescenetype WHERE " +
                     "subcasescenetype.SubCaseTypeID = '" + subCaseTypeID + "' " +
                     "AND casescenetype.CaseTypeID = subcasescenetype.CaseTypeID";
-            Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
             if (cursor != null) {
@@ -1542,7 +1536,6 @@ public class DBHelper extends SQLiteAssetHelper {
             mDb = this.getReadableDatabase(); // Read Data
 
             String strSQL = "SELECT * FROM " + TB_CaseSceneType + " ORDER BY CaseTypeID ASC LIMIT 5 OFFSET 1";
-            Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
             if (cursor != null) {
@@ -1587,7 +1580,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM official WHERE OfficialID = '" + InvestigatorOfficialID + "'";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i("Select Official", String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getColumnCount()];
@@ -1601,7 +1593,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     arrData[6] = cursor.getString(6);
                     arrData[7] = cursor.getString(7);
                 }
-                Log.i(TAG, "show selectofficial " + arrData[1] + " " + arrData[2]);
             }
             cursor.close();
 
@@ -1624,7 +1615,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM policestation WHERE PoliceStationID = '" + policestationid + "'";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i("selectPoliceStation", String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getColumnCount()];
@@ -1634,7 +1624,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     arrData[2] = cursor.getString(2);
 
                 }
-                Log.i(TAG, "show selectPoliceStation" + arrData[2]);
             }
             cursor.close();
 
@@ -1889,13 +1878,10 @@ public class DBHelper extends SQLiteAssetHelper {
                 Val.put(COL_position, apiProfile.getTbUsers().position);
                 Val.put(COL_picture, apiProfile.getTbUsers().picture);
                 Val.put(COL_last_login, apiProfile.getTbUsers().last_login);
-                Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("users", null, Val);
-                    Log.d(TAG, "Sync Table users: Insert ");
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("users", Val, " id_users = ?", new String[]{String.valueOf(username_old)});
-                    Log.d(TAG, "Sync Table users: Update ");
                 }
             }
             //บันทึกข้อมูลลง official
@@ -1917,13 +1903,10 @@ public class DBHelper extends SQLiteAssetHelper {
                 Val.put(COL_SCDCAgencyCode, apiProfile.getTbOfficial().SCDCAgencyCode);
                 Val.put(COL_PoliceStationID, apiProfile.getTbOfficial().PoliceStationID);
                 Val.put(COL_id_users, apiProfile.getTbOfficial().id_users);
-                Log.d(TAG, "official FirstName" + apiProfile.getTbOfficial().FirstName);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("official", null, Val);
-                    Log.d(TAG, "Sync Table official: Insert ");
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(sOfficialID)});
-                    Log.d(TAG, "Sync Table official: Update ");
                 }
             }
 
@@ -1960,13 +1943,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
                 Val.put(COL_OfficialDisplayPic, apiProfile.getTbOfficial().OfficialDisplayPic);
 
-                Log.d(TAG, "official FirstName" + apiProfile.getTbOfficial().FirstName);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("official", null, Val);
-                    Log.d(TAG, "Sync Table official: Insert ");
+//                    Log.d(TAG, "Sync Table official: Insert ");
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(sOfficialID)});
-                    Log.d(TAG, "Sync Table official: Update ");
+//                    Log.d(TAG, "Sync Table official: Update ");
                 }
             }
             //บันทึกข้อมูลลง users
@@ -1975,13 +1957,13 @@ public class DBHelper extends SQLiteAssetHelper {
             try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
                 ContentValues Val = new ContentValues();
                 Val.put(COL_picture, apiProfile.getTbUsers().picture);
-                Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
+//                Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("users", null, Val);
-                    Log.d(TAG, "Sync Table users: Insert ");
+//                    Log.d(TAG, "Sync Table users: Insert ");
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("users", Val, " id_users = ?", new String[]{String.valueOf(id_users)});
-                    Log.d(TAG, "Sync Table users: Update ");
+//                    Log.d(TAG, "Sync Table users: Update ");
                 }
             }
             db.setTransactionSuccessful();
@@ -2057,10 +2039,10 @@ public class DBHelper extends SQLiteAssetHelper {
                 Val.put(COL_LastUpdateTime, apiCaseScene.getTbCaseScene().LastUpdateTime);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("casescene", null, Val);
-                    Log.d(TAG, "Sync Table casescene: Insert ");
+//                    Log.d(TAG, "Sync Table casescene: Insert ");
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("casescene", Val, " CaseReportID = ?", new String[]{String.valueOf(sCaseReportID)});
-                    Log.d(TAG, "Sync Table casescene: Update ");
+//                    Log.d(TAG, "Sync Table casescene: Update ");
                 }
             }
             //บันทึกข้อมูลลง TbNoticeCase
@@ -2103,10 +2085,10 @@ public class DBHelper extends SQLiteAssetHelper {
                 Val.put(COL_LastUpdateTime, apiCaseScene.getTbNoticeCase().LastUpdateTime);
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                     db.insert("noticecase", null, Val);
-                    Log.d(TAG, "Sync Table noticecase: Insert ");
+//                    Log.d(TAG, "Sync Table noticecase: Insert ");
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("noticecase", Val, " NoticeCaseID = ?", new String[]{String.valueOf(apiCaseScene.getTbCaseScene().NoticeCaseID)});
-                    Log.d(TAG, "Sync Table noticecase: Update ");
+//                    Log.d(TAG, "Sync Table noticecase: Update ");
                 }
             }
 // บันทึกข้อมูลลง tbSceneInvestigations
@@ -2123,10 +2105,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_SceneInvestTime, apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestTime);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("sceneinvestigation", null, Val);
-                            Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Insert " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
+//                            Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Insert " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("sceneinvestigation", Val, " SceneInvestID = ?", new String[]{String.valueOf(apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID)});
-                            Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Update " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
+//                            Log.d(TAG, "Sync Table sceneinvestigation [" + i + "]: Update " + apiCaseScene.getTbSceneInvestigations().get(i).SceneInvestID);
                         }
                     }
                 }
@@ -2152,10 +2134,10 @@ public class DBHelper extends SQLiteAssetHelper {
                     Val.put(COL_SceneZone, apiCaseScene.getTbSceneFeatureOutside().SceneZone);
                     if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                         db.insert("scenefeatureoutside", null, Val);
-                        Log.d(TAG, "Sync Table scenefeatureoutside: Insert ");
+//                        Log.d(TAG, "Sync Table scenefeatureoutside: Insert ");
                     } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                         db.update("scenefeatureoutside", Val, " CaseReportID = ?", new String[]{String.valueOf(sCaseReportID)});
-                        Log.d(TAG, "Sync Table scenefeatureoutside: Update ");
+//                        Log.d(TAG, "Sync Table scenefeatureoutside: Update ");
                     }
                 }
             }
@@ -2178,10 +2160,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_CenterInside, apiCaseScene.getTbSceneFeatureInSide().get(i).CenterInside);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("scenefeatureinside", null, Val);
-                            Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Insert ");
+//                            Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("scenefeatureinside", Val, " FeatureInsideID = ?", new String[]{String.valueOf(apiCaseScene.getTbSceneFeatureInSide().get(i).FeatureInsideID)});
-                            Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Update ");
+//                            Log.d(TAG, "Sync Table scenefeatureinside [" + i + "]: Update ");
                         }
                     }
                 }
@@ -2192,7 +2174,7 @@ public class DBHelper extends SQLiteAssetHelper {
                     strSQL = "SELECT * FROM multimediaFile "
                             + " WHERE FileID = '" + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID + "' " +
                             "AND CaseReportID = '" + sCaseReportID + "'";
-                    Log.d(TAG, "บันทึกข้อมูลลง tbMultimediaFiles " + strSQL);
+//                    Log.d(TAG, "บันทึกข้อมูลลง tbMultimediaFiles " + strSQL);
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
                         ContentValues Val = new ContentValues();
                         Val.put(COL_FileID, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
@@ -2203,10 +2185,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_Timestamp, apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().Timestamp);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("multimediaFile", null, Val);
-                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Insert ");
+//                            Log/.d(TAG, "Sync Table MultimediaFile [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("multimediaFile", Val, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)});
-                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
+//                            Log.d(TAG, "Sync Table MultimediaFile [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID);
                         }
 
                         if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null) {
@@ -2220,10 +2202,10 @@ public class DBHelper extends SQLiteAssetHelper {
 
                                 if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                                     db.insert(TB_photoofoutside, null, Val2);
-                                    Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Insert ");
+//                                    Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Insert ");
                                 } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                                     db.update(TB_photoofoutside, Val2, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID)});
-                                    Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
+//                                    Log.d(TAG, "Sync Table PhotoOfOutside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID);
                                 }
                             }
                         }
@@ -2239,10 +2221,10 @@ public class DBHelper extends SQLiteAssetHelper {
 
                                 if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                                     db.insert(TB_photoofinside, null, Val3);
-                                    Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Insert ");
+//                                    Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Insert ");
                                 } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                                     db.update(TB_photoofinside, Val3, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID)});
-                                    Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
+//                                    Log.d(TAG, "Sync Table PhotoOfInside [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID);
                                 }
                             }
                         }
@@ -2257,10 +2239,10 @@ public class DBHelper extends SQLiteAssetHelper {
 
                                 if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                                     db.insert(TB_photoofevidence, null, Val4);
-                                    Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Insert ");
+//                                    Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Insert ");
                                 } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                                     db.update(TB_photoofevidence, Val4, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID)});
-                                    Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
+//                                    Log.d(TAG, "Sync Table PhotoOfEvidence [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID);
                                 }
                             }
                         }
@@ -2275,10 +2257,10 @@ public class DBHelper extends SQLiteAssetHelper {
 
                                 if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                                     db.insert(TB_photoofresultscene, null, Val5);
-                                    Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Insert ");
+//                                    Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Insert ");
                                 } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                                     db.update(TB_photoofresultscene, Val5, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID)});
-                                    Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
+//                                    Log.d(TAG, "Sync Table TB_PhotoOfResultscene [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID);
                                 }
                             }
                         }
@@ -2293,10 +2275,10 @@ public class DBHelper extends SQLiteAssetHelper {
 
                                 if (cursor2.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                                     db.insert(TB_photoofpropertyless, null, Val6);
-                                    Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Insert ");
+//                                    Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Insert ");
                                 } else if (cursor2.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                                     db.update(TB_photoofpropertyless, Val6, " FileID = ?", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID)});
-                                    Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
+//                                    Log.d(TAG, "Sync Table TB_PhotoOfPropertyless [" + i + "]: Update " + apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID);
                                 }
                             }
                         }
@@ -2323,10 +2305,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_EvidencePerformed, apiCaseScene.getTbFindEvidences().get(i).EvidencePerformed);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("FindEvidence", null, Val);
-                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Insert ");
+//                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("FindEvidence", Val, " FindEvidenceID = ?", new String[]{String.valueOf(apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID)});
-                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Update ");
+//                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Update ");
                         }
                     }
                 }
@@ -2345,10 +2327,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbResultScenes().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
+//                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbResultScenes().get(i).RSID)});
-                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
+//                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
                         }
                     }
                 }
@@ -2367,10 +2349,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbGatewayCriminals().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Insert ");
+//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbGatewayCriminals().get(i).RSID)});
-                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Update ");
+//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Update ");
                         }
                     }
                 }
@@ -2389,10 +2371,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbClueShowns().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Insert ");
+//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbClueShowns().get(i).RSID)});
-                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Update ");
+//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Update ");
                         }
                     }
                 }
@@ -2414,22 +2396,22 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_PropInsurance, apiCaseScene.getTbPropertyLosses().get(i).PropInsurance);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("propertyloss", null, Val);
-                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Insert ");
+//                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("propertyloss", Val, " PropertyLossID = ?", new String[]{String.valueOf(apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID)});
-                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Update ");
+//                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Update ");
                         }
                     }
                 }
             }
             // บันทึกข้อมูลลง InvestigatorsInScenes
             if (apiCaseScene.getApiInvestigatorsInScenes() != null) {
-                Log.d(TAG, "getApiInvestigatorsInScenes " + String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().size()));
+//                Log.d(TAG, "getApiInvestigatorsInScenes " + String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().size()));
                 for (int i = 0; i < apiCaseScene.getApiInvestigatorsInScenes().size(); i++) {
                     strSQL = "SELECT * FROM investigatorsinscene "
                             + " WHERE CaseReportID = '" + sCaseReportID + "'"
                             + " AND InvOfficialID = '" + apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID + "' ";
-                    Log.d(TAG, strSQL+" InvOfficialID " + String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID));
+//                    Log.d(TAG, strSQL+" InvOfficialID " + String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID));
                     try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
                         ContentValues Val = new ContentValues();
                         Val.put(COL_CaseReportID, apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().CaseReportID);
@@ -2438,12 +2420,12 @@ public class DBHelper extends SQLiteAssetHelper {
 
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("investigatorsinscene", null, Val);
-                            Log.d(TAG, "Sync Table investigatorsinscene [" + i + "]: Insert ");
+//                            Log.d(TAG, "Sync Table investigatorsinscene [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("investigatorsinscene", Val, " CaseReportID = ? AND InvOfficialID = ?",
                                     new String[]{String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().CaseReportID),
                                             String.valueOf(apiCaseScene.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID)});
-                            Log.d(TAG, "Sync Table investigatorsinscene [" + i + "]: Update ");
+//                            Log.d(TAG, "Sync Table investigatorsinscene [" + i + "]: Update ");
                         }
                     }
                 }
@@ -2461,7 +2443,7 @@ public class DBHelper extends SQLiteAssetHelper {
     }
 
     public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
-        Log.d(TAG, "OfficeID:" + OfficeID);
+//        Log.d(TAG, "OfficeID:" + OfficeID);
         ApiListNoticeCase apiListNoticeCase = new ApiListNoticeCase();
         apiListNoticeCase.setStatus("success");
         ApiListNoticeCase.DataEntity dataEntity = new ApiListNoticeCase().new DataEntity();
@@ -2706,7 +2688,7 @@ public class DBHelper extends SQLiteAssetHelper {
     }
 
     public ApiListOfficial selectApiOfficial(String AccessType) {
-        Log.d(TAG, "AccessType:" + AccessType);
+//        Log.d(TAG, "AccessType:" + AccessType);
         ApiListOfficial apiListOfficial = new ApiListOfficial();
         apiListOfficial.setStatus("success");
         ApiListOfficial.DataEntity dataEntity = new ApiListOfficial().new DataEntity();
@@ -2778,15 +2760,15 @@ public class DBHelper extends SQLiteAssetHelper {
                     //ส่งค่าทั้งหมดเข้า apiOfficial
                     apiOfficial.setMode("offline");
                     apiOfficialList.add(apiOfficial);
-                    Log.d("TEST", "--" + apiOfficial.getTbOfficial().OfficialID);
+//                    Log.d("TEST", "--" + apiOfficial.getTbOfficial().OfficialID);
                 }
             }
             db.close();
             // รวมข้อมูลที่ได้ทั้งหมดลง apiOfficial ก่อนส่งกลับไปใช้
-            Log.d(TAG, "apiOfficialList:" + apiOfficialList.size());
-            for (int i = 0; i < apiOfficialList.size(); i++) {
-                Log.d("TEST", "////--" + apiOfficialList.get(i).getTbOfficial().OfficialID);
-            }
+//            Log.d(TAG, "apiOfficialList:" + apiOfficialList.size());
+//            for (int i = 0; i < apiOfficialList.size(); i++) {
+//                Log.d("TEST", "////--" + apiOfficialList.get(i).getTbOfficial().OfficialID);
+//            }
 
             dataEntity.setResult(apiOfficialList);
             apiListOfficial.setData(dataEntity);
@@ -2798,7 +2780,7 @@ public class DBHelper extends SQLiteAssetHelper {
     }
 
     public ApiListScheduleInvestigates selectApiScheduleInvestigates(String SCDCAgencyCode) {
-        Log.d(TAG, "SCDCAgencyCode:" + SCDCAgencyCode);
+//        Log.d(TAG, "SCDCAgencyCode:" + SCDCAgencyCode);
         ApiListScheduleInvestigates apiListScheduleInvestigates = new ApiListScheduleInvestigates();
         apiListScheduleInvestigates.setStatus("success");
         ApiListScheduleInvestigates.DataEntity dataEntity = new ApiListScheduleInvestigates().new DataEntity();
@@ -2816,7 +2798,7 @@ public class DBHelper extends SQLiteAssetHelper {
 //                    + " ORDER BY ScheduleDate ASC";
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
 
-                Log.d(TAG, "strSQL_main" + strSQL_main + " " + String.valueOf(cursor.getCount()));
+//                Log.d(TAG, "strSQL_main" + strSQL_main + " " + String.valueOf(cursor.getCount()));
                 cursor.moveToPosition(-1);
                 while (cursor.moveToNext()) {
                     ApiScheduleInvestigates apiScheduleInvestigates = new ApiScheduleInvestigates();
@@ -2827,9 +2809,8 @@ public class DBHelper extends SQLiteAssetHelper {
                     tbScheduleInvestigates.ScheduleMonth = cursor.getString(cursor.getColumnIndex(COL_ScheduleMonth));
                     tbScheduleInvestigates.SCDCAgencyCode = cursor.getString(cursor.getColumnIndex(COL_SCDCAgencyCode));
                     apiScheduleInvestigates.setTbScheduleInvestigates(tbScheduleInvestigates);
-                    Log.d(TAG, "tbScheduleInvestigates.ScheduleInvestigateID" + tbScheduleInvestigates.ScheduleInvestigateID);
+//                    Log.d(TAG, "tbScheduleInvestigates.ScheduleInvestigateID" + tbScheduleInvestigates.ScheduleInvestigateID);
 
-                    Log.d(TAG, "apiScheduleInvestigates" + apiScheduleInvestigates.getTbScheduleInvestigates().ScheduleInvestigateID);
                     if (tbScheduleInvestigates.SCDCAgencyCode != null) {
                         // Index tbOfficial ดึงจากตาราง official
                         strSQL = "SELECT * FROM scdcagency "
@@ -2851,10 +2832,9 @@ public class DBHelper extends SQLiteAssetHelper {
                         strSQL = "SELECT * FROM schedulegroup "
                                 + " WHERE ScheduleInvestigateID = '" + tbScheduleInvestigates.ScheduleInvestigateID + "'"
                                 + " ORDER BY ScheduleGroupID ASC";
-                        Log.d(TAG, "schedulegroup / " + strSQL);
+//                        Log.d(TAG, "schedulegroup / " + strSQL);
                         try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                             if (cursor2.getCount() > 0) {
-                                Log.d(TAG, "schedulegroup  " + strSQL);
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
                                     ApiScheduleGroup apiScheduleGroup = new ApiScheduleGroup();
@@ -2870,7 +2850,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                             + " ORDER BY InvOfficialID DESC";
 //                                    Log.d(TAG, "scheduleinvingroup  " + strSQL2);
                                     try (Cursor cursor3 = db.rawQuery(strSQL2, null)) {
-                                        Log.d(TAG, "scheduleinvingroup  " + String.valueOf(cursor3.getCount()));
 
                                         if (cursor3.getCount() > 0) {
                                             cursor3.moveToPosition(-1);
@@ -2943,7 +2922,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
     public boolean syncApiScheduleInvestigates(List<ApiScheduleInvestigates> apiScheduleInvestigates) {
         if (apiScheduleInvestigates.size() == 0) {
-            Log.d(TAG, "apiScheduleInvestigates =  0");
             return false;
         }
         try {
@@ -2956,14 +2934,12 @@ public class DBHelper extends SQLiteAssetHelper {
             String PRIMARY_KEY;
             String strSQL;
             db.beginTransaction();
-            Log.d(TAG, "apiScheduleInvestigates =  " + String.valueOf(size));
             for (int i = 0; i < size; i++) {
                 PRIMARY_KEY = apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleInvestigateID;
                 strSQL = "SELECT * FROM scheduleinvestigates WHERE "
                         + "ScheduleInvestigateID = '" + PRIMARY_KEY + "'" +
                         " ORDER BY ScheduleDate ASC";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
-                Log.d(TAG, strSQL + " / scheduleinvestigates getCount=  " + String.valueOf(cursor.getCount()));
                 ContentValues Val = new ContentValues();
                 Val.put(COL_ScheduleInvestigateID, apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleInvestigateID);
                 Val.put(COL_ScheduleDate, apiScheduleInvestigates.get(i).getTbScheduleInvestigates().ScheduleDate);
@@ -3050,7 +3026,6 @@ public class DBHelper extends SQLiteAssetHelper {
     }
 
     public ApiListCaseScene selectApiCaseScene(String OfficeID) {
-        Log.d(TAG, "OfficeID:" + OfficeID);
         ApiListCaseScene apiListCaseScene = new ApiListCaseScene();
         apiListCaseScene.setStatus("success");
         ApiListCaseScene.DataEntity dataEntity = new ApiListCaseScene().new DataEntity();
@@ -3118,7 +3093,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     temp.LastUpdateDate = cursor.getString(cursor.getColumnIndex(COL_LastUpdateDate));
                     temp.LastUpdateTime = cursor.getString(cursor.getColumnIndex(COL_LastUpdateTime));
                     apiCaseSceneCase.setTbCaseScene(temp);
-                    Log.d(TAG, "NoticeCaseID " + temp.NoticeCaseID.toString());
                     // Index TbCaseScene ดึงจากตาราง noticecase
                     strSQL = "SELECT * FROM noticecase "
                             + " WHERE NoticeCaseID = '" + temp.NoticeCaseID + "'";
@@ -3413,7 +3387,6 @@ public class DBHelper extends SQLiteAssetHelper {
                         strSQL = "SELECT * FROM investigatorsinscene "
                                 + " WHERE CaseReportID = '" + temp.CaseReportID + "'" +
                                 " ORDER BY InvOfficialID ASC";
-                        Log.i(TAG, "investigatorsinscene " + strSQL);
                         try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                             if (cursor2.getCount() > 0) {
@@ -3452,7 +3425,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbOfficial.id_users = cursor3.getString(cursor3.getColumnIndex(COL_id_users));
                                                 apiInvestigatorsInScene.setTbOfficial(tbOfficial);
 
-                                                Log.i(TAG, "tbOfficial " + tbOfficial.FirstName);
                                             } else {
                                                 apiInvestigatorsInScene.setTbOfficial(null);
                                             }
@@ -3463,10 +3435,7 @@ public class DBHelper extends SQLiteAssetHelper {
                             }
                         }
                         apiCaseSceneCase.setApiInvestigatorsInScenes(apiInvestigatorsInScenes);
-                        Log.i(TAG, "apiInvestigatorsInScenes :" + String.valueOf(apiCaseSceneCase.getApiInvestigatorsInScenes().size()));
-                        for (int i = 0; i < apiCaseSceneCase.getApiInvestigatorsInScenes().size(); i++) {
-                            Log.i(TAG, apiCaseSceneCase.getApiInvestigatorsInScenes().get(i).getTbInvestigatorsInScene().InvOfficialID);
-                        }
+
                     }
                     //  ApiMultimedia
                     if (temp.CaseReportID != null) {
@@ -3474,10 +3443,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
                         strSQL = "SELECT * FROM multimediafile "
                                 + " WHERE CaseReportID = '" + temp.CaseReportID + "'";
-                        Log.i(TAG, strSQL);
                         try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
-                            Log.i(TAG, "multimediafile " + String.valueOf(cursor2.getCount()));
                             if (cursor2.getCount() > 0) {
                                 cursor2.moveToPosition(-1);
                                 while (cursor2.moveToNext()) {
@@ -3491,7 +3458,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                     temp15.FileDescription = cursor2.getString(cursor2.getColumnIndex(COL_FileDescription));
                                     temp15.Timestamp = cursor2.getString(cursor2.getColumnIndex(COL_Timestamp));
                                     apiMultimedia.setTbMultimediaFile(temp15);
-                                    Log.i(TAG, "multimediafile " + String.valueOf(apiMultimedia.getTbMultimediaFile().FileID));
                                     if (temp15.FileID != null) {
                                         strSQL = "SELECT * FROM " + TB_photoofoutside
                                                 + " WHERE " + COL_FileID + " = '" + temp15.FileID + "'";
@@ -3505,7 +3471,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbPhotoOfOutside.CaseReportID = cursor3.getString(cursor3.getColumnIndex(COL_CaseReportID));
                                                 apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
 
-                                                Log.i(TAG, "tbPhotoOfOutside " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfOutside().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfOutside(null);
                                             }
@@ -3523,7 +3488,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbPhotoOfInside.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                                 tbPhotoOfInside.FeatureInsideID = cursor3.getString(cursor3.getColumnIndex(COL_FeatureInsideID));
                                                 apiMultimedia.setTbPhotoOfInside(tbPhotoOfInside);
-                                                Log.i(TAG, "tbPhotoOfInside " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfInside().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfInside(null);
                                             }
@@ -3542,7 +3506,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbPhotoOfEvidence.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                                 tbPhotoOfEvidence.FindEvidenceID = cursor3.getString(cursor3.getColumnIndex(COL_FindEvidenceID));
                                                 apiMultimedia.setTbPhotoOfEvidence(tbPhotoOfEvidence);
-                                                Log.i(TAG, "tbPhotoOfEvidence " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfEvidence().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfEvidence(null);
                                             }
@@ -3561,7 +3524,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                                 tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
                                                 apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
-                                                Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
                                             } else {
                                                 apiMultimedia.setTbPhotoOfResultscene(null);
                                             }
@@ -3579,7 +3541,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                                 tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                                 tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(COL_PropertyLessID));
                                                 apiMultimedia.setTbPhotoOfPropertyless(tbPhotoOfPropertyless);
-                                                Log.i(TAG, "tbPhotoOfPropertyless " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfPropertyless().FileID));
 //
                                             } else {
                                                 apiMultimedia.setTbPhotoOfPropertyless(null);
@@ -3593,10 +3554,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
                         }
                         apiCaseSceneCase.setApiMultimedia(apiMultimediaList);
-                        Log.i(TAG, "apiMultimediaList :" + String.valueOf(apiCaseSceneCase.getApiMultimedia().size()));
-                        for (int i = 0; i < apiCaseSceneCase.getApiMultimedia().size(); i++) {
-                            Log.i(TAG, apiCaseSceneCase.getApiMultimedia().get(i).getTbMultimediaFile().FilePath);
-                        }
+
                     }
 
                     // Index tbFindEvidences ดึงจากตาราง findevidence ใช้ค่าจาก Index tbCaseScene
@@ -3733,16 +3691,15 @@ public class DBHelper extends SQLiteAssetHelper {
                     //ส่งค่าทั้งหมดเข้า apiNoticeCases
                     apiCaseSceneCase.setMode("offline");
                     apiCaseScenesCases.add(apiCaseSceneCase);
-                    Log.d("TEST", "--" + apiCaseSceneCase.getTbNoticeCase().NoticeCaseID);
                 }
             }
             db.close();
 //            Log.d("TEST", apiNoticeCases.get(0).getTbNoticeCase().NoticeCaseID + " " + apiNoticeCases.get(1).getTbNoticeCase().NoticeCaseID);
             // รวมข้อมูลที่ได้ทั้งหมดลง apiListNoticeCase ก่อนส่งกลับไปใช้
-            Log.d(TAG, "apiCaseScenesCases:" + apiCaseScenesCases.size());
-            for (int i = 0; i < apiCaseScenesCases.size(); i++) {
-                Log.d("TEST", "////--" + apiCaseScenesCases.get(i).getTbNoticeCase().NoticeCaseID);
-            }
+//            Log.d(TAG, "apiCaseScenesCases:" + apiCaseScenesCases.size());
+//            for (int i = 0; i < apiCaseScenesCases.size(); i++) {
+//                Log.d("TEST", "////--" + apiCaseScenesCases.get(i).getTbNoticeCase().NoticeCaseID);
+//            }
 
             dataEntity.setResult(apiCaseScenesCases);
             apiListCaseScene.setData(dataEntity);
@@ -3838,7 +3795,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM amphur WHERE PROVINCE_ID = '" + provinceid + "'";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, provinceid + " amphur " + String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getCount()][cursor
@@ -3881,7 +3837,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM district WHERE AMPHUR_ID = " + AMPHUR_ID;
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, String.valueOf(AMPHUR_ID) + " district " + String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getCount()][cursor
@@ -3919,7 +3874,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM scdccenter";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, "SelectAllSCDCCenter " + String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getCount()][cursor
@@ -3959,8 +3913,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     "FROM scdccenter AS c,scdcagency WHERE scdcagency.SCDCCenterID = c.SCDCCenterID AND" +
                     " scdcagency.SCDCAgencyCode = '" + SCDCAgencyCode + "' ORDER BY c.SCDCCenterID ASC LIMIT 1";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, SCDCAgencyCode + " SelectAllSCDCCenter" + strSQL + " " + String.valueOf(cursor.getCount()));
-
 
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -3991,7 +3943,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM scdcagency WHERE SCDCCenterID = '" + SCDCCenterID + "'";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, "SelectSCDCAgency " + String.valueOf(cursor.getCount()));
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     arrData = new String[cursor.getCount()][cursor
@@ -4003,7 +3954,6 @@ public class DBHelper extends SQLiteAssetHelper {
                         arrData[i][1] = cursor.getString(1);
                         arrData[i][2] = cursor.getString(2);
 
-                        Log.i(TAG, "SelectSCDCAgency " + arrData[i][2]);
                         i++;
                     } while (cursor.moveToNext());
                 }
@@ -4034,7 +3984,6 @@ public class DBHelper extends SQLiteAssetHelper {
             db.endTransaction();
 
             db.close();
-            Log.i(TAG, "delete " + tableName + ": " + String.valueOf(rows) + " " + id + " " + String.valueOf(rows));
             return rows; // return rows deleted.
 
         } catch (Exception e) {
@@ -4063,7 +4012,6 @@ public class DBHelper extends SQLiteAssetHelper {
                         for (int j = 0; j < cursor.getColumnCount(); j++) {
                             arrData[i][j] = cursor.getString(j);
                         }
-                        // Log.i(TAG, "show SelectAllEvidenceType " + arrData[i][0]);
                         i++;
                     } while (cursor.moveToNext());
 
@@ -4092,7 +4040,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + oMultimediaFile.CaseReportID + " = '" + sCaseReportID + "' AND "
                     + COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
                     + COL_FileID + " DESC";
-            Log.i("show", strSQL);
             Cursor cursor = mDb.rawQuery(strSQL, null);
 
             if (cursor != null) {
@@ -4109,7 +4056,6 @@ public class DBHelper extends SQLiteAssetHelper {
                         arrData[i][4] = cursor.getString(4);
                         arrData[i][5] = cursor.getString(5);
 
-                        Log.i(TAG, "show Photo " + sFileType + arrData[i][0]);
                         i++;
                     } while (cursor.moveToNext());
 
@@ -4135,7 +4081,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + COL_CaseReportID + " = '" + sCaseReportID + "' AND "
                     + COL_FileType + " = '" + sFileType + "'" + " ORDER BY "
                     + COL_FileID + " DESC";
-            Log.i(TAG, "multimediafile " + strSQL);
             List<TbMultimediaFile> tbMultimediaFiles = null;
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                 if (tbMultimediaFiles == null) {
@@ -4155,7 +4100,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     }
                 }
             }
-            Log.i(TAG, "multimediafile " + String.valueOf(tbMultimediaFiles.size()));
             db.close();
             return tbMultimediaFiles;
         } catch (Exception e) {
@@ -4184,7 +4128,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_MultimediaFile + "." + COL_FileID + " = " + TB_photoofoutside + "." + COL_FileID + " AND "
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
-            Log.i("show", strSQL);
             List<TbMultimediaFile> tbMultimediaFiles = null;
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
                 if (tbMultimediaFiles == null) {
@@ -4233,7 +4176,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_photoofinside + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
-            Log.i(TAG, "show SelectDataPhotoOfInside" + strSQL);
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                 if (cursor2.getCount() > 0) {
@@ -4261,7 +4203,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                     tbPhotoOfInside.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                     tbPhotoOfInside.FeatureInsideID = cursor3.getString(cursor3.getColumnIndex(COL_FeatureInsideID));
                                     apiMultimedia.setTbPhotoOfInside(tbPhotoOfInside);
-                                    Log.i(TAG, "tbPhotoOfInside " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfInside().FileID));
                                 } else {
                                     apiMultimedia.setTbPhotoOfInside(null);
                                 }
@@ -4302,7 +4243,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_photoofpropertyless + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
-            Log.i(TAG, "SelectDataPhotoOfPropertyLoss " + strSQL);
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                 if (cursor2.getCount() > 0) {
@@ -4330,7 +4270,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                     tbPhotoOfPropertyless.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                     tbPhotoOfPropertyless.PropertyLessID = cursor3.getString(cursor3.getColumnIndex(COL_PropertyLessID));
                                     apiMultimedia.setTbPhotoOfPropertyless(tbPhotoOfPropertyless);
-                                    Log.i(TAG, "tbPhotoOfPropertyless " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfPropertyless().FileID));
                                 } else {
                                     apiMultimedia.setTbPhotoOfPropertyless(null);
                                 }
@@ -4371,7 +4310,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_photoofevidence + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
-            Log.i("show", strSQL);
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                 if (cursor2.getCount() > 0) {
@@ -4399,7 +4337,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                     tbPhotoOfEvidence.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                     tbPhotoOfEvidence.FindEvidenceID = cursor3.getString(cursor3.getColumnIndex(COL_FindEvidenceID));
                                     apiMultimedia.setTbPhotoOfEvidence(tbPhotoOfEvidence);
-                                    Log.i(TAG, "tbPhotoOfEvidence " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfEvidence().FileID));
                                 } else {
                                     apiMultimedia.setTbPhotoOfEvidence(null);
                                 }
@@ -4440,7 +4377,6 @@ public class DBHelper extends SQLiteAssetHelper {
                     + TB_photoofresultscene + "." + COL_FileID + " = " + TB_MultimediaFile + "." + COL_FileID + " AND "
                     + TB_MultimediaFile + "." + COL_FileType + " = '" + sFileType + "'"
                     + " ORDER BY " + TB_MultimediaFile + "." + COL_FileID + " DESC";
-            Log.i("show", strSQL);
             try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                 if (cursor2.getCount() > 0) {
@@ -4468,7 +4404,6 @@ public class DBHelper extends SQLiteAssetHelper {
                                     tbPhotoOfResultscene.FileID = cursor3.getString(cursor3.getColumnIndex(COL_FileID));
                                     tbPhotoOfResultscene.RSID = cursor3.getString(cursor3.getColumnIndex(COL_RSID));
                                     apiMultimedia.setTbPhotoOfResultscene(tbPhotoOfResultscene);
-                                    Log.i(TAG, "tbPhotoOfResultscene " + temp15.FileID + " " + String.valueOf(apiMultimedia.getTbPhotoOfResultscene().FileID));
                                 } else {
                                     apiMultimedia.setTbPhotoOfEvidence(null);
                                 }
@@ -4481,10 +4416,7 @@ public class DBHelper extends SQLiteAssetHelper {
             }
 
             db.close();
-            Log.i(TAG, "apiMultimediaList resultscene :" + String.valueOf(apiMultimediaList.size()));
-            for (int i = 0; i < apiMultimediaList.size(); i++) {
-                Log.i(TAG, apiMultimediaList.get(i).getTbMultimediaFile().FileID);
-            }
+
             return apiMultimediaList;
 
         } catch (Exception e) {
@@ -4626,7 +4558,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM policestation WHERE PoliceStationID = '" + PoliceStationID + "' LIMIT 1";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, PoliceStationID + "   " + String.valueOf(cursor.getCount()));
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 arrData = cursor.getString(cursor.getColumnIndex("PoliceStationName"));
@@ -4652,7 +4583,6 @@ public class DBHelper extends SQLiteAssetHelper {
 
             String strSQL = "SELECT * FROM scdcagency WHERE SCDCAgencyCode = '" + SCDCAgencyCode + "' LIMIT 1";
             Cursor cursor = db.rawQuery(strSQL, null);
-            Log.i(TAG, SCDCAgencyCode + "   " + String.valueOf(cursor.getCount()));
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 arrData = cursor.getString(cursor.getColumnIndex("SCDCAgencyName"));

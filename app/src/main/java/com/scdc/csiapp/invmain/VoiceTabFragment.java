@@ -29,6 +29,7 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
@@ -405,7 +406,7 @@ public class VoiceTabFragment extends Fragment {
         if (tbMultimediaFileList != null) {
 
             txtVoiceNum.setText(String.valueOf(tbMultimediaFileList.size()));
-
+            setListViewHeightBasedOnItems(listViewVoice);
             listViewVoice.setVisibility(View.VISIBLE);
 
             listViewVoice.setAdapter(new VoiceRecordAdapter(
@@ -421,6 +422,43 @@ public class VoiceTabFragment extends Fragment {
         }
     }
 
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+            Log.i("inside", String.valueOf(numberOfItems));
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                Log.i("inside getHeight ", String.valueOf(itemPos) + " - " + String.valueOf(item.getMeasuredHeight()));
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+            int totalHeight = totalItemsHeight + totalDividersHeight;
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
+            params.height = totalHeight;
+            Log.i("inside totalHeight", String.valueOf(totalHeight));
+            //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
+
     public void showPlayDialog(final String filepath, final String sVoiceID) {
         // TODO Auto-generated method stub
         final Dialog dialog = new Dialog(getActivity());
@@ -434,7 +472,7 @@ public class VoiceTabFragment extends Fragment {
 
         mMedia = new MediaPlayer();
         mMedia = MediaPlayer.create(getActivity(), uri);
-        if(mMedia != null) {
+        if (mMedia != null) {
             mMedia.start();
 
             seekBar = (SeekBar) dialog.findViewById(R.id.seekBar1);
@@ -497,7 +535,7 @@ public class VoiceTabFragment extends Fragment {
             });
 
             dialog.show();
-        }else{
+        } else {
             Toast.makeText(getActivity(), R.string.no_voice, Toast.LENGTH_SHORT).show();
         }
     }

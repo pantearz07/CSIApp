@@ -36,15 +36,6 @@
                     android:orientation="vertical"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                   <!--   <TextView
-                         android:id="@+id/txtUpdateDate"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginBottom="@dimen/margin_line"
-                         android:gravity="center_horizontal|center_vertical"
-                         android:text="อัพเดทข้อมูลล่าสุดเมื่อ : "
-                         android:textSize="@dimen/ssmall_text" />
- -->
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rvDraft"
                         android:layout_width="match_parent"

@@ -511,10 +511,10 @@ public class ApiConnect {
                 .add("Registration_id", data.getRegistration_id())
                 .add("RegisOfficialID", data.getRegisOfficialID())
                 .build();
-        Log.d(TAG, "Not User " + data.getUsername());
-        Log.d(TAG, "Not Pass " + data.getPassword());
-        Log.d(TAG, "Not Token " + data.getRegistration_id());
-        Log.d(TAG, "Not OffID " + data.getRegisOfficialID());
+//        Log.d(TAG, "Not User " + data.getUsername());
+//        Log.d(TAG, "Not Pass " + data.getPassword());
+//        Log.d(TAG, "Not Token " + data.getRegistration_id());
+//        Log.d(TAG, "Not OffID " + data.getRegisOfficialID());
         Request.Builder builder = new Request.Builder();
         Request request = builder
                 .url(urlMobileIP + "getRegistrationGCM")
@@ -560,9 +560,7 @@ public class ApiConnect {
                 .add("CaseReportID", apiCaseScene.getTbCaseScene().getCaseReportID())
                 .add("ReportStatus", apiCaseScene.getTbCaseScene().getReportStatus())
                 .build();
-        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
-        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
-        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
+
         Request.Builder builder = new Request.Builder();
         Request request = builder
                 .url(urlMobileIP + "updateStatusCase")
@@ -603,10 +601,7 @@ public class ApiConnect {
                 .add("OfficeID", WelcomeActivity.profile.getTbOfficial().OfficialID)
                 .add("tbNoticeCase", gson1.toJson(tbNoticeCase))
                 .build();
-        Log.d(TAG, "NoticeCaseID " + tbNoticeCase.getNoticeCaseID());
-        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
-        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
-        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
+
         Request.Builder builder = new Request.Builder();
         Request request = builder
                 .url(urlMobileIP + "saveNewNoticeCase")
@@ -699,10 +694,7 @@ public class ApiConnect {
     }
 
     public ApiStatusResult saveDocFile(ApiCaseScene apiCaseScene) {
-        Log.d(TAG, "CaseReportID " + apiCaseScene.getTbCaseScene().getCaseReportID());
-        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
-        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
-        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
+
         FormBody.Builder formBuilder = new FormBody.Builder()
                 .add("Username", WelcomeActivity.profile.getTbUsers().id_users)
                 .add("Password", WelcomeActivity.profile.getTbUsers().pass)
@@ -747,11 +739,6 @@ public class ApiConnect {
     }
 
     public ApiStatusData saveCaseReport(ApiCaseScene apiCaseScene) {
-        Log.d(TAG, "CaseReportID " + apiCaseScene.getTbCaseScene().getCaseReportID());
-        Log.d(TAG, "Not User " + WelcomeActivity.profile.getTbUsers().id_users);
-        Log.d(TAG, "Not Pass " + WelcomeActivity.profile.getTbUsers().pass);
-        Log.d(TAG, "Not OffID " + WelcomeActivity.profile.getTbOfficial().OfficialID);
-
         MultipartBody.Builder formBuilder1 = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("Username", WelcomeActivity.profile.getTbUsers().id_users)
@@ -845,9 +832,6 @@ public class ApiConnect {
         String txt_Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
 
-        Log.d(TAG, "Not Username_old " + txt_Username_old);
-        Log.d(TAG, "Not Pass_old " + txt_pass);
-        Log.d(TAG, "Not OffID " + apiProfile.getTbOfficial().OfficialID);
         MultipartBody.Builder formBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("Username_old", txt_Username_old)
@@ -911,8 +895,6 @@ public class ApiConnect {
         String Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
 
-        Log.d(TAG, "Not Username_old " + Username_old);
-        Log.d(TAG, "Not Username_new " + Username_new);
         MultipartBody.Builder formBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("Username_old", Username_old)

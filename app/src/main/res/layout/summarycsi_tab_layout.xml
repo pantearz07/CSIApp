@@ -47,7 +47,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="รายงานที่ "
+                        android:layout_marginRight="3dp"
+                        android:text="@string/report_no"
                         android:textSize="@dimen/small_text" />
 
                     <android.support.design.widget.TextInputLayout
@@ -59,7 +60,7 @@
                             android:id="@+id/edtReportNo"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:hint="เลขที่ / พ.ศ."
+                            android:hint="@string/report_no_2"
                             android:textSize="@dimen/small_text" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
@@ -69,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="คดีเกี่ยวกับ"
+                    android:text="@string/case_type"
                     android:textSize="@dimen/small_text" />
 
                 <Spinner
@@ -84,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="ประเภทคดี"
+                    android:text="@string/subcase_type"
                     android:textSize="@dimen/small_text" />
 
                 <Spinner
@@ -99,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="พนักงานสอบสวน: "
+                    android:text="@string/inquiry_txt"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -108,25 +109,27 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text=""
                     android:freezesText="true"
+                    android:text=""
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/edtInqTel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="โทร."
-                    android:textColor="@color/ocean"
                     android:freezesText="true"
+                    android:text="@string/tel_2"
+                    android:textColor="@color/ocean"
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/txtInvInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="ผู้ตรวจสถานที่เกิดเหตุ: "
+                    android:text="@string/inv_txt"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -138,22 +141,24 @@
                     android:freezesText="true"
                     android:text="-"
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/edtInvTel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="โทร."
-                    android:textColor="@color/ocean"
                     android:freezesText="true"
+                    android:text="@string/tel_2"
+                    android:textColor="@color/ocean"
                     android:textSize="@dimen/small_text" />
+
                 <TextView
                     android:id="@+id/txtPoliceStation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="สถานีตำรวจ: "
+                    android:text="@string/police_station"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -162,8 +167,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text=""
                     android:freezesText="true"
+                    android:text=""
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -171,7 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="สถานะคดี : "
+                    android:text="@string/txtStatusTitle"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -180,8 +185,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="ยังไม่ส่งแจ้งเหตุ"
                     android:freezesText="true"
+                    android:text="@string/edtStatus_1"
                     android:textSize="@dimen/mmedium_text" />
 
                 <TextView
@@ -189,7 +194,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ: "
+                    android:text="@string/txtSceneNoticeDateTime"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -198,8 +203,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="-"
                     android:freezesText="true"
+                    android:text="-"
                     android:textSize="@dimen/mmedium_text" />
 
                 <TextView
@@ -207,35 +212,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="วันเวลาที่ตรวจคดีเสร็จ"
-                    android:textSize="@dimen/small_text" />
-            <LinearLayout
-                android:id="@+id/layoutSceneNoticeDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_line"
-                android:layout_marginBottom="@dimen/margin_line"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/editSceneNoticeDate"
-                    style="@android:style/Widget.Holo.Light.Spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_column="0"
-                    android:layout_weight="1"
-                    android:freezesText="true"
+                    android:text="@string/edtCompleteSceneDateTimeTitle"
                     android:textSize="@dimen/small_text" />
 
-                <TextView
-                    android:id="@+id/editSceneNoticeTime"
-                    style="@android:style/Widget.Holo.Light.Spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_column="1"
-                    android:freezesText="true"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/small_text" />
+                <LinearLayout
+                    android:id="@+id/layoutSceneNoticeDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_line"
+                    android:layout_marginTop="@dimen/margin_line"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/editSceneNoticeDate"
+                        style="@android:style/Widget.Holo.Light.Spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:freezesText="true"
+                        android:textSize="@dimen/small_text" />
+
+                    <TextView
+                        android:id="@+id/editSceneNoticeTime"
+                        style="@android:style/Widget.Holo.Light.Spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:freezesText="true"
+                        android:textSize="@dimen/small_text" />
                 </LinearLayout>
+
                 <TextView
                     android:id="@+id/edtCompleteSceneDateTime"
                     android:layout_width="wrap_content"
@@ -250,7 +258,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="วันเวลาที่แก้ไขข้อมูลล่าสุด : "
+                    android:text="@string/txtUpdateDateTimeTitle"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -259,59 +267,61 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
-                    android:text="-"
                     android:freezesText="true"
+                    android:text="-"
                     android:textSize="@dimen/mmedium_text" />
+
                 <LinearLayout
                     android:id="@+id/layoutButton1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
                     android:layout_marginBottom="@dimen/margin_line"
+                    android:layout_marginTop="@dimen/margin_line"
                     android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/btnAcceptCase"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="รับคดีมาตรวจ"
-                        style="@style/buttonStyle" />
+                        android:text="@string/receive_case" />
 
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/layoutButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_line"
                     android:layout_marginBottom="@dimen/margin_line"
+                    android:layout_marginTop="@dimen/margin_line"
                     android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/btnNoticecase"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="ส่งเรื่องแจ้งเหตุ"
-                        style="@style/buttonStyle" />
+                        android:text="@string/notice_case" />
 
                     <Button
                         android:id="@+id/btnDownloadfile"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="ออกรายงานสรุปคดี"
-                        style="@style/buttonStyle" />
+                        android:text="@string/export_doc" />
 
                 </LinearLayout>
 
