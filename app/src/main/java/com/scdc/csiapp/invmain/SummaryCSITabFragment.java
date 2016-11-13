@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -377,6 +378,8 @@ public class SummaryCSITabFragment extends Fragment {
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
             if (v == btnNoticecase) {
+                // ซ่อน Keyborad หลังจากกด Login แล้ว
+                hiddenKeyboard();
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
 
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
@@ -402,7 +405,7 @@ public class SummaryCSITabFragment extends Fragment {
                     }
                 });
                 dialog.setCancelable(true);
-                dialog.setNeutralButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -444,12 +447,14 @@ public class SummaryCSITabFragment extends Fragment {
                 dialog.show();
             }
             if (v == btnDownloadfile) {
+                hiddenKeyboard();
                 Log.i(TAG, "btnDownloadfile");
                 DownloadDocFile downloadDocFile = new DownloadDocFile();
                 downloadDocFile.execute(CSIDataTabFragment.apiCaseScene);
             }
 
             if (v == fabBtn) {
+                hiddenKeyboard();
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
@@ -508,6 +513,14 @@ public class SummaryCSITabFragment extends Fragment {
                     Log.e("Calling a Phone Number", "Call failed", activityException);
                 }
             }
+        }
+    }
+
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -803,8 +816,8 @@ public class SummaryCSITabFragment extends Fragment {
             super.onPostExecute(apiStatusResult);
             progressDialog.dismiss();
             if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
-//                Log.d(TAG, apiStatusResult.getStatus().toString());
-//                Log.d(TAG, apiStatusResult.getData().getResult().toString());
+                Log.d(TAG, apiStatusResult.getStatus().toString());
+                Log.d(TAG, apiStatusResult.getData().getResult().toString());
 
                 new DownloadFile().execute(apiStatusResult.getData().getResult().toString());
 

@@ -11,44 +11,62 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/ScrollView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
-            android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/linearLayout1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+
+                <View
+                    android:id="@+id/view1"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/view_height"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="1"
+
+                    android:background="@color/dark_brown" />
 
                 <TextView
                     android:id="@+id/txtVideoNum"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:gravity="right"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:text="0" />
 
-                <GridView
-                    android:id="@+id/gridViewVideo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:columnWidth="80dp"
-                    android:gravity="center"
-                    android:horizontalSpacing="1dp"
-                    android:numColumns="auto_fit"
-                    android:scrollbars="vertical"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="1dp"></GridView>
+                <TextView
+                    android:id="@+id/txt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:text="ไฟล์"
+                    android:textSize="@dimen/small_text" />
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+
+
+            <GridView
+                android:id="@+id/gridViewVideo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout1"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:columnWidth="80dp"
+                android:drawSelectorOnTop="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:numColumns="auto_fit"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="5dp" />
+        </RelativeLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabBtn"

@@ -84,6 +84,7 @@
         <activity
             android:name="com.scdc.csiapp.main.WelcomeActivity"
             android:label="@string/th_appname"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -91,18 +92,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.scdc.csiapp.main.MainActivity"></activity>
-        <activity android:name="com.scdc.csiapp.main.InqMainActivity"></activity>
+        <activity
+            android:name="com.scdc.csiapp.main.MainActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.scdc.csiapp.main.InqMainActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.scdc.csiapp.main.LoginActivity"
-            android:label="@string/login"></activity>
+            android:label="@string/login"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name="com.scdc.csiapp.invmain.VideoPlayerActivity"
             android:label="video"></activity>
         <activity
-            android:name="com.scdc.csiapp.invmain.FullScreenPhoto"
-            android:label="photo"></activity>
+            android:name="com.scdc.csiapp.invmain.GalleryActivity"
+            android:label="gallery"
+            android:theme="@style/AppTheme.ActionBar.Transparent"></activity>
         <activity
             android:name="com.scdc.csiapp.invmain.NoteActivity"
             android:label="note"

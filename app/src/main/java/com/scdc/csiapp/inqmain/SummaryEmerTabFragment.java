@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -347,7 +348,7 @@ public class SummaryEmerTabFragment extends Fragment {
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
             if (v == btnNoticecase) {
-
+                hiddenKeyboard();
                 Log.i(TAG, "btnNoticecase " + WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                 LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -454,7 +455,7 @@ public class SummaryEmerTabFragment extends Fragment {
 
             }
             if (v == btnDownloadfile) {
-
+                hiddenKeyboard();
                 if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive") || EmergencyTabFragment.mode == "new") {
                     Log.i(TAG, "ลบคดี");
 
@@ -478,6 +479,7 @@ public class SummaryEmerTabFragment extends Fragment {
 
             }
             if (v == fabBtn) {
+                hiddenKeyboard();
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
 
                 EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
@@ -773,5 +775,11 @@ public class SummaryEmerTabFragment extends Fragment {
             }
         }
     }
-
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 }

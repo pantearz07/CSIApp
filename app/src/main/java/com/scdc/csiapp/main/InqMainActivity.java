@@ -74,12 +74,24 @@ public class InqMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.inq_activity_main);
         mManager = new PreferenceData(this);
-        // PreferenceData member id
-        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-        username = WelcomeActivity.profile.getTbUsers().id_users;
-        password = WelcomeActivity.profile.getTbUsers().pass;
-        accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                // PreferenceData member id
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+                username = WelcomeActivity.profile.getTbUsers().id_users;
+                password = WelcomeActivity.profile.getTbUsers().pass;
+                accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+            } else {
+                Intent gotoWelcomeActivity = new Intent(this, WelcomeActivity.class);
+                finish();
+                startActivity(gotoWelcomeActivity);
 
+            }
+        } catch (RuntimeException e) {
+            Intent gotoWelcomeActivity = new Intent(this, WelcomeActivity.class);
+            finish();
+            startActivity(gotoWelcomeActivity);
+        }
 
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();

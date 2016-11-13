@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +60,8 @@ public class PhotoTabFragment extends Fragment {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     GetDateTime getDateTime;
-
+    Handler mHandler = new Handler();
+    int INTERVAL = 1000 * 5; //20 second
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     Context mContext;
     private static String strSDCardPathName_Pic = "/CSIFiles/";
@@ -75,7 +79,7 @@ public class PhotoTabFragment extends Fragment {
         cd = new ConnectionDetector(getActivity());
         rootLayout = (CoordinatorLayout) viewPhotosTab.findViewById(R.id.rootLayout);
         gViewPhoto = (GridView) viewPhotosTab.findViewById(R.id.gridViewPhoto);
-//        txtPhotoNum = (TextView) viewPhotosTab.findViewById(R.id.txtPhotoNum);
+        txtPhotoNum = (TextView) viewPhotosTab.findViewById(R.id.txtPhotoNum);
         mContext = viewPhotosTab.getContext();
         showAllPhoto();
         SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
@@ -153,7 +157,7 @@ public class PhotoTabFragment extends Fragment {
   */
 //            String root = Environment.getExternalStorageDirectory().toString();
             String strPath = strSDCardPathName_Pic + tbMultimediaFileList.get(position).FilePath.toString();
-            Log.i("strPath ", strPath);
+//            Log.i("strPath ", strPath);
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);
@@ -285,7 +289,7 @@ public class PhotoTabFragment extends Fragment {
         }
         if (tbMultimediaFileList != null) {
             Log.i("tbMultimediaFileList", String.valueOf(tbMultimediaFileList.size()));
-//            txtPhotoNum.setText(String.valueOf(tbMultimediaFileList.size()));
+            txtPhotoNum.setText(String.valueOf(tbMultimediaFileList.size()));
             gViewPhoto.setVisibility(View.VISIBLE);
             gViewPhoto.setAdapter(new PhotoAdapter(getActivity()));
             registerForContextMenu(gViewPhoto);
@@ -293,13 +297,21 @@ public class PhotoTabFragment extends Fragment {
             gViewPhoto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
+//                    Intent intent = new Intent(getActivity(), GalleryActivity.class);
+//                    Bundle extras = new Bundle();
+//                    extras.putSerializable("images", (Serializable) tbMultimediaFileList);
+//                    extras.putInt("position", position);
+//                    intent.putExtras(extras);
+//                    startActivity(intent);
 
-                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-                    Bundle extras = new Bundle();
-                    extras.putString("photopath", tbMultimediaFileList.get(position).FilePath.toString());
-                    extras.putString("fileid", tbMultimediaFileList.get(position).FileID.toString());
-                    intent.putExtras(extras);
-                    startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("images", (Serializable) tbMultimediaFileList);
+                    bundle.putInt("position", position);
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setArguments(bundle);
+                    newFragment.show(ft, "slideshow");
                 }
             });
 
@@ -324,6 +336,22 @@ public class PhotoTabFragment extends Fragment {
         ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAllPhoto();
+        mHandler.removeCallbacks(mHandlerReload);
+        mHandlerReload.run();
+    }
+
+    Runnable mHandlerReload = new Runnable() {
+        @Override
+        public void run() {
+            showAllPhoto();
+            INTERVAL = 1000 * 30;
+            mHandler.postDelayed(mHandlerReload, INTERVAL);
+        }
+    };
     private Object mActivityResultSubscriber = new Object() {
         @Subscribe
         public void onActivityResultReceived(ActivityResultEvent event) {

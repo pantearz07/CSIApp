@@ -91,10 +91,9 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
     String[][] mDistrictArray;
     String[] mDistrictArray2;
     boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
-    Spinner spinnerAntecedent;
     String[] Antecedent;
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail, editSuffererName, editTextSuffererPhone;
-    AutoCompleteTextView autoCompleteSuffererStatus;
+    AutoCompleteTextView autoCompleteSuffererStatus, autoCompleteAntecedent;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
     String lat, lng;
     ImageButton ic_telphone1, ic_telphone2;
@@ -380,20 +379,16 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
                 AssignTabFragment.apiCaseScene.getTbNoticeCase().CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
             }
         });
-        spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
 
+        autoCompleteAntecedent = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteAntecedent);
         Antecedent = getResources().getStringArray(R.array.antecedent);
         ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, Antecedent);
-        spinnerAntecedent.setAdapter(adapterEnglish);
-
-        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename != null) {
-            for (int i = 0; i < Antecedent.length; i++) {
-                if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename.trim().equals(Antecedent[i].toString())) {
-                    spinnerAntecedent.setSelection(i);
-                    break;
-                }
-            }
+        autoCompleteAntecedent.setAdapter(adapterEnglish);
+        if (AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename.equals("")) {
+            autoCompleteAntecedent.setText("");
+        } else {
+            autoCompleteAntecedent.setText(AssignTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename);
         }
 
         editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
@@ -464,8 +459,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
             spinnerAmphur.setEnabled(false);
             spinnerDistrict.setEnabled(false);
             btnButtonSearchLatLong.setVisibility(View.GONE);
-
-            spinnerAntecedent.setEnabled(false);
+            autoCompleteAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
             editTextSuffererPhone.setEnabled(false);

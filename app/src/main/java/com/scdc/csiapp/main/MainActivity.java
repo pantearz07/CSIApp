@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
@@ -26,7 +27,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
 
-    private static String strSDCardPathName_temp =  "/CSIFiles/temp/";
+    private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     ConnectionDetector cd;
 
     long isConnectingToInternet = 0;
@@ -97,17 +100,23 @@ public class MainActivity extends AppCompatActivity {
         mManager = new PreferenceData(this);
         mContext = getApplicationContext();
         // PreferenceData member id
-        if (WelcomeActivity.profile.getTbOfficial() != null) {
-            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-            username = WelcomeActivity.profile.getTbUsers().id_users;
-            password = WelcomeActivity.profile.getTbUsers().pass;
-            accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
-            Log.i(TAG, password.toString());
-        } else {
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+                username = WelcomeActivity.profile.getTbUsers().id_users;
+                password = WelcomeActivity.profile.getTbUsers().pass;
+                accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+                Log.i(TAG, password.toString());
+            } else {
+                Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+                finish();
+                startActivity(gotoWelcomeActivity);
+
+            }
+        } catch (NullPointerException e) {
             Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
             finish();
             startActivity(gotoWelcomeActivity);
-
         }
         cd = new ConnectionDetector(getApplicationContext());
         mDbHelper = new SQLiteDBHelper(this);
@@ -301,6 +310,9 @@ public class MainActivity extends AppCompatActivity {
 //                Uri.parse("android-app://com.scdc.csiapp.main/http/host/path")
 //        );
 //        AppIndex.AppIndexApi.start(client, viewAction);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     @Override
@@ -327,7 +339,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        super.onStop();
+        super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -343,6 +357,9 @@ public class MainActivity extends AppCompatActivity {
 //        );
 //        AppIndex.AppIndexApi.end(client, viewAction);
 //        client.disconnect();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.disconnect();
     }
 
     @Override
@@ -359,5 +376,21 @@ public class MainActivity extends AppCompatActivity {
         }
         fragmentTransaction.replace(R.id.containerView, fragment);
         fragmentTransaction.commit();
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
     }
 }

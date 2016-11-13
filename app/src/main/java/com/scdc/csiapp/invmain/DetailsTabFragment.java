@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,6 +18,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -61,6 +63,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +135,9 @@ public class DetailsTabFragment extends Fragment {
     List<TbPhotoOfOutside> tbPhotoOfOutsideList;
     private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
-
+    Handler mHandler = new Handler();
+    int INTERVAL = 1000 * 5; //20 second
+    DisplayMetrics dm;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -178,6 +183,9 @@ public class DetailsTabFragment extends Fragment {
         btn_clear_txt_21 = (Button) viewDetails.findViewById(R.id.btn_clear_txt_21);
         btn_clear_txt_22 = (Button) viewDetails.findViewById(R.id.btn_clear_txt_22);
         btn_clear_txt_23 = (Button) viewDetails.findViewById(R.id.btn_clear_txt_23);
+
+        dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 
         mViewAddFeatureInside = viewDetails.findViewById(R.id.tableRowFeatureInsideLayout);
         mViewAddFeatureInside.setVisibility(View.VISIBLE);
@@ -490,8 +498,6 @@ public class DetailsTabFragment extends Fragment {
             // Calculated single Item Layout Width for each grid element ....
             int width = 70;
 
-            DisplayMetrics dm = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
             float density = dm.density;
 
             int totalWidth = (int) (width * photolength * density);
@@ -512,14 +518,21 @@ public class DetailsTabFragment extends Fragment {
             horizontal_gridView_Outside.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
-                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-                    Bundle extras = new Bundle();
-                    extras.putString("photopath", tbPhotoList.get(position).FilePath.toString());
-                    extras.putString("fileid", tbPhotoList.get(position).FileID.toString());
-                    intent.putExtras(extras);
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
+//                    Bundle extras = new Bundle();
+//                    extras.putString("photopath", tbPhotoList.get(position).FilePath.toString());
+//                    extras.putString("fileid", tbPhotoList.get(position).FileID.toString());
+//                    intent.putExtras(extras);
+//                    startActivity(intent);
 
-//                    showViewPic(tbPhotoList.get(position).FilePath.toString());
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("images", (Serializable) tbPhotoList);
+                    bundle.putInt("position", position);
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setArguments(bundle);
+                    newFragment.show(ft, "slideshow");
                 }
             });
         } else {
@@ -687,10 +700,10 @@ public class DetailsTabFragment extends Fragment {
             if (v == btnShowHide1) {
                 if (viewGroupIsVisible) {
                     mViewAddFeatureInside.setVisibility(View.VISIBLE);
-                    btnShowHide1.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide1.setImageResource(R.drawable.ic_expand_up);
                 } else {
                     mViewAddFeatureInside.setVisibility(View.GONE);
-                    btnShowHide1.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide1.setImageResource(R.drawable.ic_expand_down);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
@@ -933,8 +946,8 @@ public class DetailsTabFragment extends Fragment {
 
                     adb.setTitle("ลบข้อมูล");
                     adb.setMessage("ยืนยันการลบข้อมูล");
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok",
+                    adb.setNegativeButton(R.string.cancel, null);
+                    adb.setPositiveButton(R.string.ok,
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
@@ -1077,7 +1090,6 @@ public class DetailsTabFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Log.i(TAG, "onStop detailscase");
-
         ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
 
@@ -1085,9 +1097,24 @@ public class DetailsTabFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume detailscase");
-
-//        ShowSelectedFeatureInside(reportID);
+        showAllPhoto();
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAllPhoto();
+        mHandler.removeCallbacks(mHandlerReload);
+        mHandlerReload.run();
+    }
+    Runnable mHandlerReload = new Runnable() {
+        @Override
+        public void run() {
+            showAllPhoto();
+            INTERVAL = 1000 * 30;
+            mHandler.postDelayed(mHandlerReload, INTERVAL);
+        }
+    };
 
     private Object mActivityResultSubscriber = new Object() {
         @Subscribe

@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -480,9 +481,8 @@ public class ResultTabFragment extends Fragment {
                 editConfineSufferer.setText("");
             }
             if (v == btnAddGatewayCriminal) {
-                Log.i("GatewayCriminal", "showlist");
-
-                Log.i(TAG, "btnAddGatewayCriminal");
+                hiddenKeyboard();
+//                Log.i(TAG, "btnAddGatewayCriminal");
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 String sRSID = "GC_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 Bundle i = new Bundle();
@@ -493,7 +493,7 @@ public class ResultTabFragment extends Fragment {
                 MainActivity.setFragment(addGatewayFragment, 1);
             }
             if (v == btnAddClueShown) {
-
+                hiddenKeyboard();
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 String sRSID = "CS_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 Bundle i = new Bundle();
@@ -504,8 +504,8 @@ public class ResultTabFragment extends Fragment {
                 MainActivity.setFragment(addClueShownFragment, 1);
             }
             if (v == btnPropertyLoss) {
-
-                Log.i(TAG, "btnPropertyLoss");
+                hiddenKeyboard();
+//                Log.i(TAG, "btnPropertyLoss");
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 String sPLID = "PL_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 Bundle i = new Bundle();
@@ -515,6 +515,7 @@ public class ResultTabFragment extends Fragment {
                 MainActivity.setFragment(addPropertyLossFragment, 1);
             }
             if (v == btnAddEvidences) {
+                hiddenKeyboard();
                 String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                 sRSID = "EV_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 int sceneinvestsize = 0;
@@ -551,40 +552,40 @@ public class ResultTabFragment extends Fragment {
             if (v == btnShowHide1) {
                 if (viewGroupIsVisible) {
                     mViewAddGatewayCriminal.setVisibility(View.VISIBLE);
-                    btnShowHide1.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide1.setImageResource(R.drawable.ic_expand_up);
                 } else {
                     mViewAddGatewayCriminal.setVisibility(View.GONE);
-                    btnShowHide1.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide1.setImageResource(R.drawable.ic_expand_down);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btnShowHide2) {
                 if (viewGroupIsVisible) {
                     mViewAddClueShown.setVisibility(View.VISIBLE);
-                    btnShowHide2.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide2.setImageResource(R.drawable.ic_expand_up);
                 } else {
                     mViewAddClueShown.setVisibility(View.GONE);
-                    btnShowHide2.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide2.setImageResource(R.drawable.ic_expand_down);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btnShowHide3) {
                 if (viewGroupIsVisible) {
                     mViewAddPropertyLoss.setVisibility(View.VISIBLE);
-                    btnShowHide3.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide3.setImageResource(R.drawable.ic_expand_up);
                 } else {
                     mViewAddPropertyLoss.setVisibility(View.GONE);
-                    btnShowHide3.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide3.setImageResource(R.drawable.ic_expand_down);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btnShowHide4) {
                 if (viewGroupIsVisible) {
                     mViewAddEvidences.setVisibility(View.VISIBLE);
-                    btnShowHide4.setImageResource(R.drawable.ic_minlayout);
+                    btnShowHide4.setImageResource(R.drawable.ic_expand_up);
                 } else {
                     mViewAddEvidences.setVisibility(View.GONE);
-                    btnShowHide4.setImageResource(R.drawable.ic_maxlayout);
+                    btnShowHide4.setImageResource(R.drawable.ic_expand_down);
                 }
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
@@ -779,8 +780,8 @@ public class ResultTabFragment extends Fragment {
 
                     adb.setTitle("ลบข้อมูล");
                     adb.setMessage("ยืนยันการลบข้อมูล");
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok",
+                    adb.setNegativeButton(R.string.cancel, null);
+                    adb.setPositiveButton(R.string.ok,
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
@@ -974,8 +975,8 @@ public class ResultTabFragment extends Fragment {
 
                     adb.setTitle("ลบข้อมูล");
                     adb.setMessage("ยืนยันการลบข้อมูล");
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok",
+                    adb.setNegativeButton(R.string.cancel, null);
+                    adb.setPositiveButton(R.string.ok,
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
@@ -1181,8 +1182,8 @@ public class ResultTabFragment extends Fragment {
 
                     adb.setTitle("ลบข้อมูล");
                     adb.setMessage("ยืนยันการลบข้อมูล");
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok",
+                    adb.setNegativeButton(R.string.cancel, null);
+                    adb.setPositiveButton(R.string.ok,
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
@@ -1429,8 +1430,8 @@ public class ResultTabFragment extends Fragment {
 
                     adb.setTitle("ลบข้อมูล");
                     adb.setMessage("ยืนยันการลบข้อมูล");
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok",
+                    adb.setNegativeButton(R.string.cancel, null);
+                    adb.setPositiveButton(R.string.ok,
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
@@ -1660,5 +1661,13 @@ public class ResultTabFragment extends Fragment {
         } catch (Exception ex) {
         }
 
+    }
+
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

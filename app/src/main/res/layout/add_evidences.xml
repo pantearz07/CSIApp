@@ -113,6 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:hint="บริเวณที่พบ"
+                            android:inputType="text"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -127,6 +128,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:hint="การทำเครื่องหมาย"
+                            android:inputType="text"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -141,6 +143,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:hint="การบรรจุหีบห่อ"
+                            android:inputType="text"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
@@ -155,6 +158,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
+                            android:inputType="text"
                             android:textSize="@dimen/small_text" />
                     </TableRow>
                 </TableLayout>

@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -89,7 +90,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     EditText editTextPhone1;
     private String sAddrDetail, sDistrictName, sAmphurName, sProvinceName, provinceid, amphurid, districtid;
     Spinner spinnerAntecedent;
-    AutoCompleteTextView autoCompleteSuffererStatus;
+    AutoCompleteTextView autoCompleteSuffererStatus, autoCompleteAntecedent;
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, edtVehicleDetail, editSuffererName, editTextSuffererPhone;
     private Button btnButtonSearchLatLong, btnButtonSearchMap;
     private Spinner spinnerDistrict, spinnerAmphur, spinnerProvince;
@@ -376,24 +377,34 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
         btnButtonSearchLatLong.setOnClickListener(new SummaryOnClickListener());
 
-        spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
-
+//        spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
+//
+//        Antecedent = getResources().getStringArray(R.array.antecedent);
+//        ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
+//                android.R.layout.simple_dropdown_item_1line, Antecedent);
+//        spinnerAntecedent.setAdapter(adapterEnglish);
+//        spinnerAntecedent.setOnItemSelectedListener(new RecOnItemSelectedListener());
+//        spinnerAntecedent.setOnTouchListener(new RecOnItemSelectedListener());
+//        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename != null) {
+//            for (int i = 0; i < Antecedent.length; i++) {
+//                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename.trim().equals(Antecedent[i].toString())) {
+//                    spinnerAntecedent.setSelection(i);
+//                    oldAntecedent = true;
+//                    break;
+//                }
+//            }
+//        }
+        autoCompleteAntecedent = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteAntecedent);
         Antecedent = getResources().getStringArray(R.array.antecedent);
         ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, Antecedent);
-        spinnerAntecedent.setAdapter(adapterEnglish);
-        spinnerAntecedent.setOnItemSelectedListener(new RecOnItemSelectedListener());
-        spinnerAntecedent.setOnTouchListener(new RecOnItemSelectedListener());
-        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename != null) {
-            for (int i = 0; i < Antecedent.length; i++) {
-                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename.trim().equals(Antecedent[i].toString())) {
-                    spinnerAntecedent.setSelection(i);
-                    oldAntecedent = true;
-                    break;
-                }
-            }
+        autoCompleteAntecedent.setAdapter(adapterEnglish);
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename.equals("")) {
+            autoCompleteAntecedent.setText("");
+        } else {
+            autoCompleteAntecedent.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename);
         }
-
+        autoCompleteAntecedent.addTextChangedListener(new ReceiveTextWatcher(autoCompleteAntecedent));
         editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName.equals("")) {
             editSuffererName.setText("");
@@ -465,8 +476,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             btnButtonSearchLatLong.setEnabled(false);
             btn_property.setEnabled(false);
             btn_property.setVisibility(View.GONE);
-            spinnerAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
+            autoCompleteAntecedent.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
             editTextSuffererPhone.setEnabled(false);
             editCircumstanceOfCaseDetail.setEnabled(false);
@@ -732,6 +743,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         public void onClick(View v) {
 
             if (v == fabBtnRec) {
+                hiddenKeyboard();
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
@@ -791,6 +803,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
             }
             if (v == btnButtonSearchMap) {
+                hiddenKeyboard();
                 if (cd.isNetworkAvailable()) {
                     if (lat != null || lng != null) {
                         Log.d(TAG, "Go to Google map " + lat + " " + lng);
@@ -816,6 +829,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 }
             }
             if (v == btnButtonSearchLatLong) {
+                hiddenKeyboard();
                 if (cd.isNetworkAvailable()) {
                     lat = String.valueOf(mLastLocation.getLatitude());
 //                lat = "16.438052";
@@ -922,7 +936,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                         .findViewById(R.id.editSceneInvestTime);
                 editSceneInvestTime.setOnClickListener(new SummaryOnClickListener());
 
-                builder.setPositiveButton("Save",
+                builder.setPositiveButton(R.string.save,
                         new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog,
@@ -947,7 +961,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                             }
                         })
                         // Button Cancel
-                        .setNegativeButton("Cancel",
+                        .setNegativeButton(R.string.cancel,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,
                                                         int id) {
@@ -1074,9 +1088,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     public class RecOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (view == spinnerAntecedent) {
-                oldAntecedent = false;
-            }
+
             if (view == spinnerProvince) {
                 oldProvince = false;
             }
@@ -1181,13 +1193,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     }
                     break;
 
-                case R.id.spinnerAntecedent:
-                    if (oldAntecedent == false) {
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename = String.valueOf(Antecedent[pos]);
-                        Log.i(TAG, "spinnerAntecedent " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename);
-                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename = String.valueOf(Antecedent[pos]);
-                    }
-                    break;
+
             }
 
         }
@@ -1216,11 +1222,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     CSIDataTabFragment.apiCaseScene.getTbNoticeCase().PROVINCE_ID = selectedProvince;
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().PROVINCE_ID = selectedProvince;
                     break;
-                case R.id.spinnerAntecedent:
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename = String.valueOf(Antecedent[0]);
-                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPrename = String.valueOf(Antecedent[0]);
-//                    Log.i(TAG, "spinnerAntecedent " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename);
-                    break;
+
             }
         }
 
@@ -1270,8 +1272,18 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             } else if (s == edtVehicleDetail.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo = edtVehicleDetail.getText().toString();
 //                Log.i(TAG, "VehicleInfo " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().VehicleInfo);
+            } else if (s == autoCompleteAntecedent.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename = autoCompleteAntecedent.getText().toString();
+//                Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
             }
         }
     }
 
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 }

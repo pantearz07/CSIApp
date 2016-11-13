@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -295,11 +296,19 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
     private class ProfileOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             if (view == txtChangePassword) {
+                hiddenKeyboard();
                 if (cd.isNetworkAvailable()) {
                     if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
                         MainActivity.setFragment(changePassFragment, 1);
@@ -322,7 +331,7 @@ public class ProfileFragment extends Fragment {
                 }
             }
             if (view == change_display) {
-
+                hiddenKeyboard();
                 File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp);
                 try {
                     // Create folder
@@ -366,6 +375,7 @@ public class ProfileFragment extends Fragment {
                 alert.show();
             }
             if (view == fabBtn) {
+                hiddenKeyboard();
                 if (cd.isNetworkAvailable()) {
                     if (WelcomeActivity.profile != null) {
                         //save to server
@@ -533,25 +543,26 @@ public class ProfileFragment extends Fragment {
                 if (apiStatus.getData().getReason() != null) {
                     String status = apiStatus.getData().getReason();
                     if (status.equals("0")) { //"ชื่อ Username เดิม";
-
-                        Toast.makeText(getActivity(),
-                                "ชื่อ Username เดิม",
-                                Toast.LENGTH_SHORT).show();
+                        edtUsername.setError("ชื่อ Username เดิม");
+//                        Toast.makeText(getActivity(),
+//                                "ชื่อ Username เดิม",
+//                                Toast.LENGTH_SHORT).show();
                         WelcomeActivity.profile.getTbOfficial().setId_users(Username_old);
                         WelcomeActivity.profile.getTbUsers().setId_users(Username_old);
                     }
                     if (status.equals("1")) { //"สามารถใช้ Username นี้ได้";
-
-                        Toast.makeText(getActivity(),
-                                "สามารถใช้ Username นี้ได้",
-                                Toast.LENGTH_SHORT).show();
+                        edtUsername.setError("สามารถใช้ Username นี้ได้");
+//                        Toast.makeText(getActivity(),
+//                                "สามารถใช้ Username นี้ได้",
+//                                Toast.LENGTH_SHORT).show();
                         WelcomeActivity.profile.getTbOfficial().setId_users(Username_new);
                         WelcomeActivity.profile.getTbUsers().setId_users(Username_new);
                     }
                     if (status.equals("2")) { //"มีผู้ใช้ Username นี้เเล้ว";
-                        Toast.makeText(getActivity(),
-                                "มีผู้ใช้ Username นี้เเล้ว",
-                                Toast.LENGTH_SHORT).show();
+                        edtUsername.setError("มีผู้ใช้ Username นี้เเล้ว");
+//                        Toast.makeText(getActivity(),
+//                                "มีผู้ใช้ Username นี้เเล้ว",
+//                                Toast.LENGTH_SHORT).show();
                         WelcomeActivity.profile.getTbOfficial().setId_users(Username_old);
                         WelcomeActivity.profile.getTbUsers().setId_users(Username_old);
                     }

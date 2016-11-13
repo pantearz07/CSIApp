@@ -244,6 +244,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="สถานที่เกิดเหตุ (ตย. ร้านอาหาร)"
+                                android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
@@ -338,25 +339,25 @@
 
                     <Button
                         android:id="@+id/btnButtonSearchLatLong"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="@string/searchlatlng"
-                        style="@style/buttonStyle"  />
+                        android:text="@string/searchlatlng" />
 
                     <Button
                         android:id="@+id/btnButtonSearchMap"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="@string/searchmap"
-                        style="@style/buttonStyle" />
+                        android:text="@string/searchmap" />
 
                 </LinearLayout>
 
@@ -457,13 +458,31 @@
                         android:layout_gravity="bottom"
                         android:layout_marginTop="@dimen/margin_line">
 
-
-                        <Spinner
-                            android:id="@+id/spinnerAntecedent"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtAntecedent"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_weight="0.3" />
+                            android:layout_weight="0.5">
+
+
+                            <AutoCompleteTextView
+                                android:id="@+id/autoCompleteAntecedent"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:completionThreshold="1"
+                                android:ems="10"
+                                android:hint="คำนำหน้า"
+                                android:inputType="textShortMessage|text"
+                                android:textSize="@dimen/small_text" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <!--<Spinner-->
+                        <!--android:id="@+id/spinnerAntecedent"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="bottom"-->
+                        <!--android:layout_weight="0.3" />-->
 
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/txtSuffererName"
@@ -477,6 +496,7 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ชื่อ-นามสกุล"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -501,6 +521,7 @@
                                 android:completionThreshold="1"
                                 android:ems="10"
                                 android:hint="สถานะเป็น ตย. เจ้าของบ้าน"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
 
                         </android.support.design.widget.TextInputLayout>
@@ -566,6 +587,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="คำอธิบาย"
+                                android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="2" />
                         </android.support.design.widget.TextInputLayout>

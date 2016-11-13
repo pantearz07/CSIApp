@@ -45,7 +45,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy">
+                        android:background="@color/navy"
+                        android:layout_marginTop="5dp">
 
                         <TextView
                             android:id="@+id/txtCriminalGate"
@@ -73,7 +74,7 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_minlayout" />
+                            android:src="@drawable/ic_expand_up" />
                     </TableRow>
 
                     <TableRow
@@ -96,7 +97,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy">
+                        android:background="@color/navy"
+                        android:layout_marginTop="5dp">
 
                         <TextView
                             android:id="@+id/txtCriminalClue"
@@ -124,7 +126,7 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_minlayout" />
+                            android:src="@drawable/ic_expand_up" />
                     </TableRow>
 
                     <TableRow
@@ -147,7 +149,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy">
+                        android:background="@color/navy"
+                        android:layout_marginTop="5dp">
 
                         <TextView
                             android:id="@+id/txtPropertyLoss"
@@ -175,7 +178,7 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_minlayout" />
+                            android:src="@drawable/ic_expand_up" />
                     </TableRow>
 
 
@@ -199,7 +202,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy">
+                        android:background="@color/navy"
+                        android:layout_marginTop="5dp">
 
                         <TextView
                             android:id="@+id/txtRealEvidences"
@@ -227,7 +231,7 @@
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
-                            android:src="@drawable/ic_minlayout" />
+                            android:src="@drawable/ic_expand_up" />
                     </TableRow>
 
 
@@ -264,6 +268,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="การดำเนินการเกี่ยวกับวัตถุพยาน"
+                                android:inputType="text"
                                 android:minLines="3" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -292,12 +297,11 @@
 
                             <EditText
                                 android:id="@+id/editAnnotation"
-
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="หมายเหตุ"
-
+                                android:inputType="text"
                                 android:minLines="2" />
 
 
@@ -470,7 +474,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="มีการใช้อาวุธ เช่น มีด, ปืน"
-
+                                android:inputType="text"
                                 android:minLines="3" />
 
 
@@ -520,6 +524,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="อธิบายการพันธนาการผู้เสียหาย"
+                                android:inputType="text"
                                 android:minLines="3" />
                         </android.support.design.widget.TextInputLayout>
 

@@ -1,20 +1,18 @@
 package com.scdc.csiapp.invmain;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -50,6 +48,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +82,10 @@ public class AddPropertyLossFragment extends Fragment {
     Context mContext;
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
-
+    List<TbMultimediaFile> tbPhotoList;
+    Handler mHandler = new Handler();
+    int INTERVAL = 1000 * 5; //20 second
+    DisplayMetrics dm;
     public AddPropertyLossFragment() {
 
     }
@@ -135,7 +137,8 @@ public class AddPropertyLossFragment extends Fragment {
         autoPropertyLossUnit.addTextChangedListener(new PropertyTextWatcher(autoPropertyLossUnit));
         editPropertyLossPosition.addTextChangedListener(new PropertyTextWatcher(editPropertyLossPosition));
         editPropertyInsurance.addTextChangedListener(new PropertyTextWatcher(editPropertyInsurance));
-
+        dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         if (mode == "edit") {
             position = args.getInt(ResultTabFragment.Bundle_Index, -1);
             Log.i(TAG, "position " + position);
@@ -307,8 +310,9 @@ public class AddPropertyLossFragment extends Fragment {
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         apiMultimediaList = new ArrayList<>();
+        tbPhotoList = new ArrayList<>();
         if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+//            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
             if (cd.isNetworkAvailable()) {
                 ApiMultimedia apiMultimedia = new ApiMultimedia();
                 for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
@@ -319,32 +323,32 @@ public class AddPropertyLossFragment extends Fragment {
                                 apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
                                 apiMultimedia.setTbPhotoOfPropertyless(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless());
                                 apiMultimediaList.add(apiMultimedia);
+                                tbPhotoList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
                             }
                         }
                     }
                 }
-                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+//                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
             } else {
                 apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPLID, "photo");
+                for (int i = 0; i < apiMultimediaList.size(); i++) {
+                    tbPhotoList.add(apiMultimediaList.get(i).getTbMultimediaFile());
+                }
             }
         } else {
             apiMultimediaList = dbHelper.SelectDataPhotoOfPropertyLoss(sPLID, "photo");
             Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            for (int i = 0; i < apiMultimediaList.size(); i++) {
+                tbPhotoList.add(apiMultimediaList.get(i).getTbMultimediaFile());
+            }
         }
         int photolength = 0;
-
-//        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID, "photo");
-        //Log.i("arrDataPhoto_Outside",arrDataPhoto[0][0]);
         if (apiMultimediaList != null) {
-            Log.i(TAG, "arrDataPhoto_PropertyLoss " + String.valueOf(apiMultimediaList.size()));
 //            photolength = arrDataPhoto.length;
             photolength = apiMultimediaList.size();
-            //int size=list.size();
             // Calculated single Item Layout Width for each grid element ....
             int width = 70;
 
-            DisplayMetrics dm = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
             float density = dm.density;
 
             int totalWidth = (int) (width * photolength * density);
@@ -366,13 +370,14 @@ public class AddPropertyLossFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-//                    showViewPic(apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
-                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-                    Bundle extras = new Bundle();
-                    extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
-                    extras.putString("fileid", apiMultimediaList.get(position).getTbMultimediaFile().FileID.toString());
-                    intent.putExtras(extras);
-                    startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("images", (Serializable) tbPhotoList);
+                    bundle.putInt("position", position);
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setArguments(bundle);
+                    newFragment.show(ft, "slideshow");
                 }
             });
         } else {
@@ -510,4 +515,28 @@ public class AddPropertyLossFragment extends Fragment {
 
         ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume detailscase");
+        showAllPhoto();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAllPhoto();
+        mHandler.removeCallbacks(mHandlerReload);
+        mHandlerReload.run();
+    }
+
+    Runnable mHandlerReload = new Runnable() {
+        @Override
+        public void run() {
+            showAllPhoto();
+            INTERVAL = 1000 * 30;
+            mHandler.postDelayed(mHandlerReload, INTERVAL);
+        }
+    };
 }

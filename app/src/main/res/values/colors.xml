@@ -25,5 +25,6 @@
     <color name="casestatus6">#D7DBDD</color>
     <color name="navy">#34495e</color>
     <color name="gray_hint">#666666</color>
+    <color name="black_trans">#70000000</color>
     <color name="lightgray">#D7DBDD</color>
 </resources>

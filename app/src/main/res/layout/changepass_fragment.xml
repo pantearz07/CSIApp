@@ -28,54 +28,51 @@
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/edtPasswordLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-         >
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/edtPasswordLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/edtPasswordOld"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="รหัสผ่านเก่า"
-            android:textSize="@dimen/small_text"
-            />
+                    <EditText
+                        android:id="@+id/edtPasswordOld"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="รหัสผ่านเก่า"
+                        android:inputType="textPassword"
+                        android:textSize="@dimen/small_text" />
 
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/edtPasswordLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+                </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/edtPasswordNew"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="รหัสผ่านใหม่"
-            android:textSize="@dimen/small_text"
-            />
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/edtPasswordLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/edtPasswordLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+                    <EditText
+                        android:id="@+id/edtPasswordNew"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="รหัสผ่านใหม่"
+                        android:inputType="textPassword"
+                        android:textSize="@dimen/small_text" />
 
-        <EditText
-            android:id="@+id/edtPasswordNewConfirm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="ยืนยันรหัสผ่านใหม่"
-            android:textSize="@dimen/small_text"
-            />
+                </android.support.design.widget.TextInputLayout>
 
-    </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/edtPasswordLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/edtPasswordNewConfirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="ยืนยันรหัสผ่านใหม่"
+                        android:inputType="textPassword"
+                        android:textSize="@dimen/small_text" />
+
+                </android.support.design.widget.TextInputLayout>
+
                 <Button
                     android:id="@+id/btnSaveNewPassword"
                     android:layout_width="match_parent"

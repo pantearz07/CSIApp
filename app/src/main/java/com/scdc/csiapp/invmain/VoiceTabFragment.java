@@ -211,7 +211,6 @@ public class VoiceTabFragment extends Fragment {
         final ImageButton btnStart = (ImageButton) dialog.findViewById(R.id.btnStart);
         final ImageButton btnStop = (ImageButton) dialog.findViewById(R.id.btnStop);
         final ImageButton btnPause = (ImageButton) dialog.findViewById(R.id.btnPause);
-
         final ImageButton btnDelete = (ImageButton) dialog.findViewById(R.id.btnDelete);
         btnPause.setVisibility(View.GONE);
         btnStop.setEnabled(false);
@@ -227,43 +226,27 @@ public class VoiceTabFragment extends Fragment {
                 startRecording(sVoiceID1);
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Start Recording", Toast.LENGTH_SHORT).show();
-//                if (recordstatus[0] == true) {
-//                    myChronometer.setBase(SystemClock.elapsedRealtime());
-//                    myChronometer.start();
-//                    Toast.makeText(getActivity().getApplicationContext(),
-//                            "Start Recording", Toast.LENGTH_SHORT).show();
-//                    Log.i("show", "Voice 1");
-//                    btnStop.setEnabled(true);
-//                    btnStart.setVisibility(View.GONE);
-//                    btnPause.setVisibility(View.VISIBLE);
-//                    startRecording(sVoiceID1);
-//                }else{
-//                    myChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped[0]);
-//                    myChronometer.start();
-//                    btnStart.setVisibility(View.GONE);
-//                    btnPause.setVisibility(View.VISIBLE);
-//                    recordstatus[0] = true;
-//                }
             }
         });
-//        btnPause.setOnClickListener(new ImageButton.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                if (recordstatus[0] == true) {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                        pauseRecording();
-//                    }
-//                    timeWhenStopped[0] = myChronometer.getBase() - SystemClock.elapsedRealtime();
-//                    myChronometer.stop();
-//                    Toast.makeText(getActivity().getApplicationContext(),
-//                            "Pause Recording", Toast.LENGTH_SHORT).show();
-//                    btnPause.setVisibility(View.GONE);
-//                    btnStart.setVisibility(View.VISIBLE);
-//                    recordstatus[0] = false;
-//                }
-//            }
-//        });
+        btnDelete.setOnClickListener(new ImageButton.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                myChronometer.stop();
+                stopRecording();
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi + sVoiceID1 + ".3gp");
+
+                if (file.exists()) {
+                    file.delete();
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Delete Recording", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "ไม่มีไฟล์", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+            }
+        });
         // if button is clicked, close the custom dialog
         btnStop.setOnClickListener(new ImageButton.OnClickListener() {
             @Override

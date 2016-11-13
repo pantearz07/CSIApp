@@ -232,7 +232,15 @@ public class VideoTabFragment extends Fragment {
                     VideoPlayActivity.putExtra("fileid",
                             tbMultimediaFileList.get(position).FileID.toString());
                     startActivity(VideoPlayActivity);
-
+//
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable("video", (Serializable) tbMultimediaFileList);
+//                    bundle.putInt("position", position);
+//
+//                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                    SlideshowVideoDialogFragment newFragment = SlideshowVideoDialogFragment.newInstance();
+//                    newFragment.setArguments(bundle);
+//                    newFragment.show(ft, "slideshow");
                 }
             });
         } else {

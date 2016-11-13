@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -44,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,11 +75,14 @@ public class AddFeatureInsideFragment extends Fragment {
     Uri uri;
     String sPhotoID, timeStamp;
     List<ApiMultimedia> apiMultimediaList;
+    List<TbMultimediaFile> tbPhotoList;
     Context mContext;
     private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
-
+    Handler mHandler = new Handler();
+    int INTERVAL = 1000 * 5; //20 second
+    DisplayMetrics dm;
     public AddFeatureInsideFragment() {
 
     }
@@ -103,7 +109,8 @@ public class AddFeatureInsideFragment extends Fragment {
         mContext = view.getContext();
         SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
-
+        dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 
         Log.i(TAG, "tbSceneFeatureInSideList num1:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
 
@@ -193,8 +200,8 @@ public class AddFeatureInsideFragment extends Fragment {
                 sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
                 timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
 
-                String sPhotoPath = strSDCardPathName_Pic+sPhotoID + ".jpg";
-                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),  sPhotoPath);
+                String sPhotoPath = strSDCardPathName_Pic + sPhotoID + ".jpg";
+                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), sPhotoPath);
                 if (newfile.exists())
                     newfile.delete();
                 try {
@@ -321,9 +328,9 @@ public class AddFeatureInsideFragment extends Fragment {
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         apiMultimediaList = new ArrayList<>();
-//        apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
+        tbPhotoList = new ArrayList<>();
         if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+//            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
             if (cd.isNetworkAvailable()) {
                 ApiMultimedia apiMultimedia = new ApiMultimedia();
 
@@ -334,31 +341,34 @@ public class AddFeatureInsideFragment extends Fragment {
                                     && CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID.equals(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)) {
                                 apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
                                 apiMultimedia.setTbPhotoOfInside(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside());
-
+                                tbPhotoList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
                                 apiMultimediaList.add(apiMultimedia);
                                 //apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
                             }
                         }
                     }
                 }
-                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+//                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
             } else {
                 apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
-
+                for (int i = 0; i < apiMultimediaList.size(); i++) {
+                    tbPhotoList.add(apiMultimediaList.get(i).getTbMultimediaFile());
+                }
             }
         } else {
             apiMultimediaList = dbHelper.SelectDataPhotoOfInside(sFeatureInsideID, "photo");
             Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            for (int i = 0; i < apiMultimediaList.size(); i++) {
+                tbPhotoList.add(apiMultimediaList.get(i).getTbMultimediaFile());
+            }
         }
         int photolength = 0;
         if (apiMultimediaList != null) {
-            Log.i(TAG, "arrDataPhoto_inside " + String.valueOf(apiMultimediaList.size()));
+//            Log.i(TAG, "arrDataPhoto_inside " + String.valueOf(apiMultimediaList.size()));
             photolength = apiMultimediaList.size();
             // Calculated single Item Layout Width for each grid element ....
             int width = 70;
 
-            DisplayMetrics dm = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
             float density = dm.density;
 
             int totalWidth = (int) (width * photolength * density);
@@ -380,13 +390,14 @@ public class AddFeatureInsideFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
 
-//                    showViewPic(apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
-                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-                    Bundle extras = new Bundle();
-                    extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
-                    extras.putString("fileid", apiMultimediaList.get(position).getTbMultimediaFile().FileID.toString());
-                    intent.putExtras(extras);
-                    startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("images", (Serializable) tbPhotoList);
+                    bundle.putInt("position", position);
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setArguments(bundle);
+                    newFragment.show(ft, "slideshow");
                 }
             });
 
@@ -513,4 +524,21 @@ public class AddFeatureInsideFragment extends Fragment {
 
         ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAllPhoto();
+        mHandler.removeCallbacks(mHandlerReload);
+        mHandlerReload.run();
+    }
+
+    Runnable mHandlerReload = new Runnable() {
+        @Override
+        public void run() {
+            showAllPhoto();
+            INTERVAL = 1000 * 30;
+            mHandler.postDelayed(mHandlerReload, INTERVAL);
+        }
+    };
 }

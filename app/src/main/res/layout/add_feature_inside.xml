@@ -27,13 +27,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-                <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/layout_addinside_dialog"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="15dp">
-                -->
+
                 <TableLayout
                     android:id="@+id/tableFeatureInsideClass"
                     android:layout_width="match_parent"
@@ -121,6 +115,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านหน้า"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
@@ -141,6 +136,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านซ้าย"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -162,6 +158,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ตรงกลาง"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -183,6 +180,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านขวา"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
@@ -203,6 +201,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านหลัง"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>

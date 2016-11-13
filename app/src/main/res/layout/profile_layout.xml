@@ -63,8 +63,8 @@
                         android:id="@+id/tableRow13"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_gravity="center"
+                        android:gravity="center"
                         android:padding="5dp">
 
                         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -109,6 +109,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Username"
+                                android:inputType="text"
+                                android:nextFocusDown="@+id/edtFirstName"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
@@ -195,6 +197,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ชื่อ"
+                                android:inputType="text"
+                                android:nextFocusRight="@+id/edtLastName"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -209,6 +213,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="นามสกุล"
+                                android:inputType="text"
+                                android:nextFocusDown="@+id/edtEmail"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
@@ -285,6 +291,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ตำแหน่งเพิ่มเติม"
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
@@ -310,6 +317,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="อีเมล์"
+                                android:inputType="textWebEmailAddress"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
@@ -332,6 +340,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="เบอร์โทรศัพท์"
+                                android:inputType="phone"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 

@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -124,8 +125,8 @@ public class ChangePassFragment extends Fragment {
 
                 } else {
                     btnSaveNewPassword.setEnabled(false);
-
-                    Toast.makeText(getActivity(), "รหัสผ่านเก่าไม่ถูกต้อง", Toast.LENGTH_LONG).show();
+                    edtPasswordOld.setError("รหัสผ่านเก่าไม่ถูกต้อง");
+//                    Toast.makeText(getActivity(), "รหัสผ่านเก่าไม่ถูกต้อง", Toast.LENGTH_LONG).show();
                 }
 
             } else if (editable == edtPasswordNew.getEditableText()) {
@@ -141,6 +142,7 @@ public class ChangePassFragment extends Fragment {
             }
         }
     }
+
 
     private class ConfirmOnClickListener implements View.OnClickListener {
         @Override
@@ -175,12 +177,14 @@ public class ChangePassFragment extends Fragment {
                             }
                         }
                     } else {
-                        Toast.makeText(getActivity(), "ยืนยันรหัสผ่านเใหม่ ไม่ตรงกัน", Toast.LENGTH_LONG).show();
+                        edtPasswordNewConfirm.setError("ยืนยันรหัสผ่านเใหม่ ไม่ตรงกัน");
+//                        Toast.makeText(getActivity(), "ยืนยันรหัสผ่านเใหม่ ไม่ตรงกัน", Toast.LENGTH_LONG).show();
                         Log.i(TAG, "txtPasswordNewConfirm " + txtPasswordNewConfirm);
                         Log.i(TAG, "txtPasswordNew " + txtPasswordNew);
                     }
                 }else {
-                    Toast.makeText(getActivity(), "รหัสผ่านเก่าไม่ถูกต้อง", Toast.LENGTH_LONG).show();
+                    edtPasswordOld.setError("รหัสผ่านเก่าไม่ถูกต้อง");
+//                    Toast.makeText(getActivity(), "รหัสผ่านเก่าไม่ถูกต้อง", Toast.LENGTH_LONG).show();
                         Log.i(TAG, "sPasswordOld " + sPasswordOld);
                         Log.i(TAG, "txtPasswordOld " + txtPasswordOld);
                     }

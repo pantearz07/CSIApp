@@ -51,6 +51,7 @@ public class CSIDataTabFragment extends Fragment {
         //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.form_csi);
+
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
         viewpagerCSI = (ViewPager) x.findViewById(R.id.viewpagerCSI);
 
@@ -146,6 +147,11 @@ public class CSIDataTabFragment extends Fragment {
             }
             return null;
         }
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActivity().invalidateOptionsMenu();
     }
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {

@@ -213,8 +213,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_line"
-                        android:orientation="horizontal"
-                        android:background="@color/lightgray">
+                        android:background="@color/lightgray"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtSceneInvestDateTime1"
@@ -224,16 +224,16 @@
                             android:layout_weight="1"
                             android:gravity="left"
                             android:padding="8dp"
-                            android:textColor="@color/navy"
                             android:text="วันเวลาที่ทำการตรวจสถานที่เกิดเหตุ"
+                            android:textColor="@color/navy"
                             android:textSize="@dimen/small_text" />
 
                         <ImageButton
                             android:id="@+id/btn_property"
                             android:layout_width="@dimen/width_btn"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
                             android:layout_gravity="right|center_vertical"
+                            android:layout_marginEnd="5dp"
                             android:background="@color/transparent"
                             android:src="@drawable/ic_property" />
 
@@ -291,6 +291,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="สถานที่เกิดเหตุ (ตย. ร้านอาหาร)"
+                                android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
@@ -387,25 +388,25 @@
 
                     <Button
                         android:id="@+id/btnButtonSearchLatLong"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="@string/searchlatlng"
-                        style="@style/buttonStyle" />
+                        android:text="@string/searchlatlng" />
 
                     <Button
                         android:id="@+id/btnButtonSearchMap"
+                        style="@style/buttonStyle"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="5dp"
-                        android:text="@string/searchmap"
-                        style="@style/buttonStyle" />
+                        android:text="@string/searchmap" />
 
                 </LinearLayout>
 
@@ -504,13 +505,25 @@
                         android:layout_marginTop="@dimen/margin_line">
 
 
-                        <Spinner
-                            android:id="@+id/spinnerAntecedent"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/txtAntecedent"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_weight="0.3"
-                            android:entries="@array/antecedent" />
+                            android:layout_weight="0.5">
+
+
+                            <AutoCompleteTextView
+                                android:id="@+id/autoCompleteAntecedent"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:completionThreshold="1"
+                                android:ems="10"
+                                android:hint="คำนำหน้า"
+                                android:inputType="textShortMessage|text"
+                                android:nextFocusRight="@+id/editSuffererName"
+                                android:textSize="@dimen/small_text" />
+
+                        </android.support.design.widget.TextInputLayout>
 
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/txtSuffererName"
@@ -524,6 +537,9 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ชื่อ-นามสกุล"
+                                android:inputType="text"
+                                android:nextFocusDown="@+id/autoCompleteSuffererStatus"
+                                android:nextFocusForward="@+id/autoCompleteSuffererStatus"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -548,6 +564,8 @@
                                 android:completionThreshold="1"
                                 android:ems="10"
                                 android:hint="สถานะเป็น ตย. เจ้าของบ้าน"
+                                android:inputType="text"
+                                android:nextFocusRight="@+id/editTextSuffererPhone"
                                 android:textSize="@dimen/small_text" />
 
                         </android.support.design.widget.TextInputLayout>
@@ -565,6 +583,7 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="โทรศัพท์ติดต่อ"
+                                android:inputType="textShortMessage|phone"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -613,6 +632,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="คำอธิบาย"
+                                android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="2" />
                         </android.support.design.widget.TextInputLayout>
@@ -655,8 +675,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="หมายเลขโล่"
-
-
+                                android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
 

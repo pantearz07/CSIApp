@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -107,8 +108,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
     View viewReceiveCSI;
     Context context;
-    AutoCompleteTextView autoCompleteSuffererStatus;
-    Spinner spinnerAntecedent;
+    AutoCompleteTextView autoCompleteSuffererStatus, autoCompleteAntecedent;
     String[] Antecedent;
     boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
     String address, amphur, province, country, postalCode, knownName = "null";
@@ -347,24 +347,17 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         }
         editCircumstanceOfCaseDetail.addTextChangedListener(new EmerTextWatcher(editCircumstanceOfCaseDetail));
 
-        spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
-
+        autoCompleteAntecedent = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteAntecedent);
         Antecedent = getResources().getStringArray(R.array.antecedent);
         ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, Antecedent);
-        spinnerAntecedent.setAdapter(adapterEnglish);
-        spinnerAntecedent.setOnItemSelectedListener(new EmerOnItemSelectedListener());
-        spinnerAntecedent.setOnTouchListener(new EmerOnItemSelectedListener());
-
-        if (EmergencyTabFragment.tbNoticeCase.SuffererPrename != null) {
-            for (int i = 0; i < Antecedent.length; i++) {
-                if (EmergencyTabFragment.tbNoticeCase.SuffererPrename.trim().equals(Antecedent[i].toString())) {
-                    spinnerAntecedent.setSelection(i);
-                    oldAntecedent = true;
-                    break;
-                }
-            }
+        autoCompleteAntecedent.setAdapter(adapterEnglish);
+        if (EmergencyTabFragment.tbNoticeCase.SuffererPrename == null || EmergencyTabFragment.tbNoticeCase.SuffererPrename.equals("")) {
+            autoCompleteAntecedent.setText("");
+        } else {
+            autoCompleteAntecedent.setText(EmergencyTabFragment.tbNoticeCase.SuffererPrename);
         }
+        autoCompleteAntecedent.addTextChangedListener(new EmerTextWatcher(autoCompleteAntecedent));
 
         editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
         if (EmergencyTabFragment.tbNoticeCase.SuffererName == null || EmergencyTabFragment.tbNoticeCase.SuffererName.equals("")) {
@@ -425,7 +418,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             spinnerDistrict.setEnabled(false);
             btnButtonSearchLatLong.setEnabled(false);
 
-            spinnerAntecedent.setEnabled(false);
+            autoCompleteAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
             editTextSuffererPhone.setEnabled(false);
@@ -492,7 +485,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fabBtnRec:
-
+                hiddenKeyboard();
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                 if (editHappenCaseDate.getText().toString() == null || editHappenCaseDate.getText().toString().equals("")) {
                     EmergencyTabFragment.tbNoticeCase.HappenCaseDate = "";
@@ -545,6 +538,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchMap:
+                hiddenKeyboard();
                 if (cd.isNetworkAvailable()) {
                     if (lat != null || lng != null) {
 //                        Log.d(TAG, "Go to Google map " + lat + " " + lng);
@@ -569,6 +563,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 }
                 break;
             case R.id.btnButtonSearchLatLong:
+                hiddenKeyboard();
                 if (cd.isNetworkAvailable()) {
                     lat = String.valueOf(mLastLocation.getLatitude());
                     lng = String.valueOf(mLastLocation.getLongitude());
@@ -749,7 +744,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
                     if (knownName != null || knownName != "null" || knownName != "Unnamed Road") {
                         knownName = knownName.replace("ตำบล", "");
-//                        Log.i(TAG, "have knownName" + knownName);
+                        Log.i(TAG, "have knownName" + knownName.trim());
                         for (int i = 0; i < mDistrictArray.length; i++) {
                             if (knownName.trim().equals(mDistrictArray[i][2].toString())) {
                                 spinnerDistrict.setSelection(i);
@@ -778,9 +773,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (view == spinnerAntecedent) {
-                oldAntecedent = false;
-            }
+
             if (view == spinnerProvince) {
                 oldProvince = false;
             }
@@ -881,12 +874,6 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
                     }
                     break;
-                case R.id.spinnerAntecedent:
-                    if (oldAntecedent == false) {
-                        EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[pos]);
-//                        Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
-                    }
-                    break;
             }
 
 
@@ -912,10 +899,6 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     sProvinceName = mProvinceArray[0][2].toString();
 //                    Log.i(TAG + " show selectedProvince", selectedProvince + " " + sProvinceName);
                     EmergencyTabFragment.tbNoticeCase.PROVINCE_ID = selectedProvince;
-                    break;
-                case R.id.spinnerAntecedent:
-                    EmergencyTabFragment.tbNoticeCase.SuffererPrename = String.valueOf(Antecedent[0]);
-//                    Log.i(TAG, "spinnerAntecedent " + EmergencyTabFragment.tbNoticeCase.SuffererPrename);
                     break;
             }
         }
@@ -961,7 +944,17 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             } else if (s == editCircumstanceOfCaseDetail.getEditableText()) {
                 EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail = editCircumstanceOfCaseDetail.getText().toString();
 //                Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
+            } else if (s == autoCompleteAntecedent.getEditableText()) {
+                EmergencyTabFragment.tbNoticeCase.SuffererPrename = autoCompleteAntecedent.getText().toString();
+//                Log.i(TAG, "CircumstanceOfCaseDetail " + EmergencyTabFragment.tbNoticeCase.CircumstanceOfCaseDetail);
             }
+        }
+    }
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

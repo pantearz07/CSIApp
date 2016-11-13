@@ -1,22 +1,20 @@
 package com.scdc.csiapp.invmain;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -29,7 +27,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
@@ -42,6 +39,7 @@ import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,9 +56,11 @@ public class DiagramTabFragment extends Fragment {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     String[] Cmd = {"View", "Delete"};
-    String arrDataPic[][];
+    TextView txtPhotoNum;
     DrawingDiagramFragment drawingDiagramFragment = new DrawingDiagramFragment();
     GetDateTime getDateTime;
+    Handler mHandler = new Handler();
+    int INTERVAL = 1000 * 5; //20 second
 
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     public static List<ApiMultimedia> apiMultimediaList = null;
@@ -89,6 +89,7 @@ public class DiagramTabFragment extends Fragment {
         rootLayout = (CoordinatorLayout) viewDiagramTab.findViewById(R.id.rootLayout);
         SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
+        txtPhotoNum = (TextView) viewDiagramTab.findViewById(R.id.txtPhotoNum);
 
         if (CSIDataTabFragment.apiCaseScene.getApiMultimedia() == null) {
             apiMultimediaList = new ArrayList<>();
@@ -138,6 +139,7 @@ public class DiagramTabFragment extends Fragment {
         }
         if (tbDiagramFileList != null) {
             Log.i(TAG, "gViewPic SelectDataMultimediaFile " + String.valueOf(tbDiagramFileList.size()));
+            txtPhotoNum.setText(String.valueOf(tbDiagramFileList.size()));
             gViewPic.setVisibility(View.VISIBLE);
             gViewPic.setAdapter(new DiagramAdapter(getActivity()));
             registerForContextMenu(gViewPic);
@@ -145,18 +147,26 @@ public class DiagramTabFragment extends Fragment {
             gViewPic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
-
-                    Toast.makeText(
-                            getActivity(),
-                            "Your selected : " + tbDiagramFileList.get(position).FilePath.toString(),
-                            Toast.LENGTH_SHORT).show();
+//
+//                    Toast.makeText(
+//                            getActivity(),
+//                            "Your selected : " + tbDiagramFileList.get(position).FilePath.toString(),
+//                            Toast.LENGTH_SHORT).show();
 //                    showViewPic(tbDiagramFileList.get(position).FilePath.toString());
-                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-                    Bundle extras = new Bundle();
-                    extras.putString("photopath", tbDiagramFileList.get(position).FilePath.toString());
-                    extras.putString("fileid", tbDiagramFileList.get(position).FileID.toString());
-                    intent.putExtras(extras);
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
+//                    Bundle extras = new Bundle();
+//                    extras.putString("photopath", tbDiagramFileList.get(position).FilePath.toString());
+//                    extras.putString("fileid", tbDiagramFileList.get(position).FileID.toString());
+//                    intent.putExtras(extras);
+//                    startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("images", (Serializable) tbDiagramFileList);
+                    bundle.putInt("position", position);
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setArguments(bundle);
+                    newFragment.show(ft, "slideshow");
                 }
             });
         } else {
@@ -166,29 +176,6 @@ public class DiagramTabFragment extends Fragment {
         }
     }
 
-    public void showViewPic(String sPicPath) {
-        // TODO Auto-generated method stub
-        final Dialog dialog = new Dialog(getActivity(), R.style.FullHeightDialog);
-        dialog.setContentView(R.layout.view_pic_dialog);
-        String root = Environment.getExternalStorageDirectory().toString();
-        String strPath = root + "/CSIFiles/Pictures/" + sPicPath;
-
-        // Image Resource
-        ImageView imageView = (ImageView) dialog
-                .findViewById(R.id.imgPhoto);
-
-        Bitmap bmpSelectedImage = BitmapFactory.decodeFile(strPath);
-        int width = bmpSelectedImage.getWidth();
-        int height = bmpSelectedImage.getHeight();
-        //Matrix matrix = new Matrix();
-        //matrix.postRotate(90);
-        //Bitmap resizedbitmap = Bitmap.createBitmap(bmpSelectedImage, 0, 0,
-        //      width, height, matrix, true);
-
-        Bitmap resizedbitmap = Bitmap.createScaledBitmap(bmpSelectedImage, width, height, true);
-        imageView.setImageBitmap(resizedbitmap);
-        dialog.show();
-    }
 
     protected ViewGroup findViewById(int layoutMediaDialog) {
         // TODO Auto-generated method stub
@@ -363,4 +350,19 @@ public class DiagramTabFragment extends Fragment {
         Log.i(TAG, "onStart");
         showAllPic();
     }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAllPic();
+        mHandler.removeCallbacks(mHandlerReload);
+        mHandlerReload.run();
+    }
+    Runnable mHandlerReload = new Runnable() {
+        @Override
+        public void run() {
+            showAllPic();
+            INTERVAL = 1000 * 30;
+            mHandler.postDelayed(mHandlerReload, INTERVAL);
+        }
+    };
 }

@@ -62,11 +62,13 @@ public class FullScreenPhoto extends Activity {
         SharedPreferences sp = getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
         cd = new ConnectionDetector(mContext);
+
         Intent intent = getIntent();
         photopath = intent.getStringExtra("photopath"); // for String
         fileid = intent.getStringExtra("fileid"); // for String
         Log.i(TAG, "fileid " + fileid);
         Log.i(TAG, "file name: " + photopath);
+
         String strPath = strSDCardPathName_Pic + photopath;
         curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
         filepath = "http://" + defaultIP + "/assets/csifiles/"

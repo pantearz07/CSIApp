@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -47,6 +49,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +76,7 @@ public class AddGatewayFragment extends Fragment {
     AutoCompleteTextView editGatewayCriminalDetails;
     Button btn_clear_txt;
     List<ApiMultimedia> apiMultimediaList;
+    List<TbMultimediaFile> tbPhotoList;
     ImageButton btnTakePhotoGC;
     String sPhotoID, timeStamp;
     public static final int REQUEST_CAMERA = 777;
@@ -81,7 +85,11 @@ public class AddGatewayFragment extends Fragment {
     Context mContext;
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
-
+    Handler mHandler = new Handler();
+    int INTERVAL = 1000 * 5; //20 second
+    DisplayMetrics dm;
+    int height = 0;
+    int width = 0;
     public AddGatewayFragment() {
 
     }
@@ -116,6 +124,8 @@ public class AddGatewayFragment extends Fragment {
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
         fabBtnDetails = (FloatingActionButton) view.findViewById(R.id.fabBtnDetails);
         btnTakePhotoGC = (ImageButton) view.findViewById(R.id.btnTakePhotoGC);
+        dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 
         editGatewayCriminalDetails = (AutoCompleteTextView) view.findViewById(R.id.editGatewayCriminalDetails);
 //        String[] mGateClueArray;
@@ -291,8 +301,9 @@ public class AddGatewayFragment extends Fragment {
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         apiMultimediaList = new ArrayList<>();
+        tbPhotoList = new ArrayList<>();
         if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+//            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
             if (cd.isNetworkAvailable()) {
                 ApiMultimedia apiMultimedia = new ApiMultimedia();
                 for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
@@ -303,32 +314,36 @@ public class AddGatewayFragment extends Fragment {
                                 apiMultimedia.setTbMultimediaFile(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
                                 apiMultimedia.setTbPhotoOfResultscene(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene());
                                 apiMultimediaList.add(apiMultimedia);
+                                tbPhotoList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+
                             }
                         }
                     }
                 }
-                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
+//                Log.i(TAG, "apiMultimediaList " + String.valueOf(apiMultimediaList.size()));
             } else {
                 apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
+                for (int i = 0; i < apiMultimediaList.size(); i++) {
+                    tbPhotoList.add(apiMultimediaList.get(i).getTbMultimediaFile());
+                }
             }
         } else {
             apiMultimediaList = dbHelper.SelectDataPhotoOfResultscene(sRSID, "photo");
             Log.i(TAG, "apiMultimediaList offline " + String.valueOf(apiMultimediaList.size()));
+            for (int i = 0; i < apiMultimediaList.size(); i++) {
+                tbPhotoList.add(apiMultimediaList.get(i).getTbMultimediaFile());
+            }
         }
         int photolength = 0;
 
 //        arrDataPhoto = mDbHelper.SelectDataPhotoOfOutside(reportID, "photo");
         //Log.i("arrDataPhoto_Outside",arrDataPhoto[0][0]);
         if (apiMultimediaList != null) {
-            Log.i(TAG, "arrDataPhoto_Resultscene " + String.valueOf(apiMultimediaList.size()));
-//            photolength = arrDataPhoto.length;
+//            Log.i(TAG, "arrDataPhoto_Resultscene " + String.valueOf(apiMultimediaList.size()));
             photolength = apiMultimediaList.size();
-            //int size=list.size();
             // Calculated single Item Layout Width for each grid element ....
             int width = 70;
 
-            DisplayMetrics dm = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
             float density = dm.density;
 
             int totalWidth = (int) (width * photolength * density);
@@ -349,14 +364,15 @@ public class AddGatewayFragment extends Fragment {
             horizontal_gridView_GC.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
-//                    showViewPic(apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
 
-                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-                    Bundle extras = new Bundle();
-                    extras.putString("photopath", apiMultimediaList.get(position).getTbMultimediaFile().FilePath.toString());
-                    extras.putString("fileid", apiMultimediaList.get(position).getTbMultimediaFile().FileID.toString());
-                    intent.putExtras(extras);
-                    startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("images", (Serializable) tbPhotoList);
+                    bundle.putInt("position", position);
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setArguments(bundle);
+                    newFragment.show(ft, "slideshow");
                 }
             });
         } else {
@@ -486,11 +502,35 @@ public class AddGatewayFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume detailscase");
+        showAllPhoto();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         Log.i(TAG, "onStop");
 
         ActivityResultBus.getInstance().unregister(mActivityResultSubscriber);
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAllPhoto();
+        mHandler.removeCallbacks(mHandlerReload);
+        mHandlerReload.run();
+    }
+
+    Runnable mHandlerReload = new Runnable() {
+        @Override
+        public void run() {
+            showAllPhoto();
+            INTERVAL = 1000 * 30;
+            mHandler.postDelayed(mHandlerReload, INTERVAL);
+        }
+    };
 }
 

@@ -44,6 +44,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="ทรัพย์สินที่หายไป"
+                            android:inputType="text"
                             android:textSize="@dimen/small_text" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -91,6 +92,7 @@
                             android:completionThreshold="1"
                             android:ems="10"
                             android:hint="หน่วย"
+                            android:inputType="text"
                             android:textSize="@dimen/small_text" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
@@ -105,6 +107,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="บริเวณ"
+                        android:inputType="text"
                         android:textSize="@dimen/small_text" />
                 </android.support.design.widget.TextInputLayout>
 
@@ -118,6 +121,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="การประกันทรัพย์สิน"
+                        android:inputType="text"
                         android:textSize="@dimen/small_text" />
                 </android.support.design.widget.TextInputLayout>
 
