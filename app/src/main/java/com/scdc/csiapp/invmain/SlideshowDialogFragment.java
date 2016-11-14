@@ -20,6 +20,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +69,10 @@ public class SlideshowDialogFragment extends DialogFragment {
     int currentphoto = 0;
     ImageButton btnMenu;
     ImageButton btnClose;
+    RelativeLayout myToolbar;
+    TextView txtNum;
+    File curfile;
+    String strPath, filepath, fileid;
 
     static SlideshowDialogFragment newInstance() {
         SlideshowDialogFragment f = new SlideshowDialogFragment();
@@ -84,7 +90,17 @@ public class SlideshowDialogFragment extends DialogFragment {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
         initView();
-
+        myToolbar = (RelativeLayout) v.findViewById(R.id.myToolbar);
+        if (Build.VERSION.SDK_INT == 19) {
+            myToolbar.setVisibility(View.VISIBLE);
+            btnMenu = (ImageButton) v.findViewById(R.id.btnMenu);
+            btnClose = (ImageButton) v.findViewById(R.id.btnClose);
+            txtNum = (TextView) v.findViewById(R.id.txtNum);
+            btnMenu.setOnClickListener(new PhotoOnclick());
+            btnClose.setOnClickListener(new PhotoOnclick());
+        } else {
+            myToolbar.setVisibility(View.GONE);
+        }
         tbMultimediaFiles = new ArrayList<>();
         tbMultimediaFiles = (List<TbMultimediaFile>) getArguments().getSerializable("images");
         selectedPosition = getArguments().getInt("position");
@@ -138,17 +154,17 @@ public class SlideshowDialogFragment extends DialogFragment {
             descPhoto.setText(tbMultimediaFiles.get(position).FileDescription);
         }
         toolbar.setTitle((position + 1) + " จาก " + tbMultimediaFiles.size());
-
+        txtNum.setText((position + 1) + " จาก " + tbMultimediaFiles.size());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (Build.VERSION.SDK_INT < 20) {
-//            setStyle(DialogFragment.STYLE_NORMAL, R.style.AppThemeDarkActionBar);
-//        } else {
+        if (Build.VERSION.SDK_INT == 19) {
+            setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_NoActionBar_Fullscreen);
+        } else {
             setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme_ActionBar_Transparent);
-//        }
+        }
         setHasOptionsMenu(true);
     }
 
@@ -240,6 +256,94 @@ public class SlideshowDialogFragment extends DialogFragment {
         descPhoto = (TextView) v.findViewById(R.id.descPhoto);
         layoutDescPhoto = (LinearLayout) v.findViewById(R.id.layoutDescPhoto);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
+
+    }
+
+    private void getDataFile() {
+        TbMultimediaFile tbMultimediaFile = tbMultimediaFiles.get(currentphoto);
+        strPath = strSDCardPathName_Pic + tbMultimediaFile.FilePath;
+        curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
+        filepath = "http://" + defaultIP + "/assets/csifiles/"
+                + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
+                + tbMultimediaFile.FilePath.toString();
+        fileid = tbMultimediaFile.FileID.toString();
+    }
+
+    private void savePhoto() {
+        if (curfile.exists()) {
+            Toast.makeText(mContext, R.string.got_photo, Toast.LENGTH_SHORT).show();
+        } else {
+            if (cd.isNetworkAvailable()) {
+                int count;
+                File myDir;
+                try {
+                    myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
+                    myDir.mkdirs();
+                    Log.i(TAG, "display file name: " + filepath);
+
+                    URL url = new URL(filepath);
+                    URLConnection conexion = url.openConnection();
+                    conexion.connect();
+
+                    int lenghtOfFile = conexion.getContentLength();
+                    Log.d(TAG, "Lenght of file: " + lenghtOfFile);
+
+                    InputStream input = new BufferedInputStream(url.openStream());
+//                        File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic + photopath);
+                    if (curfile.exists()) {
+                        curfile.delete();
+                    }
+                    curfile.createNewFile();
+                    // Get File Name from URL
+                    OutputStream output = new FileOutputStream(curfile);
+
+                    byte data[] = new byte[1024];
+                    long total = 0;
+                    while ((count = input.read(data)) != -1) {
+                        total += count;
+                        output.write(data, 0, count);
+                    }
+                    Log.i(TAG, "DownloadFile display" + curfile.getPath());
+                    if (total > 0) {
+                        Toast.makeText(mContext, getString(R.string.save_photo_success), Toast.LENGTH_SHORT).show();
+                    }
+                    output.flush();
+                    output.close();
+                    input.close();
+                } catch (Exception e) {
+                    Log.e("Error: ", e.getMessage());
+                    Toast.makeText(mContext, getString(R.string.save_error), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(mContext, getString(R.string.network_unavailable), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void deletePhoto() {
+        if (curfile.exists()) {
+            Log.i(TAG, "  delete file name " + fileid);
+            int flag = 0;
+            flag = deletefile(fileid);
+            if (flag > 0) {
+                Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
+
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
+                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                        curfile.delete();
+                        getDialog().dismiss();
+                    }
+                }
+            } else {
+                Toast.makeText(mContext.getApplicationContext(),
+                        getString(R.string.delete_error),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(mContext, getString(R.string.no_photo), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initData() {
@@ -258,87 +362,13 @@ public class SlideshowDialogFragment extends DialogFragment {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     int id = item.getItemId();
-                    TbMultimediaFile tbMultimediaFile = tbMultimediaFiles.get(currentphoto);
-                    String strPath = strSDCardPathName_Pic + tbMultimediaFile.FilePath;
-                    File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
-                    String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                            + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/pictures/"
-                            + tbMultimediaFile.FilePath.toString();
-                    String fileid = tbMultimediaFile.FileID.toString();
+                    getDataFile();
                     //noinspection SimplifiableIfStatement
                     if (id == R.id.savephoto) {
-                        if (curfile.exists()) {
-                            Toast.makeText(mContext, R.string.got_photo, Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (cd.isNetworkAvailable()) {
-                                int count;
-                                File myDir;
-                                try {
-                                    myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
-                                    myDir.mkdirs();
-                                    Log.i(TAG, "display file name: " + filepath);
-
-                                    URL url = new URL(filepath);
-                                    URLConnection conexion = url.openConnection();
-                                    conexion.connect();
-
-                                    int lenghtOfFile = conexion.getContentLength();
-                                    Log.d(TAG, "Lenght of file: " + lenghtOfFile);
-
-                                    InputStream input = new BufferedInputStream(url.openStream());
-//                        File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic + photopath);
-                                    if (curfile.exists()) {
-                                        curfile.delete();
-                                    }
-                                    curfile.createNewFile();
-                                    // Get File Name from URL
-                                    OutputStream output = new FileOutputStream(curfile);
-
-                                    byte data[] = new byte[1024];
-                                    long total = 0;
-                                    while ((count = input.read(data)) != -1) {
-                                        total += count;
-                                        output.write(data, 0, count);
-                                    }
-                                    Log.i(TAG, "DownloadFile display" + curfile.getPath());
-                                    if (total > 0) {
-                                        Toast.makeText(mContext, getString(R.string.save_photo_success), Toast.LENGTH_SHORT).show();
-                                    }
-                                    output.flush();
-                                    output.close();
-                                    input.close();
-                                } catch (Exception e) {
-                                    Log.e("Error: ", e.getMessage());
-                                    Toast.makeText(mContext, getString(R.string.save_error), Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(mContext, getString(R.string.network_unavailable), Toast.LENGTH_SHORT).show();
-                            }
-                        }
+                        savePhoto();
                     }
                     if (id == R.id.deletephoto) {
-                        if (curfile.exists()) {
-                            Log.i(TAG, "  delete file name " + fileid);
-                            int flag = 0;
-                            flag = deletefile(fileid);
-                            if (flag > 0) {
-                                Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
-
-                                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
-                                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
-                                        curfile.delete();
-                                        getDialog().dismiss();
-                                    }
-                                }
-                            } else {
-                                Toast.makeText(mContext.getApplicationContext(),
-                                        getString(R.string.delete_error),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        } else {
-                            Toast.makeText(mContext, getString(R.string.no_photo), Toast.LENGTH_SHORT).show();
-                        }
+                        deletePhoto();
                     }
                     return false;
                 }
@@ -383,10 +413,10 @@ public class SlideshowDialogFragment extends DialogFragment {
     private class PhotoOnclick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-//            if (view == imgDisplay) {
+            if (view == imgDisplay) {
                 if (fullscreen) {
                     fullscreen = false;
-                    toolbar.setVisibility(View.GONE);
+//                    toolbar.setVisibility(View.GONE);
 
                     if (Build.VERSION.SDK_INT < 16) {
                         getDialog().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -399,7 +429,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
                 } else {
                     fullscreen = true;
-                    toolbar.setVisibility(View.VISIBLE);
+//                    toolbar.setVisibility(View.VISIBLE);
 
                     if (Build.VERSION.SDK_INT < 16) {
                         getDialog().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -410,13 +440,37 @@ public class SlideshowDialogFragment extends DialogFragment {
                         decorView.setSystemUiVisibility(uiOptions);
                     }
                 }
-//            }
-//            if (view == btnMenu) {
-//                Log.i(TAG, "  btnMenu ");
-//            }
-//            if (view == btnClose) {
-//                Log.i(TAG, "  btnClose ");
-//            }
+            }
+            if (view == btnMenu) {
+                Log.i(TAG, "  btnMenu ");
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(mContext, btnMenu);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater().inflate(R.menu.photo_menu, popup.getMenu());
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int id = item.getItemId();
+                        getDataFile();
+                        //noinspection SimplifiableIfStatement
+                        if (id == R.id.savephoto) {
+                            Log.i(TAG, "  savephoto ");
+                            savePhoto();
+                        }
+                        if (id == R.id.deletephoto) {
+                            Log.i(TAG, "  deletephoto ");
+                            deletePhoto();
+                        }
+                        return true;
+                    }
+                });
+
+                popup.show();//showing popup menu
+            }
+            if (view == btnClose) {
+                Log.i(TAG, "  btnClose ");
+                getDialog().dismiss();
+            }
         }
     }
 }
