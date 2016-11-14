@@ -144,11 +144,11 @@ public class SlideshowDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT < 20) {
-            setStyle(DialogFragment.STYLE_NORMAL, R.style.AppThemeDarkActionBar);
-        } else {
+//        if (Build.VERSION.SDK_INT < 20) {
+//            setStyle(DialogFragment.STYLE_NORMAL, R.style.AppThemeDarkActionBar);
+//        } else {
             setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme_ActionBar_Transparent);
-        }
+//        }
         setHasOptionsMenu(true);
     }
 
@@ -347,25 +347,6 @@ public class SlideshowDialogFragment extends DialogFragment {
         }
     }
 
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        menu.clear();
-//        getActivity().getMenuInflater().inflate(R.menu.photo_menu, menu);
-//
-//        super.onCreateOptionsMenu(menu, inflater);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        Log.i(TAG, "  delete file name " + currentphoto);
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     protected int deletefile(String fileid) {
         int flag = 0;
