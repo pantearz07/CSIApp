@@ -4,6 +4,7 @@ package com.scdc.csiapp.inqmain;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -47,17 +49,21 @@ import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.TimeDialog;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 
-public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // Google play services
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
@@ -95,7 +101,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     String[] mDistrictArray2;
 
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, editTextSuffererPhone;
-    ImageButton ic_telphone1, ic_telphone2;
+    private ImageButton ic_telphone1, ic_telphone2;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
     String lat, lng;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
@@ -163,13 +169,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             editTextPhone1.setText(EmergencyTabFragment.tbNoticeCase.CaseTel);
         }
         editTextPhone1.addTextChangedListener(new EmerTextWatcher(editTextPhone1));
-        ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone1);
-        if (EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
-            ic_telphone1.setEnabled(true);
-        } else {
-            ic_telphone1.setEnabled(false);
-        }
-        ic_telphone1.setOnClickListener(new EmergencyDetailTabFragment());
+        ic_telphone1 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone_1);
+        ic_telphone1.setOnClickListener(this);
 
         editAddrDetail = (EditText) viewReceiveCSI.findViewById(R.id.edtAddrDetail);
         //btn_clear_txt_1 = (Button) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
@@ -385,15 +386,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         } else {
             editTextSuffererPhone.setText(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
         }
-
         editTextSuffererPhone.addTextChangedListener(new EmerTextWatcher(editTextSuffererPhone));
-        ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone2);
-        if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
-            ic_telphone2.setEnabled(true);
-        } else {
-            ic_telphone2.setEnabled(false);
-        }
-        ic_telphone2.setOnClickListener(new EmergencyDetailTabFragment());
+        ic_telphone2 = (ImageButton) viewReceiveCSI.findViewById(R.id.ic_telphone_2);
+        ic_telphone2.setOnClickListener(this);
 
         fabBtnRec = (FloatingActionButton) viewReceiveCSI.findViewById(R.id.fabBtnRec);
         if (emergencyTabFragment.mode == "view") {
@@ -525,14 +520,11 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                     boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                    getString(R.string.save_complete)
+                                            + " " +EmergencyTabFragment.tbNoticeCase.LastUpdateDate.toString()
+                                            + " " +EmergencyTabFragment.tbNoticeCase.LastUpdateTime.toString());
+                            snackBarAlert.createSnacbar();
                         }
                     }
                 }
@@ -608,30 +600,32 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 TimeDialog dialogKnowCaseTime = new TimeDialog(view);
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
                 break;
-            case R.id.ic_telphone1:
-                if (EmergencyTabFragment.tbNoticeCase.CaseTel != null || EmergencyTabFragment.tbNoticeCase.CaseTel != "") {
-                    try {
-                        Intent callIntent = new Intent(Intent.ACTION_CALL);
-                        callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.CaseTel.toString()));
-                        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getActivity().startActivity(callIntent);
-                    } catch (ActivityNotFoundException activityException) {
-                        Log.e("Calling a Phone Number", "Call failed", activityException);
-                    }
-                }
+            case R.id.ic_telphone_1:
+                hiddenKeyboard();
+                calling(EmergencyTabFragment.tbNoticeCase.CaseTel);
                 break;
-            case R.id.ic_telphone2:
-                if (EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != null || EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum != "") {
-                    try {
-                        Intent callIntent = new Intent(Intent.ACTION_CALL);
-                        callIntent.setData(Uri.parse("tel:" + EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum));
-                        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getActivity().startActivity(callIntent);
-                    } catch (ActivityNotFoundException activityException) {
-                        Log.e("Calling a Phone Number", "Call failed", activityException);
-                    }
-                }
+            case R.id.ic_telphone_2:
+                hiddenKeyboard();
+                calling(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
                 break;
+        }
+    }
+    // Intent action_call for telephone
+    private void calling(String sPhonenumber) {
+        if (sPhonenumber == null || sPhonenumber.equals("")) {
+
+        } else {
+            try {
+                Log.i(TAG, "Calling a Phone Number " + sPhonenumber);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:=" + sPhonenumber.replace(" ", "").trim()));
+                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                startActivity(callIntent);
+            } catch (ActivityNotFoundException activityException) {
+                Log.e("Calling a Phone Number", "Call failed", activityException);
+            }
         }
     }
 
@@ -950,6 +944,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             }
         }
     }
+
     public void hiddenKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {

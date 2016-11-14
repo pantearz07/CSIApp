@@ -54,6 +54,7 @@ import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.MainActivity;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.scdc.csiapp.tablemodel.TbPhotoOfOutside;
 import com.scdc.csiapp.tablemodel.TbSceneFeatureInSide;
@@ -67,6 +68,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 /**
  * Created by Pantearz07 on 22/9/2558.
@@ -658,29 +661,17 @@ public class DetailsTabFragment extends Fragment {
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete)
-                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID
-                                    + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
-                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                    getString(R.string.save_complete)
+                                            + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                            snackBarAlert.createSnacbar();
                         }
                     } else {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                    getString(R.string.save_error));
+                            snackBarAlert.createSnacbar();
                         }
                     }
                 }

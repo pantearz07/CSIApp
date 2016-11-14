@@ -19,6 +19,7 @@
     <string name="download_error">ดาวน์โหลดไฟล์ไม่สำเร็จ</string>
     <string name="cancel">ยกเลิก</string>
     <string name="ok">ตกลง</string>
+    <string name="delete">ลบ</string>
     <string name="next">ถัดไป</string>
     <string name="current_ip_server">IP Server ปัจจุบัน:</string>
     <string name="please_input_username">กรุณากรอก Username</string>
@@ -241,4 +242,7 @@
         <item>เส้น</item>
         <item>วง</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

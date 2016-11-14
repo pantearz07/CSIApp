@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -45,6 +47,7 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 
@@ -55,6 +58,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 
 public class SummaryCSITabFragment extends Fragment {
@@ -418,15 +423,10 @@ public class SummaryCSITabFragment extends Fragment {
                         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
                             dialog.dismiss();
                             if (snackbar == null || !snackbar.isShown()) {
-                                snackbar = Snackbar.make(rootLayout, "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ", Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
 
-
-                                            }
-                                        });
-                                snackbar.show();
+                                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                        "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ");
+                                snackBarAlert.createSnacbar();
                             }
                         } else {
                             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
@@ -468,50 +468,46 @@ public class SummaryCSITabFragment extends Fragment {
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                    getString(R.string.save_complete)
+                                            + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                            snackBarAlert.createSnacbar();
                         }
                     } else {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                    getString(R.string.save_error)
+                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString());
+                            snackBarAlert.createSnacbar();
                         }
                     }
                 }
             }
             if (v == edtInqTel) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + InqTel));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
-                }
+                calling(InqTel);
             }
             if (v == edtInvTel) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + InvTel));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                calling(InvTel);
+            }
+        }
+    }
+
+    // Intent action_call for telephone
+    private void calling(String sPhonenumber) {
+        if (sPhonenumber == null || sPhonenumber.equals("")) {
+
+        } else {
+            try {
+                Log.i(TAG, "Calling a Phone Number " + sPhonenumber);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:=" + sPhonenumber.replace(" ", "").trim()));
+                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
                 }
+                startActivity(callIntent);
+            } catch (ActivityNotFoundException activityException) {
+                Log.e("Calling a Phone Number", "Call failed", activityException);
             }
         }
     }
@@ -595,9 +591,9 @@ public class SummaryCSITabFragment extends Fragment {
         protected void onPostExecute(final String arrData) {
             if (arrData.equals("error")) {
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.download_error)
-                            , Snackbar.LENGTH_INDEFINITE);
-                    snackbar.show();
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            getString(R.string.download_error));
+                    snackBarAlert.createSnacbar();
                 }
             } else {
                 final String CurrentDate_ID[] = getDateTime.getDateTimeCurrent();
@@ -770,20 +766,16 @@ public class SummaryCSITabFragment extends Fragment {
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
                     if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, apiStatus.getData().getReason().toString(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                    }
-                                });
-                        snackbar.show();
+                        SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                apiStatus.getData().getReason().toString());
+                        snackBarAlert.createSnacbar();
                     }
                 }
             } else {
                 status_savecase = false;
-                Toast.makeText(getActivity(),
-                        getString(R.string.error_data) + " " + getString(R.string.network_error),
-                        Toast.LENGTH_LONG).show();
+                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                        getString(R.string.error_data) + " " + getString(R.string.network_error));
+                snackBarAlert.createSnacbar();
             }
 
         }

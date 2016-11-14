@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -735,12 +737,21 @@ public class ProfileFragment extends Fragment {
                                 if (isSuccess) {
                                     Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
                                     Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
-                                    Picasso.with(getActivity())
-                                            .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-                                                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                                            .resize(100, 100)
-                                            .centerCrop()
-                                            .into(profile_image);
+//                                    Picasso.with(getActivity())
+//                                            .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+//                                                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
+//                                            .resize(100, 100)
+//                                            .centerCrop()
+//                                            .into(profile_image);
+                                    try {
+
+                                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+                                                .openInputStream(selectedImage));
+                                        profile_image.setImageBitmap(bitmap);
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                             src.close();

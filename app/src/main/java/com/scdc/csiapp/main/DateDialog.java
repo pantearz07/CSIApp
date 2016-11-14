@@ -18,29 +18,31 @@ import java.util.Calendar;
 @SuppressLint("ValidFragment")
 public class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     TextView txtdate;
-    public DateDialog(View view){
-        txtdate=(TextView)view;
+
+    public DateDialog(View view) {
+        txtdate = (TextView) view;
     }
+
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         String date = String.valueOf(txtdate.getText());
         Log.i("OldDate ", date);
-        if(date.length()==0) {
-// Use the current date as the default date in the dialog
+        if (date.length() == 0) {
+            // Use the current date as the default date in the dialog
             final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
             // Create a new instance of DatePickerDialog and return it
-            Log.i("Cur Date ", String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(day));
+            Log.i("Cur Date ", String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(day));
             return new DatePickerDialog(getActivity(), this, year, month, day);
 
-        }else{//05-12-2556
-            int year = Integer.parseInt(date.substring(6,10));
+        } else {//05-12-2556
+            int year = Integer.parseInt(date.substring(6, 10));
             int month = Integer.parseInt(date.substring(3, 5));
             int day = Integer.parseInt(date.substring(0, 2));
-            Log.i("NewDate ", String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(day));
-           return new DatePickerDialog(getActivity(), this, year, month-1, day);
+            Log.i("NewDate ", String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(day));
+            return new DatePickerDialog(getActivity(), this, year, month - 1, day);
 
         }
 

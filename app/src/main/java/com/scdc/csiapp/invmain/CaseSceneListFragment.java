@@ -37,6 +37,7 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
@@ -46,6 +47,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 /**
  * Created by Pantearz07 on 14/9/2559.
@@ -132,7 +136,7 @@ public class CaseSceneListFragment extends Fragment {
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
                     selectApiCaseSceneFromSQLite();
 
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -173,7 +177,7 @@ public class CaseSceneListFragment extends Fragment {
                     selectApiCaseSceneFromSQLite();
 
 //                    Log.i("log_show draft", "fail network");
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -258,15 +262,10 @@ public class CaseSceneListFragment extends Fragment {
 
                                                                  } else {
                                                                      if (snackbar == null || !snackbar.isShown()) {
-                                                                         snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + apiNoticeCase.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                                                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                                                     @Override
-                                                                                     public void onClick(View view) {
-
-
-                                                                                     }
-                                                                                 });
-                                                                         snackbar.show();
+                                                                         SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                                                                 getString(R.string.save_error)
+                                                                                         + " " + apiNoticeCase.getTbCaseScene().CaseReportID.toString());
+                                                                         snackBarAlert.createSnacbar();
                                                                      }
                                                                  }
 
@@ -370,15 +369,9 @@ public class CaseSceneListFragment extends Fragment {
                 apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
             } else {
                 if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, "ดาวน์โหลดข้อมูลผิดพลาด", Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-
-                                }
-                            });
-                    snackbar.show();
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
+                            "ดาวน์โหลดข้อมูลผิดพลาด");
+                    snackBarAlert.createSnacbar();
                 }
                 selectApiCaseSceneFromSQLite();
 
@@ -411,7 +404,7 @@ public class CaseSceneListFragment extends Fragment {
             } else {
                 selectApiCaseSceneFromSQLite();
 //                if (snackbar == null || !snackbar.isShown()) {
-                snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
+                snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), LENGTH_INDEFINITE)
                         .setAction(getString(R.string.ok), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {

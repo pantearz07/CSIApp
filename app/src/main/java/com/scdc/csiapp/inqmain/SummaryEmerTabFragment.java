@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -41,8 +43,12 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 
 public class SummaryEmerTabFragment extends Fragment {
@@ -422,15 +428,10 @@ public class SummaryEmerTabFragment extends Fragment {
 
                             } else {
                                 if (snackbar == null || !snackbar.isShown()) {
-                                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-
-
-                                                }
-                                            });
-                                    snackbar.show();
+                                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                            getString(R.string.save_error)
+                                                    + " " +EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
+                                    snackBarAlert.createSnacbar();
                                 }
                             }
 
@@ -492,49 +493,45 @@ public class SummaryEmerTabFragment extends Fragment {
                     boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                    getString(R.string.save_complete)
+                                            + " " +EmergencyTabFragment.tbNoticeCase.LastUpdateDate.toString()
+                                            + " " +EmergencyTabFragment.tbNoticeCase.LastUpdateTime.toString());
+                            snackBarAlert.createSnacbar();
                         }
                     } else {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                    getString(R.string.save_error)
+                                            + " " +EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
+                            snackBarAlert.createSnacbar();
                         }
                     }
                 }
             }
             if (v == edtInqTel) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + InqTel));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
-                }
+                calling(InqTel);
             }
             if (v == edtInvTel) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + InvTel));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                calling(InvTel);
+            }
+        }
+    }
+
+    private void calling(String sPhonenumber) {
+        if (sPhonenumber == null || sPhonenumber.equals("")) {
+
+        } else {
+            try {
+                Log.i(TAG, "Calling a Phone Number " + sPhonenumber);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:=" + sPhonenumber.replace(" ", "").trim()));
+                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
                 }
+                startActivity(callIntent);
+            } catch (ActivityNotFoundException activityException) {
+                Log.e("Calling a Phone Number", "Call failed", activityException);
             }
         }
     }
@@ -555,6 +552,7 @@ public class SummaryEmerTabFragment extends Fragment {
             progressDialog.setMessage(getString(R.string.processing));
             progressDialog.show();
         }
+
         @Override
         protected ApiStatusResult doInBackground(TbNoticeCase... params) {
             return WelcomeActivity.api.sendNewNoticeCase(params[0]);
@@ -748,6 +746,7 @@ public class SummaryEmerTabFragment extends Fragment {
             progressDialog.setMessage(getString(R.string.processing));
             progressDialog.show();
         }
+
         @Override
         protected ApiStatus doInBackground(String... strings) {
             return WelcomeActivity.api.deleteNoticeCase(strings[0]);
@@ -775,6 +774,7 @@ public class SummaryEmerTabFragment extends Fragment {
             }
         }
     }
+
     public void hiddenKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {

@@ -21,15 +21,6 @@ import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 public class CSIDataTabFragment extends Fragment {
     // โชว์ข้อมูล คดี มีเเท็บ 7 เเท็บ
-    // case 0 : return new SummaryCSITabFragment();
-//    case 1 : return new ReceiveDataTabFragment();
-//    case 2 : return new DetailsTabFragment();
-//    case 3 : return new ResultTabFragment();
-//    case 4 : return new DiagramTabFragment();
-//    case 5 : return new PhotoTabFragment();
-//    case 6 : return new VideoTabFragment();
-//    case 7 : return new VoiceTabFragment();
-//    case 8 : return new NoteTabFragment(); ตัดออกก่อน
    // CoordinatorLayout rootLayoutCSI;
     public static TabLayout tabLayoutCSI;
     public static ViewPager viewpagerCSI;
@@ -73,13 +64,9 @@ public class CSIDataTabFragment extends Fragment {
             }
         });
         Bundle args = getArguments();
-
         apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
-//        tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
         mode = args.getString(Bundle_mode);
-
         Log.i(TAG, " NoticeCaseID " + apiCaseScene.getTbNoticeCase().NoticeCaseID.toString());
-        //Log.i(TAG, " NoticeCaseID " + tbNoticeCase.NoticeCaseID.toString());
         return x;
 
     }
@@ -106,7 +93,7 @@ public class CSIDataTabFragment extends Fragment {
                 case 5 : return new PhotoTabFragment();
                 case 6 : return new VideoTabFragment();
                 case 7 : return new VoiceTabFragment();
-               // case 8 : return new NoteTabFragment();
+               // case 8 : return new NoteTabFragment(); ตัดออกก่อน
             }
             return null;
         }

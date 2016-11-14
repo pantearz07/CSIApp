@@ -469,9 +469,14 @@ public class ApiConnect {
                                 checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
                                 Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
                                 if (checkDateTime == 1) {
-                                    boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
-                                    if (isSuccess) {
-                                        Log.d(TAG, "update from server to mobile updateAlldataCase ");
+                                    if (mDbHelper.DeleteMultimedia(temp_sql)) {
+                                        boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
+                                        if (isSuccess) {
+                                            Log.d(TAG, "update from server to mobile updateAlldataCase ");
+                                            break;
+                                        }
+                                    } else {
+                                        Log.d(TAG, "DeleteMultimedia in Case error");
                                         break;
                                     }
                                 } else if (checkDateTime == 2) {

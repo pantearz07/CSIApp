@@ -82,7 +82,7 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
-                        android:id="@+id/ic_telphone1"
+                        android:id="@+id/ic_telphone_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -544,7 +544,7 @@
                         </android.support.design.widget.TextInputLayout>
 
                         <ImageButton
-                            android:id="@+id/ic_telphone2"
+                            android:id="@+id/ic_telphone_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"

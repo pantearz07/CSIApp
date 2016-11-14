@@ -105,7 +105,8 @@
 
         <activity
             android:name="com.scdc.csiapp.invmain.VideoPlayerActivity"
-            android:label="video"></activity>
+            android:label="video"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.scdc.csiapp.invmain.GalleryActivity"
             android:label="gallery"

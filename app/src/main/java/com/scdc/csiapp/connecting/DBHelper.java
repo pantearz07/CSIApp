@@ -1761,6 +1761,47 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    public boolean DeleteMultimedia(ApiCaseScene apiCaseScene) {
+        // TODO Auto-generated method stub
+        try {
+            String CaseReportID = apiCaseScene.getTbCaseScene().CaseReportID;
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+            db.beginTransaction();
+            if (apiCaseScene.getApiMultimedia() != null) {
+                for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
+                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null){
+                        db.delete("photoofevidence", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID)});
+                    }
+                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null){
+                        db.delete("photoofpropertyless", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID)});
+                    }
+                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null){
+                        db.delete("photoofresultscene", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID)});
+                    }
+                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null){
+                        db.delete("photoofinside", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID)});
+                    }
+                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null){
+                        db.delete("photoofoutside", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID)});
+                    }
+                    db.delete("multimediafile", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)});
+
+                }
+            }
+            Log.d(TAG, "DeleteMultimedia " + CaseReportID);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+
+            return true;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in DeleteMultimedia " + e.getMessage().toString());
+            return false;
+        }
+    }
+
     public boolean saveCaseScene(TbCaseScene tbCaseScene) {
         if (tbCaseScene == null) {
             return false;

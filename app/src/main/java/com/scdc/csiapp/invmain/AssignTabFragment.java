@@ -20,8 +20,6 @@ import com.scdc.csiapp.apimodel.ApiCaseScene;
 
 public class AssignTabFragment extends Fragment {
     //หน้าโชว์ข้อมูลคดีทั้งหมด โดยเเบ่งเป็นเเท็บ 2 แท็บ
-    //SummaryEmerTabFragment
-    //EmergencyDetailTabFragment
 
     public static LinearLayout linearLayoutLayoutCSI;
     public static TabLayout tabLayoutCSI;
@@ -30,7 +28,6 @@ public class AssignTabFragment extends Fragment {
     private static final String TAG = "DEBUG-AssignTabFragment";
     public static String Bundle_Key = "noticecase";
     public static String Bundle_mode = "mode";
-   // public static TbNoticeCase tbNoticeCase;
     public static String mode;
     Snackbar snackbar;
     public static ApiCaseScene apiCaseScene;
@@ -42,7 +39,6 @@ public class AssignTabFragment extends Fragment {
          *Inflate csi_data_tab_layout and setup Views.
          */
         View x = inflater.inflate(R.layout.emer_data_tab_layout, null);
-        //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
         linearLayoutLayoutCSI = (LinearLayout) x.findViewById(R.id.linearLayoutLayoutCSI);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.inq_appname);
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
@@ -67,7 +63,6 @@ public class AssignTabFragment extends Fragment {
         });
         Bundle args = getArguments();
         apiCaseScene = (ApiCaseScene) args.getSerializable(Bundle_Key);
-//        tbNoticeCase = (TbNoticeCase) args.getSerializable(Bundle_Key);
         Log.i(TAG, " NoticeCaseID " + apiCaseScene.getTbNoticeCase().NoticeCaseID.toString());
         mode = args.getString(Bundle_mode);
         return x;

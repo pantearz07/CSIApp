@@ -41,6 +41,7 @@ import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.invmain.CSIDataTabFragment;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
@@ -49,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 
 /**
  * Created by Pantearz07 on 14/9/2559.
@@ -129,15 +132,10 @@ public class NoticeCaseListFragment extends Fragment {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
                     selectApiNoticeCaseFromSQLite();
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
+                            getString(R.string.offline_mode));
+                    snackBarAlert.createSnacbar();
 
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-                                }
-                            });
-                    snackbar.show();
                     Log.i("log_show draft", "fail network");
                 }
 

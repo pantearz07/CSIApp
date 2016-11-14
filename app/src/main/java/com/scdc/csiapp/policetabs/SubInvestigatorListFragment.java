@@ -36,11 +36,14 @@ import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 
 /**
  * Created by Pantearz07 on 14/10/2559.
@@ -98,15 +101,10 @@ public class SubInvestigatorListFragment extends Fragment {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
                     selectApiOfficialFromSQLite();
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayoutInv, LENGTH_INDEFINITE,
+                            getString(R.string.offline_mode));
+                    snackBarAlert.createSnacbar();
 
-                    snackbar = Snackbar.make(rootLayoutInv, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-                                }
-                            });
-                    snackbar.show();
                     Log.i("log_show draft", "fail network");
                 }
 
@@ -135,14 +133,10 @@ public class SubInvestigatorListFragment extends Fragment {
                     selectApiOfficialFromSQLite();
 
                     Log.i("log_show draft", "fail network");
-                    snackbar = Snackbar.make(rootLayoutInv, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayoutInv, LENGTH_INDEFINITE,
+                            getString(R.string.offline_mode));
+                    snackBarAlert.createSnacbar();
 
-                                }
-                            });
-                    snackbar.show();
                 }
             }
         });

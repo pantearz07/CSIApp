@@ -8,6 +8,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
@@ -20,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -54,6 +56,7 @@ import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.TimeDialog;
 import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
 
@@ -63,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
@@ -132,7 +136,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
     boolean statusConnect = false;
     ViewGroup viewByIdaddsufferer;
-    View viewReceiveCSI;
+    private View viewReceiveCSI;
     Context context;
     ArrayAdapter<String> adapterSelectDataInspector, adapterPoliceStation;
     protected static String selectScheduleID = null;
@@ -140,6 +144,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
     ViewGroup viewAddSceneInvestigation;
     protected static final int DIALOG_AddSceneInvestigation = 0;
+    protected static final int DIALOG_EditSceneInvestigation = 1;
     List<TbSceneInvestigation> tbSceneInvestigations = null;
     ListView listViewAddSceneInvestDateTime, listViewInvestigator;
     List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
@@ -297,6 +302,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         listViewAddSceneInvestDateTime = (ListView) viewReceiveCSI
                 .findViewById(R.id.listViewAddSceneInvestDateTime);
         listViewAddSceneInvestDateTime.setOnTouchListener(new ListviewSetOnTouchListener());
+
         showListSceneInvestigation();
         if (CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes() == null) {
             apiInvestigatorsInScenes = new ArrayList<>();
@@ -377,23 +383,6 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         btnButtonSearchLatLong = (Button) viewReceiveCSI.findViewById(R.id.btnButtonSearchLatLong);
         btnButtonSearchLatLong.setOnClickListener(new SummaryOnClickListener());
 
-//        spinnerAntecedent = (Spinner) viewReceiveCSI.findViewById(R.id.spinnerAntecedent);
-//
-//        Antecedent = getResources().getStringArray(R.array.antecedent);
-//        ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_dropdown_item_1line, Antecedent);
-//        spinnerAntecedent.setAdapter(adapterEnglish);
-//        spinnerAntecedent.setOnItemSelectedListener(new RecOnItemSelectedListener());
-//        spinnerAntecedent.setOnTouchListener(new RecOnItemSelectedListener());
-//        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename != null) {
-//            for (int i = 0; i < Antecedent.length; i++) {
-//                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename.trim().equals(Antecedent[i].toString())) {
-//                    spinnerAntecedent.setSelection(i);
-//                    oldAntecedent = true;
-//                    break;
-//                }
-//            }
-//        }
         autoCompleteAntecedent = (AutoCompleteTextView) viewReceiveCSI.findViewById(R.id.autoCompleteAntecedent);
         Antecedent = getResources().getStringArray(R.array.antecedent);
         ArrayAdapter<String> adapterEnglish = new ArrayAdapter<String>(getActivity(),
@@ -482,12 +471,14 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             editTextSuffererPhone.setEnabled(false);
             editCircumstanceOfCaseDetail.setEnabled(false);
             edtVehicleDetail.setEnabled(false);
+        } else {
+            listViewAddSceneInvestDateTime.setOnItemClickListener(new ListviewOnClickListener());
         }
 
         return viewReceiveCSI;
     }
 
-
+    // ดึงค่าอำเภอมาเเสดง ตาม จังหวัดปัจจุบัน
     private void setSelectAmphur(String provinceid) {
         mAmphurArray = dbHelper.SelectAmphur(provinceid);
         if (mAmphurArray != null) {
@@ -506,6 +497,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    // สัมผัส listview
     public class ListviewSetOnTouchListener implements ListView.OnTouchListener {
         @SuppressLint("ClickableViewAccessibility")
         @Override
@@ -529,6 +521,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    //กำนดความสูงของการแสดงlistview ทั้งหมด
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
 
         ListAdapter listAdapter = listView.getAdapter();
@@ -608,6 +601,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         showListSceneInvestigation();
     }
 
+    //อ่านค่า พิกัดสถานที่
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "onConnected");
@@ -635,6 +629,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         Log.d(TAG, "onConnectionFailed");
     }
 
+    //เช็คค่าพิกัดปัจจุงบัน แล้วเดึงข้อมูลสถานที่ปัจจุบัน จังหวัด อำเภอ ตำบล เอามาค้นสถ้างรายการspinner ปตามจังหวัดปัจจุบัน
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
@@ -738,7 +733,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             }
         }
     }
+    //----end //เช็คค่าพิกัดปัจจุงบัน แล้วเดึงข้อมูลสถานที่ปัจจุบัน จังหวัด อำเภอ ตำบล เอามาค้นสถ้างรายการspinner ปตามจังหวัดปัจจุบัน
 
+    //event onclick ของ ปุ่มต่างๆ
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
 
@@ -777,26 +774,19 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                    getString(R.string.save_complete)
+                                            + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                            snackBarAlert.createSnacbar();
                         }
                     } else {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
 
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                    getString(R.string.save_error)
+                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString());
+                            snackBarAlert.createSnacbar();
                         }
                     }
                 }
@@ -887,28 +877,17 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 dialogSceneInvestTime.show(getActivity().getFragmentManager(), "Time Picker");
             }
             if (v == ic_telphone1) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + editTextPhone1.getText().toString()));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
-                }
+                hiddenKeyboard();
+                calling(editTextPhone1.getText().toString());
             }
             if (v == ic_telphone2) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + editTextSuffererPhone.getText().toString()));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
-                }
+                hiddenKeyboard();
+                calling(editTextSuffererPhone.getText().toString());
             }
         }
     }
 
+    //สร้าง dialog เพิ่มวันที่เวลาตรวจสถานที่เกิดเหตุ
     protected Dialog createdDialog(int id) {
         Dialog dialog = null;
         AlertDialog.Builder builder;
@@ -926,9 +905,6 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 builder.setIcon(R.drawable.ic_property);
                 builder.setTitle("เพิ่มวันเวลาออกตรวจสถานที่เกิดเหตุ");
                 builder.setView(ViewlayoutAddSceneInvestigation);
-//                txtSceneInvest = (TextView) ViewlayoutAddSceneInvestigation
-//                    .findViewById(R.id.txtSceneInvest);
-
                 editSceneInvestDate = (TextView) ViewlayoutAddSceneInvestigation
                         .findViewById(R.id.editSceneInvestDate);
                 editSceneInvestDate.setOnClickListener(new SummaryOnClickListener());
@@ -977,6 +953,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         return dialog;
     }
 
+    //แสดงรายการ วันที่ตรวจสถานที่เกิดเหตุ
     private void showListSceneInvestigation() {
         if (CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations() != null) {
             listViewAddSceneInvestDateTime.setAdapter(new SceneInvestigationAdapter(getActivity()));
@@ -985,8 +962,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         } else {
             listViewAddSceneInvestDateTime.setVisibility(View.GONE);
         }
+
     }
 
+    //SceneInvestigationAdapter ข้อความวันที่ตรวจสถานที่เกิดเหตุ ที่เเสดงใน listview
     public class SceneInvestigationAdapter extends BaseAdapter {
         private Context context;
 
@@ -1030,6 +1009,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    //แสดงรายชื่อผู้ตรวจสถานที่เกิดเหตุ
     private void showListInvestigators() {
 
         if (CSIDataTabFragment.apiCaseScene.getApiInvestigatorsInScenes() != null) {
@@ -1041,6 +1021,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    //InvestigatorsAdapter แสดงรายชื่อผู้ตรวจสถานที่เกิดเหตุ
     public class InvestigatorsAdapter extends BaseAdapter {
         private Context context;
 
@@ -1085,6 +1066,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    //event เมื่อเลือก spinner
     public class RecOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -1229,6 +1211,26 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
     }
 
+    // ฟังชัน โทรออก
+    private void calling(String sPhonenumber) {
+        if (sPhonenumber == null || sPhonenumber.equals("")) {
+
+        } else {
+            try {
+                Log.i(TAG, "Calling a Phone Number " + sPhonenumber);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:=" + sPhonenumber.replace(" ", "").trim()));
+                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                startActivity(callIntent);
+            } catch (ActivityNotFoundException activityException) {
+                Log.e("Calling a Phone Number", "Call failed", activityException);
+            }
+        }
+    }
+
+    //event ขณะพิมพ์ข้อความในedittext
     private class ReceiveTextWatcher implements TextWatcher {
         private EditText mEditText;
 
@@ -1279,6 +1281,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    //ซ่อน keyboard
     public void hiddenKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
@@ -1286,4 +1289,93 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    //event เมื่อเลือกแก้ไข วันที่ตรวจสถานที่เกิดเหตุ
+    private class ListviewOnClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
+
+            switch (parent.getId()) {
+                case R.id.listViewAddSceneInvestDateTime:
+                    Dialog dialog = null;
+                    AlertDialog.Builder builder;
+                    final String sSceneInvestDate = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(position).getSceneInvestDate();
+                    final String sSceneInvestTime = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(position).getSceneInvestTime();
+                    builder = new AlertDialog.Builder(getActivity());
+                    final LayoutInflater inflaterDialogSceneInvestigation = (LayoutInflater) getActivity()
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    ViewGroup viewEditSceneInvestigation = (ViewGroup) view.findViewById(R.id.layout_addsceneinvestigation_dialog);
+
+                    final View ViewlayoutAddSceneInvestigation = inflaterDialogSceneInvestigation
+                            .inflate(
+                                    R.layout.add_sceneinvestigation_dialog,
+                                    viewEditSceneInvestigation);
+                    builder.setIcon(R.drawable.ic_property);
+                    builder.setTitle("แก้ไขวันเวลาออกตรวจสถานที่เกิดเหตุ");
+                    builder.setView(ViewlayoutAddSceneInvestigation);
+                    editSceneInvestDate = (TextView) ViewlayoutAddSceneInvestigation
+                            .findViewById(R.id.editSceneInvestDate);
+                    editSceneInvestDate.setOnClickListener(new SummaryOnClickListener());
+                    editSceneInvestTime = (TextView) ViewlayoutAddSceneInvestigation
+                            .findViewById(R.id.editSceneInvestTime);
+                    editSceneInvestTime.setOnClickListener(new SummaryOnClickListener());
+                    if (sSceneInvestDate == null || sSceneInvestDate.equals("")
+                            || sSceneInvestDate.equals("0000-00-00")) {
+                        editSceneInvestDate.setText("");
+                    } else {
+                        editSceneInvestDate.setText(getDateTime.changeDateFormatToCalendar(sSceneInvestDate));
+                    }
+                    if (sSceneInvestTime == null || sSceneInvestTime.equals("")
+                            || sSceneInvestTime.equals("00:00:00")) {
+                        editSceneInvestTime.setText("");
+                    } else {
+                        editSceneInvestTime.setText(getDateTime.changeTimeFormatToDB(sSceneInvestTime));
+                    }
+                    builder.setPositiveButton(R.string.edit,
+                            new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+//                                    Log.i(TAG, "Click SceneInvestDate " + editSceneInvestDate.getText().toString());
+//                                    Log.i(TAG, "Click SceneInvestTime " + editSceneInvestTime.getText().toString());
+                                    CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(position)
+                                            .setSceneInvestDate(getDateTime.changeDateFormatToDB(editSceneInvestDate.getText().toString()));
+                                    CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(position)
+                                            .setSceneInvestTime(editSceneInvestTime.getText().toString());
+
+                                    showListSceneInvestigation();
+                                    dialog.dismiss();
+                                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT, "แก้ไขสำเร็จ");
+                                    snackBarAlert.createSnacbar();
+                                }
+                            })
+                            .setNeutralButton(R.string.delete,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog,
+                                                            int id) {
+                                            CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().remove(position);
+                                            showListSceneInvestigation();
+                                            dialog.dismiss();
+                                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT, "ลบรายการสำเร็จ");
+                                            snackBarAlert.createSnacbar();
+
+                                        }
+                                    })
+
+                            // Button Cancel
+                            .setNegativeButton(R.string.cancel,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog,
+                                                            int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                    dialog = builder.create();
+                    builder.show();
+
+                    break;
+            }
+        }
+    }
+
 }

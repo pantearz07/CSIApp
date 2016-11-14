@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -38,8 +40,11 @@ import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.TimeDialog;
 import com.scdc.csiapp.main.WelcomeActivity;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 
 public class SummaryAssignTabFragment extends Fragment {
@@ -369,15 +374,10 @@ public class SummaryAssignTabFragment extends Fragment {
                     }
                 } else {
                     if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error) + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-
-                                    }
-                                });
-                        snackbar.show();
+                        SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                getString(R.string.save_error)
+                                        + " " + AssignTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString());
+                        snackBarAlert.createSnacbar();
                     }
                 }
 
@@ -386,10 +386,14 @@ public class SummaryAssignTabFragment extends Fragment {
                 Toast.makeText(getActivity(),
                         getString(R.string.error_data) + " " + getString(R.string.network_error),
                         Toast.LENGTH_LONG).show();
+                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                        getString(R.string.error_data) + " " + getString(R.string.network_error));
+                snackBarAlert.createSnacbar();
             }
         }
     }
-    public void hiddenKeyboard(){
+
+    public void hiddenKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -439,27 +443,30 @@ public class SummaryAssignTabFragment extends Fragment {
                 dialogKnowCaseTime.show(getActivity().getFragmentManager(), "Time Picker");
             }
             if (v == edtInqTel) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + InqTel));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
-                }
+                calling(InqTel);
             }
             if (v == edtInvTel) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + InvTel));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
-                }
+                calling(InvTel);
             }
         }
     }
 
+    private void calling(String sPhonenumber) {
+        if (sPhonenumber == null || sPhonenumber.equals("")) {
+
+        } else {
+            try {
+                Log.i(TAG, "Calling a Phone Number " + sPhonenumber);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:=" + sPhonenumber.replace(" ", "").trim()));
+                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                startActivity(callIntent);
+            } catch (ActivityNotFoundException activityException) {
+                Log.e("Calling a Phone Number", "Call failed", activityException);
+            }
+        }
+    }
 
 }
