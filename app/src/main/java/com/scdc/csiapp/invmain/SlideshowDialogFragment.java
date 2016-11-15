@@ -90,12 +90,8 @@ public class SlideshowDialogFragment extends DialogFragment {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
         initView();
-        myToolbar = (RelativeLayout) v.findViewById(R.id.myToolbar);
         if (Build.VERSION.SDK_INT == 19) {
             myToolbar.setVisibility(View.VISIBLE);
-            btnMenu = (ImageButton) v.findViewById(R.id.btnMenu);
-            btnClose = (ImageButton) v.findViewById(R.id.btnClose);
-            txtNum = (TextView) v.findViewById(R.id.txtNum);
             btnMenu.setOnClickListener(new PhotoOnclick());
             btnClose.setOnClickListener(new PhotoOnclick());
         } else {
@@ -148,13 +144,17 @@ public class SlideshowDialogFragment extends DialogFragment {
     };
 
     private void displayMetaInfo(int position) {
+
+        if (Build.VERSION.SDK_INT == 19) {
+            txtNum.setText((position + 1) + " จาก " + tbMultimediaFiles.size());
+        } else {
+            toolbar.setTitle((position + 1) + " จาก " + tbMultimediaFiles.size());
+        }
         if (tbMultimediaFiles.get(position).FileDescription == null || tbMultimediaFiles.get(position).FileDescription.equals("")) {
             layoutDescPhoto.setVisibility(View.GONE);
         } else {
             descPhoto.setText(tbMultimediaFiles.get(position).FileDescription);
         }
-        toolbar.setTitle((position + 1) + " จาก " + tbMultimediaFiles.size());
-        txtNum.setText((position + 1) + " จาก " + tbMultimediaFiles.size());
     }
 
     @Override
@@ -256,6 +256,10 @@ public class SlideshowDialogFragment extends DialogFragment {
         descPhoto = (TextView) v.findViewById(R.id.descPhoto);
         layoutDescPhoto = (LinearLayout) v.findViewById(R.id.layoutDescPhoto);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        myToolbar = (RelativeLayout) v.findViewById(R.id.myToolbar);
+        btnMenu = (ImageButton) v.findViewById(R.id.btnMenu);
+        btnClose = (ImageButton) v.findViewById(R.id.btnClose);
+        txtNum = (TextView) v.findViewById(R.id.txtNum);
 
 
     }
@@ -327,15 +331,11 @@ public class SlideshowDialogFragment extends DialogFragment {
             int flag = 0;
             flag = deletefile(fileid);
             if (flag > 0) {
-                Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
 
-                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
-                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
-                        curfile.delete();
-                        getDialog().dismiss();
-                    }
-                }
+                CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(currentphoto);
+                curfile.delete();
+                Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
+                getDialog().dismiss();
             } else {
                 Toast.makeText(mContext.getApplicationContext(),
                         getString(R.string.delete_error),
@@ -368,7 +368,13 @@ public class SlideshowDialogFragment extends DialogFragment {
                         savePhoto();
                     }
                     if (id == R.id.deletephoto) {
-                        deletePhoto();
+                        if (CSIDataTabFragment.mode.equals("view")) {
+                            Toast.makeText(mContext.getApplicationContext(),
+                                    getString(R.string.status_change_mode),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            deletePhoto();
+                        }
                     }
                     return false;
                 }
@@ -459,7 +465,13 @@ public class SlideshowDialogFragment extends DialogFragment {
                         }
                         if (id == R.id.deletephoto) {
                             Log.i(TAG, "  deletephoto ");
-                            deletePhoto();
+                            if (CSIDataTabFragment.mode.equals("view")) {
+                                Toast.makeText(mContext.getApplicationContext(),
+                                        getString(R.string.status_change_mode),
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                deletePhoto();
+                            }
                         }
                         return true;
                     }

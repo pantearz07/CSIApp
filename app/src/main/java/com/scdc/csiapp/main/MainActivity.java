@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
 
-
+    String nameOfficial = "";
     Toolbar toolbar;
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
@@ -106,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 username = WelcomeActivity.profile.getTbUsers().id_users;
                 password = WelcomeActivity.profile.getTbUsers().pass;
                 accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
-                Log.i(TAG, password.toString());
+                nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank
+                        + WelcomeActivity.profile.getTbOfficial().FirstName
+                        + " " + WelcomeActivity.profile.getTbOfficial().LastName;
             } else {
                 Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
                 finish();
@@ -133,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         OfficialName = (TextView) headerView.findViewById((R.id.officialName));
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
-        String nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank + WelcomeActivity.profile.getTbOfficial().FirstName + " " + WelcomeActivity.profile.getTbOfficial().LastName;
         OfficialName.setText(nameOfficial);
         txtusername.setText(username);
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {

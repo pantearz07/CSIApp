@@ -907,10 +907,16 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 builder.setView(ViewlayoutAddSceneInvestigation);
                 editSceneInvestDate = (TextView) ViewlayoutAddSceneInvestigation
                         .findViewById(R.id.editSceneInvestDate);
-                editSceneInvestDate.setOnClickListener(new SummaryOnClickListener());
                 editSceneInvestTime = (TextView) ViewlayoutAddSceneInvestigation
                         .findViewById(R.id.editSceneInvestTime);
+                //datetime
+                String[] currentDT = getDateTime.updateDataDateTime();
+                editSceneInvestDate.setText(currentDT[0]);
+                editSceneInvestTime.setText(currentDT[1]);
+
+                editSceneInvestDate.setOnClickListener(new SummaryOnClickListener());
                 editSceneInvestTime.setOnClickListener(new SummaryOnClickListener());
+
 
                 builder.setPositiveButton(R.string.save,
                         new DialogInterface.OnClickListener() {

@@ -306,8 +306,8 @@ public class SummaryCSITabFragment extends Fragment {
                 if (status_savecase = true) {
 
                     Log.i(TAG, "accept to investigating");
-                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-                    edtStatus.setText(getString(R.string.edtStatus_5));
+//                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+//                    edtStatus.setText(getString(R.string.edtStatus_5));
 
                 }
             }
@@ -402,9 +402,9 @@ public class SummaryCSITabFragment extends Fragment {
                         SaveCaseReport statusCase = new SaveCaseReport();
                         statusCase.execute(CSIDataTabFragment.apiCaseScene);
                         if (status_savecase = true) {
-
-                            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+//
+//                            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+//                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
 
                         }
                     }
@@ -420,25 +420,33 @@ public class SummaryCSITabFragment extends Fragment {
                 dialog.setNegativeButton("บันทึกเเบบสมบูรณ์", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
-                            dialog.dismiss();
-                            if (snackbar == null || !snackbar.isShown()) {
+                        try {
 
-                                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
-                                        "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ");
-                                snackBarAlert.createSnacbar();
+                            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
+                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
+                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+                                dialog.dismiss();
+                                if (snackbar == null || !snackbar.isShown()) {
+
+                                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                            "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ");
+                                    snackBarAlert.createSnacbar();
+                                }
+                            } else {
+                                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+                                SaveCaseReport statusCase = new SaveCaseReport();
+                                statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                                if (status_savecase = true) {
+
+
+                                }
                             }
-                        } else {
-                            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
-                            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
-                            SaveCaseReport statusCase = new SaveCaseReport();
-                            statusCase.execute(CSIDataTabFragment.apiCaseScene);
-                            if (status_savecase = true) {
-
-                                edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
-                                edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-
-                            }
+                        } catch (NullPointerException e) {
+                            Log.e(TAG, e.getMessage());
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                    getString(R.string.error_data));
+                            snackBarAlert.createSnacbar();
                         }
 
                     }
@@ -766,6 +774,16 @@ public class SummaryCSITabFragment extends Fragment {
                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                 if (isSuccess) {
                     if (snackbar == null || !snackbar.isShown()) {
+                        edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                                + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+                        if(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_5))){
+                            edtStatus.setText(getString(R.string.edtStatus_5));
+                        }
+                        if(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_6))){
+                            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate)
+                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
+                            edtStatus.setText(getString(R.string.edtStatus_6));
+                        }
                         SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                                 apiStatus.getData().getReason().toString());
                         snackBarAlert.createSnacbar();
@@ -773,6 +791,9 @@ public class SummaryCSITabFragment extends Fragment {
                 }
             } else {
                 status_savecase = false;
+                edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                        + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+
                 SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                         getString(R.string.error_data) + " " + getString(R.string.network_error));
                 snackBarAlert.createSnacbar();

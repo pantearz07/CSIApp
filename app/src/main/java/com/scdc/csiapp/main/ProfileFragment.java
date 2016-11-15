@@ -50,6 +50,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
+
 /**
  * Created by Pantearz07 on 23/9/2558.
  */
@@ -320,7 +322,7 @@ public class ProfileFragment extends Fragment {
                 } else {
                     if (snackbar == null || !snackbar.isShown()) {
                         snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
-                                , Snackbar.LENGTH_INDEFINITE)
+                                , LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -388,7 +390,7 @@ public class ProfileFragment extends Fragment {
                 } else {
                     if (snackbar == null || !snackbar.isShown()) {
                         snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
-                                , Snackbar.LENGTH_INDEFINITE)
+                                , LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -475,47 +477,29 @@ public class ProfileFragment extends Fragment {
                     boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
                     if (isSuccess2) {
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_complete)
-                                            + "\n" + apiStatus.getData().getResult().toString()
-                                    , Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
 
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE, getString(R.string.save_complete)
+                                    + " " + apiStatus.getData().getResult().toString());
+                            snackBarAlert.createSnacbar();
                         }
 
                     } else {
                         Toast.makeText(getActivity(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
                         if (snackbar == null || !snackbar.isShown()) {
-                            snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
-                                            + "และบันทึก pref ไม่สำเร็จ/n" + WelcomeActivity.profile.getTbOfficial().id_users.toString()
-                                    , Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
 
-
-                                        }
-                                    });
-                            snackbar.show();
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
+                                    getString(R.string.save_error) + "และบันทึก pref ไม่สำเร็จ"
+                                            + " " + apiStatus.getData().getResult().toString());
+                            snackBarAlert.createSnacbar();
                         }
                     }
 
                 } else {
                     if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
-                                , Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
 
-
-                                    }
-                                });
-                        snackbar.show();
+                        SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
+                                getString(R.string.save_error));
+                        snackBarAlert.createSnacbar();
                     }
                 }
 
@@ -761,7 +745,7 @@ public class ProfileFragment extends Fragment {
                             Log.i(TAG, "Photo from gallery error ");
                             if (snackbar == null || !snackbar.isShown()) {
                                 snackbar = Snackbar.make(rootLayout, "ไม่สามารถใช้รูปนี้ได้"
-                                        , Snackbar.LENGTH_INDEFINITE)
+                                        , LENGTH_INDEFINITE)
                                         .setAction(getString(R.string.ok), new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -816,10 +800,10 @@ public class ProfileFragment extends Fragment {
                     // Do Pick Photo task here
 
                     Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    getIntent.setType("image/jpeg");
+                    getIntent.setType("image/*");
 
                     Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    pickIntent.setType("image/jpeg");
+                    pickIntent.setType("image/*");
 
                     Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});

@@ -49,12 +49,14 @@ public class VideoPlayerActivity extends Activity {
     private static String strSDCardPathName_Vid = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
-    TextView nofile;
+    TextView nofile, txtNum;
     FrameLayout video_frame;
     DBHelper dbHelper;
     ImageButton btnClose, btnMenu;
     File curfile;
     String filepath, VideoPath, fileid;
+    int selectedposition = 0;
+    int totalnum = 0;
 
     /**
      * Called when the activity is first created.
@@ -76,12 +78,16 @@ public class VideoPlayerActivity extends Activity {
         Intent intent = getIntent();
         VideoPath = intent.getStringExtra("VideoPath"); // for String
         fileid = intent.getStringExtra("fileid");
+        selectedposition = intent.getIntExtra("position", 0);
+        totalnum = intent.getIntExtra("totalnum", 0);
         String strPath = strSDCardPathName_Vid + VideoPath;
         nofile = (TextView) findViewById(R.id.nofile);
         video_frame = (FrameLayout) findViewById(R.id.video_frame);
         video_player_view = (VideoView) findViewById(R.id.video_player_view);
         btnClose = (ImageButton) findViewById(R.id.btnClose);
         btnMenu = (ImageButton) findViewById(R.id.btnMenu);
+        txtNum = (TextView) findViewById(R.id.txtNum);
+        txtNum.setText((selectedposition + 1) + " จาก " + String.valueOf(totalnum));
         media_Controller = new MediaController(this);
         dm = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -136,9 +142,6 @@ public class VideoPlayerActivity extends Activity {
             }
         }
         btnClose.setOnClickListener(new MenuOnClickListener());
-        if (CSIDataTabFragment.mode.equals("view")) {
-            btnMenu.setVisibility(View.GONE);
-        }
         btnMenu.setOnClickListener(new MenuOnClickListener());
     }
 
@@ -162,77 +165,16 @@ public class VideoPlayerActivity extends Activity {
                             if (curfile.exists()) {
                                 Toast.makeText(VideoPlayerActivity.this, R.string.got_video, Toast.LENGTH_SHORT).show();
                             } else {
-                                if (cd.isNetworkAvailable()) {
-                                    int count;
-                                    File myDir;
-                                    String fileoutput = "";
-                                    try {
-                                        myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName_Vid);
-                                        myDir.mkdirs();
-                                        Log.i(TAG, "display file name: " + filepath);
-
-                                        URL url = new URL(filepath);
-                                        URLConnection conexion = url.openConnection();
-                                        conexion.connect();
-
-                                        int lenghtOfFile = conexion.getContentLength();
-                                        Log.d(TAG, "Lenght of file: " + lenghtOfFile);
-
-                                        InputStream input = new BufferedInputStream(url.openStream());
-                                        // Get File Name from URL
-                                        fileoutput = strSDCardPathName_Vid + VideoPath;
-                                        File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), fileoutput);
-                                        if (filePic.exists()) {
-                                            filePic.delete();
-                                        }
-                                        filePic.createNewFile();
-                                        OutputStream output = new FileOutputStream(filePic);
-
-                                        byte data[] = new byte[1024];
-                                        long total = 0;
-                                        while ((count = input.read(data)) != -1) {
-                                            total += count;
-                                            output.write(data, 0, count);
-                                        }
-                                        Log.i(TAG, "DownloadFile display" + filePic.getPath());
-                                        if (total > 0) {
-                                            Toast.makeText(VideoPlayerActivity.this, getString(R.string.save_video_success), Toast.LENGTH_SHORT).show();
-                                        }
-                                        output.flush();
-                                        output.close();
-                                        input.close();
-                                    } catch (Exception e) {
-                                        Log.e("Error: ", e.getMessage());
-                                        Toast.makeText(VideoPlayerActivity.this, getString(R.string.save_error), Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-                                    Toast.makeText(VideoPlayerActivity.this, getString(R.string.network_unavailable), Toast.LENGTH_SHORT).show();
-                                }
+                                saveVideo();
                             }
                         }
                         if (id == R.id.deletephoto) {
-                            if (curfile.exists()) {
-                                Log.i(TAG, "  delete file name " + fileid);
-                                int flag = 0;
-                                flag = deletefile(fileid);
-                                if (flag > 0) {
-                                    Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
-
-                                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
-                                            CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
-                                            Log.i(TAG, "delete file name " + fileid);
-                                            curfile.delete();
-                                            VideoPlayerActivity.this.finish();
-                                        }
-                                    }
-                                } else {
-                                    Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
-                                            getString(R.string.delete_error),
-                                            Toast.LENGTH_LONG).show();
-                                }
+                            if (CSIDataTabFragment.mode.equals("view")) {
+                                Toast.makeText(mContext.getApplicationContext(),
+                                        getString(R.string.status_change_mode),
+                                        Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(VideoPlayerActivity.this, getString(R.string.no_video), Toast.LENGTH_SHORT).show();
+                                deleteVideo();
                             }
                         }
                         return true;
@@ -247,31 +189,83 @@ public class VideoPlayerActivity extends Activity {
     protected int deletefile(String fileid) {
         int flag = 0;
         long flg1 = dbHelper.DeleteSelectedData("multimediafile", "FileID", fileid);
-//        long flg2 = dbHelper.DeleteSelectedData("photoofinside", "FileID", fileid);
-//        long flg3 = dbHelper.DeleteSelectedData("photoofoutside", "FileID", fileid);
-//        long flg4 = dbHelper.DeleteSelectedData("photoofevidence", "FileID", fileid);
-//        long flg5 = dbHelper.DeleteSelectedData("photoofpropertyless", "FileID", fileid);
-//        long flg6 = dbHelper.DeleteSelectedData("photoofresultscene", "FileID", fileid);
         if (flg1 > 0) {
             flag++;
         }
-//        if (flg2 > 0) {
-//            flag++;
-//        }
-//        if (flg3 > 0) {
-//            flag++;
-//        }
-//        if (flg4 > 0) {
-//            flag++;
-//        }
-//        if (flg5 > 0) {
-//            flag++;
-//        }
-//        if (flg6 > 0) {
-//            flag++;
-//        }
+
         Log.i(TAG, "  delete file name flag " + String.valueOf(flag));
         return flag;
     }
 
+    private void saveVideo() {
+        if (cd.isNetworkAvailable()) {
+            int count;
+            File myDir;
+            String fileoutput = "";
+            try {
+                myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), strSDCardPathName_Vid);
+                myDir.mkdirs();
+                Log.i(TAG, "display file name: " + filepath);
+
+                URL url = new URL(filepath);
+                URLConnection conexion = url.openConnection();
+                conexion.connect();
+
+                int lenghtOfFile = conexion.getContentLength();
+                Log.d(TAG, "Lenght of file: " + lenghtOfFile);
+
+                InputStream input = new BufferedInputStream(url.openStream());
+                // Get File Name from URL
+                fileoutput = strSDCardPathName_Vid + VideoPath;
+                File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), fileoutput);
+                if (filePic.exists()) {
+                    filePic.delete();
+                }
+                filePic.createNewFile();
+                OutputStream output = new FileOutputStream(filePic);
+
+                byte data[] = new byte[1024];
+                long total = 0;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    output.write(data, 0, count);
+                }
+                Log.i(TAG, "DownloadFile display" + filePic.getPath());
+                if (total > 0) {
+                    Toast.makeText(VideoPlayerActivity.this, getString(R.string.save_video_success), Toast.LENGTH_SHORT).show();
+                }
+                output.flush();
+                output.close();
+                input.close();
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.save_error), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(VideoPlayerActivity.this, getString(R.string.network_unavailable), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void deleteVideo() {
+        if (curfile.exists()) {
+            Log.i(TAG, "  delete file name " + fileid);
+            int flag = 0;
+            flag = deletefile(fileid);
+            if (flag > 0) {
+
+                CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(selectedposition);
+                Log.i(TAG, "delete file name " + fileid);
+                curfile.delete();
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
+                VideoPlayerActivity.this.finish();
+            } else {
+                Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
+                        getString(R.string.delete_error),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(VideoPlayerActivity.this, getString(R.string.no_video), Toast.LENGTH_SHORT).show();
+        }
+    }
 }

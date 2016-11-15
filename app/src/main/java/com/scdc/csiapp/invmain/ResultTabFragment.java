@@ -425,11 +425,13 @@ public class ResultTabFragment extends Fragment {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = "";
                 } else {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = getDateTime.changeDateFormatToDB(editCompleteSceneDate.getText().toString());
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate = getDateTime.changeDateFormatToDB(editCompleteSceneDate.getText().toString());
                 }
                 if (editCompleteSceneTime.getText().toString() == null || editCompleteSceneTime.getText().toString().equals("")) {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = "";
                 } else {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = editCompleteSceneTime.getText().toString();
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneTime = editCompleteSceneTime.getText().toString();
                 }
                 if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);

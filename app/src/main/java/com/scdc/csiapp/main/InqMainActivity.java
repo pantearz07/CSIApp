@@ -67,6 +67,7 @@ public class InqMainActivity extends AppCompatActivity {
     private boolean isReceiverRegistered;
     private static final String TAG = "DEBUG-InqMainActivity";
     ConnectionDetector cd;
+    String nameOfficial = "";
 
     @SuppressLint("LongLogTag")
     @Override
@@ -81,6 +82,10 @@ public class InqMainActivity extends AppCompatActivity {
                 username = WelcomeActivity.profile.getTbUsers().id_users;
                 password = WelcomeActivity.profile.getTbUsers().pass;
                 accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+                nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank
+                        + WelcomeActivity.profile.getTbOfficial().FirstName
+                        + " " + WelcomeActivity.profile.getTbOfficial().LastName;
+
             } else {
                 Intent gotoWelcomeActivity = new Intent(this, WelcomeActivity.class);
                 finish();
@@ -109,7 +114,6 @@ public class InqMainActivity extends AppCompatActivity {
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
         //โชว์ชื่อ นามสกุล
-        String nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank + WelcomeActivity.profile.getTbOfficial().FirstName + " " + WelcomeActivity.profile.getTbOfficial().LastName;
         OfficialName.setText(nameOfficial);
         txtusername.setText(username);
         Log.i("login", officialID);

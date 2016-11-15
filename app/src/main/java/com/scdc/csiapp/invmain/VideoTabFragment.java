@@ -231,6 +231,8 @@ public class VideoTabFragment extends Fragment {
                             tbMultimediaFileList.get(position).FilePath.toString());
                     VideoPlayActivity.putExtra("fileid",
                             tbMultimediaFileList.get(position).FileID.toString());
+                    VideoPlayActivity.putExtra("position", position);
+                    VideoPlayActivity.putExtra("totalnum", tbMultimediaFileList.size());
                     startActivity(VideoPlayActivity);
 //
 //                    Bundle bundle = new Bundle();
@@ -272,7 +274,6 @@ public class VideoTabFragment extends Fragment {
 
                     apiMultimediaList.add(apiMultimedia);
                     CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
-//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
                     Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
