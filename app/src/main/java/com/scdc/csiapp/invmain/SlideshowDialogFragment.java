@@ -1,5 +1,6 @@
 package com.scdc.csiapp.invmain;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -331,10 +332,10 @@ public class SlideshowDialogFragment extends DialogFragment {
             int flag = 0;
             flag = deletefile(fileid);
             if (flag > 0) {
-
                 CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(currentphoto);
                 curfile.delete();
                 Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                 getDialog().dismiss();
             } else {
                 Toast.makeText(mContext.getApplicationContext(),
@@ -395,22 +396,29 @@ public class SlideshowDialogFragment extends DialogFragment {
 
 
         if (flg2 > 0) {
+
             flag++;
+            Log.i(TAG, "  delete from photoofinside");
         }
         if (flg3 > 0) {
             flag++;
+            Log.i(TAG, "  delete from photoofoutside");
         }
         if (flg4 > 0) {
             flag++;
+            Log.i(TAG, "  delete from photoofevidence");
         }
         if (flg5 > 0) {
             flag++;
+            Log.i(TAG, "  delete from photoofpropertyless");
         }
         if (flg6 > 0) {
             flag++;
+            Log.i(TAG, "  delete from photoofresultscene");
         }
         if (flg1 > 0) {
             flag++;
+            Log.i(TAG, "  delete from multimediafile");
         }
         Log.i(TAG, "  delete file name flag " + String.valueOf(flag));
         return flag;

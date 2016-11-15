@@ -733,7 +733,15 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             }
         }
     }
+
     //----end //เช็คค่าพิกัดปัจจุงบัน แล้วเดึงข้อมูลสถานที่ปัจจุบัน จังหวัด อำเภอ ตำบล เอามาค้นสถ้างรายการspinner ปตามจังหวัดปัจจุบัน
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+    }
 
     //event onclick ของ ปุ่มต่างๆ
     private class SummaryOnClickListener implements View.OnClickListener {
@@ -741,10 +749,6 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
             if (v == fabBtnRec) {
                 hiddenKeyboard();
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
                 if (editHappenCaseDate.getText().toString() == null || editHappenCaseDate.getText().toString().equals("")) {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = "";
                 } else {
@@ -765,10 +769,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 } else {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = editKnowCaseTime.getText().toString();
                 }
-
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+                updateData();
 
                 if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -77,15 +76,15 @@ public class AddPropertyLossFragment extends Fragment {
     List<ApiMultimedia> apiMultimediaList;
     ImageButton btnTakePhotoPL;
     public static final int REQUEST_CAMERA_PROPERTYLOSS = 777;
+    public static final int REQUEST_LOAD_IMAGE = 2;
     private String mCurrentPhotoPath;
     Uri uri;
     Context mContext;
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
     List<TbMultimediaFile> tbPhotoList;
-    Handler mHandler = new Handler();
-    int INTERVAL = 1000 * 5; //20 second
     DisplayMetrics dm;
+
     public AddPropertyLossFragment() {
 
     }
@@ -161,16 +160,19 @@ public class AddPropertyLossFragment extends Fragment {
         return view;
     }
 
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+    }
+
     private class InsideOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v == fabBtnDetails) {
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+                updateData();
                 tbPropertyLoss.PropertyLossID = sPLID;
                 tbPropertyLoss.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
                 ResultTabFragment.tbPropertyLosses.add(tbPropertyLoss);
@@ -376,6 +378,7 @@ public class AddPropertyLossFragment extends Fragment {
 
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setTargetFragment(AddPropertyLossFragment.this, REQUEST_LOAD_IMAGE);
                     newFragment.setArguments(bundle);
                     newFragment.show(ft, "slideshow");
                 }
@@ -526,17 +529,7 @@ public class AddPropertyLossFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        showAllPhoto();
-        mHandler.removeCallbacks(mHandlerReload);
-        mHandlerReload.run();
+//        showAllPhoto();
     }
 
-    Runnable mHandlerReload = new Runnable() {
-        @Override
-        public void run() {
-            showAllPhoto();
-            INTERVAL = 1000 * 30;
-            mHandler.postDelayed(mHandlerReload, INTERVAL);
-        }
-    };
 }

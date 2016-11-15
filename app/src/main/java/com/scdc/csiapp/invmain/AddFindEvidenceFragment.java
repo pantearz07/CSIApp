@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -85,15 +84,15 @@ public class AddFindEvidenceFragment extends Fragment {
     String sPhotoID, timeStamp;
     ImageButton btnTakePhotoEV;
     List<ApiMultimedia> apiMultimediaList;
+    public static final int REQUEST_LOAD_IMAGE = 2;
     public static final int REQUEST_CAMERA = 777;
     private String mCurrentPhotoPath;
     Context mContext;
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
     List<TbMultimediaFile> tbPhotoList;
-    Handler mHandler = new Handler();
-    int INTERVAL = 1000 * 5; //20 second
     DisplayMetrics dm;
+
     public AddFindEvidenceFragment() {
 
     }
@@ -195,16 +194,19 @@ public class AddFindEvidenceFragment extends Fragment {
         return view;
     }
 
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+    }
+
     private class InsideOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v == fabBtnDetails) {
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+                updateData();
                 tbFindEvidence.FindEvidenceID = sEVID;
                 tbFindEvidence.SceneInvestID = sSceneInvestID;
                 tbFindEvidence.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
@@ -378,6 +380,23 @@ public class AddFindEvidenceFragment extends Fragment {
                 Log.i(TAG, "Failed to record media");
             }
         }
+        if (requestCode == REQUEST_LOAD_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    showAllPhoto();
+                    Log.i(TAG, "RESULT_OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_LOAD_IMAGE");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
+            }
+
+        }
     }
 
     public void showAllPhoto() {
@@ -450,6 +469,7 @@ public class AddFindEvidenceFragment extends Fragment {
 
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setTargetFragment(AddFindEvidenceFragment.this, REQUEST_LOAD_IMAGE);
                     newFragment.setArguments(bundle);
                     newFragment.show(ft, "slideshow");
                 }
@@ -590,17 +610,7 @@ public class AddFindEvidenceFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        showAllPhoto();
-        mHandler.removeCallbacks(mHandlerReload);
-        mHandlerReload.run();
+//        showAllPhoto();
     }
 
-    Runnable mHandlerReload = new Runnable() {
-        @Override
-        public void run() {
-            showAllPhoto();
-            INTERVAL = 1000 * 30;
-            mHandler.postDelayed(mHandlerReload, INTERVAL);
-        }
-    };
 }

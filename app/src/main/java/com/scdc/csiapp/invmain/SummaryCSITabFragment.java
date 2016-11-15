@@ -380,17 +380,20 @@ public class SummaryCSITabFragment extends Fragment {
 
     }
 
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+    }
+
     private class SummaryOnClickListener implements View.OnClickListener {
         public void onClick(View v) {
             if (v == btnNoticecase) {
                 // ซ่อน Keyborad หลังจากกด Login แล้ว
                 hiddenKeyboard();
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                updateData();
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                 dialog.setMessage("อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์");
@@ -463,13 +466,9 @@ public class SummaryCSITabFragment extends Fragment {
 
             if (v == fabBtn) {
                 hiddenKeyboard();
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                updateData();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
 
                 if (CSIDataTabFragment.apiCaseScene != null) {
 
@@ -776,10 +775,10 @@ public class SummaryCSITabFragment extends Fragment {
                     if (snackbar == null || !snackbar.isShown()) {
                         edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
                                 + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-                        if(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_5))){
+                        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_5))) {
                             edtStatus.setText(getString(R.string.edtStatus_5));
                         }
-                        if(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_6))){
+                        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_6))) {
                             edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate)
                                     + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
                             edtStatus.setText(getString(R.string.edtStatus_6));

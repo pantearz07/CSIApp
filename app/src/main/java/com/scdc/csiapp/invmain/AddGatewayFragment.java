@@ -80,6 +80,7 @@ public class AddGatewayFragment extends Fragment {
     ImageButton btnTakePhotoGC;
     String sPhotoID, timeStamp;
     public static final int REQUEST_CAMERA = 777;
+    public static final int REQUEST_LOAD_IMAGE = 2;
     private String mCurrentPhotoPath;
     Uri uri;
     Context mContext;
@@ -90,6 +91,7 @@ public class AddGatewayFragment extends Fragment {
     DisplayMetrics dm;
     int height = 0;
     int width = 0;
+
     public AddGatewayFragment() {
 
     }
@@ -157,15 +159,19 @@ public class AddGatewayFragment extends Fragment {
         return view;
     }
 
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+    }
+
     private class InsideOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v == fabBtnDetails) {
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+                updateData();
                 tbGatewayCriminal.RSID = sRSID;
                 tbGatewayCriminal.RSTypeID = typeid;
                 tbGatewayCriminal.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
@@ -371,6 +377,7 @@ public class AddGatewayFragment extends Fragment {
 
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setTargetFragment(AddGatewayFragment.this, REQUEST_LOAD_IMAGE);
                     newFragment.setArguments(bundle);
                     newFragment.show(ft, "slideshow");
                 }

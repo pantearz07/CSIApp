@@ -3,12 +3,12 @@ package com.scdc.csiapp.invmain;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -59,9 +59,7 @@ public class DiagramTabFragment extends Fragment {
     TextView txtPhotoNum;
     DrawingDiagramFragment drawingDiagramFragment = new DrawingDiagramFragment();
     GetDateTime getDateTime;
-    Handler mHandler = new Handler();
-    int INTERVAL = 1000 * 5; //20 second
-
+    public static final int REQUEST_LOAD_IMAGE = 2;
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     public static List<ApiMultimedia> apiMultimediaList = null;
     String sDiagramID;
@@ -147,24 +145,14 @@ public class DiagramTabFragment extends Fragment {
             gViewPic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
-//
-//                    Toast.makeText(
-//                            getActivity(),
-//                            "Your selected : " + tbDiagramFileList.get(position).FilePath.toString(),
-//                            Toast.LENGTH_SHORT).show();
-//                    showViewPic(tbDiagramFileList.get(position).FilePath.toString());
-//                    Intent intent = new Intent(getActivity(), FullScreenPhoto.class);
-//                    Bundle extras = new Bundle();
-//                    extras.putString("photopath", tbDiagramFileList.get(position).FilePath.toString());
-//                    extras.putString("fileid", tbDiagramFileList.get(position).FileID.toString());
-//                    intent.putExtras(extras);
-//                    startActivity(intent);
+
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("images", (Serializable) tbDiagramFileList);
                     bundle.putInt("position", position);
 
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+                    newFragment.setTargetFragment(DiagramTabFragment.this, REQUEST_LOAD_IMAGE);
                     newFragment.setArguments(bundle);
                     newFragment.show(ft, "slideshow");
                 }
@@ -345,24 +333,40 @@ public class DiagramTabFragment extends Fragment {
         super.onResume();
         showAllPic();
     }
+
     public void onStart() {
         super.onStart();
         Log.i(TAG, "onStart");
         showAllPic();
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        showAllPic();
-        mHandler.removeCallbacks(mHandlerReload);
-        mHandlerReload.run();
+//        showAllPic();
     }
-    Runnable mHandlerReload = new Runnable() {
-        @Override
-        public void run() {
-            showAllPic();
-            INTERVAL = 1000 * 30;
-            mHandler.postDelayed(mHandlerReload, INTERVAL);
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "Result media " + String.valueOf(requestCode) + " " + String.valueOf(resultCode));
+
+        if (requestCode == REQUEST_LOAD_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    showAllPic();
+                    Log.i(TAG, "RESULT_OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_LOAD_IMAGE");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
+            }
+
         }
-    };
+    }
 }

@@ -71,12 +71,6 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
         View rootView = inflater.inflate(R.layout.drawing_diagram_scene,
                 container, false);
 
-        // Permission StrictMode
-//        if (android.os.Build.VERSION.SDK_INT > 9) {
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-//                    .permitAll().build();
-//            StrictMode.setThreadPolicy(policy);
-//        }
         // database
         Bundle args = getArguments();
         sDiagramID = args.getString(DiagramTabFragment.Bundle_ID);

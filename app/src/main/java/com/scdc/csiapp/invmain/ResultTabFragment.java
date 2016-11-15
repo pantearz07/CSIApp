@@ -411,16 +411,22 @@ public class ResultTabFragment extends Fragment {
         return cloneList;
     }
 
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+    }
+
     public class ResultOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
 
             if (v == fabBtn) {
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+                hiddenKeyboard();
+                updateData();
                 if (editCompleteSceneDate.getText().toString() == null || editCompleteSceneDate.getText().toString().equals("")) {
                     CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = "";
                 } else {
@@ -517,8 +523,6 @@ public class ResultTabFragment extends Fragment {
                     sceneinvestsize = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().size();
                     if (sceneinvestsize == 0) {
                         if (snackbar == null || !snackbar.isShown()) {
-
-                            snackbar.show();
                             SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
                                     "กรุณาระบุวันเวลาออกตรวจสถานที่เกิดเหตุ");
                             snackBarAlert.createSnacbar();
@@ -527,16 +531,21 @@ public class ResultTabFragment extends Fragment {
 
                         sSceneInvestID = CSIDataTabFragment.apiCaseScene.getTbSceneInvestigations().get(sceneinvestsize - 1).getSceneInvestID();
                         Log.i(TAG, "sSceneInvestID " + sSceneInvestID);
+                        Bundle i = new Bundle();
+                        i.putString(Bundle_ID, sRSID);
+                        i.putString(Bundle_mode, "new");
+                        i.putString(Bundle_SceneInvestID, sSceneInvestID);
+                        addFindEvidenceFragment.setArguments(i);
+                        MainActivity.setFragment(addFindEvidenceFragment, 1);
+                    }
+                } else {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                                "กรุณาระบุวันเวลาออกตรวจสถานที่เกิดเหตุ");
+                        snackBarAlert.createSnacbar();
+
                     }
                 }
-                Log.i(TAG, "sSceneInvestID " + sSceneInvestID);
-                Bundle i = new Bundle();
-                i.putString(Bundle_ID, sRSID);
-                i.putString(Bundle_mode, "new");
-                i.putString(Bundle_SceneInvestID, sSceneInvestID);
-                addFindEvidenceFragment.setArguments(i);
-                MainActivity.setFragment(addFindEvidenceFragment, 1);
-
             }
             if (v == btnShowHide1) {
                 if (viewGroupIsVisible) {
