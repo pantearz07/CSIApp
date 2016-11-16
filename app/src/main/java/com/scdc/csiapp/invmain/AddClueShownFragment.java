@@ -79,8 +79,8 @@ public class AddClueShownFragment extends Fragment {
     List<TbMultimediaFile> tbPhotoList;
     ImageButton btnTakePhotoClueShown;
     String sPhotoID, timeStamp;
-    public static final int REQUEST_CAMERA = 777;
-    public static final int REQUEST_LOAD_IMAGE = 2;
+    public static final int REQUEST_CAMERA = 33;
+    public static final int REQUEST_LOAD_IMAGE = 3;
     private String mCurrentPhotoPath;
     Uri uri;
     ConnectionDetector cd;

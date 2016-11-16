@@ -210,8 +210,9 @@ public class SlideshowDialogFragment extends DialogFragment {
                                 .resize(width, height)
                                 .into(imgDisplay);
                     } else {
-                        imgDisplay.setVisibility(View.GONE);
                         nofile.setVisibility(View.VISIBLE);
+                        imgDisplay.setVisibility(View.GONE);
+
                     }
                 }
 
@@ -230,8 +231,8 @@ public class SlideshowDialogFragment extends DialogFragment {
                                 .resize(width, height)
                                 .into(imgDisplay);
                     } else {
-                        imgDisplay.setVisibility(View.GONE);
                         nofile.setVisibility(View.VISIBLE);
+                        imgDisplay.setVisibility(View.GONE);
                     }
                 }
             }

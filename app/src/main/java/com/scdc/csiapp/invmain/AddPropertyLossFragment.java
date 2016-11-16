@@ -75,8 +75,8 @@ public class AddPropertyLossFragment extends Fragment {
     String sPhotoID, timeStamp;
     List<ApiMultimedia> apiMultimediaList;
     ImageButton btnTakePhotoPL;
-    public static final int REQUEST_CAMERA_PROPERTYLOSS = 777;
-    public static final int REQUEST_LOAD_IMAGE = 2;
+    public static final int REQUEST_CAMERA_PROPERTYLOSS = 66;
+    public static final int REQUEST_LOAD_IMAGE = 6;
     private String mCurrentPhotoPath;
     Uri uri;
     Context mContext;
@@ -306,6 +306,23 @@ public class AddPropertyLossFragment extends Fragment {
             } else {
                 Log.i(TAG, "Failed to record media");
             }
+        }
+        if (requestCode == REQUEST_LOAD_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    showAllPhoto();
+                    Log.i(TAG, "RESULT_OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_LOAD_IMAGE");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
+            }
+
         }
     }
 

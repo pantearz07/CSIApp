@@ -246,4 +246,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="status_change_mode">กรุณาเปลี่ยนเป็นโหมดแก้ไข</string>
+    <string name="importphoto">นำเข้ารูปภาพ</string>
+    <string name="camera">ถ่ายรูป</string>
+    <string name="gallery">เลือกจากอัลบั้มภาพ</string>
 </resources>

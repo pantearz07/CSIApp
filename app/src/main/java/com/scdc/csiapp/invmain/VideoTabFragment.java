@@ -46,7 +46,8 @@ import java.util.List;
  */
 public class VideoTabFragment extends Fragment {
     private static final String TAG = "DEBUG-VideoTabFragment";
-    public static final int REQUEST_VIDEO = 222;
+    public static final int REQUEST_VIDEO = 888;
+    public static final int REQUEST_LOAD_VIDEO = 88;
     private String mCurrentVideoPath;
     String caseReportID, sVideoID, timeStamp;
     DBHelper dbHelper;
@@ -233,7 +234,7 @@ public class VideoTabFragment extends Fragment {
                             tbMultimediaFileList.get(position).FileID.toString());
                     VideoPlayActivity.putExtra("position", position);
                     VideoPlayActivity.putExtra("totalnum", tbMultimediaFileList.size());
-                    startActivity(VideoPlayActivity);
+                    getActivity().startActivityForResult(VideoPlayActivity, REQUEST_LOAD_VIDEO);
 //
 //                    Bundle bundle = new Bundle();
 //                    bundle.putSerializable("video", (Serializable) tbMultimediaFileList);
@@ -292,14 +293,29 @@ public class VideoTabFragment extends Fragment {
                 Log.i("REQUEST_VIDEO", "Failed to record media");
             }
         }
+        if (requestCode == REQUEST_LOAD_VIDEO) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    showAllVideo();
+                    Log.i(TAG, "RESULT_OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_LOAD_VIDEO");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_LOAD_VIDEO");
+            }
 
+        }
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        showAllVideo();
         ActivityResultBus.getInstance().register(mActivityResultSubscriber);
     }
 
@@ -323,7 +339,6 @@ public class VideoTabFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i("onResume Video", "resume");
-        showAllVideo();
     }
 
     private class VideoOnClickListener implements View.OnClickListener {

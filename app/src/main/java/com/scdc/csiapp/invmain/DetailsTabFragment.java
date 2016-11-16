@@ -2,10 +2,12 @@ package com.scdc.csiapp.invmain;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -111,8 +113,11 @@ public class DetailsTabFragment extends Fragment {
     protected static final int DIALOG_AddFeatureInside = 0;
     ViewGroup viewByIdaddinside;
     TextView edtUpdateDateTime;
-    public static final int REQUEST_CAMERA_OUTSIDE = 333;
-    public static final int REQUEST_LOAD_IMAGE = 2;
+    public static final int REQUEST_GALLERY = 111;
+    public static final int REQUEST_CAMERA_OUTSIDE = 11;
+    public static final int REQUEST_LOAD_IMAGE = 1;
+    String imageEncoded;
+    List<String> imagesEncodedList;
     private String mCurrentPhotoPath;
     Uri uri;
     String sPhotoID, timeStamp;
@@ -460,6 +465,65 @@ public class DetailsTabFragment extends Fragment {
                 Log.i(TAG, "Failed to record media");
             }
         }
+        if (requestCode == REQUEST_GALLERY) {
+            if (resultCode == getActivity().RESULT_OK && null != data) {
+                try {
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    imagesEncodedList = new ArrayList<String>();
+                    if (data.getData() != null) {
+                        Uri mImageUri = data.getData();
+                        // Get the cursor
+                        Cursor cursor = getActivity().getContentResolver().query(mImageUri,
+                                filePathColumn, null, null, null);
+                        // Move to first row
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        imageEncoded = cursor.getString(columnIndex);
+                        Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
+                        cursor.close();
+                    } else {
+                        if (data.getClipData() != null) {
+                            ClipData mClipData = data.getClipData();
+                            ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
+                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                                ClipData.Item item = mClipData.getItemAt(i);
+                                Uri uri = item.getUri();
+                                mArrayUri.add(uri);
+                                // Get the cursor
+                                Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+                                if (cursor != null) {
+                                    // Move to first row
+                                    cursor.moveToFirst();
+                                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                                    imageEncoded = cursor.getString(columnIndex);
+                                    imageEncoded = cursor.getString(columnIndex);
+                                }else{
+                                    imageEncoded = uri.getPath();
+                                }
+                                imagesEncodedList.add(imageEncoded);
+                                cursor.close();
+                                Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
+                            }
+                            Log.v(TAG, "Selected Images mArrayUri :" + mArrayUri.size() + " imagesEncodedList :" + imagesEncodedList.size());
+                        }
+                    }
+
+
+                    Log.i(TAG, "REQUEST_GALLERY");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_GALLERY");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_GALLERY");
+            }
+
+        }
         if (requestCode == REQUEST_LOAD_IMAGE) {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
@@ -720,30 +784,19 @@ public class DetailsTabFragment extends Fragment {
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btn_camera) {
+                String title = getString(R.string.importphoto);
+                CharSequence[] itemlist = {getString(R.string.camera),
+                        getString(R.string.gallery)
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setIcon(R.drawable.icon_app);
+                builder.setTitle(title);
+                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                AlertDialog alert = builder.create();
+                alert.setCancelable(true);
+                alert.show();
 
-                File newfile;
-                createFolder();
 
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-                sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-                timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
-
-                String sPhotoPath = strSDCardPathName_Pic + sPhotoID + ".jpg";
-                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), sPhotoPath);
-                if (newfile.exists())
-                    newfile.delete();
-                try {
-                    newfile.createNewFile();
-                    mCurrentPhotoPath = newfile.getAbsolutePath();
-                } catch (IOException e) {
-                }
-                if (newfile != null) {
-                    uri = Uri.fromFile(newfile);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                    getActivity().startActivityForResult(Intent.createChooser(cameraIntent
-                            , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
-                }
             }
             if (v == checkBoxHaveFence) {
                 if (checkBoxHaveFence.isChecked()) {
@@ -1230,4 +1283,61 @@ public class DetailsTabFragment extends Fragment {
         }
 
     }
+
+    private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
+
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int which) {
+            switch (which) {
+                case 0:// Take Photo
+                    // Do Take Photo task here
+                    takePhoto();
+                    break;
+                case 1:// Choose Existing Photo
+                    // Do Pick Photo task here
+                    pickPhoto();
+
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void pickPhoto() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(Intent.createChooser(intent, "เลือกรูปภาพ"), REQUEST_GALLERY);
+    }
+
+    private void takePhoto() {
+        File newfile;
+        createFolder();
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+        sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+        timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+
+        String sPhotoPath = strSDCardPathName_Pic + sPhotoID + ".jpg";
+        newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), sPhotoPath);
+        if (newfile.exists())
+            newfile.delete();
+        try {
+            newfile.createNewFile();
+            mCurrentPhotoPath = newfile.getAbsolutePath();
+        } catch (IOException e) {
+        }
+        if (newfile != null) {
+            uri = Uri.fromFile(newfile);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            getActivity().startActivityForResult(Intent.createChooser(cameraIntent
+                    , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
+        }
+    }
+
 }

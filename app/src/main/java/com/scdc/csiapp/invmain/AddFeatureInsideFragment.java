@@ -70,7 +70,7 @@ public class AddFeatureInsideFragment extends Fragment {
     String sFeatureInsideID, mode;
     int position = 0;
     ImageButton btnTakePhotoInside;
-    public static final int REQUEST_CAMERA_OUTSIDE = 333;
+    public static final int REQUEST_CAMERA_OUTSIDE = 222;
     public static final int REQUEST_LOAD_IMAGE = 2;
     private String mCurrentPhotoPath;
     Uri uri;

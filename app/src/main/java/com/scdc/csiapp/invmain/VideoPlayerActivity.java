@@ -258,6 +258,8 @@ public class VideoPlayerActivity extends Activity {
                 Log.i(TAG, "delete file name " + fileid);
                 curfile.delete();
                 Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
+                Intent _result = new Intent();
+                setResult(Activity.RESULT_OK, _result);
                 VideoPlayerActivity.this.finish();
             } else {
                 Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),

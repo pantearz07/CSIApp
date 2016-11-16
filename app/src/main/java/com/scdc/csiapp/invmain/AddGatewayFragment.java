@@ -79,8 +79,8 @@ public class AddGatewayFragment extends Fragment {
     List<TbMultimediaFile> tbPhotoList;
     ImageButton btnTakePhotoGC;
     String sPhotoID, timeStamp;
-    public static final int REQUEST_CAMERA = 777;
-    public static final int REQUEST_LOAD_IMAGE = 2;
+    public static final int REQUEST_CAMERA = 55;
+    public static final int REQUEST_LOAD_IMAGE = 5;
     private String mCurrentPhotoPath;
     Uri uri;
     Context mContext;
@@ -301,6 +301,23 @@ public class AddGatewayFragment extends Fragment {
             } else {
                 Log.i(TAG, "Failed to record media");
             }
+        }
+        if (requestCode == REQUEST_LOAD_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    showAllPhoto();
+                    Log.i(TAG, "RESULT_OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_LOAD_IMAGE");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
+            }
+
         }
     }
 

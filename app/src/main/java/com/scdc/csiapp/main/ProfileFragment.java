@@ -82,8 +82,8 @@ public class ProfileFragment extends Fragment {
     File newfile;
 
     private String mCurrentPhotoPath;
-    public static final int REQUEST_CAMERA_OUTSIDE = 0;
-    public static final int REQUEST_GALLERY = 1;
+    public static final int REQUEST_CAMERA_OUTSIDE = 77;
+    public static final int REQUEST_GALLERY = 777;
     private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     private static String strSDCardPathName_temps = "/CSIFiles/temp/temps/";
 

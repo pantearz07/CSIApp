@@ -84,8 +84,8 @@ public class AddFindEvidenceFragment extends Fragment {
     String sPhotoID, timeStamp;
     ImageButton btnTakePhotoEV;
     List<ApiMultimedia> apiMultimediaList;
-    public static final int REQUEST_LOAD_IMAGE = 2;
-    public static final int REQUEST_CAMERA = 777;
+    public static final int REQUEST_LOAD_IMAGE = 4;
+    public static final int REQUEST_CAMERA = 44;
     private String mCurrentPhotoPath;
     Context mContext;
     String defaultIP = "180.183.251.32/mcsi";
