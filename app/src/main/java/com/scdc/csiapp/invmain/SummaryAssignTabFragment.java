@@ -120,12 +120,15 @@ public class SummaryAssignTabFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null) {
             // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+
             Log.i(TAG, "from savedInstanceState null");
         } else {
             // Fragment ถูก Restore ขึ้นมา
             restoreInstanceState(savedInstanceState);
             Log.i(TAG, "from onActivityCreated" + WelcomeActivity.profile.getTbOfficial().OfficialID);
-
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+            setViewData();
         }
     }
 
@@ -184,7 +187,7 @@ public class SummaryAssignTabFragment extends Fragment {
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
         dbHelper = new DBHelper(getContext());
-        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+
         cd = new ConnectionDetector(getActivity());
         mContext = viewSummaryCSI.getContext();
         noticeCaseID = AssignTabFragment.apiCaseScene.getTbNoticeCase().NoticeCaseID;
@@ -222,10 +225,7 @@ public class SummaryAssignTabFragment extends Fragment {
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
         TextView edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
-        if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
-            AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
-            sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
-        }
+
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
         //btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
@@ -289,12 +289,9 @@ public class SummaryAssignTabFragment extends Fragment {
             }
         }
 
-        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
-                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
-                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
-                + WelcomeActivity.profile.getTbOfficial().Position + ")");
-        edtInvTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
-        InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+        if (savedInstanceState == null) {
+            setViewData();
+        }
         edtInvTel.setOnClickListener(new SummaryOnClickListener());
 
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID == null || AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID.equals("") || AssignTabFragment.apiCaseScene.getTbNoticeCase().InquiryOfficialID.equals("null")) {
@@ -389,10 +386,23 @@ public class SummaryAssignTabFragment extends Fragment {
         return viewSummaryCSI;
     }
 
+    private void setViewData() {
+        if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
+            AssignTabFragment.apiCaseScene.getTbNoticeCase().SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+            sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+        }
+        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
+                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
+                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
+                + WelcomeActivity.profile.getTbOfficial().Position + ")");
+        edtInvTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+    }
 
     public void onStart() {
         super.onStart();
         Log.i("Check", "onStartSummary");
+
     }
 
     @Override

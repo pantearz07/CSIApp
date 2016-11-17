@@ -134,7 +134,7 @@ public class SummaryCSITabFragment extends Fragment {
             // Fragment ถูก Restore ขึ้นมา
             restoreInstanceState(savedInstanceState);
             Log.i(TAG, "from onActivityCreated" + WelcomeActivity.profile.getTbOfficial().OfficialID);
-
+            setViewData();
         }
     }
 
@@ -339,14 +339,9 @@ public class SummaryCSITabFragment extends Fragment {
             }
 
         }
-
-
-        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
-                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
-                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
-                + WelcomeActivity.profile.getTbOfficial().Position + ")");
-        edtInvTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
-        InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+        if (savedInstanceState == null) {
+            setViewData();
+        }
         edtInvTel.setOnClickListener(new SummaryOnClickListener());
         String mTypePoliceStationArray[] = dbHelper.SelectPoliceStation(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().PoliceStationID);
         if (mTypePoliceStationArray != null) {
@@ -434,6 +429,15 @@ public class SummaryCSITabFragment extends Fragment {
             layoutButton1.setVisibility(View.GONE);
         }
         return viewSummaryCSI;
+    }
+
+    private void setViewData() {
+        edtInvInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
+                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
+                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
+                + WelcomeActivity.profile.getTbOfficial().Position + ")");
+        edtInvTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        InvTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
     }
 
     public void onStart() {
@@ -837,7 +841,7 @@ public class SummaryCSITabFragment extends Fragment {
         protected void onPostExecute(ApiStatusData apiStatus) {
             super.onPostExecute(apiStatus);
             progressDialog.dismiss();
-            if(apiStatus != null) {
+            if (apiStatus != null) {
                 if (apiStatus.getStatus().equalsIgnoreCase("success")) {
 //                Log.d(TAG, apiStatus.getData().getReason());
                     status_savecase = true;
@@ -868,7 +872,7 @@ public class SummaryCSITabFragment extends Fragment {
                             getString(R.string.error_data) + " " + getString(R.string.network_error));
                     snackBarAlert.createSnacbar();
                 }
-            }else{
+            } else {
                 SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                         getString(R.string.error_data) + " " + getString(R.string.network_error));
                 snackBarAlert.createSnacbar();

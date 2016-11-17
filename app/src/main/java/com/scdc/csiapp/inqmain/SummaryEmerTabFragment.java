@@ -118,12 +118,15 @@ public class SummaryEmerTabFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null) {
             // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+
             Log.i(TAG, "from savedInstanceState null");
         } else {
             // Fragment ถูก Restore ขึ้นมา
             restoreInstanceState(savedInstanceState);
             Log.i(TAG, "from onActivityCreated" + WelcomeActivity.profile.getTbOfficial().OfficialID);
-
+            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+            setViewData();
         }
     }
 
@@ -182,7 +185,6 @@ public class SummaryEmerTabFragment extends Fragment {
         mManager = new PreferenceData(getActivity());
         getDateTime = new GetDateTime();
         dbHelper = new DBHelper(getContext());
-        officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
         cd = new ConnectionDetector(getActivity());
         noticeCaseListFragment = new NoticeCaseListFragment();
         noticeCaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
@@ -221,10 +223,7 @@ public class SummaryEmerTabFragment extends Fragment {
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
         TextView edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
-        if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
-            EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
-            sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
-        }
+
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
         btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
@@ -293,13 +292,9 @@ public class SummaryEmerTabFragment extends Fragment {
 
             }
         }
-
-        edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
-                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
-                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
-                + WelcomeActivity.profile.getTbOfficial().Position + ")");
-        edtInqTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
-        InqTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+        if(savedInstanceState == null) {
+            setViewData();
+        }
         edtInqTel.setOnClickListener(new SummaryOnClickListener());
 
         if (EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID == null || EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID.equals("") || EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID.equals("null")) {
@@ -411,10 +406,23 @@ public class SummaryEmerTabFragment extends Fragment {
         return viewSummaryCSI;
     }
 
+    private void setViewData() {
+        if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode != "") {
+            EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+            sSCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+        }
+        edtInqInfo.setText(WelcomeActivity.profile.getTbOfficial().Rank + " "
+                + WelcomeActivity.profile.getTbOfficial().FirstName + " "
+                + WelcomeActivity.profile.getTbOfficial().LastName + " ("
+                + WelcomeActivity.profile.getTbOfficial().Position + ")");
+        edtInqTel.setText("โทร." + WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
+        InqTel = WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString();
+    }
 
     public void onStart() {
         super.onStart();
         Log.i("Check", "onStartSummary");
+
     }
 
     @Override
