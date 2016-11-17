@@ -37,15 +37,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.main.BusProvider;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
+
+import org.parceler.Parcels;
 
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
@@ -62,21 +67,16 @@ public class SummaryEmerTabFragment extends Fragment {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-    boolean statusConnect = false;
-    Boolean networkConnectivity = false;
-    long isConnectingToInternet = 0;
     GetDateTime getDateTime;
-    String officialID, noticecaseid;
-    ArrayAdapter<String> adapterCaseType, adapterSubCaseType;
+    String officialID;
     EditText edtReportNo;
     FragmentManager mFragmentManager;
 
     Spinner spnCaseType, spnSubCaseType;
     String selectedCaseType, selectedSubCaseType, sCaseTypeID, sSubCaseTypeID;
-    TextView edtUpdateDateTime2, edtStatus, edtInvestDateTime, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation,
+    TextView edtUpdateDateTime2, edtStatus, edtUpdateDateTime, edtInqInfo, edtInvInfo, edtPoliceStation,
             edtInvTel, edtInqTel;
     String[] updateDT;
-    String message = "";
     String[][] mTypeCenterArray, mCaseTypeArray, mSubCaseTypeArray, mTypeAgencyArray;
     String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
@@ -84,7 +84,6 @@ public class SummaryEmerTabFragment extends Fragment {
     Button btnNoticecase, btnDownloadfile;
     String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
-    String SelectedAgencyID, SelectedCenterID;
     Spinner spnSCDCcenterType, spnSCDCagencyType;
     String selectedCenter, selectedAgencyCode;
     View layoutButton1, linearLayoutReportNo, layoutSceneNoticeDate;
@@ -94,6 +93,81 @@ public class SummaryEmerTabFragment extends Fragment {
     private final static int INTERVAL = 1000 * 10; //10 second
     boolean status_deletecase = false;
     boolean status_noticecase = false;
+    public static final String KEY_PROFILE = "key_profile";
+    public static final String KEY_CONNECT = "key_connect";
+    ApiProfile apiProfile;
+    ApiConnect api;
+
+    public static SummaryEmerTabFragment newInstance() {
+        return new SummaryEmerTabFragment();
+    }
+
+    public SummaryEmerTabFragment() {
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            Log.i(TAG, "from savedInstanceState null");
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            Log.i(TAG, "from onActivityCreated" + WelcomeActivity.profile.getTbOfficial().OfficialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(mContext);
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
 
     @Nullable
     @Override
@@ -101,7 +175,7 @@ public class SummaryEmerTabFragment extends Fragment {
         View viewSummaryCSI = inflater.inflate(R.layout.summarycsi_tab_layout, null);
 
 //โชว์ scenenoticedate & time
-        final Context context = viewSummaryCSI.getContext();
+        mContext = viewSummaryCSI.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
 
         rootLayout = (CoordinatorLayout) viewSummaryCSI.findViewById(R.id.rootLayout);
@@ -430,7 +504,7 @@ public class SummaryEmerTabFragment extends Fragment {
                                 if (snackbar == null || !snackbar.isShown()) {
                                     SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                                             getString(R.string.save_error)
-                                                    + " " +EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
+                                                    + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
                                     snackBarAlert.createSnacbar();
                                 }
                             }
@@ -495,15 +569,15 @@ public class SummaryEmerTabFragment extends Fragment {
                         if (snackbar == null || !snackbar.isShown()) {
                             SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
                                     getString(R.string.save_complete)
-                                            + " " +EmergencyTabFragment.tbNoticeCase.LastUpdateDate.toString()
-                                            + " " +EmergencyTabFragment.tbNoticeCase.LastUpdateTime.toString());
+                                            + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate.toString()
+                                            + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime.toString());
                             snackBarAlert.createSnacbar();
                         }
                     } else {
                         if (snackbar == null || !snackbar.isShown()) {
                             SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                                     getString(R.string.save_error)
-                                            + " " +EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
+                                            + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
                             snackBarAlert.createSnacbar();
                         }
                     }

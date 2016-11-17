@@ -34,15 +34,20 @@ import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.main.BusProvider;
 import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.TimeDialog;
 import com.scdc.csiapp.main.WelcomeActivity;
+
+import org.parceler.Parcels;
 
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
@@ -90,6 +95,81 @@ public class SummaryAssignTabFragment extends Fragment {
     TextView editSceneNoticeDate, editSceneNoticeTime;
     String InqTel, InvTel;
     boolean status_updatecase = false;
+    public static final String KEY_PROFILE = "key_profile";
+    public static final String KEY_CONNECT = "key_connect";
+    ApiProfile apiProfile;
+    ApiConnect api;
+
+    public static SummaryAssignTabFragment newInstance() {
+        return new SummaryAssignTabFragment();
+    }
+
+    public SummaryAssignTabFragment() {
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            Log.i(TAG, "from savedInstanceState null");
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            Log.i(TAG, "from onActivityCreated" + WelcomeActivity.profile.getTbOfficial().OfficialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(mContext);
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
 
     @Nullable
     @Override
@@ -106,7 +186,7 @@ public class SummaryAssignTabFragment extends Fragment {
         dbHelper = new DBHelper(getContext());
         officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
         cd = new ConnectionDetector(getActivity());
-
+        mContext = viewSummaryCSI.getContext();
         noticeCaseID = AssignTabFragment.apiCaseScene.getTbNoticeCase().NoticeCaseID;
         Log.i(TAG, " NoticeCaseID " + noticeCaseID);
 

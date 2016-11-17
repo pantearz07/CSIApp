@@ -143,7 +143,6 @@ public class DetailsTabFragment extends Fragment {
     AddFeatureInsideFragment addFeatureInsideFragment;
     public static List<TbMultimediaFile> tbMultimediaFiles = null;
     List<TbMultimediaFile> tbPhotoList;
-    List<TbPhotoOfOutside> tbPhotoOfOutsideList;
     private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     DisplayMetrics dm;
@@ -1365,8 +1364,11 @@ public class DetailsTabFragment extends Fragment {
         if (requestCode == REQUEST_LOAD_IMAGE) {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
+                    tbMultimediaFiles = new ArrayList<>();
+                    tbMultimediaFiles = dbHelper.SelectDataPhotoOfOutside(reportID, "photo");
+                    Log.i(TAG, "RESULT_OK SelectDataPhotoOfOutside" + tbMultimediaFiles.size());
                     showAllPhoto();
-                    Log.i(TAG, "RESULT_OK");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e(TAG, e.getMessage());

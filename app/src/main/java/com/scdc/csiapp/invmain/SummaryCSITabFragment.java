@@ -41,15 +41,20 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatusData;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.main.BusProvider;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
+
+import org.parceler.Parcels;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -98,13 +103,89 @@ public class SummaryCSITabFragment extends Fragment {
     Handler mHandler = new Handler();
     private final static int INTERVAL = 1000 * 10; //10 second
     boolean status_savecase = false;
+    Context context;
+    public static final String KEY_PROFILE = "key_profile";
+    public static final String KEY_CONNECT = "key_connect";
+    ApiProfile apiProfile;
+    ApiConnect api;
+
+    public static SummaryCSITabFragment newInstance() {
+        return new SummaryCSITabFragment();
+    }
+
+    public SummaryCSITabFragment() {
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            Log.i(TAG, "from savedInstanceState null");
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            Log.i(TAG, "from onActivityCreated" + WelcomeActivity.profile.getTbOfficial().OfficialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(context);
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewSummaryCSI = inflater.inflate(R.layout.summarycsi_tab_layout, null);
 
-        final Context context = viewSummaryCSI.getContext();
+        context = viewSummaryCSI.getContext();
 
         rootLayout = (CoordinatorLayout) viewSummaryCSI.findViewById(R.id.rootLayout);
         dbHelper = new DBHelper(getActivity());
@@ -119,17 +200,6 @@ public class SummaryCSITabFragment extends Fragment {
         layoutButton = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton);
         noticeCaseID = CSIDataTabFragment.apiCaseScene.getTbNoticeCase().NoticeCaseID;
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
-        if (noticeCaseID.equals("null") || noticeCaseID == null || noticeCaseID.equals("")) {
-//            Log.i(TAG, " show noticeCaseID: ");
-        } else {
-//            Log.i(TAG, " show noticeCaseID: " + noticeCaseID.toString());
-        }
-
-        if (caseReportID.equals("null") || caseReportID == null || caseReportID.equals("")) {
-//            Log.i(TAG, " show caseReportID: ");
-        } else {
-//            Log.i(TAG, " show caseReportID: " + caseReportID);
-        }
 
 
         edtReportNo = (EditText) viewSummaryCSI.findViewById(R.id.edtReportNo);
@@ -767,37 +837,42 @@ public class SummaryCSITabFragment extends Fragment {
         protected void onPostExecute(ApiStatusData apiStatus) {
             super.onPostExecute(apiStatus);
             progressDialog.dismiss();
-            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+            if(apiStatus != null) {
+                if (apiStatus.getStatus().equalsIgnoreCase("success")) {
 //                Log.d(TAG, apiStatus.getData().getReason());
-                status_savecase = true;
-                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                if (isSuccess) {
-                    if (snackbar == null || !snackbar.isShown()) {
-                        edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-                                + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-                        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_5))) {
-                            edtStatus.setText(getString(R.string.edtStatus_5));
+                    status_savecase = true;
+                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                    if (isSuccess) {
+                        if (snackbar == null || !snackbar.isShown()) {
+                            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+                            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_5))) {
+                                edtStatus.setText(getString(R.string.edtStatus_5));
+                            }
+                            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_6))) {
+                                edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate)
+                                        + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
+                                edtStatus.setText(getString(R.string.edtStatus_6));
+                            }
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                    apiStatus.getData().getReason().toString());
+                            snackBarAlert.createSnacbar();
                         }
-                        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_6))) {
-                            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate)
-                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
-                            edtStatus.setText(getString(R.string.edtStatus_6));
-                        }
-                        SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
-                                apiStatus.getData().getReason().toString());
-                        snackBarAlert.createSnacbar();
                     }
-                }
-            } else {
-                status_savecase = false;
-                edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-                        + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+                } else {
+                    status_savecase = false;
+                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                            + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
 
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            getString(R.string.error_data) + " " + getString(R.string.network_error));
+                    snackBarAlert.createSnacbar();
+                }
+            }else{
                 SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                         getString(R.string.error_data) + " " + getString(R.string.network_error));
                 snackBarAlert.createSnacbar();
             }
-
         }
     }
 
