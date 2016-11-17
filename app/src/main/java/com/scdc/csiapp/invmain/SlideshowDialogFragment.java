@@ -2,6 +2,7 @@ package com.scdc.csiapp.invmain;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -120,8 +121,7 @@ public class SlideshowDialogFragment extends DialogFragment {
     private void setCurrentItem(int position) {
         viewPager.setCurrentItem(position, false);
         displayMetaInfo(selectedPosition);
-        currentphoto = position;
-        Log.i(TAG, "  setCurrentItem " + currentphoto);
+//        Log.i(TAG, "  setCurrentItem " + String.valueOf(position));
     }
 
     //  page change listener
@@ -130,7 +130,8 @@ public class SlideshowDialogFragment extends DialogFragment {
         @Override
         public void onPageSelected(int position) {
             displayMetaInfo(position);
-
+            currentphoto = position;
+//            Log.i(TAG, "  currentphoto " + String.valueOf(position));
         }
 
         @Override
@@ -151,6 +152,7 @@ public class SlideshowDialogFragment extends DialogFragment {
         } else {
             toolbar.setTitle((position + 1) + " จาก " + tbMultimediaFiles.size());
         }
+//        descPhoto.setText(tbMultimediaFiles.get(position).FilePath);
         if (tbMultimediaFiles.get(position).FileDescription == null || tbMultimediaFiles.get(position).FileDescription.equals("")) {
             layoutDescPhoto.setVisibility(View.GONE);
         } else {
@@ -267,6 +269,7 @@ public class SlideshowDialogFragment extends DialogFragment {
     }
 
     private void getDataFile() {
+        Log.i(TAG, "getDataFile  currentphoto " + String.valueOf(currentphoto));
         TbMultimediaFile tbMultimediaFile = tbMultimediaFiles.get(currentphoto);
         strPath = strSDCardPathName_Pic + tbMultimediaFile.FilePath;
         curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strPath);
@@ -333,12 +336,20 @@ public class SlideshowDialogFragment extends DialogFragment {
             int flag = 0;
             flag = deletefile(fileid);
             if (flag > 0) {
-                CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(currentphoto);
-                curfile.delete();
-                Log.v(TAG, "media size after delete file " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().size());
-                Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
-                getDialog().dismiss();
+//                Log.i(TAG, "deletePhoto  currentphoto " + String.valueOf(currentphoto));
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
+                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                        curfile.delete();
+//                        Log.v(TAG, "media size after delete file " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().size());
+                        Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
+                        Intent data = new Intent();
+//                        data.putExtra("fileid", fileid);
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+                        getDialog().dismiss();
+                    }
+                }
+
             } else {
                 Toast.makeText(mContext.getApplicationContext(),
                         getString(R.string.delete_error),

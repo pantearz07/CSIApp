@@ -1364,9 +1364,7 @@ public class DetailsTabFragment extends Fragment {
         if (requestCode == REQUEST_LOAD_IMAGE) {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
-                    tbMultimediaFiles = new ArrayList<>();
-                    tbMultimediaFiles = dbHelper.SelectDataPhotoOfOutside(reportID, "photo");
-                    Log.i(TAG, "RESULT_OK SelectDataPhotoOfOutside" + tbMultimediaFiles.size());
+//                    String fileid = data.getStringExtra("fileid");
                     showAllPhoto();
 
                 } catch (Exception e) {
