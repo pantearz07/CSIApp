@@ -41,6 +41,7 @@ import com.scdc.csiapp.apimodel.ApiLoginRequest;
 import com.scdc.csiapp.apimodel.ApiLoginStatus;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -48,6 +49,8 @@ import com.scdc.csiapp.connecting.SyncData;
 import com.scdc.csiapp.gcmservice.GcmRegisterService;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
+
+import org.parceler.Parcels;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -70,7 +73,8 @@ public class LoginActivity extends AppCompatActivity {
     private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
-
+    ApiConnect api;
+    public static final String KEY_CONNECT = "key_connect";
     String username;
     String password;
     String txt_username, txt_password = "";
@@ -103,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
         mDbHelper = new DBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         getDateTime = new GetDateTime();
-
+        BusProvider.getInstance().register(this);
         bindView();
 
         txt_username = mManager.getPreferenceData(mDbHelper.COL_id_users);
@@ -654,5 +658,33 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void onPostExecute(final String arrData) {
         Log.i(TAG, "DownloadDocFile display" + String.valueOf(arrData));
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(this);
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (api == null) {
+            api = new ApiConnect(this);
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
     }
 }

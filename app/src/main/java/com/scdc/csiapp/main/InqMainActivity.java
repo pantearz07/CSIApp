@@ -1,6 +1,7 @@
 package com.scdc.csiapp.main;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,11 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 
@@ -39,12 +43,13 @@ public class InqMainActivity extends AppCompatActivity {
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
-
+    Context mContext;
     private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     static FragmentManager mFragmentManager;
-
+    public static final String KEY_PROFILE = "key_profile";
+    ApiProfile apiProfile;
 
     //รายการคดี อยู่ใน package/inqmain
     NoticeCaseListFragment noticeCaseListFragment;
@@ -55,7 +60,7 @@ public class InqMainActivity extends AppCompatActivity {
     SettingFragment settingFragment;
     //แก้ไขประวัติส่วนตัว
     ProfileFragment profileFragment;
-
+    View headerView;
     Toolbar toolbar;
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
@@ -75,29 +80,7 @@ public class InqMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.inq_activity_main);
         mManager = new PreferenceData(this);
-        try {
-            if (WelcomeActivity.profile.getTbOfficial() != null) {
-                // PreferenceData member id
-                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-                username = WelcomeActivity.profile.getTbUsers().id_users;
-                password = WelcomeActivity.profile.getTbUsers().pass;
-                accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
-                nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank
-                        + WelcomeActivity.profile.getTbOfficial().FirstName
-                        + " " + WelcomeActivity.profile.getTbOfficial().LastName;
-
-            } else {
-                Intent gotoWelcomeActivity = new Intent(this, WelcomeActivity.class);
-                finish();
-                startActivity(gotoWelcomeActivity);
-
-            }
-        } catch (RuntimeException e) {
-            Intent gotoWelcomeActivity = new Intent(this, WelcomeActivity.class);
-            finish();
-            startActivity(gotoWelcomeActivity);
-        }
-
+        mContext = getApplicationContext();
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         cd = new ConnectionDetector(getApplicationContext());
@@ -109,26 +92,10 @@ public class InqMainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff);
 
-        View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
+        headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
         OfficialName = (TextView) headerView.findViewById((R.id.officialName));
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
-        //โชว์ชื่อ นามสกุล
-        OfficialName.setText(nameOfficial);
-        txtusername.setText(username);
-        Log.i("login", officialID);
-        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
-
-        } else {
-            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
-            if (avatarfile.exists()) {
-                Picasso.with(this)
-                        .load(avatarfile)
-                        .resize(100, 100)
-                        .centerCrop()
-                        .into(avatar);
-            }
-        }
         mNavigationView.addHeaderView(headerView);
         /**
          * Lets inflate the very first fragment
@@ -140,14 +107,22 @@ public class InqMainActivity extends AppCompatActivity {
         settingFragment = new SettingFragment();
         profileFragment = new ProfileFragment();
 
-
         mFragmentManager = getSupportFragmentManager();
-        setFragment(noticeCaseListFragment, 1);
+//        setFragment(noticeCaseListFragment, 1);
+        if (savedInstanceState == null) {
+            // PreferenceData member id
+            setUserProfile();
+            //set Header View in Navigation
+            setHeaderView();
+            replaceFragment();
+        } else {
 
+        }
+        BusProvider.getInstance().register(this);
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("noticeCaseListFragment")) {
-                setFragment(noticeCaseListFragment, 1);
+                setFragment(noticeCaseListFragment, 0);
             }
         }
 
@@ -188,11 +163,11 @@ public class InqMainActivity extends AppCompatActivity {
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(InqMainActivity.this);
-                    dialog.setTitle("Exit");
+                    dialog.setTitle(R.string.ad_title);
                     dialog.setIcon(R.drawable.ic_noti);
                     dialog.setCancelable(true);
-                    dialog.setMessage("คุณต้องการออกจากระบบใช่หรือไม่");
-                    dialog.setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
+                    dialog.setMessage(R.string.ad_message);
+                    dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
                             Boolean status = mManager.clearLoggedInOfficial();
@@ -204,7 +179,7 @@ public class InqMainActivity extends AppCompatActivity {
 
                     });
 
-                    dialog.setNegativeButton("ไม่", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
 
@@ -242,6 +217,56 @@ public class InqMainActivity extends AppCompatActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+    }
+
+    public void replaceFragment() {
+//        replaceFragment(CaseSceneListFragment.newInstance());
+        noticeCaseListFragment.newInstance();
+        setFragment(noticeCaseListFragment, 1);
+    }
+
+    private void setUserProfile() {
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                BusProvider.getInstance().post(WelcomeActivity.profile);
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+                username = WelcomeActivity.profile.getTbUsers().id_users;
+                password = WelcomeActivity.profile.getTbUsers().pass;
+                accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+                nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank
+                        + WelcomeActivity.profile.getTbOfficial().FirstName
+                        + " " + WelcomeActivity.profile.getTbOfficial().LastName;
+            } else {
+
+                Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+                finish();
+                startActivity(gotoWelcomeActivity);
+
+            }
+        } catch (NullPointerException e) {
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            finish();
+            startActivity(gotoWelcomeActivity);
+        }
+    }
+
+    private void setHeaderView() {
+
+        OfficialName.setText(nameOfficial);
+        txtusername.setText(username);
+        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
+
+        } else {
+            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            if (avatarfile.exists()) {
+                Picasso.with(this)
+                        .load(avatarfile)
+                        .resize(100, 100)
+                        .centerCrop()
+                        .into(avatar);
+            }
+        }
+        Log.i(TAG, officialID);
     }
 
     @Override
@@ -293,5 +318,41 @@ public class InqMainActivity extends AppCompatActivity {
     protected void onPause() {
 
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+
+        // PreferenceData member id
+        setUserProfile();
+        //set Header View in Navigation
+        setHeaderView();
+        Log.i(TAG, "from onRestoreInstanceState" + officialID);
     }
 }

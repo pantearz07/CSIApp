@@ -188,18 +188,18 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
 
     public void onBackPressed() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Exit");
+        dialog.setTitle(R.string.ad_title);
         dialog.setIcon(R.drawable.ic_noti);
         dialog.setCancelable(true);
         dialog.setMessage(R.string.ad_message);
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
 
         });
 
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
 

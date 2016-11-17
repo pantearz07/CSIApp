@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,7 +28,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -38,11 +38,14 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.apimodel.ApiStatusResult;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,13 +68,11 @@ public class ProfileFragment extends Fragment {
     private CoordinatorLayout rootLayout;
     String officialID, sDisplayPicpath, Username_old, Username_new;
     TextView tMemberID, tAccessType, txtChangePassword, txtCenter, change_display;
-    EditText edtUsername, edtPassword, edtFirstName, edtLastName, edtEmail,
-            editTextPhone, edtPosition;
+    EditText edtUsername, edtFirstName, edtLastName, edtEmail,
+            editTextPhone;
     Spinner spinnerRankInspector, spinnerPositionInspector;
-    Button btnUpdateMember;
     GetDateTime getDateTime;
     boolean oldRank, oldPosition = false;
-    String[] Rank, Position;
     Snackbar snackbar;
     FloatingActionButton fabBtn;
     String[] mRankArray2, mPositionArray2;
@@ -80,114 +81,117 @@ public class ProfileFragment extends Fragment {
     ImageView profile_image;
     Uri uri;
     File newfile;
-
     private String mCurrentPhotoPath;
     public static final int REQUEST_CAMERA_OUTSIDE = 77;
     public static final int REQUEST_GALLERY = 777;
     private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     private static String strSDCardPathName_temps = "/CSIFiles/temp/temps/";
+    public static final String KEY_PROFILE = "key_profile";
+    public static final String KEY_CONNECT = "key_connect";
+    ApiProfile apiProfile;
+    ApiConnect api;
+    View view;
 
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
+    }
+
+    public ProfileFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BusProvider.getInstance().register(this);
+    }
+
+    @Nullable
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.profile_layout, null);
-
+        view = inflater.inflate(R.layout.profile_layout, null);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.profile);
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
+
         changePassFragment = new ChangePassFragment();
         mContext = getContext();
         mManager = new PreferenceData(getActivity());
         cd = new ConnectionDetector(getActivity());
         dbHelper = new DBHelper(getActivity());
         getDateTime = new GetDateTime();
-// txtMemberID,txtMemberID,txtUsername,txtPassword,txtName,txtEmail,txtTel
         Username_old = mManager.getPreferenceData(dbHelper.COL_id_users);
-        txtChangePassword = (TextView) view.findViewById(R.id.txtChangePassword);
-        tMemberID = (TextView) view.findViewById(R.id.txtMemberID);
-        edtUsername = (EditText) view.findViewById(R.id.edtUsername);
-        edtPassword = (EditText) view.findViewById(R.id.edtPassword);
-        edtPassword.setVisibility(View.GONE);
-        spinnerRankInspector = (Spinner) view
-                .findViewById(R.id.spinnerRankInspector);
-        mRankArray = dbHelper.SelectAllRank();
-        if (mRankArray != null) {
-            mRankArray2 = new String[mRankArray.length];
-            for (int i = 0; i < mRankArray.length; i++) {
-                mRankArray2[i] = mRankArray[i][2];
-                Log.i(TAG + " show mRankArray2", mRankArray2[i].toString());
-            }
-            ArrayAdapter<String> adapterRank = new ArrayAdapter<String>(
-                    getActivity(), android.R.layout.simple_dropdown_item_1line,
-                    mRankArray2);
-            spinnerRankInspector.setAdapter(adapterRank);
-        } else {
-            Log.i(TAG + " show mRankArray", "null");
-        }
-        if (WelcomeActivity.profile.getTbOfficial().Rank == null || WelcomeActivity.profile.getTbOfficial().Rank.equals("") || WelcomeActivity.profile.getTbOfficial().Rank.equals("null")) {
-            spinnerRankInspector.setSelection(0);
-        } else {
-            for (int i = 0; i < mRankArray2.length; i++) {
-                if (WelcomeActivity.profile.getTbOfficial().Rank.trim().equals(mRankArray2[i])) {
-                    spinnerRankInspector.setSelection(i);
-                    oldRank = true;
-                    break;
-                }
-            }
-        }
-        spinnerRankInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
-        spinnerRankInspector.setOnTouchListener(new ProOnItemSelectedListener());
+        // set view on layout
+        setView();
+        return view;
+    }
 
-        spinnerPositionInspector = (Spinner) view
-                .findViewById(R.id.spinnerPositionInspector);
-        if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
-            mPositionArray = dbHelper.SelectAllinvposition();
-        } else if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("inquiryofficial")) {
-            mPositionArray = dbHelper.SelectAllinqposition();
-        }
-        if (mPositionArray != null) {
-            mPositionArray2 = new String[mPositionArray.length];
-            for (int i = 0; i < mPositionArray.length; i++) {
-                mPositionArray2[i] = mPositionArray[i][2];
-                Log.i(TAG + " show mPositionArray2", mPositionArray2[i].toString());
-            }
-            ArrayAdapter<String> adapterPosition = new ArrayAdapter<String>(
-                    getActivity(), android.R.layout.simple_dropdown_item_1line,
-                    mPositionArray2);
-            spinnerPositionInspector.setAdapter(adapterPosition);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
         } else {
-            Log.i(TAG + " show mRankArray", "null");
+            apiProfile = WelcomeActivity.profile;
         }
-        if (WelcomeActivity.profile.getTbOfficial().Position == null || WelcomeActivity.profile.getTbOfficial().Position.equals("") || WelcomeActivity.profile.getTbOfficial().Position.equals("null")) {
-            spinnerPositionInspector.setSelection(0);
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
         } else {
-            for (int i = 0; i < mPositionArray2.length; i++) {
-                if (WelcomeActivity.profile.getTbOfficial().Position.trim().equals(mPositionArray2[i])) {
-                    spinnerPositionInspector.setSelection(i);
-                    oldPosition = true;
-                    break;
-                }
-            }
+            api = WelcomeActivity.api;
         }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
+    }
 
-        spinnerPositionInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
-        spinnerPositionInspector.setOnTouchListener(new ProOnItemSelectedListener());
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart profilefragment ");
+        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
 
-//        edtPosition = (EditText) view.findViewById(R.id.edtPosition);
-        edtFirstName = (EditText) view.findViewById(R.id.edtFirstName);
-        edtLastName = (EditText) view.findViewById(R.id.edtLastName);
-        edtEmail = (EditText) view.findViewById(R.id.edtEmail);
-        editTextPhone = (EditText) view.findViewById(R.id.editTextPhone);
-        edtUsername.addTextChangedListener(new ProfileTextWatcher(edtUsername));
-        edtFirstName.addTextChangedListener(new ProfileTextWatcher(edtFirstName));
-        edtLastName.addTextChangedListener(new ProfileTextWatcher(edtLastName));
-        edtEmail.addTextChangedListener(new ProfileTextWatcher(edtEmail));
-//        edtPosition.addTextChangedListener(new ProfileTextWatcher(edtPosition));
-        editTextPhone.addTextChangedListener(new ProfileTextWatcher(editTextPhone));
-        tAccessType = (TextView) view.findViewById(R.id.txtStatus);
-        txtCenter = (TextView) view.findViewById(R.id.txtCenter);
-        fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
-        fabBtn.setOnClickListener(new ProfileOnClickListener());
-        txtChangePassword.setOnClickListener(new ProfileOnClickListener());
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            //check user profile
+            setUserProfile();
+
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            setUserProfile();
+            Log.i(TAG, "from onActivityCreated" + officialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(getActivity());
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    private void setUserProfile() {
         if (WelcomeActivity.profile.getTbOfficial() != null) {
             officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
             tMemberID.setText(WelcomeActivity.profile.getTbOfficial().OfficialID);
@@ -197,7 +201,61 @@ public class ProfileFragment extends Fragment {
             edtLastName.setText(WelcomeActivity.profile.getTbOfficial().LastName);
             edtEmail.setText(WelcomeActivity.profile.getTbOfficial().OfficialEmail);
             editTextPhone.setText(WelcomeActivity.profile.getTbOfficial().PhoneNumber);
-            Log.i(TAG, WelcomeActivity.profile.getTbOfficial().AccessType);
+            mRankArray = dbHelper.SelectAllRank();
+            if (mRankArray != null) {
+                mRankArray2 = new String[mRankArray.length];
+                for (int i = 0; i < mRankArray.length; i++) {
+                    mRankArray2[i] = mRankArray[i][2];
+                    Log.i(TAG + " show mRankArray2", mRankArray2[i].toString());
+                }
+                ArrayAdapter<String> adapterRank = new ArrayAdapter<String>(
+                        getActivity(), android.R.layout.simple_dropdown_item_1line,
+                        mRankArray2);
+                spinnerRankInspector.setAdapter(adapterRank);
+            } else {
+                Log.i(TAG + " show mRankArray", "null");
+            }
+            if (WelcomeActivity.profile.getTbOfficial().Rank == null || WelcomeActivity.profile.getTbOfficial().Rank.equals("") || WelcomeActivity.profile.getTbOfficial().Rank.equals("null")) {
+                spinnerRankInspector.setSelection(0);
+            } else {
+                for (int i = 0; i < mRankArray2.length; i++) {
+                    if (WelcomeActivity.profile.getTbOfficial().Rank.trim().equals(mRankArray2[i])) {
+                        spinnerRankInspector.setSelection(i);
+                        oldRank = true;
+                        break;
+                    }
+                }
+            }
+
+            if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
+                mPositionArray = dbHelper.SelectAllinvposition();
+            } else if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("inquiryofficial")) {
+                mPositionArray = dbHelper.SelectAllinqposition();
+            }
+            if (mPositionArray != null) {
+                mPositionArray2 = new String[mPositionArray.length];
+                for (int i = 0; i < mPositionArray.length; i++) {
+                    mPositionArray2[i] = mPositionArray[i][2];
+                    Log.i(TAG + " show mPositionArray2", mPositionArray2[i].toString());
+                }
+                ArrayAdapter<String> adapterPosition = new ArrayAdapter<String>(
+                        getActivity(), android.R.layout.simple_dropdown_item_1line,
+                        mPositionArray2);
+                spinnerPositionInspector.setAdapter(adapterPosition);
+            } else {
+                Log.i(TAG + " show mRankArray", "null");
+            }
+            if (WelcomeActivity.profile.getTbOfficial().Position == null || WelcomeActivity.profile.getTbOfficial().Position.equals("") || WelcomeActivity.profile.getTbOfficial().Position.equals("null")) {
+                spinnerPositionInspector.setSelection(0);
+            } else {
+                for (int i = 0; i < mPositionArray2.length; i++) {
+                    if (WelcomeActivity.profile.getTbOfficial().Position.trim().equals(mPositionArray2[i])) {
+                        spinnerPositionInspector.setSelection(i);
+                        oldPosition = true;
+                        break;
+                    }
+                }
+            }
             if (WelcomeActivity.profile.getTbOfficial().AccessType.equals("investigator")) {
                 tAccessType.setText("ผู้ตรวจสถานที่เกิดเหตุ");
                 if (WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode == null || WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode.equals("")) {
@@ -220,19 +278,13 @@ public class ProfileFragment extends Fragment {
             }
 
         }
+
         if (cd.isNetworkAvailable()) {
             edtUsername.setEnabled(true);
         } else {
             edtUsername.setEnabled(false);
         }
-        if (WelcomeActivity.profile.getTbUsers() != null) {
 
-            edtUsername.setText(WelcomeActivity.profile.getTbUsers().id_users);
-            edtPassword.setText(WelcomeActivity.profile.getTbUsers().pass);
-        }
-        profile_image = (ImageView) view.findViewById(R.id.profile_image);
-        change_display = (TextView) view.findViewById(R.id.change_display);
-        change_display.setOnClickListener(new ProfileOnClickListener());
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
         } else {
@@ -247,10 +299,40 @@ public class ProfileFragment extends Fragment {
                         .into(profile_image);
             }
         }
-
-        return view;
+        setViewListener();
     }
 
+    private void setView() {
+        txtChangePassword = (TextView) view.findViewById(R.id.txtChangePassword);
+        tMemberID = (TextView) view.findViewById(R.id.txtMemberID);
+        edtUsername = (EditText) view.findViewById(R.id.edtUsername);
+        profile_image = (ImageView) view.findViewById(R.id.profile_image);
+        change_display = (TextView) view.findViewById(R.id.change_display);
+        spinnerRankInspector = (Spinner) view.findViewById(R.id.spinnerRankInspector);
+        spinnerPositionInspector = (Spinner) view.findViewById(R.id.spinnerPositionInspector);
+        edtFirstName = (EditText) view.findViewById(R.id.edtFirstName);
+        edtLastName = (EditText) view.findViewById(R.id.edtLastName);
+        edtEmail = (EditText) view.findViewById(R.id.edtEmail);
+        editTextPhone = (EditText) view.findViewById(R.id.editTextPhone);
+        tAccessType = (TextView) view.findViewById(R.id.txtStatus);
+        txtCenter = (TextView) view.findViewById(R.id.txtCenter);
+        fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
+    }
+
+    private void setViewListener() {
+        spinnerRankInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
+        spinnerRankInspector.setOnTouchListener(new ProOnItemSelectedListener());
+        spinnerPositionInspector.setOnItemSelectedListener(new ProOnItemSelectedListener());
+        spinnerPositionInspector.setOnTouchListener(new ProOnItemSelectedListener());
+        change_display.setOnClickListener(new ProfileOnClickListener());
+        edtUsername.addTextChangedListener(new ProfileTextWatcher(edtUsername));
+        edtFirstName.addTextChangedListener(new ProfileTextWatcher(edtFirstName));
+        edtLastName.addTextChangedListener(new ProfileTextWatcher(edtLastName));
+        edtEmail.addTextChangedListener(new ProfileTextWatcher(edtEmail));
+        editTextPhone.addTextChangedListener(new ProfileTextWatcher(editTextPhone));
+        fabBtn.setOnClickListener(new ProfileOnClickListener());
+        txtChangePassword.setOnClickListener(new ProfileOnClickListener());
+    }
 
     private class ProfileTextWatcher implements TextWatcher {
         private EditText mEditText;
@@ -336,32 +418,9 @@ public class ProfileFragment extends Fragment {
             }
             if (view == change_display) {
                 hiddenKeyboard();
-                File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp);
-                try {
-                    // Create folder
-                    if (!folder.exists()) {
-                        folder.mkdir();
-                        Log.i(TAG, "mkdir folder temp" + folder.getPath());
-                    } else {
-                        Log.i(TAG, "folder.exists" + folder.getPath());
+                createFolder(strSDCardPathName_temp);
+                createFolder(strSDCardPathName_temps);
 
-                    }
-                } catch (Exception ex) {
-                    Log.i(TAG, "mkdir" + ex.getMessage());
-                }
-                File folder_temps = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temps);
-                try {
-                    // Create folder
-                    if (!folder_temps.exists()) {
-                        folder_temps.mkdir();
-                        Log.i(TAG, "mkdir folder_temps" + folder_temps.getPath());
-                    } else {
-                        Log.i(TAG, "folder.exists" + folder_temps.getPath());
-
-                    }
-                } catch (Exception ex) {
-                    Log.i(TAG, "mkdir" + ex.getMessage());
-                }
                 sDisplayPicpath = "img_" + WelcomeActivity.profile.getTbOfficial().OfficialID + ".jpg";
 
                 String title = "เลือกรูปภาพโปรไฟล์";
@@ -404,6 +463,23 @@ public class ProfileFragment extends Fragment {
 
             }
         }
+    }
+
+    public static void createFolder(String path) {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), path);
+        try {
+            // Create folder
+            if (!folder.exists()) {
+                folder.mkdir();
+                Log.i(TAG, "mkdir" + folder.getAbsolutePath());
+            } else {
+                Log.i(TAG, "folder.exists");
+
+            }
+        } catch (Exception ex) {
+            Log.i(TAG, "mkdir" + ex.getMessage());
+        }
+
     }
 
     private class ProOnItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener, View.OnTouchListener {
@@ -576,11 +652,6 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    public void onStart() {
-        super.onStart();
-        Log.i(TAG, "onStart profilefragment ");
-        ActivityResultBus.getInstance().register(mActivityResultSubscriber);
-    }
 
     @Override
     public void onStop() {

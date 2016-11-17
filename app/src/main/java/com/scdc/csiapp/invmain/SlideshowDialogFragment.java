@@ -335,6 +335,7 @@ public class SlideshowDialogFragment extends DialogFragment {
             if (flag > 0) {
                 CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(currentphoto);
                 curfile.delete();
+                Log.v(TAG, "media size after delete file " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().size());
                 Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                 getDialog().dismiss();

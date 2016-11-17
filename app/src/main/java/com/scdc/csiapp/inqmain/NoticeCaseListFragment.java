@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -35,23 +36,25 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListNoticeCase;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.invmain.CSIDataTabFragment;
+import com.scdc.csiapp.main.BusProvider;
 import com.scdc.csiapp.main.GetDateTime;
-import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbNoticeCase;
+
+import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 
 /**
  * Created by Pantearz07 on 14/9/2559.
@@ -66,6 +69,8 @@ public class NoticeCaseListFragment extends Fragment {
     RecyclerView rvDraft;
     SwipeRefreshLayout swipeContainer;
     private ApiNoticeCaseListAdapter apiNoticeCaseListAdapter;
+    private static Bundle mBundleRecyclerViewState;
+    private final String KEY_RECYCLER_STATE = "recycler_state";
     // connect sqlite
     DBHelper mDbHelper;
     private Context mContext;
@@ -81,6 +86,23 @@ public class NoticeCaseListFragment extends Fragment {
     Snackbar snackbar;
     Handler mHandler = new Handler();
     private final static int INTERVAL = 1000 * 20; //20 second
+    public static final String KEY_PROFILE = "key_profile";
+    public static final String KEY_CONNECT = "key_connect";
+    ApiProfile apiProfile;
+    ApiConnect api;
+
+    public static NoticeCaseListFragment newInstance() {
+        return new NoticeCaseListFragment();
+    }
+
+    public NoticeCaseListFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BusProvider.getInstance().register(this);
+    }
 
     @Nullable
     @Override
@@ -92,20 +114,13 @@ public class NoticeCaseListFragment extends Fragment {
         mManager = new PreferenceData(getActivity());
         context = view.getContext();
         mFragmentManager = getActivity().getSupportFragmentManager();
-        rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
-        if (WelcomeActivity.profile.getTbOfficial() != null) {
-            officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-        } else {
-            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
-            getActivity().finish();
-            startActivity(gotoWelcomeActivity);
-        }
         cd = new ConnectionDetector(context);
         //networkConnectivity = cd.isNetworkAvailable();
         getDateTime = new GetDateTime();
 
         emergencyTabFragment = new EmergencyTabFragment();
         csiDataTabFragment = new CSIDataTabFragment();
+        rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
         fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
         fabBtn.setOnClickListener(new NoticeOnClickListener());
 
@@ -114,94 +129,87 @@ public class NoticeCaseListFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rvDraft.setLayoutManager(llm);
         rvDraft.setHasFixedSize(true);
+
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-
-            public void onRefresh() {
-                if (cd.isNetworkAvailable()) {
-                    Log.i("log_show draft", "Refreshing!! ");
-
-                    swipeContainer.setRefreshing(true);
-                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-
-
-                } else {
-                    swipeContainer.setRefreshing(true);
-                    // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    selectApiNoticeCaseFromSQLite();
-                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
-                            getString(R.string.offline_mode));
-                    snackBarAlert.createSnacbar();
-
-                    Log.i("log_show draft", "fail network");
-                }
-
-            }
-
-        });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+
+        return view;
+    }
+
+    private void setAdapterList() {
+        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
+        rvDraft.setAdapter(apiNoticeCaseListAdapter);
+        apiNoticeCaseListAdapter.notifyDataSetChanged();
+        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+        swipeContainer.setRefreshing(false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setAdapterData();
+            }
+        });
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                Log.i("log_show draft", "Runnable");
-
-                if (cd.isNetworkAvailable()) {
-                    Log.i("log_show draft", "Refreshing!! ");
-
-                    swipeContainer.setRefreshing(true);
-                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-
-                } else {
-                    swipeContainer.setRefreshing(true);
-                    // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    selectApiNoticeCaseFromSQLite();
-
-                    Log.i("log_show draft", "fail network");
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-                                }
-                            });
-                    snackbar.show();
-                }
+                setAdapterData();
             }
         });
-        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
-        rvDraft.setAdapter(apiNoticeCaseListAdapter);
-        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+    }
 
-        // ตรวจสอบการเชื่อมต่ออินเตอร์แล้วแยกการทำงานกัน
+    @Override
+    public void onPause() {
+        super.onPause();
+        // save RecyclerView state
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = rvDraft.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+        Log.i(TAG, "onPause");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // restore RecyclerView state
+        if (mBundleRecyclerViewState != null) {
+            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+            rvDraft.getLayoutManager().onRestoreInstanceState(listState);
+            Log.i(TAG, "onResume mBundleRecyclerViewState");
+        }
+    }
+
+    private void setAdapterData() {
         if (cd.isNetworkAvailable()) {
+            Log.i("log_show draft", "Refreshing!! ");
+
+            swipeContainer.setRefreshing(true);
             mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
             mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
 
         } else {
-            if (snackbar == null || !snackbar.isShown()) {
-                snackbar = Snackbar.make(rootLayout, "ดาวน์โหลดข้อมูลผิดพลาด", Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-
-                            }
-                        });
-                snackbar.show();
-            }
+            swipeContainer.setRefreshing(true);
+            // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
             selectApiNoticeCaseFromSQLite();
-        }
 
-        return view;
+            Log.i("log_show draft", "fail network");
+            snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     ApiNoticeCaseListAdapter.OnItemClickListener onItemClickListener = new ApiNoticeCaseListAdapter.OnItemClickListener() {
@@ -211,7 +219,6 @@ public class NoticeCaseListFragment extends Fragment {
             final ApiNoticeCase apiNoticeCase = caseList.get(position);
             final String caserepTD = apiNoticeCase.getTbNoticeCase().getNoticeCaseID().toString();
             final String mode = apiNoticeCase.getMode().toString();
-
 
             PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
             //Inflating the Popup using xml file
@@ -277,18 +284,18 @@ public class NoticeCaseListFragment extends Fragment {
 
     public void onBackPressed() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        dialog.setTitle("Exit");
+        dialog.setTitle(R.string.ad_title);
         dialog.setIcon(R.drawable.ic_noti);
         dialog.setCancelable(true);
-        dialog.setMessage("Do you want to exit?");
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        dialog.setMessage(R.string.ad_message);
+        dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 getActivity().finish();
             }
 
         });
 
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
 
@@ -303,13 +310,7 @@ public class NoticeCaseListFragment extends Fragment {
         caseList = apiListNoticeCase.getData().getResult();
         Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
 
-        if (swipeContainer != null && swipeContainer.isRefreshing()) {
-            swipeContainer.setRefreshing(false);
-        }
-        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
-        rvDraft.setAdapter(apiNoticeCaseListAdapter);
-        apiNoticeCaseListAdapter.notifyDataSetChanged();
-        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+        setAdapterList();
     }
 
     class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
@@ -345,16 +346,7 @@ public class NoticeCaseListFragment extends Fragment {
                     }
                 });
 
-                // เอาข้อมูลไปแสดงใน RV
-                apiNoticeCaseListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "Update apiNoticeCaseListAdapter");
-
-                if (swipeContainer.isRefreshing()) {
-                    swipeContainer.setRefreshing(false);
-                }
-                apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
-                rvDraft.setAdapter(apiNoticeCaseListAdapter);
-                apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+                setAdapterList();
             } else {
                 selectApiNoticeCaseFromSQLite();
             }
@@ -579,5 +571,77 @@ public class NoticeCaseListFragment extends Fragment {
             dialog.create();
             dialog.show();
         }
+    }
+
+    private void setUserProfile() {
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+
+            } else {
+
+                Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
+                getActivity().finish();
+                startActivity(gotoWelcomeActivity);
+
+            }
+        } catch (NullPointerException e) {
+            Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            //check user profile
+            setUserProfile();
+
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            setUserProfile();
+            Log.i(TAG, "from onActivityCreated" + officialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(getActivity());
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
     }
 }

@@ -38,6 +38,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="รหัสผ่านเก่า"
+                        android:freezesText="true"
                         android:inputType="textPassword"
                         android:textSize="@dimen/small_text" />
 
@@ -53,6 +54,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="รหัสผ่านใหม่"
+                        android:freezesText="true"
                         android:inputType="textPassword"
                         android:textSize="@dimen/small_text" />
 
@@ -68,6 +70,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="ยืนยันรหัสผ่านใหม่"
+                        android:freezesText="true"
                         android:inputType="textPassword"
                         android:textSize="@dimen/small_text" />
 

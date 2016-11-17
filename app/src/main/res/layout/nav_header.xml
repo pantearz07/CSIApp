@@ -31,7 +31,8 @@
         android:text="Official name"
         android:textColor="#FFF"
         android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:freezesText="true"/>
 
     <TextView
         android:id="@+id/username"
@@ -44,5 +45,6 @@
         android:gravity="left"
         android:text="username"
         android:textColor="#fff"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:freezesText="true" />
 </RelativeLayout>

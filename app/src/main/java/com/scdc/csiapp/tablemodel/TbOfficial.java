@@ -7,7 +7,6 @@ import java.io.Serializable;
  */
 public class TbOfficial implements Serializable {
 
-
     // From Table official field name OfficialID
     public String OfficialID = "";
 

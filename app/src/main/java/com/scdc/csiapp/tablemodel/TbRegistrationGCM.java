@@ -1,10 +1,13 @@
 package com.scdc.csiapp.tablemodel;
 
+import org.parceler.Parcel;
+
 import java.io.Serializable;
 
 /**
  * Created by Pantearz07 on 16/9/2559.
  */
+@Parcel
 public class TbRegistrationGCM implements Serializable {
     // From Table registrationgcm field name RegisNO
     public String RegisNO = "";

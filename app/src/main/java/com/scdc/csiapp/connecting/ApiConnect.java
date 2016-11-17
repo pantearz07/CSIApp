@@ -3,6 +3,8 @@ package com.scdc.csiapp.connecting;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -62,14 +64,13 @@ import okhttp3.Response;
 /**
  * Created by Pantearz07 on 12/9/2559.
  */
-public class ApiConnect {
+public class ApiConnect implements Parcelable {
 
     public static String urlMobileIP = "http://180.183.251.32/mcsi/C_mobile/";
     private String defaultIP = "180.183.251.32/mcsi";
     private String TAG = "DEBUG-ApiConnect";
     private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     private static String strSDCardPathName = "/CSIFiles/";
-    private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private static final MediaType MEDIA_TYPE_IMG = MediaType.parse("image/*");
     private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/*");
     private static final MediaType MEDIA_TYPE_VOICE = MediaType.parse("audio/*");
@@ -1048,4 +1049,28 @@ public class ApiConnect {
             return null;
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+    }
+
+    protected ApiConnect(Parcel in) {
+    }
+
+    public static final Parcelable.Creator<ApiConnect> CREATOR = new Parcelable.Creator<ApiConnect>() {
+        @Override
+        public ApiConnect createFromParcel(Parcel source) {
+            return new ApiConnect(source);
+        }
+
+        @Override
+        public ApiConnect[] newArray(int size) {
+            return new ApiConnect[size];
+        }
+    };
 }

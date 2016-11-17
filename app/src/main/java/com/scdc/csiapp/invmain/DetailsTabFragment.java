@@ -64,8 +64,11 @@ import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -399,151 +402,6 @@ public class DetailsTabFragment extends Fragment {
 
     }
 
-    public static void createFolder() {
-        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
-        try {
-            // Create folder
-            if (!folder.exists()) {
-                folder.mkdir();
-                Log.i(TAG, "mkdir " + folder.getAbsolutePath());
-            } else {
-                Log.i(TAG, "folder.exists");
-
-            }
-        } catch (Exception ex) {
-        }
-
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i("Result media", String.valueOf(requestCode) + " " + String.valueOf(resultCode));
-
-
-        if (requestCode == REQUEST_CAMERA_OUTSIDE) {
-            if (resultCode == getActivity().RESULT_OK) {
-                try {
-
-                    Log.i(TAG, "Photo save");
-                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
-                    ApiMultimedia apiMultimedia = new ApiMultimedia();
-                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
-                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
-                    tbMultimediaFile.FileID = sPhotoID;
-                    tbMultimediaFile.FileDescription = "";
-                    tbMultimediaFile.FileType = "photo";
-                    tbMultimediaFile.FilePath = sPhotoID + ".jpg";
-                    tbMultimediaFile.Timestamp = timeStamp;
-                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
-
-                    TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
-                    tbPhotoOfOutside.CaseReportID = reportID;
-                    tbPhotoOfOutside.FileID = sPhotoID;
-                    apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
-
-                    apiMultimediaList.add(apiMultimedia);
-//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
-
-                    CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
-                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                    if (isSuccess) {
-                        Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
-                        Log.i(TAG, "PHOTO saved to Gallery! : " + sPhotoID + ".jpg");
-
-                    }
-                    showAllPhoto();
-//                    showAllVideo();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            } else if (resultCode == getActivity().RESULT_CANCELED) {
-                //data.getData();
-                Log.i(TAG, "media recording cancelled." + sPhotoID);
-            } else {
-                Log.i(TAG, "Failed to record media");
-            }
-        }
-        if (requestCode == REQUEST_GALLERY) {
-            if (resultCode == getActivity().RESULT_OK && null != data) {
-                try {
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    imagesEncodedList = new ArrayList<String>();
-                    if (data.getData() != null) {
-                        Uri mImageUri = data.getData();
-                        // Get the cursor
-                        Cursor cursor = getActivity().getContentResolver().query(mImageUri,
-                                filePathColumn, null, null, null);
-                        // Move to first row
-                        cursor.moveToFirst();
-
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        imageEncoded = cursor.getString(columnIndex);
-                        Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
-                        cursor.close();
-                    } else {
-                        if (data.getClipData() != null) {
-                            ClipData mClipData = data.getClipData();
-                            ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-                            for (int i = 0; i < mClipData.getItemCount(); i++) {
-
-                                ClipData.Item item = mClipData.getItemAt(i);
-                                Uri uri = item.getUri();
-                                mArrayUri.add(uri);
-                                // Get the cursor
-                                Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
-                                if (cursor != null) {
-                                    // Move to first row
-                                    cursor.moveToFirst();
-                                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                                    imageEncoded = cursor.getString(columnIndex);
-                                    imageEncoded = cursor.getString(columnIndex);
-                                }else{
-                                    imageEncoded = uri.getPath();
-                                }
-                                imagesEncodedList.add(imageEncoded);
-                                cursor.close();
-                                Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
-                            }
-                            Log.v(TAG, "Selected Images mArrayUri :" + mArrayUri.size() + " imagesEncodedList :" + imagesEncodedList.size());
-                        }
-                    }
-
-
-                    Log.i(TAG, "REQUEST_GALLERY");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e(TAG, e.getMessage());
-                }
-            } else if (resultCode == getActivity().RESULT_CANCELED) {
-                // After Cancel code.
-                Log.i(TAG, "Cancel REQUEST_GALLERY");
-            } else {
-                Log.i(TAG, "Failed to REQUEST_GALLERY");
-            }
-
-        }
-        if (requestCode == REQUEST_LOAD_IMAGE) {
-            if (resultCode == getActivity().RESULT_OK) {
-                try {
-                    showAllPhoto();
-                    Log.i(TAG, "RESULT_OK");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e(TAG, e.getMessage());
-                }
-            } else if (resultCode == getActivity().RESULT_CANCELED) {
-                // After Cancel code.
-                Log.i(TAG, "Cancel REQUEST_LOAD_IMAGE");
-            } else {
-                Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
-            }
-
-        }
-    }
-
-
     public void showAllPhoto() {
         // TODO Auto-generated method stub
         tbPhotoList = new ArrayList<>();
@@ -784,12 +642,14 @@ public class DetailsTabFragment extends Fragment {
                 viewGroupIsVisible = !viewGroupIsVisible;
             }
             if (v == btn_camera) {
+
+
                 String title = getString(R.string.importphoto);
                 CharSequence[] itemlist = {getString(R.string.camera),
                         getString(R.string.gallery)
                 };
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setIcon(R.drawable.icon_app);
+                builder.setIcon(R.drawable.ic_camera_add);
                 builder.setTitle(title);
                 builder.setItems(itemlist, new DialogInterfaceOnClickListener());
                 AlertDialog alert = builder.create();
@@ -1306,12 +1166,32 @@ public class DetailsTabFragment extends Fragment {
         }
     }
 
+    public static void createFolder() {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
+        try {
+            // Create folder
+            if (!folder.exists()) {
+                folder.mkdir();
+                Log.i(TAG, "mkdir " + folder.getAbsolutePath());
+            } else {
+                Log.i(TAG, "folder.exists");
+
+            }
+        } catch (Exception ex) {
+        }
+
+    }
+
     private void pickPhoto() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_PICK);
-        startActivityForResult(Intent.createChooser(intent, "เลือกรูปภาพ"), REQUEST_GALLERY);
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+        getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
     }
 
     private void takePhoto() {
@@ -1339,5 +1219,180 @@ public class DetailsTabFragment extends Fragment {
                     , "Take a picture with"), REQUEST_CAMERA_OUTSIDE);
         }
     }
+
+    private void saveToMyAlbum(String imageEncoded) {
+        try {
+            createFolder();
+            File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File datadest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String sPhotoID = "", sImageType = "";
+            String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+            sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+            timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+            sImageType = imageEncoded.substring(imageEncoded.lastIndexOf("."));
+            Log.i(TAG, "sPhotoID " + sPhotoID + " sImageType " + sImageType);
+            if (sd.canWrite()) {
+//                        String sourceImagePath = "/path/to/source/file.jpg";
+                String destinationImagePath = strSDCardPathName_Pic + sPhotoID + sImageType;
+                File source = new File(imageEncoded);
+
+                File destination = new File(datadest, destinationImagePath);
+                if (source.exists()) {
+                    Log.i(TAG, "source ");
+                    FileChannel src = new FileInputStream(source).getChannel();
+                    FileChannel dst = new FileOutputStream(destination).getChannel();
+
+                    try {
+                        dst.transferFrom(src, 0, src.size());
+                        Log.i(TAG, "transferFrom ");
+                    } catch (IOException e) {
+                        Log.i(TAG, "transferFrom " + e.getMessage());
+                    }
+                    if (destination.exists()) {
+//                                source.delete();
+                        Log.i(TAG, "source.delete ");
+                        saveToListDB(sPhotoID, sImageType);
+
+                    }
+                    src.close();
+                    dst.close();
+                    Log.i(TAG, "save new Photo from gallery " + destinationImagePath);
+                } else {
+                    Log.i(TAG, "Photo from gallery error ");
+                }
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "Photo from gallery error " + e.getMessage());
+        }
+    }
+
+    // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
+    private void saveToListDB(String PhotoID, String sImageType) {
+        try {
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            ApiMultimedia apiMultimedia = new ApiMultimedia();
+            TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+            tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+            tbMultimediaFile.FileID = PhotoID;
+            tbMultimediaFile.FileDescription = "";
+            tbMultimediaFile.FileType = "photo";
+            tbMultimediaFile.FilePath = PhotoID + sImageType;
+            tbMultimediaFile.Timestamp = timeStamp;
+            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+            TbPhotoOfOutside tbPhotoOfOutside = new TbPhotoOfOutside();
+            tbPhotoOfOutside.CaseReportID = reportID;
+            tbPhotoOfOutside.FileID = PhotoID;
+            apiMultimedia.setTbPhotoOfOutside(tbPhotoOfOutside);
+            apiMultimediaList.add(apiMultimedia);
+
+            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+                Log.i(TAG, "PHOTO saved to Gallery! : " + PhotoID + sImageType);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("Result media", String.valueOf(requestCode) + " " + String.valueOf(resultCode));
+
+        if (requestCode == REQUEST_CAMERA_OUTSIDE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                Log.i(TAG, "Photo save" + sPhotoID);
+                saveToListDB(sPhotoID, ".jpg");
+                showAllPhoto();
+
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                //data.getData();
+                Log.i(TAG, "media recording cancelled." + sPhotoID);
+            } else {
+                Log.i(TAG, "Failed to record media");
+            }
+        }
+        if (requestCode == REQUEST_GALLERY) {
+            if (resultCode == getActivity().RESULT_OK && null != data) {
+                try {
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    imagesEncodedList = new ArrayList<String>();
+                    if (data.getData() != null) {
+                        Uri mImageUri = data.getData();
+                        imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
+                        saveToMyAlbum(imageEncoded);
+                    } else { //ถ้าเลือกหลายรูป
+                        if (data.getClipData() != null) {
+                            ClipData mClipData = data.getClipData();
+                            ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
+                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                                ClipData.Item item = mClipData.getItemAt(i);
+                                Uri uri = item.getUri();
+                                mArrayUri.add(uri);
+                                // Get the cursor getFilepath
+                                imageEncoded = getFilepath(filePathColumn, uri);
+                                Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
+
+                                if (imageEncoded != null) {
+                                    imagesEncodedList.add(imageEncoded);
+                                    saveToMyAlbum(imageEncoded);
+                                }
+                            }
+                            Log.v(TAG, "Selected Images mArrayUri :" + mArrayUri.size() + " imagesEncodedList :" + imagesEncodedList.size());
+                        }
+                    }
+
+                    showAllPhoto();
+                    Log.i(TAG, "REQUEST_GALLERY");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_GALLERY");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_GALLERY");
+            }
+
+        }
+        if (requestCode == REQUEST_LOAD_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                try {
+                    showAllPhoto();
+                    Log.i(TAG, "RESULT_OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_LOAD_IMAGE");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
+            }
+
+        }
+    }
+
+    public String getFilepath(String[] filePathColumn, Uri uri) {
+        // Get the cursor
+        Cursor cursor = getActivity().getContentResolver().query(uri,
+                filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        imageEncoded = cursor.getString(columnIndex);
+
+        cursor.close();
+        return imageEncoded;
+    }
+
 
 }

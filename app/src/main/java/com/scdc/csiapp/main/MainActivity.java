@@ -32,6 +32,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.scdc.csiapp.R;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
@@ -39,6 +40,8 @@ import com.scdc.csiapp.inqmain.NoticeCaseListFragment;
 import com.scdc.csiapp.invmain.CaseSceneListFragment;
 import com.scdc.csiapp.schdule.CalendarFragment;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 
@@ -48,14 +51,15 @@ public class MainActivity extends AppCompatActivity {
     // connect sqlite
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
-
+    public static final String KEY_PROFILE = "key_profile";
     private static String strSDCardPathName_temp = "/CSIFiles/temp/";
     ConnectionDetector cd;
-
+    ApiProfile apiProfile;
     long isConnectingToInternet = 0;
     public static Context mContext;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
+    View headerView;
     static FragmentManager mFragmentManager;
 
     //รายการคดี ทั้งหมด อันให่ม่  อยู่ใน package/invmain
@@ -99,27 +103,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mManager = new PreferenceData(this);
         mContext = getApplicationContext();
-        // PreferenceData member id
-        try {
-            if (WelcomeActivity.profile.getTbOfficial() != null) {
-                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
-                username = WelcomeActivity.profile.getTbUsers().id_users;
-                password = WelcomeActivity.profile.getTbUsers().pass;
-                accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
-                nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank
-                        + WelcomeActivity.profile.getTbOfficial().FirstName
-                        + " " + WelcomeActivity.profile.getTbOfficial().LastName;
-            } else {
-                Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
-                finish();
-                startActivity(gotoWelcomeActivity);
-
-            }
-        } catch (NullPointerException e) {
-            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
-            finish();
-            startActivity(gotoWelcomeActivity);
-        }
         cd = new ConnectionDetector(getApplicationContext());
         mDbHelper = new SQLiteDBHelper(this);
         mDb = mDbHelper.getWritableDatabase();
@@ -130,28 +113,13 @@ public class MainActivity extends AppCompatActivity {
         rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff);
+        headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
 
-        View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, mNavigationView, false);
         OfficialName = (TextView) headerView.findViewById((R.id.officialName));
         txtusername = (TextView) headerView.findViewById((R.id.username));
         avatar = (ImageView) headerView.findViewById(R.id.profile_image);
-        OfficialName.setText(nameOfficial);
-        txtusername.setText(username);
-        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
-
-        } else {
-            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
-            if (avatarfile.exists()) {
-                Picasso.with(this)
-                        .load(avatarfile)
-                        .resize(100, 100)
-                        .centerCrop()
-                        .into(avatar);
-            }
-        }
-        Log.i("officialID", officialID);
-
         mNavigationView.addHeaderView(headerView);
+
         /**
          * Lets inflate the very first fragment
          * Here , we are inflating the CSIDataTabFragment as the first Fragment
@@ -166,12 +134,21 @@ public class MainActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
 
         mFragmentManager = getSupportFragmentManager();
-        setFragment(caseSceneListFragment, 1);
+//
+        if (savedInstanceState == null) {
+            // PreferenceData member id
+            setUserProfile();
+            //set Header View in Navigation
+            setHeaderView();
+            replaceFragment();
+        } else {
 
+        }
+        BusProvider.getInstance().register(this);
         String menuFragment = getIntent().getStringExtra("menuFragment");
         if (menuFragment != null) {
             if (menuFragment.equals("caseSceneListFragment")) {
-                setFragment(caseSceneListFragment, 1);
+                setFragment(caseSceneListFragment, 0);
             }
         }
 
@@ -215,11 +192,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-                    dialog.setTitle("Exit");
+                    dialog.setTitle(R.string.ad_title);
                     dialog.setIcon(R.drawable.ic_noti);
                     dialog.setCancelable(true);
-                    dialog.setMessage("คุณต้องการออกจากระบบใช่หรือไม่");
-                    dialog.setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
+                    dialog.setMessage(R.string.ad_message);
+                    dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
                             Boolean status = mManager.clearLoggedInOfficial();
@@ -232,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
                     });
 
-                    dialog.setNegativeButton("ไม่", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
 
@@ -278,6 +255,55 @@ public class MainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    public void replaceFragment() {
+        caseSceneListFragment.newInstance();
+        setFragment(caseSceneListFragment, 1);
+    }
+
+    private void setUserProfile() {
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                BusProvider.getInstance().post(WelcomeActivity.profile);
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+                username = WelcomeActivity.profile.getTbUsers().id_users;
+                password = WelcomeActivity.profile.getTbUsers().pass;
+                accestype = WelcomeActivity.profile.getTbOfficial().AccessType;
+                nameOfficial = WelcomeActivity.profile.getTbOfficial().Rank
+                        + WelcomeActivity.profile.getTbOfficial().FirstName
+                        + " " + WelcomeActivity.profile.getTbOfficial().LastName;
+            } else {
+
+                Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+                finish();
+                startActivity(gotoWelcomeActivity);
+
+            }
+        } catch (NullPointerException e) {
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            finish();
+            startActivity(gotoWelcomeActivity);
+        }
+    }
+
+    private void setHeaderView() {
+
+        OfficialName.setText(nameOfficial);
+        txtusername.setText(username);
+        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
+
+        } else {
+            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            if (avatarfile.exists()) {
+                Picasso.with(this)
+                        .load(avatarfile)
+                        .resize(100, 100)
+                        .centerCrop()
+                        .into(avatar);
+            }
+        }
+        Log.i(TAG, officialID);
+    }
+
 
     @Override
     protected void onResume() {
@@ -297,23 +323,13 @@ public class MainActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Main Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://com.scdc.csiapp.main/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.start(client, viewAction);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
     }
 
     @Override
@@ -343,23 +359,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
 // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Main Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://com.scdc.csiapp.main/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(client, viewAction);
-//        client.disconnect();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.disconnect();
     }
 
@@ -393,5 +392,35 @@ public class MainActivity extends AppCompatActivity {
                 .setObject(object)
                 .setActionStatus(Action.STATUS_TYPE_COMPLETED)
                 .build();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+
+        // PreferenceData member id
+        setUserProfile();
+        //set Header View in Navigation
+        setHeaderView();
+        Log.i(TAG, "from onRestoreInstanceState" + officialID);
     }
 }

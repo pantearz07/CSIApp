@@ -11,106 +11,121 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/ScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
-            android:layout_marginTop="100dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
+            android:layout_marginRight="@dimen/codelab_fab_margin_right"
+            android:layout_marginTop="@dimen/codelab_fab_margin_right"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <ImageView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/logo_csi" />
+                android:layout_height="match_parent"
+                android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/txtTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
-                android:text="Management System"
-                android:textColor="@color/dark_red_2"
-                android:textSize="@dimen/small_text" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/usernameEdtLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" >
-
-                <EditText
-                    android:id="@+id/usernameEdt"
-                    android:layout_width="fill_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="ชื่อผู้ใช้"
-                    android:inputType="text"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_below="@+id/toolbar"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginBottom="50dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/passwordEdtLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/logo_csi" />
 
-                android:layout_below="@+id/usernameEdtLayout">
+                    <TextView
+                        android:id="@+id/txtTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_horizontal"
+                        android:text="Management System"
+                        android:textColor="@color/dark_red_2"
+                        android:textSize="@dimen/small_text" />
 
-                <EditText
-                    android:id="@+id/passwordEdt"
-                    android:layout_width="fill_parent"
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/usernameEdtLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <EditText
+                            android:id="@+id/usernameEdt"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:freezesText="true"
+                            android:hint="ชื่อผู้ใช้"
+                            android:inputType="text" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/passwordEdtLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_below="@+id/usernameEdtLayout">
+
+                        <EditText
+                            android:id="@+id/passwordEdt"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:freezesText="true"
+                            android:hint="รหัสผ่าน"
+                            android:inputType="textPassword" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/loginButton"
+                        style="@style/buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/passwordEdtLayout"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:text="เข้าสู่ระบบ" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txt_ipvalue"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="รหัสผ่าน"
-                    android:inputType="textPassword" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_gravity="left|bottom"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="10dp"
+                    android:freezesText="true"
+                    android:gravity="right"
+                    android:paddingEnd="60dp"
+                    android:text="ip............"
+                    android:textSize="@dimen/ssmall_text"
+                    android:layout_alignParentBottom="true" />
 
-            <Button
-                android:id="@+id/loginButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/passwordEdtLayout"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
-                android:text="เข้าสู่ระบบ"
-                style="@style/buttonStyle" />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txt_ipvalue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|bottom"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:gravity="right"
-            android:text="ip............"
-            android:paddingEnd="60dp"
-            android:textSize="@dimen/ssmall_text" />
-
-        <ImageButton
-            android:id="@+id/settingip_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="right|bottom"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/transparent"
-            android:scaleType="fitStart"
-            android:src="@drawable/ic_ipaddress"
-            android:text="@string/setip" />
-        <!--<android.support.v7.widget.Toolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
-        <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
-        <!--app:title="@string/login" />-->
-
+                <ImageButton
+                    android:id="@+id/settingip_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@color/transparent"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/ic_ipaddress"
+                    android:text="@string/setip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true" />
+            </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>
