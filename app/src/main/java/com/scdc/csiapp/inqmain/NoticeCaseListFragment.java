@@ -335,8 +335,8 @@ public class NoticeCaseListFragment extends Fragment {
                     @Override
                     public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
                         SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + obj1.getTbNoticeCase().ReceivingCaseTime;
-                        String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + obj2.getTbNoticeCase().ReceivingCaseTime;
+                        String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj1.getTbNoticeCase().ReceivingCaseTime);
+                        String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj2.getTbNoticeCase().ReceivingCaseTime);
                         try {
                             return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
                         } catch (Exception e) {

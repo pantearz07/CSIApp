@@ -264,4 +264,15 @@ public class GetDateTime {
 
         return check;
     }
+
+    public String formatTime(String time) {
+        String snewTime = null;
+
+        if (time.length() == 5) {
+            snewTime = time + ":00";
+        } else {
+            snewTime = time;
+        }
+        return snewTime;
+    }
 }
