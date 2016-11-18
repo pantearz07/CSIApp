@@ -179,6 +179,13 @@ public class NoticeCaseListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume api");
+        if (WelcomeActivity.api == null) {
+            Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
+            Log.i(TAG, "onResume api null");
+        }
         // restore RecyclerView state
         if (mBundleRecyclerViewState != null) {
             Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
@@ -317,7 +324,13 @@ public class NoticeCaseListFragment extends Fragment {
 
         @Override
         protected ApiListNoticeCase doInBackground(Void... voids) {
-            return WelcomeActivity.api.listNoticecase();
+            try {
+                return WelcomeActivity.api.listNoticecase();
+            } catch (RuntimeException e) {
+                Log.e(TAG, e.getMessage());
+                WelcomeActivity.api = new ApiConnect(getActivity());
+                return WelcomeActivity.api.listNoticecase();
+            }
         }
 
         @Override
@@ -541,8 +554,7 @@ public class NoticeCaseListFragment extends Fragment {
                     tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
 
                     if (tbNoticeCase != null) {
-//                            boolean isSuccess = mDbHelper.saveNoticeCase(tbNoticeCase);
-//                            if (isSuccess) {
+
                         Bundle i = new Bundle();
                         i.putSerializable(Bundle_Key, tbNoticeCase);
 
@@ -550,10 +562,7 @@ public class NoticeCaseListFragment extends Fragment {
                         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                         emergencyTabFragment.setArguments(i);
                         fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-                        //  fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();
-//                            } else {
-//                                Toast.makeText(getActivity(), R.string.save_complete, Toast.LENGTH_LONG).show();
-//                            }
+
                     }
 
 

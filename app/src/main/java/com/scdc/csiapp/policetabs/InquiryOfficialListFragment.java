@@ -32,6 +32,7 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListOfficial;
 import com.scdc.csiapp.apimodel.ApiOfficial;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -257,7 +258,13 @@ public class InquiryOfficialListFragment extends Fragment {
 
         @Override
         protected ApiListOfficial doInBackground(Void... voids) {
-            return WelcomeActivity.api.listOfficial("inquiryofficial");
+            try {
+                return WelcomeActivity.api.listOfficial("inquiryofficial");
+            } catch (RuntimeException e) {
+                Log.e(TAG, e.getMessage());
+                WelcomeActivity.api = new ApiConnect(getActivity());
+                return WelcomeActivity.api.listOfficial("inquiryofficial");
+            }
         }
 
         @Override

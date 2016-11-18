@@ -32,6 +32,7 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListOfficial;
 import com.scdc.csiapp.apimodel.ApiOfficial;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
@@ -255,7 +256,13 @@ public class SubInvestigatorListFragment extends Fragment {
 
         @Override
         protected ApiListOfficial doInBackground(Void... voids) {
-            return WelcomeActivity.api.listOfficial("investigator2");
+            try {
+                return WelcomeActivity.api.listOfficial("investigator2");
+            } catch (RuntimeException e) {
+                Log.e(TAG, e.getMessage());
+                WelcomeActivity.api = new ApiConnect(getActivity());
+                return WelcomeActivity.api.listOfficial("investigator2");
+            }
         }
 
         @Override

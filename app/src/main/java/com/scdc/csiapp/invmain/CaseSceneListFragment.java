@@ -238,6 +238,13 @@ public class CaseSceneListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume api");
+        if(WelcomeActivity.api == null){
+            Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
+            Log.i(TAG, "onResume api null");
+        }
         // restore RecyclerView state
         if (mBundleRecyclerViewState != null) {
             Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
@@ -391,7 +398,13 @@ public class CaseSceneListFragment extends Fragment {
 
         @Override
         protected ApiListCaseScene doInBackground(Void... voids) {
-            return WelcomeActivity.api.listCasescene();
+            try {
+                return WelcomeActivity.api.listCasescene();
+            } catch (RuntimeException e) {
+                Log.e(TAG, e.getMessage());
+                WelcomeActivity.api = new ApiConnect(getActivity());
+                return WelcomeActivity.api.listCasescene();
+            }
         }
 
         @Override
@@ -455,14 +468,7 @@ public class CaseSceneListFragment extends Fragment {
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-                try {
-                    new ConnectlistCasescene().execute();
-
-                } catch (RuntimeException e) {
-                    Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
-                    getActivity().finish();
-                    startActivity(gotoWelcomeActivity);
-                }
+                new ConnectlistCasescene().execute();
             } else {
                 selectApiCaseSceneFromSQLite();
 //                if (snackbar == null || !snackbar.isShown()) {

@@ -29,6 +29,7 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListScheduleInvestigates;
 import com.scdc.csiapp.apimodel.ApiScheduleGroup;
 import com.scdc.csiapp.apimodel.ApiScheduleInvestigates;
+import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.main.WelcomeActivity;
@@ -246,7 +247,13 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
         @Override
         protected ApiListScheduleInvestigates doInBackground(Void... voids) {
+            try {
             return WelcomeActivity.api.listScheduleInvestigates();
+            } catch (RuntimeException e) {
+                Log.e(TAG, e.getMessage());
+                WelcomeActivity.api = new ApiConnect(getActivity());
+                return WelcomeActivity.api.listScheduleInvestigates();
+            }
         }
 
         @Override
