@@ -124,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
     private void bindView() {
         //เเสดงค่า IP ล่าสุด
         txt_ipvalue = (TextView) findViewById(R.id.txt_ipvalue);
-        txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
         loginButton = (Button) findViewById(R.id.loginButton);
         settingip_btn = (ImageButton) findViewById(R.id.settingip_btn);
         mUsername = (EditText) findViewById(R.id.usernameEdt);
@@ -659,11 +658,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onPostExecute(final String arrData) {
         Log.i(TAG, "DownloadDocFile display" + String.valueOf(arrData));
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         BusProvider.getInstance().unregister(this);
     }
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -686,5 +687,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
+
     }
 }

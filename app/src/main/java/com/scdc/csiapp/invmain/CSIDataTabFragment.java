@@ -41,7 +41,7 @@ public class CSIDataTabFragment extends Fragment {
         View x =  inflater.inflate(R.layout.csi_data_tab_layout,null);
         //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.form_csi);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.form_csi));
 
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
         viewpagerCSI = (ViewPager) x.findViewById(R.id.viewpagerCSI);

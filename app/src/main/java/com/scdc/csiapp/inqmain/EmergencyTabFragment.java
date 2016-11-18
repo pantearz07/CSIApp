@@ -44,7 +44,7 @@ public class EmergencyTabFragment extends Fragment {
         View x = inflater.inflate(R.layout.emer_data_tab_layout, null);
         //rootLayoutCSI = (CoordinatorLayout) x.findViewById(R.id.rootLayoutCSI);
         linearLayoutLayoutCSI = (LinearLayout) x.findViewById(R.id.linearLayoutLayoutCSI);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.inq_appname);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.inq_appname));
         tabLayoutCSI = (TabLayout) x.findViewById(R.id.tabLayoutCSI);
         viewpagerCSI = (ViewPager) x.findViewById(R.id.viewpagerCSI);
 

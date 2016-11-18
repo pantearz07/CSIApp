@@ -109,7 +109,7 @@ public class NoticeCaseListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.casescene_fragment_layout, null);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.home);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
         mDbHelper = new DBHelper(getActivity());
         mManager = new PreferenceData(getActivity());
         context = view.getContext();

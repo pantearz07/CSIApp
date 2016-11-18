@@ -248,11 +248,10 @@ public class AddFeatureInsideFragment extends Fragment {
 
     private void pickPhoto() {
         Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getIntent.setType("image/*");
+        getIntent.setType("image/jpg");
 
         Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
-
+        pickIntent.setType("image/jpg");
         Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
         getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);

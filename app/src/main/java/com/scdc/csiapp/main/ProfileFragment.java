@@ -148,7 +148,20 @@ public class ProfileFragment extends Fragment {
         super.onStart();
         Log.i(TAG, "onStart profilefragment ");
         ActivityResultBus.getInstance().register(mActivityResultSubscriber);
+        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
+        } else {
+
+            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+            if (avatarfile.exists()) {
+                Picasso.with(getActivity())
+                        .load(avatarfile)
+                        .resize(100, 100)
+                        .centerCrop()
+                        .into(profile_image);
+            }
+        }
     }
 
     @Override
@@ -683,8 +696,8 @@ public class ProfileFragment extends Fragment {
                         File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
                         File data1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
                         if (sd.canWrite()) {
-                            String sourceImagePath = strSDCardPathName_temp + sDisplayPicpath;
-                            String destinationImagePath = strSDCardPathName_temps + sDisplayPicpath;
+                            String sourceImagePath = strSDCardPathName_temps + sDisplayPicpath;
+                            String destinationImagePath = strSDCardPathName_temp + sDisplayPicpath;
                             File source = new File(data1, sourceImagePath);
                             File destination = new File(sd, destinationImagePath);
                             if (source.exists()) {
@@ -713,6 +726,7 @@ public class ProfileFragment extends Fragment {
                                                 .resize(100, 100)
                                                 .centerCrop()
                                                 .into(profile_image);
+
                                     }
                                 }
                                 src.close();
@@ -871,10 +885,10 @@ public class ProfileFragment extends Fragment {
                     // Do Pick Photo task here
 
                     Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    getIntent.setType("image/*");
+                    getIntent.setType("image/jpg");
 
                     Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    pickIntent.setType("image/*");
+                    pickIntent.setType("image/jpg");
 
                     Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
                     chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
