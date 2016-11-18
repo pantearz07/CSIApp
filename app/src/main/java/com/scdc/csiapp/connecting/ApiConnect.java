@@ -367,7 +367,7 @@ public class ApiConnect implements Parcelable {
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListNoticeCase apiListNoticeCaseServer = gson.fromJson(response.body().string(), ApiListNoticeCase.class);
                 // ข้อมูลจาก SQLite
-                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+                mDbHelper = new DBHelper(mContext);
                 ApiListNoticeCase apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListNoticeCaseServer.getData().getResult().size();
@@ -444,7 +444,7 @@ public class ApiConnect implements Parcelable {
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListCaseScene apiListCaseSceneServer = gson.fromJson(response.body().string(), ApiListCaseScene.class);
                 // ข้อมูลจาก SQLite
-                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+                mDbHelper = new DBHelper(mContext);
                 ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListCaseSceneServer.getData().getResult().size();
@@ -659,7 +659,7 @@ public class ApiConnect implements Parcelable {
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListOfficial apiListOfficialServer = gson.fromJson(response.body().string(), ApiListOfficial.class);
                 // ข้อมูลจาก SQLite
-                mDbHelper = new DBHelper(WelcomeActivity.mContext);
+                mDbHelper = new DBHelper(mContext);
                 ApiListOfficial apiListOfficialSQLite = mDbHelper.selectApiOfficial(AccessType);
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListOfficialServer.getData().getResult().size();
@@ -834,7 +834,7 @@ public class ApiConnect implements Parcelable {
     // Username,Password ดึงเอาจาก User ของ ApiProfile
 
     public ApiStatusResult editProfile(ApiProfile apiProfile) {
-        mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        mDbHelper = new DBHelper(mContext);
         String txt_Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
 
@@ -897,7 +897,7 @@ public class ApiConnect implements Parcelable {
     }
 
     public ApiStatus checkUsername(String Username_new) {
-        mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        mDbHelper = new DBHelper(mContext);
         String Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
 
@@ -947,7 +947,7 @@ public class ApiConnect implements Parcelable {
     }
 
     public ApiStatus deleteNoticeCase(String Mobile_CaseID) {
-        mDbHelper = new DBHelper(WelcomeActivity.mContext);
+        mDbHelper = new DBHelper(mContext);
         String Username = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String Password = mManager.getPreferenceData(mDbHelper.COL_pass);
 

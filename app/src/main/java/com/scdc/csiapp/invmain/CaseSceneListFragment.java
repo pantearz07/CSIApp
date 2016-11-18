@@ -145,7 +145,12 @@ public class CaseSceneListFragment extends Fragment {
                 Color.parseColor("#03C9A9"),
                 Color.parseColor("#F4D03F"));
 
-
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setAdapterData();
+            }
+        });
         return viewlayout;
     }
 
@@ -205,12 +210,7 @@ public class CaseSceneListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                setAdapterData();
-            }
-        });
+
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
@@ -455,7 +455,14 @@ public class CaseSceneListFragment extends Fragment {
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-                new ConnectlistCasescene().execute();
+                try {
+                    new ConnectlistCasescene().execute();
+
+                } catch (RuntimeException e) {
+                    Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
+                    getActivity().finish();
+                    startActivity(gotoWelcomeActivity);
+                }
             } else {
                 selectApiCaseSceneFromSQLite();
 //                if (snackbar == null || !snackbar.isShown()) {

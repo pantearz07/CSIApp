@@ -137,7 +137,12 @@ public class NoticeCaseListFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setAdapterData();
+            }
+        });
         return view;
     }
 
@@ -152,12 +157,7 @@ public class NoticeCaseListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                setAdapterData();
-            }
-        });
+
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
