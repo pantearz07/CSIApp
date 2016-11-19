@@ -251,4 +251,6 @@
     <string name="gallery">เลือกจากอัลบั้มภาพ</string>
     <string name="no">ไม่</string>
     <string name="yes">ใช่</string>
+    <string name="descphoto">แก้ไขคำอธิบาย</string>
+    <string name="edit_descphoto">แก้ไขคำอธิบายภาพ</string>
 </resources>

@@ -62,7 +62,6 @@ import com.scdc.csiapp.tablemodel.TbSceneInvestigation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -88,8 +87,6 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     GetDateTime getDateTime;
     String officialID;
     String[] updateDT;
-    private String message = "";
-    TextView spnLocatePolice;
     TextView edtUpdateDateTime2;
     EditText editTextPhone1;
     private String sAddrDetail, sDistrictName, sAmphurName, sProvinceName, provinceid, amphurid, districtid;
@@ -106,21 +103,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     String[][] mDistrictArray;
     String[] mDistrictArray2;
     String[] Antecedent;
-    static String sInquiryOfficialID, sProvinceID, sAmphurID = "";
-    // layout Sufferer 3
-    String sReceivingCaseDate_New = "";
-    String sHappenCaseDate_New = "";
-    String sKnowCaseDate_New = "";
-    String sSceneInvestDate_New = "";
-    private ListView listViewSufferer;
-    private View linearLayoutAddSufferer, linearLayoutInvestigator;
-    private Button btnAddSufferer, btnAddInvestigator, btnShowInvestigator, btnSaveSchedule, btnEditInvestigator;
-    private ArrayList<HashMap<String, String>> suffererList;
+
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
-    private String sReceivingCaseDate, sReceivingCaseTime, sHappenCaseDate,
-            sHappenCaseTime, sKnowCaseDate, sKnowCaseTime, sSceneInvestDate,
-            sSceneInvestTime, sCompleteSceneDate, sCompleteSceneTime, sCircumstanceOfCaseDetail;
-    private TextView editReceiveCaseDate, editReceiveCaseTime, editScheduleInvestDate;
+    private TextView editReceiveCaseDate, editReceiveCaseTime;
     private TextView editHappenCaseDate, editHappenCaseTime;
     private TextView editKnowCaseDate, editKnowCaseTime, valueLat, valueLong;
     // InvestDateTime ตรวจ
@@ -129,22 +114,12 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     //private TextView editCompleteSceneDate, editCompleteSceneTime;
     ImageButton btn_property, ic_telphone1, ic_telphone2;
 
-    ArrayList<Integer> mMultiSelected;
-    ArrayList<Boolean> mMultiChecked;
-    String[][] mSelectDataInvestigatorArray = null;
-    private ArrayList<HashMap<String, String>> InvestigatorList;
-
-    boolean statusConnect = false;
-    ViewGroup viewByIdaddsufferer;
     private View viewReceiveCSI;
     Context context;
-    ArrayAdapter<String> adapterSelectDataInspector, adapterPoliceStation;
-    protected static String selectScheduleID = null;
     String lat, lng;
-    boolean oldAntecedent, oldProvince, oldAmphur, oldDistrict = false;
+    boolean oldAntecedent, oldProvince, oldAmphur  = false;
     ViewGroup viewAddSceneInvestigation;
     protected static final int DIALOG_AddSceneInvestigation = 0;
-    protected static final int DIALOG_EditSceneInvestigation = 1;
     List<TbSceneInvestigation> tbSceneInvestigations = null;
     ListView listViewAddSceneInvestDateTime, listViewInvestigator;
     List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;

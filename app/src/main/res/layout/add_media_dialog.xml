@@ -37,6 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="คำอธิบาย"
+            android:lines="3"
+            android:maxLines="5"
             android:textSize="@dimen/ssmall_text" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

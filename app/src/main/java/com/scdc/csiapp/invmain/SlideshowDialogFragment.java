@@ -1,7 +1,10 @@
 package com.scdc.csiapp.invmain;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -19,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -75,6 +79,8 @@ public class SlideshowDialogFragment extends DialogFragment {
     TextView txtNum;
     File curfile;
     String strPath, filepath, fileid;
+    ViewGroup viewDescPhoto;
+    protected static final int DIALOG_AddDescPhoto = 0;
 
     static SlideshowDialogFragment newInstance() {
         SlideshowDialogFragment f = new SlideshowDialogFragment();
@@ -381,6 +387,10 @@ public class SlideshowDialogFragment extends DialogFragment {
                     if (id == R.id.savephoto) {
                         savePhoto();
                     }
+                    if (id == R.id.descphoto) {
+                        viewDescPhoto = (ViewGroup) v.findViewById(R.id.layout_media_dialog);
+                        createdDialog(DIALOG_AddDescPhoto).show();
+                    }
                     if (id == R.id.deletephoto) {
                         if (CSIDataTabFragment.mode.equals("view")) {
                             Toast.makeText(mContext.getApplicationContext(),
@@ -484,6 +494,11 @@ public class SlideshowDialogFragment extends DialogFragment {
                             Log.i(TAG, "  savephoto ");
                             savePhoto();
                         }
+                        if (id == R.id.descphoto) {
+                            Log.i(TAG, "  descphoto ");
+                            viewDescPhoto = (ViewGroup) v.findViewById(R.id.layout_media_dialog);
+                            createdDialog(DIALOG_AddDescPhoto).show();
+                        }
                         if (id == R.id.deletephoto) {
                             Log.i(TAG, "  deletephoto ");
                             if (CSIDataTabFragment.mode.equals("view")) {
@@ -504,6 +519,95 @@ public class SlideshowDialogFragment extends DialogFragment {
                 Log.i(TAG, "  btnClose ");
                 getDialog().dismiss();
             }
+        }
+    }
+
+    protected Dialog createdDialog(int id) {
+        Dialog dialog = null;
+        AlertDialog.Builder builder;
+        switch (id) {
+
+            case DIALOG_AddDescPhoto:
+                builder = new AlertDialog.Builder(getActivity());
+                final LayoutInflater inflaterDialogDescPhoto = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                final View ViewlayoutAddDescPhoto = inflaterDialogDescPhoto
+                        .inflate(
+                                R.layout.add_media_dialog,
+                                viewDescPhoto);
+                builder.setIcon(R.drawable.ic_edit);
+                builder.setTitle(R.string.edit_descphoto);
+                builder.setView(ViewlayoutAddDescPhoto);
+                final TbMultimediaFile tbMultimediaFile = tbMultimediaFiles.get(currentphoto);
+                TextView editMediaName = (TextView) ViewlayoutAddDescPhoto
+                        .findViewById(R.id.editMediaName);
+                final EditText editMediaDescription = (EditText) ViewlayoutAddDescPhoto
+                        .findViewById(R.id.editMediaDescription);
+                editMediaName.setText(tbMultimediaFile.FilePath);
+                if (tbMultimediaFile.FileDescription == null
+                        || tbMultimediaFile.FileDescription.equals("")) {
+                    editMediaDescription.setText("");
+                } else {
+                    editMediaDescription.setText(tbMultimediaFile.FileDescription);
+                }
+                builder.setPositiveButton(R.string.save,
+                        new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(tbMultimediaFile.FileID)) {
+                                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i)
+                                                .getTbMultimediaFile().FileDescription = editMediaDescription.getText().toString();
+                                        tbMultimediaFiles.get(currentphoto).FileDescription = editMediaDescription.getText().toString();
+                                        Toast.makeText(mContext, getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
+//                                        Log.v(TAG, "Click FileDescription " + i + " " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i)
+//                                                .getTbMultimediaFile().FileDescription + " tbMultimediaFiles " + tbMultimediaFiles.get(currentphoto).FileDescription.toString());
+                                        saveToDB();
+                                        showDescPhoto();
+                                    }
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        // Button Cancel
+                        .setNegativeButton(R.string.cancel,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                dialog = builder.create();
+
+                break;
+            default:
+                dialog = null;
+        }
+        return dialog;
+    }
+
+    private void showDescPhoto() {
+        if (tbMultimediaFiles.get(currentphoto).FileDescription == null || tbMultimediaFiles.get(currentphoto).FileDescription.equals("")) {
+            layoutDescPhoto.setVisibility(View.GONE);
+        } else {
+            layoutDescPhoto.setVisibility(View.VISIBLE);
+            descPhoto.setText(tbMultimediaFiles.get(currentphoto).FileDescription);
+        }
+    }
+
+    // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
+    private void saveToDB() {
+        try {
+
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

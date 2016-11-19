@@ -1394,5 +1394,4 @@ public class DetailsTabFragment extends Fragment {
         return imageEncoded;
     }
 
-
 }
