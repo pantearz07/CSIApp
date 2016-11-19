@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -91,6 +92,8 @@ public class ProfileFragment extends Fragment {
     ApiProfile apiProfile;
     ApiConnect api;
     View view;
+    Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 5; //20 second
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -148,12 +151,13 @@ public class ProfileFragment extends Fragment {
         super.onStart();
         Log.i(TAG, "onStart profilefragment ");
         ActivityResultBus.getInstance().register(mActivityResultSubscriber);
+        setUserProfile();
         if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
 
         } else {
 
             File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+                    strSDCardPathName_temp + WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic);
             if (avatarfile.exists()) {
                 Picasso.with(getActivity())
                         .load(avatarfile)
@@ -162,6 +166,9 @@ public class ProfileFragment extends Fragment {
                         .into(profile_image);
             }
         }
+
+        mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+        mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
     }
 
     @Override
@@ -292,18 +299,13 @@ public class ProfileFragment extends Fragment {
 
         }
 
-        if (cd.isNetworkAvailable()) {
-            edtUsername.setEnabled(true);
-        } else {
-            edtUsername.setEnabled(false);
-        }
 
-        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
+        if (WelcomeActivity.profile.getTbOfficial().getOfficialDisplayPic() == null || WelcomeActivity.profile.getTbOfficial().getOfficialDisplayPic().equals("")) {
 
         } else {
 
             File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+                    strSDCardPathName_temp + WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic);
             if (avatarfile.exists()) {
                 Picasso.with(getActivity())
                         .load(avatarfile)
@@ -314,6 +316,30 @@ public class ProfileFragment extends Fragment {
         }
         setViewListener();
     }
+
+    Runnable mHandlerTaskcheckConnect = new Runnable() {
+        @Override
+        public void run() {
+            if (cd.isNetworkAvailable()) {
+                edtUsername.setEnabled(true);
+            } else {
+                edtUsername.setEnabled(false);
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
+                            , LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+
+                                }
+                            });
+                    snackbar.show();
+                }
+            }
+            mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
+        }
+    };
 
     private void setView() {
         txtChangePassword = (TextView) view.findViewById(R.id.txtChangePassword);
@@ -431,24 +457,39 @@ public class ProfileFragment extends Fragment {
             }
             if (view == change_display) {
                 hiddenKeyboard();
-                createFolder(strSDCardPathName_temp);
-                createFolder(strSDCardPathName_temps);
+                if (cd.isNetworkAvailable()) {
+                    createFolder(strSDCardPathName_temp);
+                    createFolder(strSDCardPathName_temps);
 
-                sDisplayPicpath = "img_" + WelcomeActivity.profile.getTbOfficial().OfficialID + ".jpg";
+                    sDisplayPicpath = "img_" + WelcomeActivity.profile.getTbOfficial().OfficialID + ".jpg";
 
-                String title = "เลือกรูปภาพโปรไฟล์";
-                CharSequence[] itemlist = {"ถ่ายรูป",
-                        "เลือกจากอัลบั้มภาพ"
+                    String title = "เลือกรูปภาพโปรไฟล์";
+                    CharSequence[] itemlist = {"ถ่ายรูป",
+                            "เลือกจากอัลบั้มภาพ"
 //                        , "เปิดจากไฟล์"
-                };
+                    };
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setIcon(R.drawable.icon_app);
-                builder.setTitle(title);
-                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
-                AlertDialog alert = builder.create();
-                alert.setCancelable(true);
-                alert.show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setIcon(R.drawable.ic_camera_add);
+                    builder.setTitle(title);
+                    builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                    AlertDialog alert = builder.create();
+                    alert.setCancelable(true);
+                    alert.show();
+                } else {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, getString(R.string.network_unavailable)
+                                , LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+
+                                    }
+                                });
+                        snackbar.show();
+                    }
+                }
             }
             if (view == fabBtn) {
                 hiddenKeyboard();
@@ -714,32 +755,24 @@ public class ProfileFragment extends Fragment {
                                 }
                                 if (destination != null) {
                                     source.delete();
+
                                     WelcomeActivity.profile.getTbOfficial().setOfficialDisplayPic(sDisplayPicpath);
                                     WelcomeActivity.profile.getTbUsers().setPicture(sDisplayPicpath);
-                                    boolean isSuccess = dbHelper.updateDisplayProfile(WelcomeActivity.profile);
-                                    if (isSuccess) {
-                                        Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
-                                        Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
-                                        Picasso.with(getActivity())
-                                                .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                                                        , strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-                                                .resize(100, 100)
-                                                .centerCrop()
-                                                .into(profile_image);
+                                    EditProfile editProfile = new EditProfile();
+                                    editProfile.execute(WelcomeActivity.profile);
+                                    Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
+                                    Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
+                                    Picasso.with(getActivity())
+                                            .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                                    , strSDCardPathName_temp + WelcomeActivity.profile.getTbOfficial().getOfficialDisplayPic()))
+                                            .resize(100, 100)
+                                            .centerCrop()
+                                            .into(profile_image);
 
-                                    }
                                 }
                                 src.close();
                                 dst.close();
                                 Log.i(TAG, "save new Photo from camera " + destinationImagePath);
-//                                if (cd.isNetworkAvailable()) {
-//                                    if (WelcomeActivity.profile.getTbOfficial() != null) {
-//                                        //save to server
-//                                        EditProfile editProfile = new EditProfile();
-//                                        editProfile.execute(WelcomeActivity.profile);
-//
-//                                    }
-//                                }
                             }
                         }
                     } catch (Exception e) {
@@ -799,28 +832,19 @@ public class ProfileFragment extends Fragment {
                             }
                             if (destination.exists()) {
 //                                source.delete();
-                                Log.i(TAG, "source.delete ");
+                                Log.i(TAG, "source.delete " + WelcomeActivity.profile.getTbUsers().id_users);
                                 WelcomeActivity.profile.getTbOfficial().setOfficialDisplayPic(sDisplayPicpath);
                                 WelcomeActivity.profile.getTbUsers().setPicture(sDisplayPicpath);
-                                boolean isSuccess = dbHelper.updateDisplayProfile(WelcomeActivity.profile);
-                                if (isSuccess) {
-                                    Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
-                                    Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
-//                                    Picasso.with(getActivity())
-//                                            .load(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-//                                                    strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture()))
-//                                            .resize(100, 100)
-//                                            .centerCrop()
-//                                            .into(profile_image);
-                                    try {
-
-                                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
-                                                .openInputStream(selectedImage));
-                                        profile_image.setImageBitmap(bitmap);
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                EditProfile editProfile = new EditProfile();
+                                editProfile.execute(WelcomeActivity.profile);
+                                Log.i(TAG, "OfficialDisplayPic :" + String.valueOf(WelcomeActivity.profile.getTbOfficial().OfficialDisplayPic));
+                                Log.i(TAG, "PHOTO saved to Gallery!" + strSDCardPathName_temp + sDisplayPicpath);
+                                try {
+                                    Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+                                            .openInputStream(selectedImage));
+                                    profile_image.setImageBitmap(bitmap);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             }
                             src.close();
@@ -895,9 +919,6 @@ public class ProfileFragment extends Fragment {
                     getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
 
                     break;
-//                case 2:// Choose Existing File
-//                    // Do Pick file here
-//                    break;
                 default:
                     break;
             }

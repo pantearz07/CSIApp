@@ -1770,19 +1770,19 @@ public class DBHelper extends SQLiteAssetHelper {
             db.beginTransaction();
             if (apiCaseScene.getApiMultimedia() != null) {
                 for (int i = 0; i < apiCaseScene.getApiMultimedia().size(); i++) {
-                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null){
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence() != null) {
                         db.delete("photoofevidence", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfEvidence().FileID)});
                     }
-                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null){
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless() != null) {
                         db.delete("photoofpropertyless", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfPropertyless().FileID)});
                     }
-                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null){
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene() != null) {
                         db.delete("photoofresultscene", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfResultscene().FileID)});
                     }
-                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null){
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside() != null) {
                         db.delete("photoofinside", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfInside().FileID)});
                     }
-                    if(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null){
+                    if (apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside() != null) {
                         db.delete("photoofoutside", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbPhotoOfOutside().FileID)});
                     }
                     db.delete("multimediafile", " FileID = ? ", new String[]{String.valueOf(apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID)});
@@ -1951,62 +1951,6 @@ public class DBHelper extends SQLiteAssetHelper {
                 }
             }
 
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.close();
-            return true;
-        } catch (Exception e) {
-            Log.d(TAG, "Error in updateProfile " + e.getMessage().toString());
-            return false;
-        }
-    }
-
-    public boolean updateDisplayProfile(ApiProfile apiProfile) {
-        if (apiProfile == null) {
-            return false;
-        }
-        try {
-            mDb = this.getReadableDatabase();
-            SQLiteDatabase db;
-            db = this.getWritableDatabase();
-
-            String sOfficialID, id_users;
-            String strSQL;
-            db.beginTransaction();
-            sOfficialID = apiProfile.getTbOfficial().OfficialID;
-            id_users = apiProfile.getTbUsers().id_users;
-            //บันทึกข้อมูลลง official
-            strSQL = "SELECT * FROM official WHERE "
-                    + "OfficialID = '" + sOfficialID + "'";
-            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                ContentValues Val = new ContentValues();
-
-                Val.put(COL_OfficialDisplayPic, apiProfile.getTbOfficial().OfficialDisplayPic);
-
-                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                    db.insert("official", null, Val);
-//                    Log.d(TAG, "Sync Table official: Insert ");
-                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                    db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(sOfficialID)});
-//                    Log.d(TAG, "Sync Table official: Update ");
-                }
-            }
-            //บันทึกข้อมูลลง users
-            strSQL = "SELECT * FROM users WHERE "
-                    + "id_users = '" + id_users + "'";
-            try (Cursor cursor = mDb.rawQuery(strSQL, null)) {
-                ContentValues Val = new ContentValues();
-                Val.put(COL_picture, apiProfile.getTbUsers().picture);
-//                Log.d(TAG, "users   name" + apiProfile.getTbUsers().name);
-                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                    db.insert("users", null, Val);
-//                    Log.d(TAG, "Sync Table users: Insert ");
-                } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
-                    db.update("users", Val, " id_users = ?", new String[]{String.valueOf(id_users)});
-//                    Log.d(TAG, "Sync Table users: Update ");
-                }
-            }
             db.setTransactionSuccessful();
             db.endTransaction();
 
