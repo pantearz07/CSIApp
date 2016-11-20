@@ -469,7 +469,7 @@ public class AddFindEvidenceFragment extends Fragment {
                 if (cd.isNetworkAvailable()) {
                     Picasso.with(getActivity())
                             .load(filepath)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .centerCrop()
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
@@ -479,7 +479,7 @@ public class AddFindEvidenceFragment extends Fragment {
                     if (curfile.exists()) {
                         Picasso.with(getActivity())
                                 .load(curfile)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
@@ -493,7 +493,7 @@ public class AddFindEvidenceFragment extends Fragment {
                 if (curfile.exists()) {
                     Picasso.with(getActivity())
                             .load(curfile)
-                            .resize(50, 50)
+                            .resize(100, 100)
                             .placeholder(R.drawable.ic_imagefile)
                             .error(R.drawable.ic_imagefile)
                             .centerCrop()
@@ -502,7 +502,7 @@ public class AddFindEvidenceFragment extends Fragment {
                     if (cd.isNetworkAvailable()) {
                         Picasso.with(getActivity())
                                 .load(filepath)
-                                .resize(50, 50)
+                                .resize(100, 100)
                                 .placeholder(R.drawable.ic_imagefile)
                                 .error(R.drawable.ic_imagefile)
                                 .centerCrop()
