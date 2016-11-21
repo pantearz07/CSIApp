@@ -75,6 +75,7 @@ public class PhotoTabFragment extends Fragment {
     private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
+//    private static final String QIP_DIR_NAME = "QuickImagePick Sample";
 
     @Nullable
     @Override
@@ -333,7 +334,7 @@ public class PhotoTabFragment extends Fragment {
                 case 1:// Choose Existing Photo
                     // Do Pick Photo task here
                     pickPhoto();
-
+//                    pickFromGallery();
 
                     break;
                 default:
@@ -357,6 +358,118 @@ public class PhotoTabFragment extends Fragment {
         }
 
     }
+
+//    private final PickCallback mCallback = new PickCallback() {
+//
+//        @Override
+//        public void onImagePicked(@NonNull final PickSource pPickSource, final int pRequestType, @NonNull final Uri pImageUri) {
+//            // Do something with Uri, for example load image into an ImageView
+////            Glide.with(getActivity())
+////                    .load(pImageUri)
+////                    .fitCenter()
+////                    .into(mImageView);
+//            // Get the cursor getFilepath
+//            final Context context = getActivity();
+//            final boolean exists = UriUtils.contentExists(context, pImageUri);
+//
+//            if (!exists) {
+//
+//                Toast.makeText(context, "Image does not exist. WTF!?", Toast.LENGTH_SHORT)
+//                        .show();
+//
+//                return;
+//            }
+//            final String extension = UriUtils.getFileExtension(context, pImageUri);
+//            Log.i(TAG, "Picked: " + pImageUri.toString() + "\nMIME type: " + UriUtils.getMimeType(context,
+//                    pImageUri) + "\nFile extension: " + extension + "\nRequest type: " + pRequestType);
+//            try {
+//
+//                final String ext = extension == null ? "" : "." + extension;
+//                final File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), QIP_DIR_NAME);
+//                final File file = new File(outDir, "qip_temp" + ext);
+//
+//                //noinspection ResultOfMethodCallIgnored
+//                outDir.mkdirs();
+//
+//                // DO NOT do this on main thread. This is only for reference
+//                UriUtils.saveContentToFile(context, pImageUri, file);
+//
+//                Toast.makeText(context, "Save complete", Toast.LENGTH_SHORT)
+//                        .show();
+//
+//            } catch (final IOException e) {
+//                Toast.makeText(context, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT)
+//                        .show();
+//            }
+//        }
+//
+//        @Override
+//        public void onMultipleImagesPicked(final int pRequestType, @NonNull final List<Uri> pImageUris) {
+//            // meh whatever, just show first picked ;D
+//            Log.i(TAG, "Picked a few images. Uris: " + Arrays.toString(pImageUris.toArray()));
+//            this.onImagePicked(PickSource.GALLERY, pRequestType, pImageUris.get(0));
+//        }
+//
+//        @Override
+//        public void onError(@NonNull final PickSource pPickSource, final int pRequestType, @NonNull final String pErrorString) {
+//            Log.e(TAG, "Err: " + pErrorString);
+//        }
+//
+//        @Override
+//        public void onCancel(@NonNull final PickSource pPickSource, final int pRequestType) {
+//            Log.d(TAG, "Cancel: " + pPickSource.name());
+//        }
+//
+//    };
+
+//    private void pickFromGallery() {
+//        final File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), QIP_DIR_NAME);
+//        Log.d(TAG, outDir.getAbsolutePath() + ", can write: " + outDir.canWrite());
+//        @PickTriggerResult final int triggerResult;
+//        triggerResult = QiPick.in(this)
+//                .allowOnlyLocalContent(true)
+//                .withAllowedMimeTypes(QiPick.MIME_TYPE_IMAGE_JPEG)
+//                .withCameraPicsDirectory(outDir)
+//                .withRequestType(1)
+//                .fromMultipleSources("All sources", PickSource.DOCUMENTS, PickSource.CAMERA, PickSource.GALLERY);
+//        this.solveTriggerResult(triggerResult);
+//    }
+
+//    private void solveTriggerResult(final @PickTriggerResult int pTriggerResult) {
+//
+//        switch (pTriggerResult) {
+//
+//            case PickTriggerResult.TRIGGER_PICK_ERR_CAM_FILE: {
+//
+//                Toast.makeText(getActivity(), "Could not create file to save Camera image. Make sure camera pics dir is writable", Toast.LENGTH_SHORT)
+//                        .show();
+//
+//                break;
+//            }
+//
+//            case PickTriggerResult.TRIGGER_PICK_ERR_NO_ACTIVITY: {
+//
+//                Toast.makeText(getActivity(), "There is no Activity that can pick requested file :(", Toast.LENGTH_SHORT)
+//                        .show();
+//
+//                break;
+//            }
+//
+//            case PickTriggerResult.TRIGGER_PICK_ERR_NO_PICK_SOURCES: {
+//
+//                Toast.makeText(getActivity(), "Dear dev, multiple source request needs at least one source!", Toast.LENGTH_SHORT)
+//                        .show();
+//
+//                break;
+//            }
+//
+//            case PickTriggerResult.TRIGGER_PICK_OK: {
+//                break;// all good, do nothing
+//            }
+//
+//        }
+//
+//    }
 
     private void pickPhoto() {
         Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -426,7 +539,7 @@ public class PhotoTabFragment extends Fragment {
                     if (destination.exists()) {
 //                                source.delete();
                         Log.i(TAG, "source.delete ");
-                        saveToListDB(sPhotoID,sImageType);
+                        saveToListDB(sPhotoID, sImageType);
 
                     }
                     src.close();
@@ -442,7 +555,7 @@ public class PhotoTabFragment extends Fragment {
     }
 
     // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
-    private void saveToListDB(String PhotoID,String sImageType) {
+    private void saveToListDB(String PhotoID, String sImageType) {
         try {
             List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
             ApiMultimedia apiMultimedia = new ApiMultimedia();
@@ -477,7 +590,7 @@ public class PhotoTabFragment extends Fragment {
             if (resultCode == getActivity().RESULT_OK) {
 
                 Log.i(TAG, "Photo save " + sPhotoID);
-                saveToListDB(sPhotoID,".jpg");
+                saveToListDB(sPhotoID, ".jpg");
                 showAllPhoto();
 
             } else if (resultCode == getActivity().RESULT_CANCELED) {
@@ -488,6 +601,9 @@ public class PhotoTabFragment extends Fragment {
                 Log.i("REQUEST_Photo", "Failed to record media");
             }
         }
+//        if (!QiPick.handleActivityResult(getActivity(), requestCode, resultCode, data, this.mCallback)) {
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
 
         // รับข้อมูลจากอัลบั้มภาพ และบันทึกภาพลงแอพ
         if (requestCode == REQUEST_GALLERY) {

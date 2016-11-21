@@ -92,7 +92,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.scdc.csiapp.main.MainActivity" ></activity>
+            android:name="com.scdc.csiapp.main.MainActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.scdc.csiapp.main.InqMainActivity"
             android:screenOrientation="portrait"></activity>

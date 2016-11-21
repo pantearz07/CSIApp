@@ -98,7 +98,7 @@ public class SlideshowDialogFragment extends DialogFragment {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
         initView();
-        if (Build.VERSION.SDK_INT == 19) {
+        if (Build.VERSION.SDK_INT <= 19) {
             myToolbar.setVisibility(View.VISIBLE);
             btnMenu.setOnClickListener(new PhotoOnclick());
             btnClose.setOnClickListener(new PhotoOnclick());
@@ -153,7 +153,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
     private void displayMetaInfo(int position) {
 
-        if (Build.VERSION.SDK_INT == 19) {
+        if (Build.VERSION.SDK_INT <= 19) {
             txtNum.setText((position + 1) + " จาก " + tbMultimediaFiles.size());
         } else {
             toolbar.setTitle((position + 1) + " จาก " + tbMultimediaFiles.size());
