@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -613,13 +614,9 @@ public class SummaryCSITabFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             int count;
-
-            File myDir;
+            createFolder();
             String fileoutput = "";
             try {
-
-                myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc);
-                myDir.mkdirs();
                 //http://localhost/mCSI/assets/csifiles/CR04_000002/docs/
                 String defaultIP = "180.183.251.32/mcsi";
                 SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
@@ -638,7 +635,12 @@ public class SummaryCSITabFragment extends Fragment {
 
                 // Get File Name from URL
                 fileoutput = strSDCardPathName_Doc + params[0] + ".docx";
-                File fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileoutput);
+                File fileDoc;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileoutput);
+                } else {
+                    fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileoutput);
+                }
                 if (fileDoc.exists()) {
                     fileDoc.delete();
                 }
@@ -711,9 +713,35 @@ public class SummaryCSITabFragment extends Fragment {
         }
     }
 
+    public static void createFolder() {
+        File folder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc);
+        } else {
+            folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc);
+        }
+        try {
+            // Create folder
+            if (!folder.exists()) {
+                folder.mkdir();
+                Log.i("mkdir", folder.getAbsolutePath());
+            } else {
+                Log.i("folder.exists", folder.getAbsolutePath());
+
+            }
+        } catch (Exception ex) {
+        }
+
+    }
+
     public void openDocument(String name) {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc + name + ".docx");
+        File file;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc+ name + ".docx");
+        } else {
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc+ name + ".docx");
+        }
         if (file.exists()) {
             String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).toString());
             String mimetype = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);

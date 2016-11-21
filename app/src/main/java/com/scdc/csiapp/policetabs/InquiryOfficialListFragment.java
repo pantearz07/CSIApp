@@ -4,14 +4,17 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -298,35 +301,54 @@ public class InquiryOfficialListFragment extends Fragment {
     }
 
     OfficialListAdapter.OnItemClickListener onItemClickListener = new OfficialListAdapter.OnItemClickListener() {
+
         @Override
         public void onItemClick(View view, int position) {
             final ApiOfficial apiOfficial = apiOfficialList.get(position);
-            //Creating the instance of PopupMenu
-            PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
-            //Inflating the Popup using xml file
-            popup.getMenuInflater().inflate(R.menu.official_menu, popup.getMenu());
-            //registering popup with OnMenuItemClickListener
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                                 public boolean onMenuItemClick(MenuItem item) {
-                                                     switch (item.getItemId()) {
-                                                         case R.id.call:
-                                                             try {
-                                                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                                                 callIntent.setData(Uri.parse("tel:" + apiOfficial.getTbOfficial().getPhoneNumber().toString()));
-                                                                 callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                                 getActivity().startActivity(callIntent);
-                                                             } catch (ActivityNotFoundException activityException) {
-                                                                 Log.e("Calling a Phone Number", "Call failed", activityException);
-                                                             }
-                                                             break;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater().inflate(R.menu.official_menu, popup.getMenu());
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                                     public boolean onMenuItemClick(MenuItem item) {
+                                                         switch (item.getItemId()) {
+                                                             case R.id.call:
+                                                                 calling(apiOfficial.getTbOfficial().getPhoneNumber());
 
+                                                                 break;
+
+                                                         }
+                                                         return true;
                                                      }
-                                                     return true;
                                                  }
-                                             }
-            );
-            popup.show();
+                );
+                popup.show();
+            } else {
+                calling(apiOfficial.getTbOfficial().getPhoneNumber());
+            }
         }
     };
+
+    // ฟังชัน โทรออก
+    private void calling(String sPhonenumber) {
+        if (sPhonenumber == null || sPhonenumber.equals("")) {
+
+        } else {
+            try {
+                Log.i(TAG, "Calling a Phone Number " + sPhonenumber);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:=" + sPhonenumber.replace(" ", "").trim()));
+                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                startActivity(callIntent);
+            } catch (ActivityNotFoundException activityException) {
+                Log.e("Calling a Phone Number", "Call failed", activityException);
+            }
+        }
+    }
+
 }
 

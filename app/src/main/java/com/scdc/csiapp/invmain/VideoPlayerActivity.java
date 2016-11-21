@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
@@ -156,6 +157,8 @@ public class VideoPlayerActivity extends Activity {
                 PopupMenu popup = new PopupMenu(VideoPlayerActivity.this, btnMenu);
                 //Inflating the Popup using xml file
                 popup.getMenuInflater().inflate(R.menu.photo_menu, popup.getMenu());
+                Menu popupMenu = popup.getMenu();
+                popupMenu.findItem(R.id.descphoto).setVisible(false);
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {

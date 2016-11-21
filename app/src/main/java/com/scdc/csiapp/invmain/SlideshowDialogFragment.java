@@ -98,7 +98,7 @@ public class SlideshowDialogFragment extends DialogFragment {
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
         initView();
-        if (Build.VERSION.SDK_INT <= 19) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             myToolbar.setVisibility(View.VISIBLE);
             btnMenu.setOnClickListener(new PhotoOnclick());
             btnClose.setOnClickListener(new PhotoOnclick());
@@ -153,7 +153,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
     private void displayMetaInfo(int position) {
 
-        if (Build.VERSION.SDK_INT <= 19) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             txtNum.setText((position + 1) + " จาก " + tbMultimediaFiles.size());
         } else {
             toolbar.setTitle((position + 1) + " จาก " + tbMultimediaFiles.size());
@@ -169,7 +169,7 @@ public class SlideshowDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT == 19) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_NoActionBar_Fullscreen);
         } else {
             setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme_ActionBar_Transparent);

@@ -389,7 +389,7 @@ public class VoiceTabFragment extends Fragment {
         if (tbMultimediaFileList != null) {
 
             txtVoiceNum.setText(String.valueOf(tbMultimediaFileList.size()));
-            setListViewHeightBasedOnItems(listViewVoice);
+//            setListViewHeightBasedOnItems(listViewVoice);
             listViewVoice.setVisibility(View.VISIBLE);
 
             listViewVoice.setAdapter(new VoiceRecordAdapter(
