@@ -1,16 +1,20 @@
 package com.scdc.csiapp.invmain;
 
 import android.content.ClipData;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -26,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
@@ -359,128 +364,24 @@ public class PhotoTabFragment extends Fragment {
 
     }
 
-//    private final PickCallback mCallback = new PickCallback() {
-//
-//        @Override
-//        public void onImagePicked(@NonNull final PickSource pPickSource, final int pRequestType, @NonNull final Uri pImageUri) {
-//            // Do something with Uri, for example load image into an ImageView
-////            Glide.with(getActivity())
-////                    .load(pImageUri)
-////                    .fitCenter()
-////                    .into(mImageView);
-//            // Get the cursor getFilepath
-//            final Context context = getActivity();
-//            final boolean exists = UriUtils.contentExists(context, pImageUri);
-//
-//            if (!exists) {
-//
-//                Toast.makeText(context, "Image does not exist. WTF!?", Toast.LENGTH_SHORT)
-//                        .show();
-//
-//                return;
-//            }
-//            final String extension = UriUtils.getFileExtension(context, pImageUri);
-//            Log.i(TAG, "Picked: " + pImageUri.toString() + "\nMIME type: " + UriUtils.getMimeType(context,
-//                    pImageUri) + "\nFile extension: " + extension + "\nRequest type: " + pRequestType);
-//            try {
-//
-//                final String ext = extension == null ? "" : "." + extension;
-//                final File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), QIP_DIR_NAME);
-//                final File file = new File(outDir, "qip_temp" + ext);
-//
-//                //noinspection ResultOfMethodCallIgnored
-//                outDir.mkdirs();
-//
-//                // DO NOT do this on main thread. This is only for reference
-//                UriUtils.saveContentToFile(context, pImageUri, file);
-//
-//                Toast.makeText(context, "Save complete", Toast.LENGTH_SHORT)
-//                        .show();
-//
-//            } catch (final IOException e) {
-//                Toast.makeText(context, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT)
-//                        .show();
-//            }
-//        }
-//
-//        @Override
-//        public void onMultipleImagesPicked(final int pRequestType, @NonNull final List<Uri> pImageUris) {
-//            // meh whatever, just show first picked ;D
-//            Log.i(TAG, "Picked a few images. Uris: " + Arrays.toString(pImageUris.toArray()));
-//            this.onImagePicked(PickSource.GALLERY, pRequestType, pImageUris.get(0));
-//        }
-//
-//        @Override
-//        public void onError(@NonNull final PickSource pPickSource, final int pRequestType, @NonNull final String pErrorString) {
-//            Log.e(TAG, "Err: " + pErrorString);
-//        }
-//
-//        @Override
-//        public void onCancel(@NonNull final PickSource pPickSource, final int pRequestType) {
-//            Log.d(TAG, "Cancel: " + pPickSource.name());
-//        }
-//
-//    };
-
-//    private void pickFromGallery() {
-//        final File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), QIP_DIR_NAME);
-//        Log.d(TAG, outDir.getAbsolutePath() + ", can write: " + outDir.canWrite());
-//        @PickTriggerResult final int triggerResult;
-//        triggerResult = QiPick.in(this)
-//                .allowOnlyLocalContent(true)
-//                .withAllowedMimeTypes(QiPick.MIME_TYPE_IMAGE_JPEG)
-//                .withCameraPicsDirectory(outDir)
-//                .withRequestType(1)
-//                .fromMultipleSources("All sources", PickSource.DOCUMENTS, PickSource.CAMERA, PickSource.GALLERY);
-//        this.solveTriggerResult(triggerResult);
-//    }
-
-//    private void solveTriggerResult(final @PickTriggerResult int pTriggerResult) {
-//
-//        switch (pTriggerResult) {
-//
-//            case PickTriggerResult.TRIGGER_PICK_ERR_CAM_FILE: {
-//
-//                Toast.makeText(getActivity(), "Could not create file to save Camera image. Make sure camera pics dir is writable", Toast.LENGTH_SHORT)
-//                        .show();
-//
-//                break;
-//            }
-//
-//            case PickTriggerResult.TRIGGER_PICK_ERR_NO_ACTIVITY: {
-//
-//                Toast.makeText(getActivity(), "There is no Activity that can pick requested file :(", Toast.LENGTH_SHORT)
-//                        .show();
-//
-//                break;
-//            }
-//
-//            case PickTriggerResult.TRIGGER_PICK_ERR_NO_PICK_SOURCES: {
-//
-//                Toast.makeText(getActivity(), "Dear dev, multiple source request needs at least one source!", Toast.LENGTH_SHORT)
-//                        .show();
-//
-//                break;
-//            }
-//
-//            case PickTriggerResult.TRIGGER_PICK_OK: {
-//                break;// all good, do nothing
-//            }
-//
-//        }
-//
-//    }
-
     private void pickPhoto() {
-        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getIntent.setType("image/jpg");
+//        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//        getIntent.setType("image/jpg");
+//
+//        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        pickIntent.setType("image/jpg");
+//
+//        Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
+//        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+//        getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "เลือกรูปภาพ"), REQUEST_GALLERY);
 
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/jpg");
-
-        Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
-        getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
     }
 
     private void takePhoto() {
@@ -614,28 +515,35 @@ public class PhotoTabFragment extends Fragment {
                     if (data.getData() != null) {
                         Uri mImageUri = data.getData();
                         // Get the cursor getFilepath
-                        imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            imageEncoded = getPath(getActivity(), mImageUri);
+                        }else{
+                            imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        }
                         Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
                         saveToMyAlbum(imageEncoded);
                     } else { //ถ้าเลือกหลายรูป
-                        if (data.getClipData() != null) {
-                            ClipData mClipData = data.getClipData();
-                            ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            if (data.getClipData() != null) {
+                                ClipData mClipData = data.getClipData();
+                                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                                    //Multiple images
+                                    ClipData.Item item = mClipData.getItemAt(i);
+                                    Uri uri = item.getUri();
+                                    // Get the cursor getFilepath
+                                    imageEncoded = getPath(getActivity(), uri);
+                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
 
-                                ClipData.Item item = mClipData.getItemAt(i);
-                                Uri uri = item.getUri();
-                                mArrayUri.add(uri);
-                                // Get the cursor getFilepath
-                                imageEncoded = getFilepath(filePathColumn, uri);
-                                Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
-
-                                if (imageEncoded != null) {
-                                    imagesEncodedList.add(imageEncoded);
-                                    saveToMyAlbum(imageEncoded);
+                                    if (imageEncoded != null) {
+                                        imagesEncodedList.add(imageEncoded);
+                                        saveToMyAlbum(imageEncoded);
+                                    }
                                 }
+                                Log.v(TAG, "REQUEST_GALLERY Selected Images   :"  + " imagesEncodedList :" + imagesEncodedList.size());
                             }
-                            Log.v(TAG, "Selected Images mArrayUri :" + mArrayUri.size() + " imagesEncodedList :" + imagesEncodedList.size());
+                        }else{
+                            Toast.makeText(getActivity(), "ไม่สามารถเลือกหลายรูปได้", Toast.LENGTH_LONG)
+                                    .show();
                         }
                     }
 
@@ -684,5 +592,133 @@ public class PhotoTabFragment extends Fragment {
         cursor.close();
         return imageEncoded;
     }
+    /**
+     * Get a file path from a Uri. This will get the the path for Storage Access
+     * Framework Documents, as well as the _data field for the MediaStore and
+     * other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri     The Uri to query.
+     * @author paulburke
+     */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static String getPath(final Context context, final Uri uri) {
 
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+
+                // TODO handle non-primary volumes
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                return getDataColumn(context, contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[]{
+                        split[1]
+                };
+
+                return getDataColumn(context, contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            return getDataColumn(context, uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the value of the data column for this Uri. This is useful for
+     * MediaStore Uris, and other file-based ContentProviders.
+     *
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
+     * @param selectionArgs (Optional) Selection arguments used in the query.
+     * @return The value of the _data column, which is typically a file path.
+     */
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
+
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int column_index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(column_index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
 }

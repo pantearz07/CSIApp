@@ -1189,7 +1189,7 @@ public class DetailsTabFragment extends Fragment {
         pickIntent.setType("image/jpg");
 
         Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+        chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, new Intent[]{pickIntent});
         getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
     }
 
