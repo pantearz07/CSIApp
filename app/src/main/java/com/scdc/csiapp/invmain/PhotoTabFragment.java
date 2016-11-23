@@ -521,7 +521,7 @@ public class PhotoTabFragment extends Fragment {
                                     Uri uri = item.getUri();
                                     // Get the cursor getFilepath
                                     imageEncoded = getPathUri.getPath(getActivity(), uri);
-                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
+//                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
 
                                     if (imageEncoded != null) {
                                         imagesEncodedList.add(imageEncoded);
