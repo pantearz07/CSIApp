@@ -491,9 +491,6 @@ public class PhotoTabFragment extends Fragment {
                 Log.i("REQUEST_Photo", "Failed to record media");
             }
         }
-//        if (!QiPick.handleActivityResult(getActivity(), requestCode, resultCode, data, this.mCallback)) {
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
 
         // รับข้อมูลจากอัลบั้มภาพ และบันทึกภาพลงแอพ
         if (requestCode == REQUEST_GALLERY) {

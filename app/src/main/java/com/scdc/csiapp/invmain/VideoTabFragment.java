@@ -1,12 +1,16 @@
 package com.scdc.csiapp.invmain;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -15,6 +19,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +29,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
@@ -37,7 +43,10 @@ import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +56,11 @@ import java.util.List;
 public class VideoTabFragment extends Fragment {
     private static final String TAG = "DEBUG-VideoTabFragment";
     public static final int REQUEST_VIDEO = 888;
-    public static final int REQUEST_LOAD_VIDEO = 88;
+    public static final int REQUEST_LOAD_VIDEO = 8;
+    public static final int REQUEST_GALLERY = 88;
     private String mCurrentVideoPath;
+    String imageEncoded;
+    List<String> imagesEncodedList;
     String caseReportID, sVideoID, timeStamp;
     DBHelper dbHelper;
     SQLiteDatabase mDb;
@@ -65,6 +77,7 @@ public class VideoTabFragment extends Fragment {
     private static String strSDCardPathName_Vid = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
+    GetPathUri getPathUri;
 
     @Nullable
     @Override
@@ -83,7 +96,7 @@ public class VideoTabFragment extends Fragment {
         fabBtn.setOnClickListener(new VideoOnClickListener());
         SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
-
+        getPathUri = new GetPathUri();
         if (CSIDataTabFragment.mode == "view") {
 
             CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
@@ -235,15 +248,7 @@ public class VideoTabFragment extends Fragment {
                     VideoPlayActivity.putExtra("position", position);
                     VideoPlayActivity.putExtra("totalnum", tbMultimediaFileList.size());
                     getActivity().startActivityForResult(VideoPlayActivity, REQUEST_LOAD_VIDEO);
-//
-//                    Bundle bundle = new Bundle();
-//                    bundle.putSerializable("video", (Serializable) tbMultimediaFileList);
-//                    bundle.putInt("position", position);
-//
-//                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                    SlideshowVideoDialogFragment newFragment = SlideshowVideoDialogFragment.newInstance();
-//                    newFragment.setArguments(bundle);
-//                    newFragment.show(ft, "slideshow");
+
                 }
             });
         } else {
@@ -260,27 +265,9 @@ public class VideoTabFragment extends Fragment {
         if (requestCode == REQUEST_VIDEO) {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
-
+                    saveToListDB(sVideoID, ".mp4");
                     Log.i(TAG, "VIDEO save " + sVideoID);
-                    List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
-                    ApiMultimedia apiMultimedia = new ApiMultimedia();
-                    TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
-                    tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
-                    tbMultimediaFile.FileID = sVideoID;
-                    tbMultimediaFile.FileDescription = "";
-                    tbMultimediaFile.FileType = "video";
-                    tbMultimediaFile.FilePath = sVideoID + ".mp4";
-                    tbMultimediaFile.Timestamp = timeStamp;
-                    apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
 
-                    apiMultimediaList.add(apiMultimedia);
-                    CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
-                    Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
-                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                    if (isSuccess) {
-                        Log.i(TAG, "video saved to Gallery! Video/" + " : " + sVideoID + ".mp4");
-
-                    }
                     showAllVideo();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -292,6 +279,61 @@ public class VideoTabFragment extends Fragment {
             } else {
                 Log.i("REQUEST_VIDEO", "Failed to record media");
             }
+        }
+        // รับข้อมูลจากอัลบั้มภาพ และบันทึกภาพลงแอพ
+        if (requestCode == REQUEST_GALLERY) {
+            if (resultCode == getActivity().RESULT_OK && null != data) {
+                try {
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    imagesEncodedList = new ArrayList<String>();
+                    if (data.getData() != null) {
+                        Uri mImageUri = data.getData();
+                        // Get the cursor getFilepath
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            imageEncoded = getPathUri.getPath(getActivity(), mImageUri);
+                        } else {
+                            imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        }
+                        Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
+                        saveToMyAlbum(imageEncoded);
+                    } else { //ถ้าเลือกหลายรูป
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            if (data.getClipData() != null) {
+                                ClipData mClipData = data.getClipData();
+                                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                                    //Multiple images
+                                    ClipData.Item item = mClipData.getItemAt(i);
+                                    Uri uri = item.getUri();
+                                    // Get the cursor getFilepath
+                                    imageEncoded = getPathUri.getPath(getActivity(), uri);
+//                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
+
+                                    if (imageEncoded != null) {
+                                        imagesEncodedList.add(imageEncoded);
+                                        saveToMyAlbum(imageEncoded);
+                                    }
+                                }
+                                Log.v(TAG, "REQUEST_GALLERY Selected Images   :" + " imagesEncodedList :" + imagesEncodedList.size());
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "ไม่สามารถเลือกหลายรูปได้", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+
+                    showAllVideo();
+                    Log.i(TAG, "REQUEST_GALLERY");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_GALLERY");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_GALLERY");
+            }
+
         }
         if (requestCode == REQUEST_LOAD_VIDEO) {
             if (resultCode == getActivity().RESULT_OK) {
@@ -345,31 +387,161 @@ public class VideoTabFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (v == fabBtn) {
-                File newfile;
-                createFolder();
-                Intent intentvideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-                sVideoID = "VID_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-                timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
-
-                String sVideoPath = strSDCardPathName_Vid + sVideoID + ".mp4";
-                newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), sVideoPath);
-                if (newfile.exists())
-                    newfile.delete();
-                try {
-                    newfile.createNewFile();
-                    mCurrentVideoPath = newfile.getAbsolutePath();
-                } catch (IOException e) {
-                }
-                if (newfile != null) {
-                    uri = Uri.fromFile(newfile);
-                    intentvideo.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                    getActivity().startActivityForResult(intentvideo, REQUEST_VIDEO);
-                    String sVideoDescription = "";
-                    Log.i("show", "Video saved to Gallery! Video/" + " : " + sVideoPath);
-                }
+                String title = getString(R.string.importvideo);
+                CharSequence[] itemlist = {getString(R.string.video),
+                        getString(R.string.gallery)
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setIcon(R.drawable.ic_video);
+                builder.setTitle(title);
+                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                AlertDialog alert = builder.create();
+                alert.setCancelable(true);
+                alert.show();
             }
         }
     }
 
+    private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
+
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int which) {
+            switch (which) {
+                case 0:// Take Photo
+                    // Do Take Photo task here
+                    takeVideo();
+                    break;
+                case 1:// Choose Existing Photo
+                    // Do Pick Photo task here
+                    pickVideo();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void takeVideo() {
+        File newfile;
+        createFolder();
+        Intent intentvideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+        sVideoID = "VID_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+        timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+
+        String sVideoPath = strSDCardPathName_Vid + sVideoID + ".mp4";
+        newfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), sVideoPath);
+        if (newfile.exists())
+            newfile.delete();
+        try {
+            newfile.createNewFile();
+            mCurrentVideoPath = newfile.getAbsolutePath();
+        } catch (IOException e) {
+        }
+        if (newfile != null) {
+            uri = Uri.fromFile(newfile);
+            intentvideo.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            getActivity().startActivityForResult(intentvideo, REQUEST_VIDEO);
+            String sVideoDescription = "";
+            Log.i("show", "Video saved to Gallery! Video/" + " : " + sVideoPath);
+        }
+    }
+
+    private void pickVideo() {
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "เลือกวิดีโอ"), REQUEST_GALLERY);
+
+    }
+
+    private void saveToMyAlbum(String imageEncoded) {
+        try {
+            createFolder();
+            File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+            File datadest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+            String sVideoID = "", sFileType = "";
+            String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+            sVideoID = "VID_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5] + CurrentDate_ID[6];
+            timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+            sFileType = imageEncoded.substring(imageEncoded.lastIndexOf("."));
+            Log.i(TAG, "sVideoID " + sVideoID + " sImageType " + sFileType);
+            if (sd.canWrite()) {
+//                        String sourceImagePath = "/path/to/source/file.jpg";
+                String destinationImagePath = strSDCardPathName_Vid + sVideoID + sFileType;
+                File source = new File(imageEncoded);
+
+                File destination = new File(datadest, destinationImagePath);
+                if (source.exists()) {
+                    Log.i(TAG, "source ");
+                    FileChannel src = new FileInputStream(source).getChannel();
+                    FileChannel dst = new FileOutputStream(destination).getChannel();
+
+                    try {
+                        dst.transferFrom(src, 0, src.size());
+                        Log.i(TAG, "transferFrom ");
+                    } catch (IOException e) {
+                        Log.i(TAG, "transferFrom " + e.getMessage());
+                    }
+                    if (destination.exists()) {
+//                                source.delete();
+                        Log.i(TAG, "source.delete ");
+                        saveToListDB(sVideoID, sFileType);
+
+                    }
+                    src.close();
+                    dst.close();
+                    Log.i(TAG, "save new Video from gallery " + destinationImagePath);
+                } else {
+                    Log.i(TAG, "Video from gallery error ");
+                }
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "Video from gallery error " + e.getMessage());
+        }
+    }
+
+    // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
+    private void saveToListDB(String videoID, String sFileType) {
+        try {
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            ApiMultimedia apiMultimedia = new ApiMultimedia();
+            TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+            tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+            tbMultimediaFile.FileID = videoID;
+            tbMultimediaFile.FileDescription = "";
+            tbMultimediaFile.FileType = "video";
+            tbMultimediaFile.FilePath = videoID + sFileType;
+            tbMultimediaFile.Timestamp = timeStamp;
+            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+            apiMultimediaList.add(apiMultimedia);
+            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+            Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "video saved to Gallery! Video/" + " : " + videoID + sFileType);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getFilepath(String[] filePathColumn, Uri uri) {
+        // Get the cursor
+        Cursor cursor = getActivity().getContentResolver().query(uri,
+                filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        imageEncoded = cursor.getString(columnIndex);
+
+        cursor.close();
+        return imageEncoded;
+    }
 }

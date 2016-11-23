@@ -1,14 +1,18 @@
 package com.scdc.csiapp.invmain;
 
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +31,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
@@ -39,7 +44,11 @@ import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +66,14 @@ public class DiagramTabFragment extends Fragment {
     CoordinatorLayout rootLayout;
     String[] Cmd = {"View", "Delete"};
     TextView txtPhotoNum;
-    DrawingDiagramFragment drawingDiagramFragment = new DrawingDiagramFragment();
+
     GetDateTime getDateTime;
+    public static final int REQUEST_DRAW = 22;
     public static final int REQUEST_LOAD_IMAGE = 2;
+    public static final int REQUEST_GALLERY = 222;
+    String imageEncoded;
+    List<String> imagesEncodedList;
+    GetPathUri getPathUri;
     public static List<TbMultimediaFile> tbMultimediaFileList = null;
     public static List<ApiMultimedia> apiMultimediaList = null;
     String sDiagramID;
@@ -72,6 +86,9 @@ public class DiagramTabFragment extends Fragment {
     ConnectionDetector cd;
     private static String strSDCardPathName_Pic = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
+    TextView editMediaName;
+    EditText editMediaDescription;
+    String edtMediaDescription, timeStamp;
 
     @Nullable
     @Override
@@ -81,6 +98,7 @@ public class DiagramTabFragment extends Fragment {
         mFragmentManager = getActivity().getSupportFragmentManager();
         dbHelper = new DBHelper(getActivity());
         getDateTime = new GetDateTime();
+        getPathUri = new GetPathUri();
         View viewDiagramTab = inflater.inflate(R.layout.diagram_tab_layout, container, false);
         cd = new ConnectionDetector(getActivity());
         gViewPic = (GridView) viewDiagramTab.findViewById(R.id.gridViewShowMedia);
@@ -174,54 +192,116 @@ public class DiagramTabFragment extends Fragment {
         @Override
         public void onClick(View view) {
             if (view == fabBtn) {
-
-                final AlertDialog.Builder addDialog = new AlertDialog.Builder(getActivity());
-                final LayoutInflater inflaterDialog = (LayoutInflater) getActivity().getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
-
-                View Viewlayout = inflaterDialog.inflate(R.layout.add_media_dialog,
-                        (ViewGroup) findViewById(R.id.layout_media_dialog));
-                addDialog.setIcon(R.drawable.ic_drawing);
-                addDialog.setTitle("วาดภาพแผนผังสถานที่เกิดเหตุ");
-                addDialog.setView(Viewlayout);
-
-                String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-                sDiagramID = "DIA_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
-                final TextView editMediaName = (TextView) Viewlayout
-                        .findViewById(R.id.editMediaName);
-                editMediaName.setText(sDiagramID);
-
-                final EditText editMediaDescription = (EditText) Viewlayout
-                        .findViewById(R.id.editMediaDescription);
-                editMediaDescription.setHint("คำอธิบายภาพ");
-
-                // Button OK
-                addDialog.setPositiveButton(getString(R.string.save),
-                        new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                Bundle i = new Bundle();
-                                i.putString(Bundle_ID, sDiagramID);
-                                i.putString(Bundle_mode, "new");
-                                i.putString(Bundle_MediaDescription, editMediaDescription.getText().toString());
-
-                                drawingDiagramFragment.setArguments(i);
-                                MainActivity.setFragment(drawingDiagramFragment, 1);
-                            }
-                        })
-                        // Button Cancel
-                        .setNegativeButton(getString(R.string.cancel),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-
-                addDialog.create();
-                addDialog.show();
+                String title = getString(R.string.importphoto);
+                CharSequence[] itemlist = {getString(R.string.drawing),
+                        getString(R.string.gallery)
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setIcon(R.drawable.ic_camera_add);
+                builder.setTitle(title);
+                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                AlertDialog alert = builder.create();
+                alert.setCancelable(true);
+                alert.show();
             }
         }
+    }
+
+    private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
+
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int which) {
+            switch (which) {
+                case 0:// Take Photo
+                    // Do Take Photo task here
+                    drawingDiagram();
+                    break;
+                case 1:// Choose Existing Photo
+                    // Do Pick Photo task here
+                    pickFromGallery();
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static void createFolder() {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), strSDCardPathName_Pic);
+        try {
+            // Create folder
+            if (!folder.exists()) {
+                folder.mkdir();
+                Log.i("mkdir", folder.getAbsolutePath());
+            } else {
+                Log.i("folder.exists", folder.getAbsolutePath());
+
+            }
+        } catch (Exception ex) {
+        }
+
+    }
+
+    private void pickFromGallery() {
+        createFolder();
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "เลือกรูปภาพ"), REQUEST_GALLERY);
+    }
+
+    private void drawingDiagram() {
+        final AlertDialog.Builder addDialog = new AlertDialog.Builder(getActivity());
+        final LayoutInflater inflaterDialog = (LayoutInflater) getActivity().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+
+        View Viewlayout = inflaterDialog.inflate(R.layout.add_media_dialog,
+                (ViewGroup) findViewById(R.id.layout_media_dialog));
+        addDialog.setIcon(R.drawable.ic_drawing);
+        addDialog.setTitle("วาดภาพแผนผังสถานที่เกิดเหตุ");
+        addDialog.setView(Viewlayout);
+
+        String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+        sDiagramID = "DIA_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+        editMediaName = (TextView) Viewlayout
+                .findViewById(R.id.editMediaName);
+        editMediaName.setText(sDiagramID);
+        editMediaDescription = (EditText) Viewlayout
+                .findViewById(R.id.editMediaDescription);
+        edtMediaDescription = editMediaDescription.getText().toString();
+        editMediaDescription.setHint("คำอธิบายภาพ");
+        // Button OK
+        addDialog.setPositiveButton(getString(R.string.save),
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Bundle i = new Bundle();
+                        i.putString(Bundle_ID, sDiagramID);
+                        i.putString(Bundle_mode, "new");
+                        i.putString(Bundle_MediaDescription, edtMediaDescription);
+                        DrawingDiagramFragment drawingDiagramFragment = new DrawingDiagramFragment();
+                        drawingDiagramFragment.setTargetFragment(DiagramTabFragment.this, REQUEST_DRAW);
+                        drawingDiagramFragment.setArguments(i);
+                        MainActivity.setFragment(drawingDiagramFragment, 1);
+                    }
+                })
+                // Button Cancel
+                .setNegativeButton(getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        addDialog.create();
+        addDialog.show();
+
     }
 
     public class DiagramAdapter extends BaseAdapter {
@@ -350,7 +430,61 @@ public class DiagramTabFragment extends Fragment {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         Log.i(TAG, "Result media " + String.valueOf(requestCode) + " " + String.valueOf(resultCode));
+        // รับข้อมูลจากอัลบั้มภาพ และบันทึกภาพลงแอพ
+        if (requestCode == REQUEST_GALLERY) {
+            if (resultCode == getActivity().RESULT_OK && null != data) {
+                try {
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    imagesEncodedList = new ArrayList<String>();
+                    if (data.getData() != null) {
+                        Uri mImageUri = data.getData();
+                        // Get the cursor getFilepath
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            imageEncoded = getPathUri.getPath(getActivity(), mImageUri);
+                        } else {
+                            imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        }
+                        Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
+                        saveToMyAlbum(imageEncoded);
+                    } else { //ถ้าเลือกหลายรูป
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            if (data.getClipData() != null) {
+                                ClipData mClipData = data.getClipData();
+                                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                                    //Multiple images
+                                    ClipData.Item item = mClipData.getItemAt(i);
+                                    Uri uri = item.getUri();
+                                    // Get the cursor getFilepath
+                                    imageEncoded = getPathUri.getPath(getActivity(), uri);
+//                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
 
+                                    if (imageEncoded != null) {
+                                        imagesEncodedList.add(imageEncoded);
+                                        saveToMyAlbum(imageEncoded);
+                                    }
+                                }
+                                Log.v(TAG, "REQUEST_GALLERY Selected Images   :" + " imagesEncodedList :" + imagesEncodedList.size());
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "ไม่สามารถเลือกหลายรูปได้", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+
+                    showAllPic();
+                    Log.i(TAG, "REQUEST_GALLERY");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_GALLERY");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_GALLERY");
+            }
+
+        }
         if (requestCode == REQUEST_LOAD_IMAGE) {
             if (resultCode == getActivity().RESULT_OK) {
                 try {
@@ -367,6 +501,91 @@ public class DiagramTabFragment extends Fragment {
                 Log.i(TAG, "Failed to REQUEST_LOAD_IMAGE");
             }
 
+        }
+    }
+
+    public String getFilepath(String[] filePathColumn, Uri uri) {
+        // Get the cursor
+        Cursor cursor = getActivity().getContentResolver().query(uri,
+                filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        imageEncoded = cursor.getString(columnIndex);
+
+        cursor.close();
+        return imageEncoded;
+    }
+
+    private void saveToMyAlbum(String imageEncoded) {
+        try {
+            File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File datadest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String sPhotoID = "", sImageType = "";
+            String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+            sPhotoID = "DIA_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5] + CurrentDate_ID[6];
+            timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+            sImageType = imageEncoded.substring(imageEncoded.lastIndexOf("."));
+            Log.i(TAG, "sPhotoID " + sPhotoID + " sImageType " + sImageType);
+            if (sd.canWrite()) {
+//                        String sourceImagePath = "/path/to/source/file.jpg";
+                String destinationImagePath = strSDCardPathName_Pic + sPhotoID + sImageType;
+                File source = new File(imageEncoded);
+
+                File destination = new File(datadest, destinationImagePath);
+                if (source.exists()) {
+                    Log.i(TAG, "source ");
+                    FileChannel src = new FileInputStream(source).getChannel();
+                    FileChannel dst = new FileOutputStream(destination).getChannel();
+
+                    try {
+                        dst.transferFrom(src, 0, src.size());
+                        Log.i(TAG, "transferFrom ");
+                    } catch (IOException e) {
+                        Log.i(TAG, "transferFrom " + e.getMessage());
+                    }
+                    if (destination.exists()) {
+//                                source.delete();
+                        Log.i(TAG, "source.delete ");
+                        saveToListDB(sPhotoID, sImageType);
+
+                    }
+                    src.close();
+                    dst.close();
+                    Log.i(TAG, "save new Photo from gallery " + destinationImagePath);
+                } else {
+                    Log.i(TAG, "Photo from gallery error ");
+                }
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "Photo from gallery error " + e.getMessage());
+        }
+    }
+
+    // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
+    private void saveToListDB(String PhotoID, String sImageType) {
+        try {
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            ApiMultimedia apiMultimedia = new ApiMultimedia();
+            TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+            tbMultimediaFile.CaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+            tbMultimediaFile.FileID = PhotoID;
+            tbMultimediaFile.FileDescription = "แผนผัง";
+            tbMultimediaFile.FileType = "diagram";
+            tbMultimediaFile.FilePath = PhotoID + sImageType;
+            tbMultimediaFile.Timestamp = timeStamp;
+            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+            apiMultimediaList.add(apiMultimedia);
+            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+//                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+            Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "PHOTO saved to Gallery!  : " + PhotoID + sImageType);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
