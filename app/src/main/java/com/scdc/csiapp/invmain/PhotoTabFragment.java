@@ -147,13 +147,10 @@ public class PhotoTabFragment extends Fragment {
 
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
-            textView.setVisibility(View.GONE);
- /*           textView.setText(lis[position][3].toString() + "\n"
-                    + lis[position][4].toString());
-  */
-//            String root = Environment.getExternalStorageDirectory().toString();
+//            textView.setVisibility(View.GONE);
+            textView.setText(tbMultimediaFileList.get(position).FileDescription.toString());
+
             String strPath = strSDCardPathName_Pic + tbMultimediaFileList.get(position).FilePath.toString();
-//            Log.i("strPath ", strPath);
             // Image Resource
             ImageView imageView = (ImageView) convertView
                     .findViewById(R.id.imgPhoto);

@@ -159,8 +159,8 @@ public class VideoTabFragment extends Fragment {
 
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
-            textView.setVisibility(View.GONE);
-
+//            textView.setVisibility(View.GONE);
+            textView.setText(tbMultimediaFileList.get(position).FileDescription.toString());
             String strPath = strSDCardPathName_Vid
                     + tbMultimediaFileList.get(position).FilePath.toString();
 
@@ -245,6 +245,8 @@ public class VideoTabFragment extends Fragment {
                             tbMultimediaFileList.get(position).FilePath.toString());
                     VideoPlayActivity.putExtra("fileid",
                             tbMultimediaFileList.get(position).FileID.toString());
+                    VideoPlayActivity.putExtra("desc",
+                            tbMultimediaFileList.get(position).FileDescription.toString());
                     VideoPlayActivity.putExtra("position", position);
                     VideoPlayActivity.putExtra("totalnum", tbMultimediaFileList.size());
                     getActivity().startActivityForResult(VideoPlayActivity, REQUEST_LOAD_VIDEO);

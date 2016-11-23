@@ -419,8 +419,8 @@
 
                         <ImageButton
                             android:id="@+id/btn_camera"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
                             android:background="@color/transparent"
                             android:src="@drawable/ic_camera_add" />
 
@@ -441,9 +441,9 @@
                                     android:id="@+id/horizontal_gridView_Outside"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:columnWidth="70dp"
+                                    android:columnWidth="100dp"
                                     android:gravity="center_vertical"
-                                    android:horizontalSpacing="1dp" />
+                                    android:horizontalSpacing="2dp" />
                             </LinearLayout>
                         </HorizontalScrollView>
 

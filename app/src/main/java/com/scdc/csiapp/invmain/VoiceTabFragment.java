@@ -1,17 +1,22 @@
 package com.scdc.csiapp.invmain;
 
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -29,7 +34,6 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
@@ -47,12 +51,14 @@ import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +89,14 @@ public class VoiceTabFragment extends Fragment {
     Context mContext;
     private static String strSDCardPathName_Voi = "/CSIFiles/";
     String defaultIP = "180.183.251.32/mcsi";
+    public static final int REQUEST_GALLERY = 88;
+    String imageEncoded;
+    List<String> imagesEncodedList;
+    GetPathUri getPathUri;
     ConnectionDetector cd;
+    protected static final int DIALOG_AddDescPhoto = 0;
+    ViewGroup viewDescPhoto;
+    View viewVoiceTab;
 
     @Nullable
     @Override
@@ -92,12 +105,12 @@ public class VoiceTabFragment extends Fragment {
         getDateTime = new GetDateTime();
         caseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
         dbHelper = new DBHelper(getActivity());
-        View viewVoiceTab = inflater.inflate(R.layout.voice_tab_layout, container, false);
+        viewVoiceTab = inflater.inflate(R.layout.voice_tab_layout, container, false);
         mContext = viewVoiceTab.getContext();
         cd = new ConnectionDetector(getActivity());
         SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
         defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
-
+        getPathUri = new GetPathUri();
 
         if (mMedia != null) {
             mMedia.release();
@@ -240,7 +253,7 @@ public class VoiceTabFragment extends Fragment {
                     file.delete();
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Delete Recording", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "ไม่มีไฟล์", Toast.LENGTH_SHORT).show();
                 }
@@ -255,26 +268,8 @@ public class VoiceTabFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Stop Recording", Toast.LENGTH_SHORT).show();
                 stopRecording();
-                List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
-                ApiMultimedia apiMultimedia = new ApiMultimedia();
-                TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
-                tbMultimediaFile.CaseReportID = caseReportID;
-                tbMultimediaFile.FileID = sVoiceID1;
-                tbMultimediaFile.FileDescription = sVoiceDescription1;
-                tbMultimediaFile.FileType = "voice";
-                tbMultimediaFile.FilePath = sVoiceID1 + ".3gp";
-                tbMultimediaFile.Timestamp = stimeStamp;
-                apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
 
-                apiMultimediaList.add(apiMultimedia);
-                CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
-//                CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
-                Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
-                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                if (isSuccess) {
-                    Log.i(TAG, "voice saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID1 + ".3gp");
-                    showListVoiceRecord();
-                }
+                saveToListDB(sVoiceID1, stimeStamp, ".3gp", sVoiceDescription1);
                 dialog.dismiss();
 
             }
@@ -282,7 +277,6 @@ public class VoiceTabFragment extends Fragment {
 
         dialog.show();
     }
-
 
     private void startRecording(String sVoiceID1) {
         // TODO Auto-generated method stub
@@ -305,26 +299,6 @@ public class VoiceTabFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
-//    @TargetApi(Build.VERSION_CODES.N)
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private void pauseRecording() {
-//        if (null != recorder) {
-//            try {
-//                recorder.pause();
-//            } catch (IllegalStateException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-//
-//    @TargetApi(Build.VERSION_CODES.N)
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private void resumeRecording() {
-//        if (null != recorder) {
-//            recorder.resume();
-//        }
-//    }
 
     private void stopRecording() {
         if (null != recorder) {
@@ -362,85 +336,6 @@ public class VoiceTabFragment extends Fragment {
                     .show();
         }
     };
-
-    public void showListVoiceRecord() {
-        // TODO Auto-generated method stub
-        tbMultimediaFileList = new ArrayList<>();
-        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
-            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
-            if (cd.isNetworkAvailable()) {
-                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
-                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equals("voice")) {
-                            tbMultimediaFileList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
-                        }
-                    }
-                }
-                Log.i(TAG, "tbMultimediaFileList " + String.valueOf(tbMultimediaFileList.size()));
-            } else {
-                tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
-
-            }
-        } else {
-            tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
-
-            Log.i(TAG, "tbMultimediaFileList voice offline " + String.valueOf(tbMultimediaFileList.size()));
-        }
-        if (tbMultimediaFileList != null) {
-
-            txtVoiceNum.setText(String.valueOf(tbMultimediaFileList.size()));
-//            setListViewHeightBasedOnItems(listViewVoice);
-            listViewVoice.setVisibility(View.VISIBLE);
-
-            listViewVoice.setAdapter(new VoiceRecordAdapter(
-                    getActivity()));
-            // OnClick
-            listViewVoice.setOnItemClickListener(new MyOnItemClickListener());
-        } else {
-            txtVoiceNum.setText(String.valueOf(0));
-
-            listViewVoice.setVisibility(View.GONE);
-            Log.i("Recieve", "Null!! ");
-
-        }
-    }
-
-    public static boolean setListViewHeightBasedOnItems(ListView listView) {
-
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter != null) {
-
-            int numberOfItems = listAdapter.getCount();
-            Log.i("inside", String.valueOf(numberOfItems));
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = listAdapter.getView(itemPos, null, listView);
-                item.measure(0, 0);
-                Log.i("inside getHeight ", String.valueOf(itemPos) + " - " + String.valueOf(item.getMeasuredHeight()));
-                totalItemsHeight += item.getMeasuredHeight();
-            }
-
-            // Get total height of all item dividers.
-            int totalDividersHeight = listView.getDividerHeight() *
-                    (numberOfItems - 1);
-            int totalHeight = totalItemsHeight + totalDividersHeight;
-            // Set list height.
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            //params.height = (int) (totalItemsHeight-(totalItemsHeight/1.5));
-            params.height = totalHeight;
-            Log.i("inside totalHeight", String.valueOf(totalHeight));
-            //  Log.i("inside getDividerHeight", String.valueOf(totalItemsHeight) + " " + String.valueOf(totalItemsHeight - (totalItemsHeight / 1.5)));
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-
-            return true;
-
-        } else {
-            return false;
-        }
-
-    }
 
     public void showPlayDialog(final String filepath, final String sVoiceID) {
         // TODO Auto-generated method stub
@@ -543,6 +438,47 @@ public class VoiceTabFragment extends Fragment {
         }
     }
 
+    public void showListVoiceRecord() {
+        // TODO Auto-generated method stub
+        tbMultimediaFileList = new ArrayList<>();
+        if (CSIDataTabFragment.mode.equals("view") && CSIDataTabFragment.apiCaseScene.getMode().equals("online")) {
+            Log.i(TAG, "view online tbMultimediaFileList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            if (cd.isNetworkAvailable()) {
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().CaseReportID.equals(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID)) {
+                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileType.equals("voice")) {
+                            tbMultimediaFileList.add(CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile());
+                        }
+                    }
+                }
+                Log.i(TAG, "tbMultimediaFileList " + String.valueOf(tbMultimediaFileList.size()));
+            } else {
+                tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
+
+            }
+        } else {
+            tbMultimediaFileList = dbHelper.selectedMediafiles(caseReportID, "voice");
+
+            Log.i(TAG, "tbMultimediaFileList voice offline " + String.valueOf(tbMultimediaFileList.size()));
+        }
+        if (tbMultimediaFileList != null) {
+
+            txtVoiceNum.setText(String.valueOf(tbMultimediaFileList.size()));
+//            setListViewHeightBasedOnItems(listViewVoice);
+            listViewVoice.setVisibility(View.VISIBLE);
+
+            listViewVoice.setAdapter(new VoiceRecordAdapter(
+                    getActivity()));
+            // OnClick
+            listViewVoice.setOnItemClickListener(new MyOnItemClickListener());
+        } else {
+            txtVoiceNum.setText(String.valueOf(0));
+
+            listViewVoice.setVisibility(View.GONE);
+            Log.i("Recieve", "Null!! ");
+
+        }
+    }
 
     public class VoiceRecordAdapter extends BaseAdapter {
         private Context context;
@@ -587,8 +523,8 @@ public class VoiceTabFragment extends Fragment {
 
             TextView txtVoiceDesc = (TextView) convertView
                     .findViewById(R.id.txtVoiceDesc);
-            txtVoiceDesc.setText("คำอธิบาย: "
-                    + tbMultimediaFileList.get(position).FileDescription.toString());
+            final String descvoice = tbMultimediaFileList.get(position).FileDescription.toString();
+            txtVoiceDesc.setText("คำอธิบาย: " + descvoice);
             final String strPath = strSDCardPathName_Voi + sVoiceName;
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/"
@@ -661,6 +597,59 @@ public class VoiceTabFragment extends Fragment {
                                     }
                                 }
                             }
+                            if (id == R.id.descphoto) {
+                                Log.i(TAG, "  descphoto ");
+                                final AlertDialog.Builder addDialog = new AlertDialog.Builder(getActivity());
+                                final LayoutInflater inflaterDialog = (LayoutInflater) getActivity().getSystemService(
+                                        Context.LAYOUT_INFLATER_SERVICE);
+
+                                View Viewlayout = inflaterDialog.inflate(R.layout.add_media_dialog,
+                                        (ViewGroup) viewVoiceTab.findViewById(R.id.layout_media_dialog));
+                                addDialog.setIcon(R.drawable.ic_drawing);
+                                addDialog.setTitle("เพิ่มคำอธิบาย");
+                                addDialog.setView(Viewlayout);
+                                TextView editMediaName = (TextView) Viewlayout
+                                        .findViewById(R.id.editMediaName);
+                                editMediaName.setText(sVoiceID);
+                                final EditText editMediaDescription = (EditText) Viewlayout
+                                        .findViewById(R.id.editMediaDescription);
+                                if (descvoice == null || descvoice.equals("")) {
+                                    editMediaDescription.setHint("คำอธิบายภาพ");
+                                } else {
+                                    editMediaDescription.setText(descvoice);
+                                }
+                                addDialog.setPositiveButton(getString(R.string.save),
+                                        new DialogInterface.OnClickListener() {
+
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                                                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
+                                                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i)
+                                                                .getTbMultimediaFile().FileDescription = editMediaDescription.getText().toString();
+                                                        Toast.makeText(mContext, getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
+                                                        Log.v(TAG, "Click FileDescription " + i + " " + sVoiceID + " " +
+                                                                CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileDescription.toString());
+                                                    }
+                                                }
+                                                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                                                if (isSuccess) {
+                                                    showListVoiceRecord();
+                                                }
+                                                dialog.dismiss();
+
+                                            }
+                                        })
+                                        // Button Cancel
+                                        .setNegativeButton(getString(R.string.cancel),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+
+                                addDialog.create();
+                                addDialog.show();
+                            }
                             if (id == R.id.deletevoice) {
                                 if (curfile.exists()) {
                                     long saveStatus = dbHelper.DeleteSelectedData("multimediafile", "FileID", sVoiceID);
@@ -723,9 +712,202 @@ public class VoiceTabFragment extends Fragment {
         public void onClick(View view) {
             if (view == fabBtn) {
                 Log.i("show", "voice");
-                viewByIdaddVoice = (ViewGroup) view.findViewById(R.id.layout_media_dialog);
-                showMediaDialog();
+                String title = getString(R.string.importvoice);
+                CharSequence[] itemlist = {getString(R.string.voice),
+                        getString(R.string.folder)
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setIcon(R.drawable.ic_record);
+                builder.setTitle(title);
+                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                AlertDialog alert = builder.create();
+                alert.setCancelable(true);
+                alert.show();
+
             }
+        }
+    }
+
+    private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
+
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int which) {
+            switch (which) {
+                case 0:// Take Photo
+                    // Do Take Photo task here
+                    viewByIdaddVoice = (ViewGroup) viewVoiceTab.findViewById(R.id.layout_media_dialog);
+                    showMediaDialog();
+                    break;
+                case 1:// Choose Existing Photo
+                    // Do Pick Photo task here
+                    pickVoice();
+//                    pickFromGallery();
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void pickVoice() {
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("audio/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "เลือกไฟล์เสียง"), REQUEST_GALLERY);
+
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        // รับข้อมูลจากอัลบั้มภาพ และบันทึกภาพลงแอพ
+        if (requestCode == REQUEST_GALLERY) {
+            if (resultCode == getActivity().RESULT_OK && null != data) {
+                try {
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    imagesEncodedList = new ArrayList<String>();
+                    if (data.getData() != null) {
+                        Uri mImageUri = data.getData();
+                        // Get the cursor getFilepath
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            imageEncoded = getPathUri.getPath(getActivity(), mImageUri);
+                        } else {
+                            imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        }
+                        Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
+                        saveToMyAlbum(imageEncoded);
+                    } else { //ถ้าเลือกหลายรูป
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            if (data.getClipData() != null) {
+                                ClipData mClipData = data.getClipData();
+                                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                                    //Multiple images
+                                    ClipData.Item item = mClipData.getItemAt(i);
+                                    Uri uri = item.getUri();
+                                    // Get the cursor getFilepath
+                                    imageEncoded = getPathUri.getPath(getActivity(), uri);
+//                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
+
+                                    if (imageEncoded != null) {
+                                        imagesEncodedList.add(imageEncoded);
+                                        saveToMyAlbum(imageEncoded);
+                                    }
+                                }
+                                Log.v(TAG, "REQUEST_GALLERY Selected Images   :" + " imagesEncodedList :" + imagesEncodedList.size());
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "ไม่สามารถเลือกหลายรูปได้", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+
+                    showListVoiceRecord();
+                    Log.i(TAG, "REQUEST_GALLERY");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
+                // After Cancel code.
+                Log.i(TAG, "Cancel REQUEST_GALLERY");
+            } else {
+                Log.i(TAG, "Failed to REQUEST_GALLERY");
+            }
+
+        }
+    }
+
+    private void saveToMyAlbum(String imageEncoded) {
+        try {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+            File datadest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+            String sVoiceID = "", sFileType = "";
+            String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
+            sVoiceID = "VOI_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5] + CurrentDate_ID[6];
+            timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
+            sFileType = imageEncoded.substring(imageEncoded.lastIndexOf("."));
+            Log.i(TAG, "sVoiceID " + sVoiceID + " sImageType " + sFileType);
+            if (sd.canWrite()) {
+//                        String sourceImagePath = "/path/to/source/file.jpg";
+                String destinationImagePath = strSDCardPathName_Voi + sVoiceID + sFileType;
+                File source = new File(imageEncoded);
+
+                File destination = new File(datadest, destinationImagePath);
+                if (source.exists()) {
+                    Log.i(TAG, "source ");
+                    FileChannel src = new FileInputStream(source).getChannel();
+                    FileChannel dst = new FileOutputStream(destination).getChannel();
+
+                    try {
+                        dst.transferFrom(src, 0, src.size());
+                        Log.i(TAG, "transferFrom ");
+                    } catch (IOException e) {
+                        Log.i(TAG, "transferFrom " + e.getMessage());
+                    }
+                    if (destination.exists()) {
+//                                source.delete();
+                        Log.i(TAG, "source.delete ");
+                        saveToListDB(sVoiceID, timeStamp, sFileType, "");
+                    }
+                    src.close();
+                    dst.close();
+                    Log.i(TAG, "save new Voice from gallery " + destinationImagePath);
+                } else {
+                    Log.i(TAG, "Voice from gallery error ");
+                }
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "Voice from gallery error " + e.getMessage());
+        }
+    }
+
+    public String getFilepath(String[] filePathColumn, Uri uri) {
+        // Get the cursor
+        Cursor cursor = getActivity().getContentResolver().query(uri,
+                filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        imageEncoded = cursor.getString(columnIndex);
+
+        cursor.close();
+        return imageEncoded;
+    }
+
+    // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
+    private void saveToListDB(String sVoiceID, String stimeStamp, String sFileType, String sVoiceDescription) {
+        try {
+            List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
+            ApiMultimedia apiMultimedia = new ApiMultimedia();
+            TbMultimediaFile tbMultimediaFile = new TbMultimediaFile();
+            tbMultimediaFile.CaseReportID = caseReportID;
+            tbMultimediaFile.FileID = sVoiceID;
+            tbMultimediaFile.FileDescription = sVoiceDescription;
+            tbMultimediaFile.FileType = "voice";
+            tbMultimediaFile.FilePath = sVoiceID + sFileType;
+            tbMultimediaFile.Timestamp = stimeStamp;
+            apiMultimedia.setTbMultimediaFile(tbMultimediaFile);
+
+            apiMultimediaList.add(apiMultimedia);
+            CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
+//                CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
+            Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "voice saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID + ".3gp");
+                showListVoiceRecord();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -786,4 +968,5 @@ public class VoiceTabFragment extends Fragment {
             }
         }
     }
+
 }

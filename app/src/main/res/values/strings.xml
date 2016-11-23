@@ -248,10 +248,13 @@
     <string name="status_change_mode">กรุณาเปลี่ยนเป็นโหมดแก้ไข</string>
     <string name="importphoto">นำเข้ารูปภาพ</string>
     <string name="importvideo">นำเข้าวิดีโอ</string>
+    <string name="importvoice">นำเข้าไฟล์เสียง</string>
     <string name="camera">ถ่ายรูป</string>
     <string name="video">อัดวิดีโอ</string>
+    <string name="voice">อัดเสียง</string>
     <string name="drawing">วาดรูปด้วยแอพนี้</string>
     <string name="gallery">เลือกจากอัลบั้มภายนอก</string>
+    <string name="folder">เลือกไฟล์จากภายนอก</string>
     <string name="no">ไม่</string>
     <string name="yes">ใช่</string>
     <string name="descphoto">แก้ไขคำอธิบาย</string>

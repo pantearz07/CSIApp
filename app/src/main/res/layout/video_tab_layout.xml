@@ -59,7 +59,7 @@
                 android:layout_below="@+id/linearLayout1"
                 android:layout_margin="5dp"
                 android:clickable="true"
-                android:columnWidth="80dp"
+                android:columnWidth="100dp"
                 android:drawSelectorOnTop="true"
                 android:focusable="true"
                 android:gravity="center"

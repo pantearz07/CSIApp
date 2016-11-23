@@ -1,7 +1,10 @@
 package com.scdc.csiapp.invmain;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,12 +13,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.MediaController;
@@ -55,9 +61,11 @@ public class VideoPlayerActivity extends Activity {
     DBHelper dbHelper;
     ImageButton btnClose, btnMenu;
     File curfile;
-    String filepath, VideoPath, fileid;
+    String filepath, VideoPath, fileid, descVideo;
     int selectedposition = 0;
     int totalnum = 0;
+    ViewGroup viewDescPhoto;
+    protected static final int DIALOG_AddDescPhoto = 0;
 
     /**
      * Called when the activity is first created.
@@ -79,6 +87,7 @@ public class VideoPlayerActivity extends Activity {
         Intent intent = getIntent();
         VideoPath = intent.getStringExtra("VideoPath"); // for String
         fileid = intent.getStringExtra("fileid");
+        descVideo = intent.getStringExtra("desc");
         selectedposition = intent.getIntExtra("position", 0);
         totalnum = intent.getIntExtra("totalnum", 0);
         String strPath = strSDCardPathName_Vid + VideoPath;
@@ -158,7 +167,7 @@ public class VideoPlayerActivity extends Activity {
                 //Inflating the Popup using xml file
                 popup.getMenuInflater().inflate(R.menu.photo_menu, popup.getMenu());
                 Menu popupMenu = popup.getMenu();
-                popupMenu.findItem(R.id.descphoto).setVisible(false);
+//                popupMenu.findItem(R.id.descphoto).setVisible(false);
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
@@ -170,6 +179,11 @@ public class VideoPlayerActivity extends Activity {
                             } else {
                                 saveVideo();
                             }
+                        }
+                        if (id == R.id.descphoto) {
+                            Log.i(TAG, "  descphoto ");
+                            viewDescPhoto = (ViewGroup) findViewById(R.id.layout_media_dialog);
+                            createdDialog(DIALOG_AddDescPhoto).show();
                         }
                         if (id == R.id.deletephoto) {
                             if (CSIDataTabFragment.mode.equals("view")) {
@@ -256,14 +270,18 @@ public class VideoPlayerActivity extends Activity {
             int flag = 0;
             flag = deletefile(fileid);
             if (flag > 0) {
+                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
+                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                        Log.i(TAG, "delete file name " + fileid);
+                        curfile.delete();
+                        Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
+                        Intent _result = new Intent();
+                        setResult(Activity.RESULT_OK, _result);
+                        VideoPlayerActivity.this.finish();
+                    }
+                }
 
-                CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(selectedposition);
-                Log.i(TAG, "delete file name " + fileid);
-                curfile.delete();
-                Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
-                Intent _result = new Intent();
-                setResult(Activity.RESULT_OK, _result);
-                VideoPlayerActivity.this.finish();
             } else {
                 Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
                         getString(R.string.delete_error),
@@ -271,6 +289,82 @@ public class VideoPlayerActivity extends Activity {
             }
         } else {
             Toast.makeText(VideoPlayerActivity.this, getString(R.string.no_video), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected Dialog createdDialog(int id) {
+        Dialog dialog = null;
+        AlertDialog.Builder builder;
+        switch (id) {
+
+            case DIALOG_AddDescPhoto:
+                builder = new AlertDialog.Builder(this);
+                final LayoutInflater inflaterDialogDescPhoto = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                final View ViewlayoutAddDescPhoto = inflaterDialogDescPhoto
+                        .inflate(
+                                R.layout.add_media_dialog,
+                                viewDescPhoto);
+                builder.setIcon(R.drawable.ic_edit);
+                builder.setTitle(R.string.edit_descphoto);
+                builder.setView(ViewlayoutAddDescPhoto);
+                TextView editMediaName = (TextView) ViewlayoutAddDescPhoto
+                        .findViewById(R.id.editMediaName);
+                final EditText editMediaDescription = (EditText) ViewlayoutAddDescPhoto
+                        .findViewById(R.id.editMediaDescription);
+                editMediaName.setText(fileid + ".mp4");
+                if (descVideo == null || descVideo.equals("")) {
+                    editMediaDescription.setText("");
+                } else {
+                    editMediaDescription.setText(descVideo);
+                }
+                builder.setPositiveButton(R.string.save,
+                        new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
+                                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i)
+                                                .getTbMultimediaFile().FileDescription = editMediaDescription.getText().toString();
+
+                                        Toast.makeText(mContext, getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
+//                                        Log.v(TAG, "Click FileDescription " + i + " " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i)
+//                                                .getTbMultimediaFile().FileDescription + " tbMultimediaFiles " + tbMultimediaFiles.get(currentphoto).FileDescription.toString());
+                                        saveToDB();
+                                    }
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        // Button Cancel
+                        .setNegativeButton(R.string.cancel,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                dialog = builder.create();
+
+                break;
+            default:
+                dialog = null;
+        }
+        return dialog;
+    }
+
+    // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
+    private void saveToDB() {
+        try {
+
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
