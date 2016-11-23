@@ -16,6 +16,7 @@ public class GetDateTime {
     private int mHour;
     private int mMinute;
     private int mSecond;
+    private int mMiliSecond;
     private String CurrentDateTime;
 
 
@@ -64,7 +65,7 @@ public class GetDateTime {
     }
 
     public String[] getDateTimeCurrent() {
-        String[] DateTime = new String[6];
+        String[] DateTime = new String[7];
         final Calendar c = Calendar.getInstance();
 
         mYear = c.get(Calendar.YEAR);
@@ -77,12 +78,14 @@ public class GetDateTime {
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mMinute = c.get(Calendar.MINUTE);
         mSecond = c.get(Calendar.SECOND);
+        mMiliSecond = c.get(Calendar.MILLISECOND);
         DateTime[0] = year;
         DateTime[1] = String.format("%02d", mMonth + 1);
         DateTime[2] = String.format("%02d", mDay);
         DateTime[3] = String.format("%02d", mHour);
         DateTime[4] = String.format("%02d", mMinute);
         DateTime[5] = String.format("%02d", mSecond);
+        DateTime[6] = String.format("%03d", mMiliSecond);
         //2016-08-06 DateTime[0]-DateTime[1]-DateTime[2]
         return DateTime;
 

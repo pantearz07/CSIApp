@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -44,6 +45,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiMultimedia;
@@ -121,6 +123,7 @@ public class DetailsTabFragment extends Fragment {
     public static final int REQUEST_LOAD_IMAGE = 1;
     String imageEncoded;
     List<String> imagesEncodedList;
+    GetPathUri getPathUri;
     private String mCurrentPhotoPath;
     Uri uri;
     String sPhotoID, timeStamp;
@@ -161,6 +164,7 @@ public class DetailsTabFragment extends Fragment {
         mFragmentManager = getActivity().getSupportFragmentManager();
         cd = new ConnectionDetector(getActivity());
         getDateTime = new GetDateTime();
+        getPathUri = new GetPathUri();
         officialID = mManager.getPreferenceData(mManager.KEY_OFFICIALID);
         ////
         reportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().getCaseReportID();
@@ -1182,15 +1186,13 @@ public class DetailsTabFragment extends Fragment {
     }
 
     private void pickPhoto() {
-        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getIntent.setType("image/jpg");
-
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/jpg");
-
-        Intent chooserIntent = Intent.createChooser(getIntent, "เลือกรูปภาพ");
-        chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, new Intent[]{pickIntent});
-        getActivity().startActivityForResult(chooserIntent, REQUEST_GALLERY);
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "เลือกรูปภาพ"), REQUEST_GALLERY);
     }
 
     private void takePhoto() {
@@ -1226,7 +1228,7 @@ public class DetailsTabFragment extends Fragment {
             File datadest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             String sPhotoID = "", sImageType = "";
             String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
-            sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5];
+            sPhotoID = "IMG_" + CurrentDate_ID[2] + CurrentDate_ID[1] + CurrentDate_ID[0] + "_" + CurrentDate_ID[3] + CurrentDate_ID[4] + CurrentDate_ID[5] + CurrentDate_ID[6];
             timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
             sImageType = imageEncoded.substring(imageEncoded.lastIndexOf("."));
             Log.i(TAG, "sPhotoID " + sPhotoID + " sImageType " + sImageType);
@@ -1322,28 +1324,35 @@ public class DetailsTabFragment extends Fragment {
                     imagesEncodedList = new ArrayList<String>();
                     if (data.getData() != null) {
                         Uri mImageUri = data.getData();
-                        imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            imageEncoded = getPathUri.getPath(getActivity(), mImageUri);
+                        } else {
+                            imageEncoded = getFilepath(filePathColumn, mImageUri);
+                        }
                         Log.i(TAG, "REQUEST_GALLERY " + imageEncoded);
                         saveToMyAlbum(imageEncoded);
                     } else { //ถ้าเลือกหลายรูป
-                        if (data.getClipData() != null) {
-                            ClipData mClipData = data.getClipData();
-                            ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            if (data.getClipData() != null) {
+                                ClipData mClipData = data.getClipData();
+                                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                                    //Multiple images
+                                    ClipData.Item item = mClipData.getItemAt(i);
+                                    Uri uri = item.getUri();
+                                    // Get the cursor getFilepath
+                                    imageEncoded = getPathUri.getPath(getActivity(), uri);
+                                    Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
 
-                                ClipData.Item item = mClipData.getItemAt(i);
-                                Uri uri = item.getUri();
-                                mArrayUri.add(uri);
-                                // Get the cursor getFilepath
-                                imageEncoded = getFilepath(filePathColumn, uri);
-                                Log.v(TAG, "REQUEST_GALLERY [" + i + "] " + imageEncoded);
-
-                                if (imageEncoded != null) {
-                                    imagesEncodedList.add(imageEncoded);
-                                    saveToMyAlbum(imageEncoded);
+                                    if (imageEncoded != null) {
+                                        imagesEncodedList.add(imageEncoded);
+                                        saveToMyAlbum(imageEncoded);
+                                    }
                                 }
+                                Log.v(TAG, "REQUEST_GALLERY Selected Images   :" + " imagesEncodedList :" + imagesEncodedList.size());
                             }
-                            Log.v(TAG, "Selected Images mArrayUri :" + mArrayUri.size() + " imagesEncodedList :" + imagesEncodedList.size());
+                        } else {
+                            Toast.makeText(getActivity(), "ไม่สามารถเลือกหลายรูปได้", Toast.LENGTH_LONG)
+                                    .show();
                         }
                     }
 
