@@ -342,8 +342,12 @@ public class DiagramTabFragment extends Fragment {
                     .findViewById(R.id.txtDescPhoto);
             String strPath = strSDCardPathName_Pic + tbDiagramFileList.get(position).FilePath.toString();
             Log.i(TAG, strPath);
-
-            textView.setText(tbDiagramFileList.get(position).FileDescription.toString());
+            if(tbDiagramFileList.get(position).FileDescription == null ||
+                    tbDiagramFileList.get(position).FileDescription.length() == 0){
+                textView.setVisibility(View.GONE);
+            }else {
+                textView.setText(tbDiagramFileList.get(position).FileDescription.toString());
+            }
 //            textView.setVisibility(View.GONE);
             // Image Resource
             ImageView imageView = (ImageView) convertView

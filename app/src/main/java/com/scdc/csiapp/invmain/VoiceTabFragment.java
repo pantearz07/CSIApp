@@ -524,7 +524,11 @@ public class VoiceTabFragment extends Fragment {
             TextView txtVoiceDesc = (TextView) convertView
                     .findViewById(R.id.txtVoiceDesc);
             final String descvoice = tbMultimediaFileList.get(position).FileDescription.toString();
-            txtVoiceDesc.setText("คำอธิบาย: " + descvoice);
+            if(tbMultimediaFileList.get(position).FileDescription == null ||
+                    tbMultimediaFileList.get(position).FileDescription.length() == 0){
+            }else {
+                txtVoiceDesc.setText("คำอธิบาย: " + tbMultimediaFileList.get(position).FileDescription.toString());
+            }
             final String strPath = strSDCardPathName_Voi + sVoiceName;
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
                     + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/"

@@ -147,8 +147,12 @@ public class PhotoTabFragment extends Fragment {
 
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
-//            textView.setVisibility(View.GONE);
-            textView.setText(tbMultimediaFileList.get(position).FileDescription.toString());
+            if(tbMultimediaFileList.get(position).FileDescription == null ||
+                    tbMultimediaFileList.get(position).FileDescription.length() == 0){
+                textView.setVisibility(View.GONE);
+            }else {
+                textView.setText(tbMultimediaFileList.get(position).FileDescription.toString());
+            }
 
             String strPath = strSDCardPathName_Pic + tbMultimediaFileList.get(position).FilePath.toString();
             // Image Resource
