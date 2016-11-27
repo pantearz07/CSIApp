@@ -495,7 +495,7 @@ public class SummaryCSITabFragment extends Fragment {
                     }
                 });
 
-                dialog.setNegativeButton("บันทึกเเบบสมบูรณ์", new DialogInterface.OnClickListener() {
+                dialog.setNegativeButton("ยืนยันตรวจเสร็จ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
