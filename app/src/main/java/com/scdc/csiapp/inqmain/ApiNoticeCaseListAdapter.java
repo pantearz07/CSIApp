@@ -172,6 +172,8 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
             csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus5));
         } else if (CaseStatus.equalsIgnoreCase("investigated")) {
             csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus6));
+        }else if (CaseStatus.equalsIgnoreCase("reported")) {
+            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus7));
         }
     }
 

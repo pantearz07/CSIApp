@@ -381,6 +381,8 @@ public class SummaryCSITabFragment extends Fragment {
             edtStatus.setText(getString(R.string.edtStatus_5));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_6))) {
             edtStatus.setText(getString(R.string.edtStatus_6));
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_7))) {
+            edtStatus.setText(getString(R.string.edtStatus_7));
         }
 
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
@@ -469,68 +471,18 @@ public class SummaryCSITabFragment extends Fragment {
                 // ซ่อน Keyborad หลังจากกด Login แล้ว
                 hiddenKeyboard();
                 updateData();
+                String title = getString(R.string.sendtoserver);
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                dialog.setMessage("อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์");
-                dialog.setPositiveButton("บันทึกแบบร่าง", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // uploadDataToServer();
-                        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
-                        SaveCaseReport statusCase = new SaveCaseReport();
-                        statusCase.execute(CSIDataTabFragment.apiCaseScene);
-                        if (status_savecase = true) {
-//
-//                            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-//                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-
-                        }
-                    }
-                });
-                dialog.setCancelable(true);
-                dialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.setNegativeButton("ยืนยันตรวจเสร็จ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-
-                            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
-                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
-                                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
-                                dialog.dismiss();
-                                if (snackbar == null || !snackbar.isShown()) {
-
-                                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
-                                            "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ");
-                                    snackBarAlert.createSnacbar();
-                                }
-                            } else {
-                                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
-                                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
-                                SaveCaseReport statusCase = new SaveCaseReport();
-                                statusCase.execute(CSIDataTabFragment.apiCaseScene);
-                                if (status_savecase = true) {
-
-
-                                }
-                            }
-                        } catch (NullPointerException e) {
-                            Log.e(TAG, e.getMessage());
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
-                                    getString(R.string.error_data));
-                            snackBarAlert.createSnacbar();
-                        }
-
-                    }
-                });
-                dialog.create();
-                dialog.show();
+                CharSequence[] itemlist = {getString(R.string.draftreport),
+                        getString(R.string.reported)
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setIcon(R.drawable.ic_noti);
+                builder.setTitle(title);
+                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                AlertDialog alert = builder.create();
+                alert.setCancelable(true);
+                alert.show();
             }
             if (v == btnDownloadfile) {
                 hiddenKeyboard();
@@ -572,6 +524,63 @@ public class SummaryCSITabFragment extends Fragment {
             if (v == edtInvTel) {
                 calling(InvTel);
             }
+        }
+    }
+    private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
+
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int which) {
+            switch (which) {
+                case 0: // บันทึกข้อมูลเข้าเซิร์ฟเวอร์ แบบร่าง
+                    submitSaveData();
+                    break;
+                case 1:// ยืนยันรายงานเสร็จ เปลี่ยนสถานะเป็น reported
+                    submitReported();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void submitSaveData() {
+        SaveCaseReport statusCase = new SaveCaseReport();
+        statusCase.execute(CSIDataTabFragment.apiCaseScene);
+        if (status_savecase = true) {
+//
+//                            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+//                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+
+        }
+    }
+
+    private void submitReported() {
+        try {
+            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+
+                if (snackbar == null || !snackbar.isShown()) {
+
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            "ยังไม่ระบุวันเวลาที่ตรวจเสร็จ");
+                    snackBarAlert.createSnacbar();
+                }
+            } else {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "reported";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "reported";
+                SaveCaseReport statusCase = new SaveCaseReport();
+                statusCase.execute(CSIDataTabFragment.apiCaseScene);
+                if (status_savecase = true) {
+
+                }
+            }
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.getMessage());
+            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                    getString(R.string.error_data));
+            snackBarAlert.createSnacbar();
         }
     }
 
@@ -738,9 +747,9 @@ public class SummaryCSITabFragment extends Fragment {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
         File file;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc+ name + ".docx");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc + name + ".docx");
         } else {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc+ name + ".docx");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc + name + ".docx");
         }
         if (file.exists()) {
             String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).toString());
@@ -885,6 +894,9 @@ public class SummaryCSITabFragment extends Fragment {
                                 edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate)
                                         + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
                                 edtStatus.setText(getString(R.string.edtStatus_6));
+                            }
+                            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(getString(R.string.casestatus_7))) {
+                                edtStatus.setText(getString(R.string.edtStatus_7));
                             }
                             SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                                     apiStatus.getData().getReason().toString());

@@ -124,12 +124,14 @@
     <string name="edtStatus_4">รอตรวจ</string>
     <string name="edtStatus_5">กำลังตรวจ</string>
     <string name="edtStatus_6">ตรวจเสร็จ</string>
+    <string name="edtStatus_7">รายงานเสร็จ</string>
     <string name="casestatus_1">receive</string>
     <string name="casestatus_2">notice</string>
     <string name="casestatus_3">assign</string>
     <string name="casestatus_4">accept</string>
     <string name="casestatus_5">investigating</string>
     <string name="casestatus_6">investigated</string>
+    <string name="casestatus_7">reported</string>
     <string name="delete_case">ลบคดี</string>
     <string name="searchlatlng">บันทึกพิกัดที่เกิดเหตุ</string>
     <string name="searchmap">นำเส้นทาง</string>
@@ -259,4 +261,8 @@
     <string name="yes">ใช่</string>
     <string name="descphoto">แก้ไขคำอธิบาย</string>
     <string name="edit_descphoto">แก้ไขคำอธิบายภาพ</string>
+    <string name="reported">ยืนยันรายงานเสร็จ</string>
+    <string name="draftreport">บันทึกแบบร่าง</string>
+    <string name="investigated">ยืนยันตรวจเสร็จ</string>
+    <string name="sendtoserver">อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์</string>
 </resources>

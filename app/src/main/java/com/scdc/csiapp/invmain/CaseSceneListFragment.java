@@ -312,7 +312,9 @@ public class CaseSceneListFragment extends Fragment {
                 popup.getMenuInflater().inflate(R.menu.csi_menu_1, popup.getMenu());
                 Menu popupMenu = popup.getMenu();
                 popupMenu.findItem(R.id.edit).setVisible(false);
-                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept") || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")) {
+                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept")
+                        || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")
+                        || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigated")) {
                     popupMenu.findItem(R.id.edit).setVisible(true);
                 }
                 //registering popup with OnMenuItemClickListener
@@ -345,7 +347,9 @@ public class CaseSceneListFragment extends Fragment {
                         viewCase();
                     }
                 });
-                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept") || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")) {
+                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept")
+                        || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")
+                        || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigated")) {
                     builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
