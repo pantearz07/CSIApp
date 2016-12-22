@@ -265,4 +265,5 @@
     <string name="draftreport">บันทึกแบบร่าง</string>
     <string name="investigated">ยืนยันตรวจเสร็จ</string>
     <string name="sendtoserver">อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์</string>
+    <string name="editInvestigator">แก้ไขรายชื่อผู้ตรวจ</string>
 </resources>

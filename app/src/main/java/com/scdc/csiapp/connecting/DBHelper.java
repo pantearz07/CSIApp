@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
@@ -1885,6 +1887,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public boolean updateProfile(ApiProfile apiProfile, String Username_old) {
         if (apiProfile == null) {
             return false;
@@ -1962,6 +1965,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public boolean updateAlldataCase(ApiCaseScene apiCaseScene) {
         if (apiCaseScene == null) {
             return false;
@@ -2427,6 +2431,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public ApiListNoticeCase selectApiNoticeCase(String OfficeID) {
 //        Log.d(TAG, "OfficeID:" + OfficeID);
         ApiListNoticeCase apiListNoticeCase = new ApiListNoticeCase();
@@ -2672,6 +2677,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public ApiListOfficial selectApiOfficial(String AccessType) {
 //        Log.d(TAG, "AccessType:" + AccessType);
         ApiListOfficial apiListOfficial = new ApiListOfficial();
@@ -2764,6 +2770,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public ApiListScheduleInvestigates selectApiScheduleInvestigates(String SCDCAgencyCode) {
 //        Log.d(TAG, "SCDCAgencyCode:" + SCDCAgencyCode);
         ApiListScheduleInvestigates apiListScheduleInvestigates = new ApiListScheduleInvestigates();
@@ -3010,6 +3017,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public ApiListCaseScene selectApiCaseScene(String OfficeID) {
         ApiListCaseScene apiListCaseScene = new ApiListCaseScene();
         apiListCaseScene.setStatus("success");
@@ -4058,6 +4066,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public List<TbMultimediaFile> selectedMediafiles(String sCaseReportID, String sFileType) {
         try {
             SQLiteDatabase db;
@@ -4092,6 +4101,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public List<TbMultimediaFile> SelectDataPhotoOfOutside(String sCaseReportID,
                                                            String sFileType) {
         // TODO Auto-generated method stub
@@ -4140,6 +4150,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public List<ApiMultimedia> SelectDataPhotoOfInside(String sFeatureInsideID,
                                                        String sFileType) {
         List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
@@ -4207,6 +4218,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public List<ApiMultimedia> SelectDataPhotoOfPropertyLoss(String sPLID,
                                                              String sFileType) {
         List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
@@ -4274,6 +4286,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public List<ApiMultimedia> SelectDataPhotoOfEvidence(String sEVID,
                                                          String sFileType) {
         List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
@@ -4341,6 +4354,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public List<ApiMultimedia> SelectDataPhotoOfResultscene(String sRSID,
                                                             String sFileType) {
         List<ApiMultimedia> apiMultimediaList = new ArrayList<>();
@@ -4581,5 +4595,117 @@ public class DBHelper extends SQLiteAssetHelper {
             return null;
         }
 
+    }
+
+    public String[][] SelectDataInvestigator(String accesstype) {
+        // TODO Auto-generated method stub
+
+        try {
+            String arrData[][] = null;
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT " + COL_OfficialID + "," + COL_Rank + "," + COL_FirstName + "," + COL_LastName + " FROM official WHERE AccessType='" + accesstype + "'";
+            Cursor cursor = db.rawQuery(strSQL, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        arrData[i][1] = cursor.getString(1);
+                        arrData[i][2] = cursor.getString(2);
+                        arrData[i][3] = cursor.getString(3);
+                        Log.i("SelectDataInvestigator", arrData[i][0] + " " + arrData[i][1] + " " + arrData[i][2] + " " + arrData[i][3]);
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.close();
+            db.close();
+            return arrData;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+    public long CheckInvestigatorInCase(String sCaseReportID, String sOfficialID) {
+        // TODO Auto-generated method stub
+
+        try {
+
+            mDb = this.getReadableDatabase(); // Read Data
+            long rows = 0;
+            String strSQL = "SELECT *" + " FROM investigatorsinscene"
+                    + " WHERE " + COL_CaseReportID + "= '" + sCaseReportID
+                    + "' AND InvOfficialID = '" + sOfficialID + "'";
+            Log.i("show CheckInvestigator", strSQL);
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            Log.i("CheckInvestigator", String.valueOf(cursor.getCount()));
+
+            if (cursor.getCount() != 0) {
+                rows = 1;
+                Log.i("have CheckInvestigator",
+                        String.valueOf(cursor.getCount()));
+
+            } else {
+                rows = 0;
+                Log.i("no haveInvestigator",
+                        String.valueOf(cursor.getCount()));
+            }
+            cursor.close();
+
+            return rows; // return rows inserted.
+
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+    public long saveOtherofficialInscene(String sCaseReportID,
+                                         String sOfficialID) {
+        // TODO Auto-generated method stub
+
+        try {
+            mDb = this.getReadableDatabase(); // Read Data
+
+            String strSQL = "SELECT * FROM " + TB_investigatorsinscene
+                    + " WHERE CaseReportID = '" + sCaseReportID + "' AND "
+                    + "InvOfficialID = '" + sOfficialID + "'";
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+            long rows = 0;
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+
+            ContentValues Val = new ContentValues();
+            Val.put(COL_CaseReportID, sCaseReportID);
+            Val.put(COL_OfficialID, sOfficialID);
+
+            Log.i("cursor officialinscene",
+                    String.valueOf(cursor.getCount()));
+
+            if (cursor.getCount() != 0) {
+                Log.i("had officialinscene",
+                        String.valueOf(cursor.getCount()));
+
+            } else {
+                rows = db.insert(TB_investigatorsinscene, null, Val);
+                Log.i("save officialinscene", String.valueOf(rows)
+                        + " " + sOfficialID + " " + sCaseReportID);
+                db.close();
+            }
+
+            cursor.close();
+
+            return rows; // return rows inserted.
+
+        } catch (Exception e) {
+            return -1;
+        }
     }
 }
