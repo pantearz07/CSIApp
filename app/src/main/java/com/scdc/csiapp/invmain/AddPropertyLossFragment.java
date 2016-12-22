@@ -23,6 +23,7 @@ import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -71,8 +72,8 @@ public class AddPropertyLossFragment extends Fragment {
     FloatingActionButton fabBtnDetails;
     private CoordinatorLayout rootLayout;
     private static final String TAG = "DEBUG-AddPropertyLossFragment";
-    EditText editPropertyLossName, editPropertyLossAmount, editPropertyLossPosition, editPropertyInsurance;
-    AutoCompleteTextView autoPropertyLossUnit;
+    EditText editPropertyLossAmount, editPropertyLossPosition, editPropertyInsurance;
+    AutoCompleteTextView editPropertyLossName, autoPropertyLossUnit;
     private GridView horizontal_gridView_PL_photo, horizontal_gridView_PL_video;
     private TextView txtPhoto, txtVideo;
     GetDateTime getDateTime;
@@ -130,18 +131,25 @@ public class AddPropertyLossFragment extends Fragment {
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
         fabBtnDetails = (FloatingActionButton) view.findViewById(R.id.fabBtnDetails);
         btnTakePhotoPL = (ImageButton) view.findViewById(R.id.btnTakePhotoPL);
-        editPropertyLossName = (EditText) view.findViewById(R.id.editPropertyLossName);
+        editPropertyLossName = (AutoCompleteTextView) view.findViewById(R.id.editPropertyLossName);
         editPropertyLossAmount = (EditText) view.findViewById(R.id.editPropertyLossAmount);
         autoPropertyLossUnit = (AutoCompleteTextView) view.findViewById(R.id.autoPropertyLossUnit);
         String[] mUnitArray;
+        String[] mPropNameArray;
         mUnitArray = getResources().getStringArray(
                 R.array.property_unit);
         ArrayAdapter<String> adapterUnit = new ArrayAdapter<String>(
                 getActivity(),
                 android.R.layout.simple_dropdown_item_1line, mUnitArray);
-
         autoPropertyLossUnit.setThreshold(1);
         autoPropertyLossUnit.setAdapter(adapterUnit);
+        mPropNameArray = getResources().getStringArray(
+                R.array.property_name);
+        ArrayAdapter<String> adapterPropName = new ArrayAdapter<String>(
+                getActivity(),
+                android.R.layout.simple_dropdown_item_1line, mPropNameArray);
+        editPropertyLossName.setThreshold(1);
+        editPropertyLossName.setAdapter(adapterPropName);
         editPropertyLossPosition = (EditText) view.findViewById(R.id.editPropertyLossPosition);
         editPropertyInsurance = (EditText) view.findViewById(R.id.editPropertyInsurance);
 
@@ -150,6 +158,8 @@ public class AddPropertyLossFragment extends Fragment {
         autoPropertyLossUnit.addTextChangedListener(new PropertyTextWatcher(autoPropertyLossUnit));
         editPropertyLossPosition.addTextChangedListener(new PropertyTextWatcher(editPropertyLossPosition));
         editPropertyInsurance.addTextChangedListener(new PropertyTextWatcher(editPropertyInsurance));
+        editPropertyLossName.setOnTouchListener(new InsideOnTouchListener());
+        autoPropertyLossUnit.setOnTouchListener(new InsideOnTouchListener());
         dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         if (mode == "edit") {
@@ -189,7 +199,19 @@ public class AddPropertyLossFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
     }
+    private class InsideOnTouchListener implements View.OnTouchListener {
 
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(view == editPropertyLossName){
+                editPropertyLossName.showDropDown();
+            }
+            if(view == autoPropertyLossUnit){
+                autoPropertyLossUnit.showDropDown();
+            }
+            return false;
+        }
+    }
     private class InsideOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {

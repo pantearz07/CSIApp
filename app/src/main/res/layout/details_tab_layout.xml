@@ -293,15 +293,17 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
-                                android:id="@+id/editOutsideAroundBack"
-                                style="@style/edtMultiLine"
+                            <MultiAutoCompleteTextView
+                                android:id="@+id/autoCompleteOutsideAroundBack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:ems="10"
                                 android:hint="ด้านหลังติด"
                                 android:inputType="text"
                                 android:maxLines="3"
-                                android:minLines="1" />
+                                android:minLines="1"
+                                android:textSize="@dimen/small_text" />
+
                         </android.support.design.widget.TextInputLayout>
 
                         <Button
@@ -325,13 +327,15 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editOutsideAroundLeft"
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านซ้ายติด"
+                                android:ems="10"
                                 android:inputType="text"
+                                android:maxLines="5"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
@@ -357,12 +361,13 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editOutsideAroundRight"
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านขวาติด"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:maxLines="5"
                                 android:minLines="1" />
@@ -388,12 +393,13 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editOutsideAroundFront"
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านหน้าติด"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="1" />

@@ -43,6 +43,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -103,9 +104,10 @@ public class DetailsTabFragment extends Fragment {
             btn_clear_txt_22, btn_clear_txt_23;
     CheckBox checkBoxHaveFence, checkBoxHaveMezzanine, checkBoxHaveRoofTop;
     EditText edtFloorNum, edtCaveNum, editDetailOutside,
-            editOutsideAroundBack, editOutsideAroundLeft,
-            editOutsideAroundRight, editOutsideAroundFront,
             editDetailInside, editFeatureAtTheScene;
+    MultiAutoCompleteTextView editOutsideAroundLeft,
+            editOutsideAroundRight, editOutsideAroundFront,
+            autoCompleteOutsideAroundBack;
     private GridView horizontal_gridView_Outside;
     String sOutsideTypeName, sFloorNum, sCaveNum, sOutsideTypeDetail,
             sFrontSide, sLeftSide, sRightSide, sBackSide, sSceneZone, sFeatureInsideDetail, sHaveFence, sHaveMezzanine, sHaveRoofTop;
@@ -222,7 +224,7 @@ public class DetailsTabFragment extends Fragment {
                 mOutsideTypeArray);
         autoCompleteTypeOutside.setThreshold(1);
         autoCompleteTypeOutside.setAdapter(adapterOutsideType);
-
+        autoCompleteTypeOutside.setOnTouchListener(new DetailOnTouchListener());
         // มีชั้นเเบบ
         checkBoxHaveFence = (CheckBox) viewDetails
                 .findViewById(R.id.checkBoxHaveFence);
@@ -240,12 +242,12 @@ public class DetailsTabFragment extends Fragment {
         // จำนวนคูหา
         edtCaveNum = (EditText) viewDetails.findViewById(R.id.edtCaveNum);
         editDetailOutside = (EditText) viewDetails.findViewById(R.id.editDetailOutside);
-        editOutsideAroundBack = (EditText) viewDetails
-                .findViewById(R.id.editOutsideAroundBack);
-        editOutsideAroundLeft = (EditText) viewDetails
+        autoCompleteOutsideAroundBack = (MultiAutoCompleteTextView) viewDetails
+                .findViewById(R.id.autoCompleteOutsideAroundBack);
+        editOutsideAroundLeft = (MultiAutoCompleteTextView) viewDetails
                 .findViewById(R.id.editOutsideAroundLeft);
-        editOutsideAroundRight = (EditText) viewDetails.findViewById(R.id.editOutsideAroundRight);
-        editOutsideAroundFront = (EditText) viewDetails
+        editOutsideAroundRight = (MultiAutoCompleteTextView) viewDetails.findViewById(R.id.editOutsideAroundRight);
+        editOutsideAroundFront = (MultiAutoCompleteTextView) viewDetails
                 .findViewById(R.id.editOutsideAroundFront);
         // บริเวณที่เกิดเหตุ
         editFeatureAtTheScene = (EditText) viewDetails
@@ -302,9 +304,11 @@ public class DetailsTabFragment extends Fragment {
                 editDetailOutside.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
             }
             if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide.equals("")) {
-                editOutsideAroundBack.setText("");
+
+                autoCompleteOutsideAroundBack.setText("");
             } else {
-                editOutsideAroundBack.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide);
+
+                autoCompleteOutsideAroundBack.setText(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide);
             }
 
             if (CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide == null || CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide.equals("")) {
@@ -339,11 +343,33 @@ public class DetailsTabFragment extends Fragment {
         edtFloorNum.addTextChangedListener(new DetailTextWatcher(edtFloorNum));
         edtCaveNum.addTextChangedListener(new DetailTextWatcher(edtCaveNum));
         editDetailOutside.addTextChangedListener(new DetailTextWatcher(editDetailOutside));
-        editOutsideAroundBack.addTextChangedListener(new DetailTextWatcher(editOutsideAroundBack));
-        editOutsideAroundLeft.addTextChangedListener(new DetailTextWatcher(editOutsideAroundLeft));
-        editOutsideAroundRight.addTextChangedListener(new DetailTextWatcher(editOutsideAroundRight));
-        editOutsideAroundFront.addTextChangedListener(new DetailTextWatcher(editOutsideAroundFront));
         editFeatureAtTheScene.addTextChangedListener(new DetailTextWatcher(editFeatureAtTheScene));
+
+        final String[] mOutsideBackArray = getResources().getStringArray(
+                R.array.type_feature_out);
+        ArrayAdapter<String> adapterOutsideBack = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_dropdown_item_1line,
+                mOutsideBackArray);
+        autoCompleteOutsideAroundBack.setAdapter(adapterOutsideBack);
+        autoCompleteOutsideAroundBack.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        autoCompleteOutsideAroundBack.setOnTouchListener(new DetailOnTouchListener());
+        autoCompleteOutsideAroundBack.addTextChangedListener(new DetailTextWatcher(autoCompleteOutsideAroundBack));
+
+        editOutsideAroundLeft.setAdapter(adapterOutsideBack);
+        editOutsideAroundLeft.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editOutsideAroundLeft.setOnTouchListener(new DetailOnTouchListener());
+        editOutsideAroundLeft.addTextChangedListener(new DetailTextWatcher(editOutsideAroundLeft));
+
+        editOutsideAroundRight.setAdapter(adapterOutsideBack);
+        editOutsideAroundRight.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editOutsideAroundRight.setOnTouchListener(new DetailOnTouchListener());
+        editOutsideAroundRight.addTextChangedListener(new DetailTextWatcher(editOutsideAroundRight));
+
+        editOutsideAroundFront.setAdapter(adapterOutsideBack);
+        editOutsideAroundFront.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editOutsideAroundFront.setOnTouchListener(new DetailOnTouchListener());
+        editOutsideAroundFront.addTextChangedListener(new DetailTextWatcher(editOutsideAroundFront));
+
 
         horizontal_gridView_Outside = (GridView) viewDetails.findViewById(R.id.horizontal_gridView_Outside);
 
@@ -385,7 +411,7 @@ public class DetailsTabFragment extends Fragment {
             edtFloorNum.setEnabled(false);
             edtCaveNum.setEnabled(false);
             editDetailOutside.setEnabled(false);
-            editOutsideAroundBack.setEnabled(false);
+            autoCompleteOutsideAroundBack.setEnabled(false);
             editOutsideAroundLeft.setEnabled(false);
             editOutsideAroundRight.setEnabled(false);
             editOutsideAroundFront.setEnabled(false);
@@ -701,7 +727,7 @@ public class DetailsTabFragment extends Fragment {
                 editDetailOutside.setText("");
             }
             if (v == btn_clear_txt_18) {
-                editOutsideAroundBack.setText("");
+                autoCompleteOutsideAroundBack.setText("");
             }
             if (v == btn_clear_txt_19) {
                 editOutsideAroundLeft.setText("");
@@ -1082,7 +1108,7 @@ public class DetailsTabFragment extends Fragment {
                 btn_clear_txt_17.setVisibility(View.VISIBLE);
                 btn_clear_txt_17.setOnClickListener(new DetailsOnClickListener());
             }
-            if (mEditText == editOutsideAroundBack) {
+            if (mEditText == autoCompleteOutsideAroundBack) {
                 btn_clear_txt_18.setVisibility(View.VISIBLE);
                 btn_clear_txt_18.setOnClickListener(new DetailsOnClickListener());
             }
@@ -1124,8 +1150,8 @@ public class DetailsTabFragment extends Fragment {
             } else if (s == editDetailOutside.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail = editDetailOutside.getText().toString();
                 Log.i(TAG, "OutsideTypeDetail " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().OutsideTypeDetail);
-            } else if (s == editOutsideAroundBack.getEditableText()) {
-                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide = editOutsideAroundBack.getText().toString();
+            } else if (s == autoCompleteOutsideAroundBack.getEditableText()) {
+                CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide = autoCompleteOutsideAroundBack.getText().toString();
                 Log.i(TAG, "BackSide " + CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().BackSide);
             } else if (s == editOutsideAroundLeft.getEditableText()) {
                 CSIDataTabFragment.apiCaseScene.getTbSceneFeatureOutside().LeftSide = editOutsideAroundLeft.getText().toString();
@@ -1403,4 +1429,25 @@ public class DetailsTabFragment extends Fragment {
         return imageEncoded;
     }
 
+    private class DetailOnTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(view == autoCompleteTypeOutside){
+                autoCompleteTypeOutside.showDropDown();
+            }
+            if(view == autoCompleteOutsideAroundBack){
+                autoCompleteOutsideAroundBack.showDropDown();
+            }
+            if(view == editOutsideAroundFront){
+                editOutsideAroundFront.showDropDown();
+            }
+            if(view == editOutsideAroundLeft){
+                editOutsideAroundLeft.showDropDown();
+            }
+            if(view == editOutsideAroundRight){
+                editOutsideAroundRight.showDropDown();
+            }
+            return false;
+        }
+    }
 }

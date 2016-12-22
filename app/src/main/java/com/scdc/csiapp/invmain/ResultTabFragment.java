@@ -1335,8 +1335,12 @@ public class ResultTabFragment extends Fragment {
 
                     for (int i = 0; i < evidenceTypeArray.length; i++) {
                         if (String.valueOf(evidenceTypeArray[i][0]).equals(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).EvidenceTypeID)) {
-                            txtEvidenceType.setText(String.valueOf(position + 1) + ") " + String.valueOf(evidenceTypeArray[i][2]));
+                            if(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol == null || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol.equals("")) {
+                                txtEvidenceType.setText(String.valueOf(position + 1) + ") " + String.valueOf(evidenceTypeArray[i][2]));
+                            }else{
+                                txtEvidenceType.setText(String.valueOf(position + 1) + ") " + String.valueOf(evidenceTypeArray[i][2]) + " " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol);
 
+                            }
                             break;
                         }
                     }

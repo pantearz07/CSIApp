@@ -110,11 +110,12 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editFeatureInsideClassFront"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านหน้า"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -131,11 +132,12 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editFeatureInsideClassLeft"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านซ้าย"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -153,11 +155,12 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editFeatureInsideClassCenter"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ตรงกลาง"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -175,11 +178,12 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editFeatureInsideClassRight"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านขวา"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -196,11 +200,12 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <EditText
+                            <MultiAutoCompleteTextView
                                 android:id="@+id/editFeatureInsideClassBack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ด้านหลัง"
+                                android:ems="10"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>

@@ -24,15 +24,18 @@ import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,7 +73,8 @@ public class AddFeatureInsideFragment extends Fragment {
     FloatingActionButton fabBtnDetails;
     private CoordinatorLayout rootLayout;
     private static final String TAG = "DEBUG-AddFeatureInsideFragment";
-    EditText editFeatureInsideFloor, editFeatureInsideCave, editFeatureInsideClassBack, editFeatureInsideClassLeft, editFeatureInsideClassCenter,
+    EditText editFeatureInsideFloor, editFeatureInsideCave;
+    MultiAutoCompleteTextView editFeatureInsideClassBack, editFeatureInsideClassLeft, editFeatureInsideClassCenter,
             editFeatureInsideClassRight, editFeatureInsideClassFront;
     private GridView horizontal_gridView_Inside, horizontal_gridView_Inside_video;
     private TextView txtPhoto, txtVideo;
@@ -138,11 +142,11 @@ public class AddFeatureInsideFragment extends Fragment {
         btnTakePhotoInside = (ImageButton) view.findViewById(R.id.btnTakePhotoInside);
         editFeatureInsideFloor = (EditText) view.findViewById(R.id.editFeatureInsideFloor);
         editFeatureInsideCave = (EditText) view.findViewById(R.id.editFeatureInsideCave);
-        editFeatureInsideClassBack = (EditText) view.findViewById(R.id.editFeatureInsideClassBack);
-        editFeatureInsideClassLeft = (EditText) view.findViewById(R.id.editFeatureInsideClassLeft);
-        editFeatureInsideClassCenter = (EditText) view.findViewById(R.id.editFeatureInsideClassCenter);
-        editFeatureInsideClassRight = (EditText) view.findViewById(R.id.editFeatureInsideClassRight);
-        editFeatureInsideClassFront = (EditText) view.findViewById(R.id.editFeatureInsideClassFront);
+        editFeatureInsideClassBack = (MultiAutoCompleteTextView) view.findViewById(R.id.editFeatureInsideClassBack);
+        editFeatureInsideClassLeft = (MultiAutoCompleteTextView) view.findViewById(R.id.editFeatureInsideClassLeft);
+        editFeatureInsideClassCenter = (MultiAutoCompleteTextView) view.findViewById(R.id.editFeatureInsideClassCenter);
+        editFeatureInsideClassRight = (MultiAutoCompleteTextView) view.findViewById(R.id.editFeatureInsideClassRight);
+        editFeatureInsideClassFront = (MultiAutoCompleteTextView) view.findViewById(R.id.editFeatureInsideClassFront);
 
         editFeatureInsideFloor.addTextChangedListener(new InsideTextWatcher(editFeatureInsideFloor));
         editFeatureInsideCave.addTextChangedListener(new InsideTextWatcher(editFeatureInsideCave));
@@ -152,6 +156,26 @@ public class AddFeatureInsideFragment extends Fragment {
         editFeatureInsideClassFront.addTextChangedListener(new InsideTextWatcher(editFeatureInsideClassFront));
         editFeatureInsideClassLeft.addTextChangedListener(new InsideTextWatcher(editFeatureInsideClassLeft));
 
+        final String[] mInsideBackArray = getResources().getStringArray(
+                R.array.type_feature_in);
+        ArrayAdapter<String> adapterInsideBack = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_dropdown_item_1line,
+                mInsideBackArray);
+        editFeatureInsideClassBack.setAdapter(adapterInsideBack);
+        editFeatureInsideClassBack.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editFeatureInsideClassBack.setOnTouchListener(new DetailOnTouchListener());
+        editFeatureInsideClassCenter.setAdapter(adapterInsideBack);
+        editFeatureInsideClassCenter.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editFeatureInsideClassCenter.setOnTouchListener(new DetailOnTouchListener());
+        editFeatureInsideClassRight.setAdapter(adapterInsideBack);
+        editFeatureInsideClassRight.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editFeatureInsideClassRight.setOnTouchListener(new DetailOnTouchListener());
+        editFeatureInsideClassFront.setAdapter(adapterInsideBack);
+        editFeatureInsideClassFront.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editFeatureInsideClassFront.setOnTouchListener(new DetailOnTouchListener());
+        editFeatureInsideClassLeft.setAdapter(adapterInsideBack);
+        editFeatureInsideClassLeft.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editFeatureInsideClassLeft.setOnTouchListener(new DetailOnTouchListener());
         if (mode == "edit") {
             position = args.getInt(DetailsTabFragment.Bundle_Index, -1);
             Log.i(TAG, "position " + position);
@@ -738,5 +762,26 @@ public class AddFeatureInsideFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 //        showAllPhoto();
 
+    }
+    private class DetailOnTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(view == editFeatureInsideClassBack){
+                editFeatureInsideClassBack.showDropDown();
+            }
+            if(view == editFeatureInsideClassFront){
+                editFeatureInsideClassFront.showDropDown();
+            }
+            if(view == editFeatureInsideClassCenter){
+                editFeatureInsideClassCenter.showDropDown();
+            }
+            if(view == editFeatureInsideClassRight){
+                editFeatureInsideClassRight.showDropDown();
+            }
+            if(view == editFeatureInsideClassLeft){
+                editFeatureInsideClassLeft.showDropDown();
+            }
+            return false;
+        }
     }
 }

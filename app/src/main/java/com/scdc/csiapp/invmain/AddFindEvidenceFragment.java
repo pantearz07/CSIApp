@@ -72,7 +72,7 @@ public class AddFindEvidenceFragment extends Fragment {
     private CoordinatorLayout rootLayout;
     private static final String TAG = "DEBUG-AddFindEvidenceFragment";
     EditText editEvidenceNumber, editFindEvidenceZone, editMarking, editParceling,
-            editEvidencePerformed;
+            editEvidencePerformed, editEvidenceType;
     Spinner spnEvidenceType;
     private GridView horizontal_gridView_EV_photo, horizontal_gridView_EV_video;
     private TextView txtPhoto, txtVideo;
@@ -139,6 +139,7 @@ public class AddFindEvidenceFragment extends Fragment {
 
         btnTakePhotoEV = (ImageButton) view.findViewById(R.id.btnTakePhotoEV);
         spnEvidenceType = (Spinner) view.findViewById(R.id.spinnerEvidenceType);
+        editEvidenceType = (EditText) view.findViewById(R.id.editEvidenceType);
         evidenceTypeArray = dbHelper.SelectAllEvidenceType();
         if (evidenceTypeArray != null) {
             final String[] evidenceTypeArray2 = new String[evidenceTypeArray.length];
@@ -194,6 +195,12 @@ public class AddFindEvidenceFragment extends Fragment {
                         break;
                     }
                 }
+            }
+            if (tbFindEvidence.getFindEvidencecol() == null || tbFindEvidence.getFindEvidencecol().equals("")) {
+                editEvidenceType.setVisibility(View.GONE);
+            }else{
+                editEvidenceType.setVisibility(View.VISIBLE);
+                editEvidenceType.setText(tbFindEvidence.getFindEvidencecol());
             }
         }
         horizontal_gridView_EV_photo = (GridView) view.findViewById(R.id.horizontal_gridView_EV);
@@ -301,6 +308,9 @@ public class AddFindEvidenceFragment extends Fragment {
             } else if (s == editEvidencePerformed.getEditableText()) {
                 tbFindEvidence.EvidencePerformed = editEvidencePerformed.getText().toString();
                 Log.i(TAG, "EvidencePerformed " + tbFindEvidence.EvidencePerformed);
+            } else if (s == editEvidenceType.getEditableText()) {
+                tbFindEvidence.FindEvidencecol = editEvidenceType.getText().toString();
+                Log.i(TAG, "FindEvidencecol " + tbFindEvidence.FindEvidencecol);
             }
         }
     }
@@ -318,10 +328,13 @@ public class AddFindEvidenceFragment extends Fragment {
             switch (parent.getId()) {
                 case R.id.spinnerEvidenceType:
                     if (oldEvidenceType == false) {
-
+                        editEvidenceType.setVisibility(View.GONE);
                         tbFindEvidence.EvidenceTypeID = String.valueOf(evidenceTypeArray[i][0]);
                         Log.i(TAG, "EvidenceTypeID " + tbFindEvidence.EvidenceTypeID);
-
+                        if (evidenceTypeArray[i][1].equals("etc")) {
+                            editEvidenceType.setVisibility(View.VISIBLE);
+                            editEvidenceType.addTextChangedListener(new InsideTextWatcher(editEvidenceType));
+                        }
                     }
                     break;
             }

@@ -38,14 +38,22 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
-
-                        <EditText
+                        <AutoCompleteTextView
                             android:id="@+id/editPropertyLossName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:completionThreshold="1"
+                            android:ems="10"
                             android:hint="ทรัพย์สินที่หายไป"
                             android:inputType="text"
                             android:textSize="@dimen/small_text" />
+                        <!--<EditText-->
+                            <!--android:id="@+id/editPropertyLossName"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:hint="ทรัพย์สินที่หายไป"-->
+                            <!--android:inputType="text"-->
+                            <!--android:textSize="@dimen/small_text" />-->
                     </android.support.design.widget.TextInputLayout>
 
                     <TextView

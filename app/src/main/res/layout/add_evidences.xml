@@ -61,18 +61,27 @@
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
-                    <!-- <TableRow
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content" >
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
 
-                         <EditText
-                             android:id="@+id/editEvidenceType"
-                             android:layout_width="0dp"
-                             android:layout_height="wrap_content"
-                             android:layout_weight="1"
-                             android:hint="วัตถุพยานอื่นๆ"
-                             android:textSize="@dimen/small_text" />
-                     </TableRow>-->
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editEvidenceTypeLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editEvidenceType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="วัตถุพยานอื่นๆ"
+                                android:visibility="gone"
+                                android:inputType="text"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
+                    </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -107,14 +116,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <EditText
-                            android:id="@+id/editFindEvidenceZone"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editFindEvidenceZoneLayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="บริเวณที่พบ"
-                            android:inputType="text"
-                            android:textSize="@dimen/small_text" />
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editFindEvidenceZone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="บริเวณที่พบ"
+                                android:inputType="text"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
                     <TableRow
@@ -122,14 +137,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <EditText
-                            android:id="@+id/editMarking"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editMarkingLayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="การทำเครื่องหมาย"
-                            android:inputType="text"
-                            android:textSize="@dimen/small_text" />
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editMarking"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="การทำเครื่องหมาย"
+                                android:inputType="text"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
                     <TableRow
@@ -137,14 +158,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <EditText
-                            android:id="@+id/editParceling"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editParcelingLayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="การบรรจุหีบห่อ"
-                            android:inputType="text"
-                            android:textSize="@dimen/small_text" />
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editParceling"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="การบรรจุหีบห่อ"
+                                android:inputType="text"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
                     <TableRow
@@ -152,14 +179,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <EditText
-                            android:id="@+id/editEvidencePerformed"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/editEvidencePerformedLayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
-                            android:inputType="text"
-                            android:textSize="@dimen/small_text" />
+                            android:layout_weight="1">
+
+                            <EditText
+                                android:id="@+id/editEvidencePerformed"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
+                                android:inputType="text"
+                                android:textSize="@dimen/small_text" />
+                        </android.support.design.widget.TextInputLayout>
                     </TableRow>
                 </TableLayout>
 

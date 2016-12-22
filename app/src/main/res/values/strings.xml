@@ -139,7 +139,6 @@
     <string-array name="accesstype">
         <item>ผู้ตรวจสถานที่เกิดเหตุ</item>
         <item>พนักงานสอบสวน</item>
-
     </string-array>
     <string-array name="subcasetypeproperties">
         <item>ลักทรัพย์</item>
@@ -159,6 +158,15 @@
         <item>เจ้าของบ้าน</item>
         <item>ผู้เช่าอาศัย</item>
         <item>ตัวแทนบริษัทฯ</item>
+        <item>ผู้เสียหาย</item>
+        <item>เพื่อนบ้าน</item>
+        <item>สามีของเจ้าของบ้าน</item>
+        <item>ภรรยาของเจ้าของบ้าน</item>
+        <item>คนสวน</item>
+        <item>แม่บ้าน</item>
+        <item>พนักงาน</item>
+        <item>เจ้าอาวาส</item>
+        <item>สามเณร</item>
     </string-array>
     <string-array name="type_Receive">
         <item>หนังสือ</item>
@@ -170,6 +178,8 @@
         <item>นาย</item>
         <item>นาง</item>
         <item>นางสาว</item>
+        <item>พระ</item>
+        <item>สามเณร</item>
     </string-array>
     <string-array name="type_outside">
         <item>บ้านคอนกรีต</item>
@@ -179,6 +189,27 @@
         <item>ทาวน์เฮ้าส์</item>
         <item>อาคารพานิช (ตึกแถว)</item>
         <item>อื่นๆ</item>
+    </string-array>
+    <string-array name="type_feature_out">
+        <item>บ้าน</item>
+        <item>บ้านข้างเคียง</item>
+        <item>ป่า</item>
+        <item>ถนน</item>
+        <item>ถนนหมู่บ้าน</item>
+        <item>สวน</item>
+        <item>กุฏิ</item>
+    </string-array>
+    <string-array name="type_feature_in">
+        <item>ห้องนอน</item>
+        <item>ห้องนั่งเล่น</item>
+        <item>ห้องรับเเขก</item>
+        <item>ห้องโถง</item>
+        <item>ห้องครัว</item>
+        <item>ห้องน้ำ</item>
+        <item>โถงทางเดิน</item>
+        <item>โถง</item>
+        <item>บันได</item>
+        <item>ห้องเก็บของ</item>
     </string-array>
     <string-array name="rank_inspector">
         <item>พล.ต.อ.</item>
@@ -243,8 +274,28 @@
         <item>ด้าม</item>
         <item>เส้น</item>
         <item>วง</item>
+        <item>เรือน</item>
+        <item>ใบ</item>
+        <item>ตัว</item>
+        <item>เล่ม</item>
+        <item>ลูก</item>
     </string-array>
-
+    <string-array name="property_name">
+        <item>กำไร</item>
+        <item>สร้อยทอง</item>
+        <item>เงิน</item>
+        <item>ธนาบัติ</item>
+        <item>นาฬิกา</item>
+        <item>โทรทัศน์</item>
+        <item>คอมพิวเตอร์</item>
+        <item>โน๊ตบุ๊ค</item>
+        <item>ลำโพง</item>
+        <item>เครื่องเสียง</item>
+        <item>เครื่องเล่นดีวีดี</item>
+        <item>กระเป๋า</item>
+        <item>กระเป๋าแบรนด์เนม</item>
+        <item>เครื่องซักผ้า</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="status_change_mode">กรุณาเปลี่ยนเป็นโหมดแก้ไข</string>

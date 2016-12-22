@@ -375,6 +375,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             autoCompleteAntecedent.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPrename);
         }
         autoCompleteAntecedent.addTextChangedListener(new ReceiveTextWatcher(autoCompleteAntecedent));
+        autoCompleteAntecedent.setOnTouchListener(new ReceiveOnTouchListener());
         editSuffererName = (EditText) viewReceiveCSI.findViewById(R.id.editSuffererName);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererName.equals("")) {
             editSuffererName.setText("");
@@ -394,7 +395,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             autoCompleteSuffererStatus.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererStatus);
         }
         autoCompleteSuffererStatus.addTextChangedListener(new ReceiveTextWatcher(autoCompleteSuffererStatus));
-
+        autoCompleteSuffererStatus.setOnTouchListener(new ReceiveOnTouchListener());
         editTextSuffererPhone = (EditText) viewReceiveCSI.findViewById(R.id.editTextSuffererPhone);
         // Log.i(TAG, "SuffererPhoneNum " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SuffererPhoneNum);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().SuffererPhoneNum.equals("")) {
@@ -1473,4 +1474,16 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
     }
 
+    private class ReceiveOnTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(view == autoCompleteAntecedent){
+                autoCompleteAntecedent.showDropDown();
+            }
+            if(view == autoCompleteSuffererStatus){
+                autoCompleteSuffererStatus.showDropDown();
+            }
+            return false;
+        }
+    }
 }
