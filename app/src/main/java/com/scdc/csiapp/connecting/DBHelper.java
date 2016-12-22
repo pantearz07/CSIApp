@@ -3379,7 +3379,7 @@ public class DBHelper extends SQLiteAssetHelper {
                         List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = new ArrayList<>();
                         strSQL = "SELECT * FROM investigatorsinscene "
                                 + " WHERE CaseReportID = '" + temp.CaseReportID + "'" +
-                                " ORDER BY InvOfficialID ASC";
+                                " ORDER BY InvOfficialID DESC";
                         try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
 
                             if (cursor2.getCount() > 0) {
@@ -4633,6 +4633,7 @@ public class DBHelper extends SQLiteAssetHelper {
         }
 
     }
+
     public long CheckInvestigatorInCase(String sCaseReportID, String sOfficialID) {
         // TODO Auto-generated method stub
 
@@ -4666,6 +4667,7 @@ public class DBHelper extends SQLiteAssetHelper {
             return -1;
         }
     }
+
     public long saveOtherofficialInscene(String sCaseReportID,
                                          String sOfficialID) {
         // TODO Auto-generated method stub
@@ -4684,7 +4686,7 @@ public class DBHelper extends SQLiteAssetHelper {
 
             ContentValues Val = new ContentValues();
             Val.put(COL_CaseReportID, sCaseReportID);
-            Val.put(COL_OfficialID, sOfficialID);
+            Val.put(COL_InvOfficialID, sOfficialID);
 
             Log.i("cursor officialinscene",
                     String.valueOf(cursor.getCount()));
@@ -4706,6 +4708,192 @@ public class DBHelper extends SQLiteAssetHelper {
 
         } catch (Exception e) {
             return -1;
+        }
+    }
+
+    public boolean DeleteInvestigatorInscene(String sCaseReportID) {
+        // TODO Auto-generated method stub
+        try {
+            mDb = this.getReadableDatabase(); // Read Data
+            String arrData[][] = null;
+            String strSQL = "SELECT investigatorsinscene.InvOfficialID FROM " + TB_investigatorsinscene + ", " + TB_official
+                    + " WHERE investigatorsinscene.CaseReportID = '" + sCaseReportID + "' AND "
+                    + "investigatorsinscene.InvOfficialID = official.OfficialID AND "
+                    + "official.AccessType = 'investigator2'";
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+            int deleterow = 0;
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+            db.beginTransaction();
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    arrData = new String[cursor.getCount()][cursor
+                            .getColumnCount()];
+
+                    int i = 0;
+                    do {
+                        arrData[i][0] = cursor.getString(0);
+                        db.delete(TB_investigatorsinscene, " InvOfficialID = ?", new String[]{String.valueOf(arrData[i][0])});
+                        Log.d(TAG, "Delete InvOfficialID " + arrData[i][0].toString());
+                        deleterow++;
+                        i++;
+                    } while (cursor.moveToNext());
+                }
+            }
+
+            cursor.close();
+            Log.d(TAG, "Delete TB_investigatorsinscene " + sCaseReportID + " deleterow " + String.valueOf(deleterow));
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+
+            return true;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in Delete TB_investigatorsinscene" + e.getMessage().toString());
+            return false;
+        }
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public List<ApiInvestigatorsInScene> selectApiInvestigatorsInScene(String CaseReportID) {
+
+        List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = new ArrayList<>();
+        try {
+            SQLiteDatabase db;
+            db = this.getReadableDatabase(); // Read Data
+            String strSQL;
+
+            strSQL = "SELECT * FROM investigatorsinscene "
+                    + " WHERE CaseReportID = '" + CaseReportID + "'" +
+                    " ORDER BY InvOfficialID DESC";
+            try (Cursor cursor2 = db.rawQuery(strSQL, null)) {
+
+                if (cursor2.getCount() > 0) {
+                    cursor2.moveToPosition(-1);
+                    while (cursor2.moveToNext()) {
+                        ApiInvestigatorsInScene apiInvestigatorsInScene = new ApiInvestigatorsInScene();
+
+                        TbInvestigatorsInScene tbInvestigatorsInScene = new TbInvestigatorsInScene();
+                        tbInvestigatorsInScene.CaseReportID = cursor2.getString(cursor2.getColumnIndex(COL_CaseReportID));
+                        tbInvestigatorsInScene.InvOfficialID = cursor2.getString(cursor2.getColumnIndex(COL_InvOfficialID));
+                        tbInvestigatorsInScene.InvType = cursor2.getString(cursor2.getColumnIndex(COL_InvType));
+                        apiInvestigatorsInScene.setTbInvestigatorsInScene(tbInvestigatorsInScene);
+
+                        if (tbInvestigatorsInScene.InvOfficialID != null) {
+                            strSQL = "SELECT * FROM " + TB_official
+                                    + " WHERE " + COL_OfficialID + " = '" + tbInvestigatorsInScene.InvOfficialID + "'";
+
+                            try (Cursor cursor3 = db.rawQuery(strSQL, null)) {
+
+                                if (cursor3.getCount() == 1) {
+                                    cursor3.moveToFirst();
+                                    TbOfficial tbOfficial = new TbOfficial();
+                                    tbOfficial.OfficialID = cursor3.getString(cursor3.getColumnIndex(COL_OfficialID));
+                                    tbOfficial.FirstName = cursor3.getString(cursor3.getColumnIndex(COL_FirstName));
+                                    tbOfficial.LastName = cursor3.getString(cursor3.getColumnIndex(COL_LastName));
+                                    tbOfficial.Alias = cursor3.getString(cursor3.getColumnIndex(COL_Alias));
+                                    tbOfficial.Rank = cursor3.getString(cursor3.getColumnIndex(COL_Rank));
+                                    tbOfficial.Position = cursor3.getString(cursor3.getColumnIndex(COL_Position));
+                                    tbOfficial.SubPossition = cursor3.getString(cursor3.getColumnIndex(COL_SubPossition));
+                                    tbOfficial.PhoneNumber = cursor3.getString(cursor3.getColumnIndex(COL_PhoneNumber));
+                                    tbOfficial.OfficialEmail = cursor3.getString(cursor3.getColumnIndex(COL_OfficialEmail));
+                                    tbOfficial.OfficialDisplayPic = cursor3.getString(cursor3.getColumnIndex(COL_OfficialDisplayPic));
+                                    tbOfficial.AccessType = cursor3.getString(cursor3.getColumnIndex(COL_AccessType));
+                                    tbOfficial.SCDCAgencyCode = cursor3.getString(cursor3.getColumnIndex(COL_SCDCAgencyCode));
+                                    tbOfficial.PoliceStationID = cursor3.getString(cursor3.getColumnIndex(COL_PoliceStationID));
+                                    tbOfficial.id_users = cursor3.getString(cursor3.getColumnIndex(COL_id_users));
+                                    apiInvestigatorsInScene.setTbOfficial(tbOfficial);
+
+                                } else {
+                                    apiInvestigatorsInScene.setTbOfficial(null);
+                                }
+                            }
+                        }
+                        apiInvestigatorsInScenes.add(apiInvestigatorsInScene);
+                    }
+                }
+            }
+            return apiInvestigatorsInScenes;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in apiInvestigatorsInScenes " + e.getMessage().toString());
+            return null;
+        }
+
+    }
+
+    public boolean saveInvIncase(String sCaseReportID, ArrayList<String> InvestigatorArrayList) {
+        if (InvestigatorArrayList.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = InvestigatorArrayList.size();
+            int insert = 0;
+            String sInvOfficialID;
+            String strSQL;
+            db.beginTransaction();
+            for (int i = 0; i < size; i++) {
+                sInvOfficialID = InvestigatorArrayList.get(i);
+                strSQL = "SELECT * FROM investigatorsinscene "
+                        + " WHERE CaseReportID = '" + sCaseReportID + "' AND "
+                        + "InvOfficialID = '" + sInvOfficialID + "'";
+                Cursor cursor = mDb.rawQuery(strSQL, null);
+
+
+                ContentValues Val = new ContentValues();
+                Val.put(COL_CaseReportID, sCaseReportID);
+                Val.put(COL_InvOfficialID, sInvOfficialID);
+
+                if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                    db.insert("investigatorsinscene", null, Val);
+                    insert++;
+                }
+                cursor.close();
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d(TAG, "Sync Table investigatorsinscene: Insert " + insert);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in investigatorsinscene " + e.getMessage().toString());
+            return false;
+        }
+    }
+    public boolean deleteInvIncase(String sCaseReportID, ArrayList<String> InvestigatorArrayList) {
+        if (InvestigatorArrayList.size() == 0) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int size = InvestigatorArrayList.size();
+            int insert = 0;
+            String sInvOfficialID;
+            String strSQL;
+            db.beginTransaction();
+            for (int i = 0; i < size; i++) {
+                sInvOfficialID = InvestigatorArrayList.get(i);
+                db.delete(TB_investigatorsinscene, COL_CaseReportID
+                        + " =? AND " + COL_InvOfficialID + " =?", new String[]{
+                        sCaseReportID, sInvOfficialID});
+                Log.d(TAG, "Delete InvOfficialID " + sInvOfficialID);
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in investigatorsinscene " + e.getMessage().toString());
+            return false;
         }
     }
 }

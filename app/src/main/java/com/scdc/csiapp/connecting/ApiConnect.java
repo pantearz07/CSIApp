@@ -762,6 +762,7 @@ public class ApiConnect implements Parcelable {
         formBuilder1.addFormDataPart("tbGatewayCriminals", gson1.toJson(apiCaseScene.getTbGatewayCriminals()));
         formBuilder1.addFormDataPart("tbClueShowns", gson1.toJson(apiCaseScene.getTbClueShowns()));
         formBuilder1.addFormDataPart("tbPropertyLosses", gson1.toJson(apiCaseScene.getTbPropertyLosses()));
+        formBuilder1.addFormDataPart("apiInvestigatorsInScenes", gson1.toJson(apiCaseScene.getApiInvestigatorsInScenes()));
         formBuilder1.addFormDataPart("apiMultimedia", gson1.toJson(apiCaseScene.getApiMultimedia()));
 //        Log.d(TAG, "getApiMultimedia size" + String.valueOf(apiCaseScene.getApiMultimedia().size()));
 //        Log.d(TAG, "apiMultimedia" + gson1.toJson(apiCaseScene.getApiMultimedia()));

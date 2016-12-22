@@ -117,7 +117,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     private View viewReceiveCSI;
     Context context;
     String lat, lng;
-    boolean oldAntecedent, oldProvince, oldAmphur  = false;
+    boolean oldAntecedent, oldProvince, oldAmphur = false;
     ViewGroup viewAddSceneInvestigation;
     protected static final int DIALOG_AddSceneInvestigation = 0;
     protected static final int DIALOG_SelectDataInvestigator = 1; // Dialog 1 ID
@@ -126,6 +126,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = null;
     String address, amphur, province, country, postalCode, knownName = "null";
     ArrayList<Integer> mMultiSelected;
+    ArrayList<String> mSelectDataInvestigatorArrayNew, mSelectDataInvestigatorArrayOld;
     ArrayList<Boolean> mMultiChecked;
     String[][] mSelectDataInvestigatorArray = null;
     Handler mHandler = new Handler();
@@ -456,7 +457,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             listViewAddSceneInvestDateTime.setOnItemClickListener(new ListviewOnClickListener());
 
         }
-        btnEditInvestigator.setVisibility(View.GONE);
+//        btnEditInvestigator.setVisibility(View.GONE);
         return viewReceiveCSI;
     }
 
@@ -822,7 +823,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                             Toast.LENGTH_SHORT).show();
                 }
             }
-            if(v == btnEditInvestigator){
+            if (v == btnEditInvestigator) {
                 Log.i("Investigator1", "showlist");
                 createdDialog(DIALOG_SelectDataInvestigator).show();
             }
@@ -945,6 +946,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 mSelectDataInvestigatorArray = dbHelper
                         .SelectDataInvestigator("investigator2");
                 mMultiChecked = new ArrayList<Boolean>();
+                mSelectDataInvestigatorArrayOld = new ArrayList<String>();
+
                 if (mSelectDataInvestigatorArray != null) {
                     final String[] mSelectDataInvestigatorArray2 = new String[mSelectDataInvestigatorArray.length];
                     for (int i = 0; i < mSelectDataInvestigatorArray.length; i++) {
@@ -954,11 +957,14 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                         long checkInv = dbHelper.CheckInvestigatorInCase(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, mSelectDataInvestigatorArray[i][0]);
                         if (checkInv == 1) {
                             mMultiChecked.add(true);
+                            mSelectDataInvestigatorArrayOld.add(mSelectDataInvestigatorArray[i][0]);
+                            Log.i("mSelectDataInvestigatorArrayOld", mSelectDataInvestigatorArray[i][0]);
                         } else if (checkInv == 0) {
                             mMultiChecked.add(false);
                         }
                     }
-                    boolean[] CheckedInvestigator = new boolean[mMultiChecked.size()];
+
+                    final boolean[] CheckedInvestigator = new boolean[mMultiChecked.size()];
 
                     for (int i = 0; i < mMultiChecked.size(); i++) {
                         CheckedInvestigator[i] = ((Boolean) mMultiChecked.get(i)).booleanValue();
@@ -966,11 +972,13 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                                 String.valueOf(CheckedInvestigator[i]));
                     }
                     mMultiSelected = new ArrayList<Integer>();
+                    mSelectDataInvestigatorArrayNew = new ArrayList<String>();
                     builder = new AlertDialog.Builder(getActivity());
 
                     builder.setMultiChoiceItems(mSelectDataInvestigatorArray2, CheckedInvestigator, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                            CheckedInvestigator[which] = isChecked;
                             if (isChecked) {
                                 mMultiSelected.add(which);
 
@@ -980,30 +988,49 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                         }
                     })
                             .setTitle("เลือกรายชื่อเจ้าหน้าที่")
-                            //.setCancelable(false)
+                            .setCancelable(false)
                             .setPositiveButton("ยืนยัน", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     Log.i("DIALOG_ Investigator", "null");
-                                    for (Integer team : mMultiSelected) {
-                                        // buffer.append(" ");
-                                        // buffer.append(mSelectDataInvestigatorArray[team][0]);
-                                        // }
 
-                                        long saveStatus = dbHelper.saveOtherofficialInscene(
-                                                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID, mSelectDataInvestigatorArray[team][0]);
-                                        if (saveStatus <= 0) {
-                                            Log.i("save officialInscene", "have");
-                                            showListInvestigators();
-                                        } else {
-
-
-                                            Toast.makeText(getActivity().getApplicationContext(), "เลือก" +
-                                                    mSelectDataInvestigatorArray[team][0].toString(), Toast.LENGTH_SHORT).show();
-                                            showListInvestigators();
-
+                                    for (int i = 0; i < CheckedInvestigator.length; i++) {
+                                        boolean checked = CheckedInvestigator[i];
+                                        if (checked) {
+                                            mSelectDataInvestigatorArrayNew.add(mSelectDataInvestigatorArray[i][0]);
+//                                            Toast.makeText(getActivity().getApplicationContext(), mSelectDataInvestigatorArray[i][0] + "\n", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+
+                                    String sCaseReportID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID;
+                                    if (mSelectDataInvestigatorArrayOld != null) {
+                                        if (dbHelper.deleteInvIncase(sCaseReportID, mSelectDataInvestigatorArrayOld)) {
+                                            Log.i(TAG, "success deleteInvIncase");
+                                        } else {
+                                            Log.i(TAG, "cannot DeleteInvestigatorInscene");
+                                        }
+                                    } else {
+                                        Toast.makeText(getActivity().getApplicationContext(), "ไม่มีผู้ช่วยตรวจ", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if (mSelectDataInvestigatorArrayNew != null) {
+                                        if (dbHelper.saveInvIncase(sCaseReportID, mSelectDataInvestigatorArrayNew)) {
+                                            Log.i(TAG, "success saveInvIncase");
+                                            List<ApiInvestigatorsInScene> apiInvestigatorsInScenes = new ArrayList<>();
+                                            apiInvestigatorsInScenes = dbHelper.selectApiInvestigatorsInScene(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID);
+                                            CSIDataTabFragment.apiCaseScene.setApiInvestigatorsInScenes(apiInvestigatorsInScenes);
+                                            Log.i(TAG, "size apiInvestigatorsInScenes " + String.valueOf(apiInvestigatorsInScenes.size()));
+
+                                            Toast.makeText(getActivity().getApplicationContext(), "บันทึกเรียบร้อย", Toast.LENGTH_SHORT).show();
+                                            showListInvestigators();
+                                        } else {
+                                            Log.i(TAG, "cannot saveInvIncase");
+                                        }
+                                    } else {
+                                        Toast.makeText(getActivity().getApplicationContext(), "คุณยังไม่ได้เลือกรายชื่อผู้ตรวจ", Toast.LENGTH_SHORT).show();
+                                    }
+
+
                                     dialog.dismiss();
+                                    showListInvestigators();
                                 }
                             })
                             .setNegativeButton("ยกเลิก", null);
