@@ -25,8 +25,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -200,7 +203,22 @@ public class InquiryOfficialListFragment extends Fragment {
 
                                 view = inflater.inflate(R.layout.ipsetting_dialog, null);
                                 builder.setView(view);
-                                final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+                                final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
+                                final String[] ip_list = getResources().getStringArray(
+                                        R.array.ip_list);
+                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                                        ip_list);
+                                ipvalueEdt.setThreshold(1);
+                                ipvalueEdt.setAdapter(adapter);
+                                ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
+                                    @Override
+                                    public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                                        ipvalueEdt.showDropDown();
+
+                                        return false;
+                                    }
+                                });
 
                                 builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
                                     @Override

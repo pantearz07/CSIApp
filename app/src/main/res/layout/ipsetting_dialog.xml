@@ -18,11 +18,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/ipvalueEdt"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="xxx.xxx.xxx.xxx" />
+            android:ems="10"
+            android:hint="IP" />
     </android.support.design.widget.TextInputLayout>
 
     <TextView

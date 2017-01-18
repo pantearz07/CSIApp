@@ -25,8 +25,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -155,8 +158,22 @@ public class LoginActivity extends AppCompatActivity {
 
                     View view = inflater.inflate(R.layout.ipsetting_dialog, null);
                     builder.setView(view);
-                    final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+                    final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
+                    final String[] ip_list = getResources().getStringArray(
+                            R.array.ip_list);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line,
+                            ip_list);
+                    ipvalueEdt.setThreshold(1);
+                    ipvalueEdt.setAdapter(adapter);
+                    ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
 
+                            ipvalueEdt.showDropDown();
+
+                            return false;
+                        }
+                    });
                     builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -438,7 +455,22 @@ public class LoginActivity extends AppCompatActivity {
 
                                         View view = inflater.inflate(R.layout.ipsetting_dialog, null);
                                         builder.setView(view);
-                                        final EditText ipvalueEdt = (EditText) view.findViewById(R.id.ipvalueEdt);
+                                        final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
+                                        final String[] ip_list = getResources().getStringArray(
+                                                R.array.ip_list);
+                                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line,
+                                                ip_list);
+                                        ipvalueEdt.setThreshold(1);
+                                        ipvalueEdt.setAdapter(adapter);
+                                        ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                                                ipvalueEdt.showDropDown();
+
+                                                return false;
+                                            }
+                                        });
 
                                         builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
                                             @Override
@@ -695,4 +727,5 @@ public class LoginActivity extends AppCompatActivity {
         txt_ipvalue.setText(getString(R.string.current_ip_server) + WelcomeActivity.api.getDefaultIP());
 
     }
+
 }

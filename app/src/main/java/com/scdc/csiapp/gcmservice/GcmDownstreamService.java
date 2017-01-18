@@ -50,8 +50,9 @@ public class GcmDownstreamService extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         // TODO Do something here
         Log.e(TAG, "Message Incoming");
+        String Title = data.getString("gcm.notification.Title");
         if (accesstype.equals("investigator")) {
-            String Title = data.getString("gcm.notification.Title");
+
             Log.e(TAG, "Title : " + Title);
             String InvestigatorOfficialID = data.getString("gcm.notification.InvestigatorOfficialID");
             Log.e(TAG, "InvestigatorOfficialID : " + InvestigatorOfficialID);
@@ -95,9 +96,9 @@ public class GcmDownstreamService extends GcmListenerService {
                     sendNotification("อัพเดทตารางเวรใหม่", message, bigmessage, nameintent, "calendarfragment");
 
                 }
+
             }
         } else if (accesstype.equals("inquiryofficial")) {
-            String Title = data.getString("gcm.notification.Title");
             String InquiryOfficialID = data.getString("gcm.notification.InquiryOfficialID");
             if (officialID.equals(InquiryOfficialID)) {
                 if (Title.equals("acceptreceivingcase")) {
@@ -142,9 +143,23 @@ public class GcmDownstreamService extends GcmListenerService {
 
                     sendNotification("จ่ายงานแล้ว", message, bigmessage, nameintent, "noticecaselistfragment");
                 }
+
             }
         }
-
+        if (Title.equals("newofficial")) {
+            String nameintent = "MainActivity";
+            String info = data.getString("gcm.notification.info");
+            Log.e(TAG, "info : " + info);
+            String message = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจใหม่";
+            String bigmessage = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจใหม่" + "\n" + "ชื่อ " + info;
+            sendNotification("กรุณาอัพเดทข้อมูลรายชื่อ", message, bigmessage, nameintent, "settingfragment");
+        }
+        if (Title.equals("newdata")) {
+            String nameintent = "MainActivity";
+            String message = "มีการอัพเดทข้อมูลเกี่ยวกับตำรวจใหม่";
+            String bigmessage = "ไปที่การตั้งค่าในระบบ เพื่ออัพเดทข้อมูลเกี่ยวกับตำรวจใหม่";
+            sendNotification("กรุณาอัพเดทข้อมูลเกี่ยวกับตำรวจ", message, bigmessage, nameintent, "settingfragment");
+        }
     }
 
     private void sendNotification(String Title, String message, String bigmessage, String nameintent, String namefragment) {
