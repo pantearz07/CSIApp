@@ -345,13 +345,14 @@ public class SummaryAssignTabFragment extends Fragment {
             edtSceneNoticeDateTime.setText("-");
 
         } else {
-            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate + " น.");
+            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate)
+                    +" เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentTime + " น.");
         }
 
         edtCompleteSceneDateTime.setVisibility(View.GONE);
         //วันเวลาที่ จะออกไปตรวจ
         TextView edtCompleteSceneDateTimeTitle = (TextView) viewSummaryCSI.findViewById(R.id.edtCompleteSceneDateTimeTitle);
-        edtCompleteSceneDateTimeTitle.setText("กำหนดวันเวลาทีออกไปตรวจ");
+        edtCompleteSceneDateTimeTitle.setText("กำหนดวันเวลาออกไปตรวจล่วงหน้า");
         editSceneNoticeDate = (TextView) viewSummaryCSI.findViewById(R.id.editSceneNoticeDate);
         editSceneNoticeTime = (TextView) viewSummaryCSI.findViewById(R.id.editSceneNoticeTime);
         editSceneNoticeDate.setOnClickListener(new SummaryOnClickListener());

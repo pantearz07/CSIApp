@@ -83,7 +83,8 @@ public class ResultTabFragment extends Fragment {
     protected static final int DIALOG_AddPropertyLoss = 2;
     protected static final int DIALOG_AddEvidences = 3;
     TextView edtUpdateDateTime3;
-    private ImageButton btn_clear_txt_24, btn_clear_txt_25, btn_clear_txt_26, btn_clear_txt_27, btn_clear_txt_28, btn_clear_txt_29, btn_clear_txt_30;
+    private ImageButton btn_clear_txt_24, btn_clear_txt_25, btn_clear_txt_26,
+            btn_clear_txt_27, btn_clear_txt_28, btn_clear_txt_29, btn_clear_txt_30, btn_clear_txt_1;
     private String sMaleCriminalNum, sFemaleCriminalNum, sCriminalUsedWeapon, sPersonInvolvedDetail,
             sFullEvidencePerformed, sAnnotation, sCompleteSceneDate, sCompleteSceneTime;
     private EditText editCriminalUseWeapon,
@@ -307,7 +308,8 @@ public class ResultTabFragment extends Fragment {
             editCompleteSceneTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime));
         }
         editCompleteSceneTime.setOnClickListener(new ResultOnClickListener());
-
+        btn_clear_txt_1 = (ImageButton) viewDetails.findViewById(R.id.btn_clear_txt_1);
+        btn_clear_txt_1.setOnClickListener(new ResultOnClickListener());
 // ทางเข้า-ออกคนร้าย
 
 //        tbResultScenes = new ArrayList<>();
@@ -407,13 +409,15 @@ public class ResultTabFragment extends Fragment {
             btn_clear_txt_28.setEnabled(false);
             btn_clear_txt_29.setEnabled(false);
             btn_clear_txt_30.setEnabled(false);
+            btn_clear_txt_1.setVisibility(View.GONE);
             btnSubmitInvestigated.setVisibility(View.GONE);
         }
-        if(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(R.string.casestatus_6)
-    || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(R.string.casestatus_7)){
-            btnSubmitInvestigated.setVisibility(View.GONE);
-        }
-        btnSubmitInvestigated.setOnClickListener(new ResultOnClickListener());
+//        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(R.string.casestatus_6)
+//                || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals(R.string.casestatus_7)) {
+//            btnSubmitInvestigated.setVisibility(View.GONE);
+//        }
+//        btnSubmitInvestigated.setOnClickListener(new ResultOnClickListener());
+        btnSubmitInvestigated.setVisibility(View.GONE);
         return viewDetails;
     }
 
@@ -453,7 +457,15 @@ public class ResultTabFragment extends Fragment {
             if (v == fabBtn) {
                 hiddenKeyboard();
                 updateData();
-
+                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
+                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
+                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+                } else {
+                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+                }
                 if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
@@ -510,6 +522,10 @@ public class ResultTabFragment extends Fragment {
             }
             if (v == btn_clear_txt_30) {
                 editConfineSufferer.setText("");
+            }
+            if (v == btn_clear_txt_1) {
+                editCompleteSceneDate.setText("");
+                editCompleteSceneTime.setText("");
             }
             if (v == btnAddGatewayCriminal) {
                 hiddenKeyboard();
@@ -1335,9 +1351,9 @@ public class ResultTabFragment extends Fragment {
 
                     for (int i = 0; i < evidenceTypeArray.length; i++) {
                         if (String.valueOf(evidenceTypeArray[i][0]).equals(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).EvidenceTypeID)) {
-                            if(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol == null || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol.equals("")) {
+                            if (CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol == null || CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol.equals("")) {
                                 txtEvidenceType.setText(String.valueOf(position + 1) + ") " + String.valueOf(evidenceTypeArray[i][2]));
-                            }else{
+                            } else {
                                 txtEvidenceType.setText(String.valueOf(position + 1) + ") " + String.valueOf(evidenceTypeArray[i][2]) + " " + CSIDataTabFragment.apiCaseScene.getTbFindEvidences().get(position).FindEvidencecol);
 
                             }

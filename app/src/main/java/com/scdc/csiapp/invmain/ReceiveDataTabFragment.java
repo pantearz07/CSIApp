@@ -113,6 +113,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     // ตรวจเสร็จ
     //private TextView editCompleteSceneDate, editCompleteSceneTime;
     ImageButton btn_property, ic_telphone1, ic_telphone2;
+    private ImageButton btn_clear_txt_1, btn_clear_txt_2;
 
     private View viewReceiveCSI;
     Context context;
@@ -267,6 +268,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         }
         editKnowCaseTime.setOnClickListener(new SummaryOnClickListener());
 
+        btn_clear_txt_1 = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
+        btn_clear_txt_2 = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_clear_txt_2);
+        btn_clear_txt_1.setOnClickListener(new SummaryOnClickListener());
+        btn_clear_txt_2.setOnClickListener(new SummaryOnClickListener());
         //วันเวลาตรวจสถานที่เกิดเหตุ
         btn_property = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_property);
         btn_property.setOnClickListener(new SummaryOnClickListener());
@@ -440,6 +445,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             editHappenCaseTime.setEnabled(false);
             editKnowCaseDate.setEnabled(false);
             editKnowCaseTime.setEnabled(false);
+            btn_clear_txt_1.setVisibility(View.GONE);
+            btn_clear_txt_2.setVisibility(View.GONE);
             editAddrDetail.setEnabled(false);
             spinnerProvince.setEnabled(false);
             spinnerAmphur.setEnabled(false);
@@ -872,6 +879,16 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             if (v == ic_telphone2) {
                 hiddenKeyboard();
                 calling(editTextSuffererPhone.getText().toString());
+            }
+            if (v == btn_clear_txt_1) {
+                hiddenKeyboard();
+                editHappenCaseDate.setText("");
+                editHappenCaseTime.setText("");
+            }
+            if (v == btn_clear_txt_2) {
+                hiddenKeyboard();
+                editKnowCaseDate.setText("");
+                editKnowCaseTime.setText("");
             }
         }
     }
@@ -1477,10 +1494,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     private class ReceiveOnTouchListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(view == autoCompleteAntecedent){
+            if (view == autoCompleteAntecedent) {
                 autoCompleteAntecedent.showDropDown();
             }
-            if(view == autoCompleteSuffererStatus){
+            if (view == autoCompleteSuffererStatus) {
                 autoCompleteSuffererStatus.showDropDown();
             }
             return false;

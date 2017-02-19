@@ -51,6 +51,7 @@ import com.scdc.csiapp.main.DateDialog;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.TimeDialog;
+import com.scdc.csiapp.main.WelcomeActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,6 +103,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
     private EditText editAddrDetail, editCircumstanceOfCaseDetail, editTextSuffererPhone;
     private ImageButton ic_telphone1, ic_telphone2;
+    private ImageButton btn_clear_txt_1, btn_clear_txt_2;
     private Button btnButtonSearchMap, btnButtonSearchLatLong;
     String lat, lng;
     // CaseDateTime การรับเเจ้งเหตุ, การเกิดเหตุ, การทราบเหตุ
@@ -164,7 +166,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
 
         if (EmergencyTabFragment.tbNoticeCase.CaseTel == null || EmergencyTabFragment.tbNoticeCase.CaseTel.equals("")) {
-            editTextPhone1.setText("");
+            editTextPhone1.setText(WelcomeActivity.profile.getTbOfficial().PhoneNumber.toString());
         } else {
             editTextPhone1.setText(EmergencyTabFragment.tbNoticeCase.CaseTel);
         }
@@ -265,11 +267,11 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 .findViewById(R.id.editHappenCaseDate);
         if (EmergencyTabFragment.tbNoticeCase.HappenCaseDate == null || EmergencyTabFragment.tbNoticeCase.HappenCaseDate.equals("")
                 || EmergencyTabFragment.tbNoticeCase.HappenCaseDate.equals("0000-00-00")) {
-            if (EmergencyTabFragment.mode == "view") {
+//            if (EmergencyTabFragment.mode == "view") {
                 editHappenCaseDate.setText("");
-            } else {
-                editHappenCaseDate.setText(currentDT[0]);
-            }
+//            } else {
+//                editHappenCaseDate.setText(currentDT[0]);
+//            }
         } else {
             editHappenCaseDate.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.HappenCaseDate));
         }
@@ -278,11 +280,11 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 .findViewById(R.id.editHappenCaseTime);
         if (EmergencyTabFragment.tbNoticeCase.HappenCaseTime == null || EmergencyTabFragment.tbNoticeCase.HappenCaseTime.equals("")
                 || EmergencyTabFragment.tbNoticeCase.HappenCaseTime.equals("00:00:00")) {
-            if (EmergencyTabFragment.mode == "view") {
+//            if (EmergencyTabFragment.mode == "view") {
                 editHappenCaseTime.setText("");
-            } else {
-                editHappenCaseTime.setText(currentDT[1]);
-            }
+//            } else {
+//                editHappenCaseTime.setText(currentDT[1]);
+//            }
         } else {
             editHappenCaseTime.setText(getDateTime.changeTimeFormatToDB(EmergencyTabFragment.tbNoticeCase.HappenCaseTime));
         }
@@ -292,11 +294,11 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 .findViewById(R.id.editKnowCaseDate);
         if (EmergencyTabFragment.tbNoticeCase.KnowCaseDate == null || EmergencyTabFragment.tbNoticeCase.KnowCaseDate.equals("")
                 || EmergencyTabFragment.tbNoticeCase.KnowCaseDate.equals("0000-00-00")) {
-            if (EmergencyTabFragment.mode == "view") {
+//            if (EmergencyTabFragment.mode == "view") {
                 editKnowCaseDate.setText("");
-            } else {
-                editKnowCaseDate.setText(currentDT[0]);
-            }
+//            } else {
+//                editKnowCaseDate.setText(currentDT[0]);
+//            }
         } else {
             editKnowCaseDate.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.KnowCaseDate));
         }
@@ -307,17 +309,21 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
 
         if (EmergencyTabFragment.tbNoticeCase.KnowCaseTime == null || EmergencyTabFragment.tbNoticeCase.KnowCaseTime.equals("")
                 || EmergencyTabFragment.tbNoticeCase.KnowCaseTime.equals("00:00:00")) {
-            if (EmergencyTabFragment.mode == "view") {
+//            if (EmergencyTabFragment.mode == "view") {
                 editKnowCaseTime.setText("");
-            } else {
-                editKnowCaseTime.setText(currentDT[1]);
-            }
+//            } else {
+//                editKnowCaseTime.setText(currentDT[1]);
+//            }
         } else {
             editKnowCaseTime.setText(getDateTime.changeTimeFormatToDB(EmergencyTabFragment.tbNoticeCase.KnowCaseTime));
         }
 
         editKnowCaseTime.setOnClickListener(this);
 
+        btn_clear_txt_1 = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_clear_txt_1);
+        btn_clear_txt_2 = (ImageButton) viewReceiveCSI.findViewById(R.id.btn_clear_txt_2);
+        btn_clear_txt_1.setOnClickListener(this);
+        btn_clear_txt_2.setOnClickListener(this);
         valueLat = (TextView) viewReceiveCSI.findViewById(R.id.valueLat);
         valueLong = (TextView) viewReceiveCSI.findViewById(R.id.valueLong);
         if (EmergencyTabFragment.tbNoticeCase.Latitude == null || EmergencyTabFragment.tbNoticeCase.Latitude.equals("")) {
@@ -412,7 +418,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             spinnerAmphur.setEnabled(false);
             spinnerDistrict.setEnabled(false);
             btnButtonSearchLatLong.setEnabled(false);
-
+            btn_clear_txt_1.setVisibility(View.GONE);
+            btn_clear_txt_2.setVisibility(View.GONE);
             autoCompleteAntecedent.setEnabled(false);
             editSuffererName.setEnabled(false);
             autoCompleteSuffererStatus.setEnabled(false);
@@ -607,6 +614,16 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
             case R.id.ic_telphone_2:
                 hiddenKeyboard();
                 calling(EmergencyTabFragment.tbNoticeCase.SuffererPhoneNum);
+                break;
+            case R.id.btn_clear_txt_1:
+                hiddenKeyboard();
+                editHappenCaseDate.setText("");
+                editHappenCaseTime.setText("");
+                break;
+            case R.id.btn_clear_txt_2:
+                hiddenKeyboard();
+                editKnowCaseDate.setText("");
+                editKnowCaseTime.setText("");
                 break;
         }
     }

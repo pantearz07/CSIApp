@@ -76,7 +76,7 @@
                             android:id="@+id/editTextPhone"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:hint="โทรศัพท์ติดต่อ"
+                            android:hint="โทรศัพท์ติดต่อพงส."
                             android:inputType="phone"
                             android:textSize="@dimen/small_text" />
                     </android.support.design.widget.TextInputLayout>
@@ -169,6 +169,14 @@
                             android:layout_weight="1"
                             android:freezesText="true"
                             android:textSize="@dimen/small_text" />
+                        <ImageButton
+                            android:id="@+id/btn_clear_txt_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
                     </TableRow>
 
 
@@ -208,6 +216,14 @@
                             android:layout_weight="1"
                             android:freezesText="true"
                             android:textSize="@dimen/small_text" />
+                        <ImageButton
+                            android:id="@+id/btn_clear_txt_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
                     </TableRow>
 
 
