@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -211,7 +212,7 @@ public class DetailsTabFragment extends Fragment {
         edtUpdateDateTime = (TextView) viewDetails.findViewById(R.id.edtUpdateDateTime);
         edtUpdateDateTime.setText(getString(R.string.updatedata) + " "
                 + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-                + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                + " เวลา " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime) + " น.");
 
         // ลักษณะสถานที่เกิดเหตุ
         // ภายนอก
@@ -620,6 +621,25 @@ public class DetailsTabFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_complete)
+                                    + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                    snackBarAlert.createSnacbar();
+                }
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_error));
+                    snackBarAlert.createSnacbar();
+                }
+            }
+        }
+
     }
 
     public class DetailsOnClickListener implements View.OnClickListener {
@@ -628,26 +648,8 @@ public class DetailsTabFragment extends Fragment {
         public void onClick(View v) {
             if (v == fabBtnDetails) {
                 Log.i(TAG, "fabBtnDetails");
+                hiddenKeyboard();
                 updateData();
-                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
-                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_complete)
-                                            + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
-                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
-                            snackBarAlert.createSnacbar();
-                        }
-                    } else {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_error));
-                            snackBarAlert.createSnacbar();
-                        }
-                    }
-                }
-
             }
             if (v == btnAddFeatureInside) {
                 Log.i(TAG, "btnAddFeatureInside");
@@ -1076,6 +1078,8 @@ public class DetailsTabFragment extends Fragment {
         // TODO Auto-generated method stub
         super.onPause();
         Log.i(TAG, "onPause detailscase");
+        hiddenKeyboard();
+        updateData();
     }
 
     private class DetailTextWatcher implements TextWatcher {
@@ -1432,22 +1436,30 @@ public class DetailsTabFragment extends Fragment {
     private class DetailOnTouchListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(view == autoCompleteTypeOutside){
+            if (view == autoCompleteTypeOutside) {
                 autoCompleteTypeOutside.showDropDown();
             }
-            if(view == autoCompleteOutsideAroundBack){
+            if (view == autoCompleteOutsideAroundBack) {
                 autoCompleteOutsideAroundBack.showDropDown();
             }
-            if(view == editOutsideAroundFront){
+            if (view == editOutsideAroundFront) {
                 editOutsideAroundFront.showDropDown();
             }
-            if(view == editOutsideAroundLeft){
+            if (view == editOutsideAroundLeft) {
                 editOutsideAroundLeft.showDropDown();
             }
-            if(view == editOutsideAroundRight){
+            if (view == editOutsideAroundRight) {
                 editOutsideAroundRight.showDropDown();
             }
             return false;
+        }
+    }
+
+    public void hiddenKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

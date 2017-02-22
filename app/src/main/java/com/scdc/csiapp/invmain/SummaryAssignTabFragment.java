@@ -198,7 +198,8 @@ public class SummaryAssignTabFragment extends Fragment {
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText(getString(R.string.updatedata) + " "
-                + getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
+                + getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate)
+                + " เวลา " + getDateTime.changeTimeFormatToDB(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime) + " น.");
 
         linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
         linearLayoutReportNo.setVisibility(View.GONE);
@@ -346,7 +347,7 @@ public class SummaryAssignTabFragment extends Fragment {
 
         } else {
             edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentDate)
-                    +" เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentTime + " น.");
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(AssignTabFragment.apiCaseScene.getTbCaseScene().AssignmentTime) + " น.");
         }
 
         edtCompleteSceneDateTime.setVisibility(View.GONE);
@@ -364,7 +365,8 @@ public class SummaryAssignTabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
 
         } else {
-            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate) + " เวลาประมาณ " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime + " น.");
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime) + " น.");
 
         }
 

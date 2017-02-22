@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.connecting.SQLiteDBHelper;
+import com.scdc.csiapp.main.GetDateTime;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
     Cursor mCursor;
     List<ApiNoticeCase> apiNoticeCases;
     OnItemClickListener mItemClickListener;
+    GetDateTime getDateTime = new GetDateTime();
+
 
     ApiNoticeCaseListAdapter(List<ApiNoticeCase> apiNoticeCases) {
         this.apiNoticeCases = apiNoticeCases;
@@ -89,7 +92,6 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
     public void onBindViewHolder(CSIDataViewHolder csidataholder, int position) {
 
         ApiNoticeCase apiNoticeCase = apiNoticeCases.get(position);
-
         // set icon mode
         if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("online")) {
             csidataholder.iv_mode.setImageResource(R.drawable.ic_router_black_24dp);
@@ -126,7 +128,9 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
 
         }
 
-        csidataholder.receiviedatetime.setText("แจ้งเหตุ: " + apiNoticeCase.getTbNoticeCase().ReceivingCaseDate + " เวลา " + apiNoticeCase.getTbNoticeCase().ReceivingCaseTime + " น.");
+        csidataholder.receiviedatetime.setText("แจ้งเหตุ: " +
+                getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate) +
+                " เวลา " + getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime) + " น.");
 
         if (apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != null || apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != "") {
             if (apiNoticeCase.getTbOfficial() == null) {

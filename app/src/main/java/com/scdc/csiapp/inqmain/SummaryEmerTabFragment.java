@@ -196,7 +196,7 @@ public class SummaryEmerTabFragment extends Fragment {
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText(getString(R.string.updatedata) + " " +
                 getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
-                + " เวลา " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime);
+                + " เวลา " + getDateTime.changeTimeFormatToDB(EmergencyTabFragment.tbNoticeCase.LastUpdateTime) + " น.");
 
         linearLayoutReportNo = (LinearLayout) viewSummaryCSI.findViewById(R.id.linearLayoutReportNo);
         linearLayoutReportNo.setVisibility(View.GONE);
@@ -292,7 +292,7 @@ public class SummaryEmerTabFragment extends Fragment {
 
             }
         }
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             setViewData();
         }
         edtInqTel.setOnClickListener(new SummaryOnClickListener());
@@ -346,15 +346,17 @@ public class SummaryEmerTabFragment extends Fragment {
                 || EmergencyTabFragment.tbNoticeCase.SceneNoticeDate.equals("0000-00-00")) {
             edtSceneNoticeDateTime.setText("-");
         } else {
-            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.SceneNoticeDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.SceneNoticeTime + " น.");
+            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.SceneNoticeDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(EmergencyTabFragment.tbNoticeCase.SceneNoticeTime) + " น.");
         }
 
         //วันเวลาที่ตรวจคดีเสร็จ
         if (EmergencyTabFragment.tbNoticeCase.CompleteSceneDate == null || EmergencyTabFragment.tbNoticeCase.CompleteSceneDate.equals("")
-                || EmergencyTabFragment.tbNoticeCase.SceneNoticeDate.equals("0000-00-00")) {
+                || EmergencyTabFragment.tbNoticeCase.CompleteSceneDate.equals("0000-00-00")) {
             edtCompleteSceneDateTime.setText("-");
         } else {
-            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.CompleteSceneDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.CompleteSceneTime + " น.");
+            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.CompleteSceneDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(EmergencyTabFragment.tbNoticeCase.CompleteSceneTime) + " น.");
 
         }
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
@@ -363,7 +365,8 @@ public class SummaryEmerTabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
 
         } else {
-            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate) + " เวลาประมาณ " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime + " น.");
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(EmergencyTabFragment.tbNoticeCase.LastUpdateDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(EmergencyTabFragment.tbNoticeCase.LastUpdateTime) + " น.");
 
         }
 
@@ -430,7 +433,7 @@ public class SummaryEmerTabFragment extends Fragment {
         // TODO Auto-generated method stub
         super.onPause();
         Log.i("onPause", "onPause sum");
-
+        hiddenKeyboard();
     }
 
     private class SummaryOnClickListener implements View.OnClickListener {
@@ -500,7 +503,10 @@ public class SummaryEmerTabFragment extends Fragment {
                         EmergencyTabFragment.tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
                         EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
                         EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+                        EmergencyTabFragment.tbNoticeCase.SceneNoticeDate = null;
+                        EmergencyTabFragment.tbNoticeCase.SceneNoticeTime = null;
+                        EmergencyTabFragment.tbNoticeCase.CompleteSceneDate = null;
+                        EmergencyTabFragment.tbNoticeCase.CompleteSceneTime = null;
                         if (EmergencyTabFragment.tbNoticeCase != null) {
 
                             boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
@@ -563,33 +569,8 @@ public class SummaryEmerTabFragment extends Fragment {
             }
             if (v == fabBtn) {
                 hiddenKeyboard();
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-
-                EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
-                Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
                 EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
-                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                if (EmergencyTabFragment.tbNoticeCase != null) {
-
-                    boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_complete)
-                                            + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate.toString()
-                                            + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime.toString());
-                            snackBarAlert.createSnacbar();
-                        }
-                    } else {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
-                                    getString(R.string.save_error)
-                                            + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
-                            snackBarAlert.createSnacbar();
-                        }
-                    }
-                }
+                savedata();
             }
             if (v == edtInqTel) {
                 calling(InqTel);
@@ -864,4 +845,35 @@ public class SummaryEmerTabFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    private void savedata() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+
+        EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode = WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode;
+        Log.i(TAG + " show SCDCAgencyCode", EmergencyTabFragment.tbNoticeCase.SCDCAgencyCode);
+
+        EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        if (EmergencyTabFragment.tbNoticeCase != null) {
+
+            boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+            if (isSuccess) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_complete)
+                                    + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateDate.toString()
+                                    + " " + EmergencyTabFragment.tbNoticeCase.LastUpdateTime.toString());
+                    snackBarAlert.createSnacbar();
+                }
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            getString(R.string.save_error)
+                                    + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
+                    snackBarAlert.createSnacbar();
+                }
+            }
+        }
+    }
+
 }

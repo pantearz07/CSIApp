@@ -145,7 +145,7 @@ public class AssignDetailTabFragment extends Fragment implements View.OnClickLis
         edtUpdateDateTime2 = (TextView) viewCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText(getString(R.string.updatedata) + " " +
                 getDateTime.changeDateFormatToCalendar(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate)
-                + " เวลา " + AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime);
+                + " เวลา " + getDateTime.changeTimeFormatToDB(AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime) + " น.");
         //Show spinner สถานที่ตำรวจภูธร
 
 

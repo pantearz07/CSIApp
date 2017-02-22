@@ -167,7 +167,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         edtUpdateDateTime2 = (TextView) viewReceiveCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText(getString(R.string.updatedata) + " "
                 + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-                + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                + " เวลา " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime) + " น.");
 
         //โทรศัพท์ติดต่อ
         editTextPhone1 = (EditText) viewReceiveCSI.findViewById(R.id.editTextPhone);
@@ -194,7 +194,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.editReceiveCaseDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate.equals("0000-00-00")) {
-            editReceiveCaseDate.setText(currentDT[0]);
+            editReceiveCaseDate.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate = null;
         } else {
             editReceiveCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseDate));
         }
@@ -205,11 +206,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         editReceiveCaseTime.setEnabled(false);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime.equals("00:00:00")) {
-            if (CSIDataTabFragment.mode == "view") {
-                editReceiveCaseTime.setText("");
-            } else {
-                editReceiveCaseTime.setText(currentDT[1]);
-            }
+            editReceiveCaseTime.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime = null;
         } else {
             editReceiveCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReceivingCaseTime));
         }
@@ -218,12 +216,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.editHappenCaseDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate.equals("0000-00-00")) {
-            if (CSIDataTabFragment.mode == "view") {
-
-                editHappenCaseDate.setText("");
-            } else {
-                editHappenCaseDate.setText(currentDT[0]);
-            }
+            editHappenCaseDate.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = null;
         } else {
             editHappenCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate));
         }
@@ -232,11 +226,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.editHappenCaseTime);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime.equals("00:00:00")) {
-            if (CSIDataTabFragment.mode == "view") {
-                editHappenCaseTime.setText("");
-            } else {
-                editHappenCaseTime.setText(currentDT[1]);
-            }
+            editHappenCaseTime.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = null;
         } else {
             editHappenCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime));
         }
@@ -245,11 +236,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.editKnowCaseDate);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate.equals("0000-00-00")) {
-            if (CSIDataTabFragment.mode == "view") {
-                editKnowCaseDate.setText("");
-            } else {
-                editKnowCaseDate.setText(currentDT[1]);
-            }
+            editKnowCaseDate.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = null;
         } else {
             editKnowCaseDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate));
         }
@@ -258,11 +246,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
                 .findViewById(R.id.editKnowCaseTime);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("")
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime.equals("00:00:00")) {
-            if (CSIDataTabFragment.mode == "view") {
-                editKnowCaseTime.setText("");
-            } else {
-                editKnowCaseTime.setText(currentDT[1]);
-            }
+            editKnowCaseTime.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = null;
         } else {
             editKnowCaseTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime));
         }
@@ -352,6 +337,10 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude.equals("")) {
             valueLat.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude = null;
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().Longitude = null;
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().Latitude = null;
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().Longitude = null;
         } else {
             valueLat.setText(CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude);
             lat = CSIDataTabFragment.apiCaseScene.getTbCaseScene().Latitude;
@@ -566,8 +555,8 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         // TODO Auto-generated method stub
         super.onPause();
         Log.i("onPause", "onPause receive");
-
-
+        hiddenKeyboard();
+        savedata();
     }
 
     @Override
@@ -726,12 +715,53 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     }
 
     //----end //เช็คค่าพิกัดปัจจุงบัน แล้วเดึงข้อมูลสถานที่ปัจจุบัน จังหวัด อำเภอ ตำบล เอามาค้นสถ้างรายการspinner ปตามจังหวัดปัจจุบัน
-    private void updateData() {
+    private void savedata() {
         final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        if (editHappenCaseDate.getText().toString() == null || editHappenCaseDate.getText().toString().equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = null;
+        } else {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
+        }
+        if (editHappenCaseTime.getText().toString() == null || editHappenCaseTime.getText().toString().equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = null;
+        } else {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = editHappenCaseTime.getText().toString();
+        }
+        if (editKnowCaseDate.getText().toString() == null || editKnowCaseDate.getText().toString().equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = null;
+        } else {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
+        }
+        if (editKnowCaseTime.getText().toString() == null || editKnowCaseTime.getText().toString().equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = null;
+        } else {
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = editKnowCaseTime.getText().toString();
+        }
+
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_complete)
+                                    + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                    snackBarAlert.createSnacbar();
+                }
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_error)
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString());
+                    snackBarAlert.createSnacbar();
+                }
+            }
+        }
     }
 
     //event onclick ของ ปุ่มต่างๆ
@@ -740,49 +770,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
 
             if (v == fabBtnRec) {
                 hiddenKeyboard();
-                if (editHappenCaseDate.getText().toString() == null || editHappenCaseDate.getText().toString().equals("")) {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = "";
-                } else {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseDate = getDateTime.changeDateFormatToDB(editHappenCaseDate.getText().toString());
-                }
-                if (editHappenCaseTime.getText().toString() == null || editHappenCaseTime.getText().toString().equals("")) {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = "";
-                } else {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = editHappenCaseTime.getText().toString();
-                }
-                if (editKnowCaseDate.getText().toString() == null || editKnowCaseDate.getText().toString().equals("")) {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = "";
-                } else {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = getDateTime.changeDateFormatToDB(editKnowCaseDate.getText().toString());
-                }
-                if (editKnowCaseTime.getText().toString() == null || editKnowCaseTime.getText().toString().equals("")) {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = "";
-                } else {
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = editKnowCaseTime.getText().toString();
-                }
-                updateData();
-
-                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
-                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_complete)
-                                            + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
-                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
-                            snackBarAlert.createSnacbar();
-                        }
-                    } else {
-                        if (snackbar == null || !snackbar.isShown()) {
-
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_error)
-                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID.toString());
-                            snackBarAlert.createSnacbar();
-                        }
-                    }
-                }
-
+                savedata();
             }
             if (v == btnButtonSearchMap) {
                 hiddenKeyboard();

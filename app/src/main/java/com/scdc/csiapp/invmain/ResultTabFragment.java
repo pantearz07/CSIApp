@@ -201,7 +201,8 @@ public class ResultTabFragment extends Fragment {
         btnSubmitInvestigated = (Button) viewDetails.findViewById(R.id.btnSubmitInvestigated);
         edtUpdateDateTime3 = (TextView) viewDetails.findViewById(R.id.edtUpdateDateTime3);
         edtUpdateDateTime3.setText(getString(R.string.updatedata) + " "
-                + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                + " เวลา " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime) + " น.");
 
 
 // การดำเนินการเกี่ยวกับวัตถุพยาน
@@ -290,6 +291,7 @@ public class ResultTabFragment extends Fragment {
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00")) {
 
             editCompleteSceneDate.setText("");
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = null;
 
         } else {
             editCompleteSceneDate.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate));
@@ -303,7 +305,7 @@ public class ResultTabFragment extends Fragment {
                 || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime.equals("00:00:00")) {
 
             editCompleteSceneTime.setText("");
-
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = null;
         } else {
             editCompleteSceneTime.setText(getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime));
         }
@@ -436,16 +438,46 @@ public class ResultTabFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         if (editCompleteSceneDate.getText().toString() == null || editCompleteSceneDate.getText().toString().equals("")) {
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = "";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = null;
         } else {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = getDateTime.changeDateFormatToDB(editCompleteSceneDate.getText().toString());
             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneDate = getDateTime.changeDateFormatToDB(editCompleteSceneDate.getText().toString());
         }
         if (editCompleteSceneTime.getText().toString() == null || editCompleteSceneTime.getText().toString().equals("")) {
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = "";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = null;
         } else {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = editCompleteSceneTime.getText().toString();
             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneTime = editCompleteSceneTime.getText().toString();
+        }
+    }
+
+    private void savedata() {
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+        } else {
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+        }
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
+            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+            if (isSuccess) {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_complete)
+                                    + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                    snackBarAlert.createSnacbar();
+                }
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
+                            getString(R.string.save_error));
+                    snackBarAlert.createSnacbar();
+                }
+            }
         }
     }
 
@@ -457,33 +489,7 @@ public class ResultTabFragment extends Fragment {
             if (v == fabBtn) {
                 hiddenKeyboard();
                 updateData();
-                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
-                        CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
-                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
-                } else {
-                    CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
-                    CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
-                }
-                if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
-                    boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-                    if (isSuccess) {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_complete)
-                                            + "\n" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
-                                            + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
-                            snackBarAlert.createSnacbar();
-                        }
-                    } else {
-                        if (snackbar == null || !snackbar.isShown()) {
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_SHORT,
-                                    getString(R.string.save_error));
-                            snackBarAlert.createSnacbar();
-                        }
-                    }
-                }
+                savedata();
             }
             if (v == btnSubmitInvestigated) {
                 hiddenKeyboard();
@@ -689,8 +695,9 @@ public class ResultTabFragment extends Fragment {
         // TODO Auto-generated method stub
         super.onPause();
         Log.i("onPause", "onPause Result");
-
-
+        updateData();
+        savedata();
+        hiddenKeyboard();
     }
 
 

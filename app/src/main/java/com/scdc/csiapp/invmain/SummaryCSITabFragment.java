@@ -237,7 +237,7 @@ public class SummaryCSITabFragment extends Fragment {
         edtUpdateDateTime2 = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime2);
         edtUpdateDateTime2.setText(getString(R.string.updatedata) + " "
                 + getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-                + " เวลา " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                + " เวลา " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime) + " น.");
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
         edtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtSceneNoticeDateTime);
         //วันเวลาที่ตรวจคดีเสร็จ
@@ -391,7 +391,8 @@ public class SummaryCSITabFragment extends Fragment {
             edtSceneNoticeDateTime.setText("-");
 
         } else {
-            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime + " น.");
+            edtSceneNoticeDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime) + " น.");
         }
         //วันเวลาที่ตรวจคดีเสร็จ
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null || CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")
@@ -399,7 +400,8 @@ public class SummaryCSITabFragment extends Fragment {
             edtCompleteSceneDateTime.setText("-");
 
         } else {
-            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime + " น.");
+            edtCompleteSceneDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime) + " น.");
 
         }
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
@@ -408,7 +410,8 @@ public class SummaryCSITabFragment extends Fragment {
             edtUpdateDateTime.setText("-");
 
         } else {
-            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
+            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
+                    + " เวลาประมาณ " + getDateTime.changeTimeFormatToDB(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime) + " น.");
         }
 //
         fabBtn = (FloatingActionButton) viewSummaryCSI.findViewById(R.id.fabBtnSum);
@@ -526,6 +529,7 @@ public class SummaryCSITabFragment extends Fragment {
             }
         }
     }
+
     private class DialogInterfaceOnClickListener implements DialogInterface.OnClickListener {
 
 
@@ -631,7 +635,7 @@ public class SummaryCSITabFragment extends Fragment {
                 SharedPreferences sp = getActivity().getSharedPreferences(PreferenceData.PREF_IP, mContext.MODE_PRIVATE);
                 defaultIP = sp.getString(PreferenceData.KEY_IP, defaultIP);
                 String filepath = "http://" + defaultIP + "/assets/csifiles/" + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/docs/" + params[0] + ".docx";
-//                Log.i(TAG, "docs: " + filepath);
+                Log.i(TAG, "docs: " + filepath);
 
                 URL url = new URL(filepath);
                 URLConnection conexion = url.openConnection();
@@ -645,11 +649,11 @@ public class SummaryCSITabFragment extends Fragment {
                 // Get File Name from URL
                 fileoutput = strSDCardPathName_Doc + params[0] + ".docx";
                 File fileDoc;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileoutput);
-                } else {
-                    fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileoutput);
-                }
+//                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+//                    fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), fileoutput);
+//                } else {
+                fileDoc = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileoutput);
+//                }
                 if (fileDoc.exists()) {
                     fileDoc.delete();
                 }
@@ -724,11 +728,11 @@ public class SummaryCSITabFragment extends Fragment {
 
     public static void createFolder() {
         File folder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc);
-        } else {
-            folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc);
+//        } else {
+        folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc);
+//        }
         try {
             // Create folder
             if (!folder.exists()) {
@@ -746,11 +750,11 @@ public class SummaryCSITabFragment extends Fragment {
     public void openDocument(String name) {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
         File file;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc + name + ".docx");
-        } else {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc + name + ".docx");
-        }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), strSDCardPathName_Doc + name + ".docx");
+//            } else {
+        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), strSDCardPathName_Doc + name + ".docx");
+//        }
         if (file.exists()) {
             String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).toString());
             String mimetype = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
