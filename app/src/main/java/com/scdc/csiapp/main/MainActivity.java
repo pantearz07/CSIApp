@@ -289,18 +289,28 @@ public class MainActivity extends AppCompatActivity {
 
         OfficialName.setText(nameOfficial);
         txtusername.setText(username);
-        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
-
-        } else {
-            File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
-            if (avatarfile.exists()) {
-                Picasso.with(this)
-                        .load(avatarfile)
-                        .resize(100, 100)
-                        .centerCrop()
-                        .into(avatar);
+        try {
+            if (WelcomeActivity.profile.getTbUsers() == null) {
+                Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+                finish();
+                startActivity(gotoWelcomeActivity);
+            } else {
+                File avatarfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), strSDCardPathName_temp + WelcomeActivity.profile.getTbUsers().getPicture());
+                if (avatarfile.exists()) {
+                    Picasso.with(this)
+                            .load(avatarfile)
+                            .resize(100, 100)
+                            .centerCrop()
+                            .into(avatar);
+                }
             }
+        } catch (NullPointerException e) {
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            finish();
+            startActivity(gotoWelcomeActivity);
         }
+//        if (WelcomeActivity.profile.getTbUsers().getPicture() == null || WelcomeActivity.profile.getTbUsers().getPicture().equals("")) {
+
         Log.i(TAG, officialID);
     }
 
