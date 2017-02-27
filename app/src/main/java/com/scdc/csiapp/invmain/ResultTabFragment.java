@@ -458,9 +458,15 @@ public class ResultTabFragment extends Fragment {
             CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
         } else {
-            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals("reported")) {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "reported";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "reported";
+            } else {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+            }
         }
+        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {

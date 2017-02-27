@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 // Consume input from header view. This disables the ripple effect
                 //Toast.makeText(getApplicationContext(),"Send Selected", Toast.LENGTH_SHORT).show();
                 mDrawerLayout.closeDrawers();
+                mFragmentManager.popBackStack();
                 setFragment(profileFragment, 1);
 
             }
@@ -177,17 +178,21 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
+                    mFragmentManager.popBackStack();
                     setFragment(caseSceneListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_schedule) {
+                    mFragmentManager.popBackStack();
                     setFragment(calendarFragment, 1);
                 }
                 if (menuItem.getItemId() == R.id.nav_item_police) {
+                    mFragmentManager.popBackStack();
                     setFragment(policeListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
+                    mFragmentManager.popBackStack();
                     setFragment(settingFragment, 1);
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
@@ -257,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void replaceFragment() {
         caseSceneListFragment.newInstance();
-        setFragment(caseSceneListFragment, 1);
+        setFragment(caseSceneListFragment, 0);
     }
 
     private void setUserProfile() {
@@ -358,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            mFragmentManager.popBackStack();
             setFragment(settingFragment, 1);
         }
 

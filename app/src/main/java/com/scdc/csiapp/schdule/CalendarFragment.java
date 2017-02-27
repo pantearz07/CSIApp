@@ -63,7 +63,18 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     ConnectionDetector cd;
     Context context;
     ListView listViewInvestigator;
-//    List<ApiScheduleInvestigates> apiScheduleInvestigates_bydate;
+
+    public static CalendarFragment newInstance() {
+        return new CalendarFragment();
+    }
+
+    public CalendarFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
@@ -224,7 +235,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                     sizeScheduleGroup = apiScheduleInvestigatesList.get(i).getApiScheduleGroup().size();
                     Log.d(TAG, "have sizeScheduleGroup " + sizeScheduleGroup);
                     apiScheduleGroups = new ArrayList<>(sizeScheduleGroup);
-                    for(int j=0; j < sizeScheduleGroup; j++) {
+                    for (int j = 0; j < sizeScheduleGroup; j++) {
                         apiScheduleGroups.add(apiScheduleInvestigatesList.get(i).getApiScheduleGroup().get(j));
                         Log.d(TAG, "have getApiScheduleGroup " + apiScheduleInvestigatesList.get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID);
 
@@ -248,7 +259,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         @Override
         protected ApiListScheduleInvestigates doInBackground(Void... voids) {
             try {
-            return WelcomeActivity.api.listScheduleInvestigates();
+                return WelcomeActivity.api.listScheduleInvestigates();
             } catch (RuntimeException e) {
                 Log.e(TAG, e.getMessage());
                 WelcomeActivity.api = new ApiConnect(getActivity());
@@ -357,7 +368,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     private void showListInvestigators(List<ApiScheduleGroup> apiScheduleGroups) {
         if (apiScheduleGroups != null) {
-            listViewInvestigator.setAdapter(new InvestigatorsAdapter(getActivity(),apiScheduleGroups));
+            listViewInvestigator.setAdapter(new InvestigatorsAdapter(getActivity(), apiScheduleGroups));
             setListViewHeightBasedOnItems(listViewInvestigator);
             listViewInvestigator.setVisibility(View.VISIBLE);
         } else {
@@ -372,7 +383,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         public InvestigatorsAdapter(Context c, List<ApiScheduleGroup> cc) {
             // TODO Auto-generated method stub
             context = c;
-            apiScheduleGroups  = cc;
+            apiScheduleGroups = cc;
         }
 
         @Override
@@ -405,25 +416,25 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
             String sno = "";
             String invinfo = "";
 
-            int sizeScheduleInvInGroup=0;
-                String ScheduleGroupID = apiScheduleGroups.get(i).getTbScheduleGroup().ScheduleGroupID;
-                sizeScheduleInvInGroup = apiScheduleGroups.get(i).getApiScheduleInvInGroup().size();
-                Log.i(TAG, " sizeScheduleInvInGroup " + String.valueOf(sizeScheduleInvInGroup));
-                Log.d(TAG, "กลุ่มที่ " + ScheduleGroupID.substring(11)+" "+ScheduleGroupID);
-                sno = "กลุ่มที่ " + ScheduleGroupID.substring(11) ;
-                txtNo.setText(sno);
+            int sizeScheduleInvInGroup = 0;
+            String ScheduleGroupID = apiScheduleGroups.get(i).getTbScheduleGroup().ScheduleGroupID;
+            sizeScheduleInvInGroup = apiScheduleGroups.get(i).getApiScheduleInvInGroup().size();
+            Log.i(TAG, " sizeScheduleInvInGroup " + String.valueOf(sizeScheduleInvInGroup));
+            Log.d(TAG, "กลุ่มที่ " + ScheduleGroupID.substring(11) + " " + ScheduleGroupID);
+            sno = "กลุ่มที่ " + ScheduleGroupID.substring(11);
+            txtNo.setText(sno);
 
-                for (int k = 0; k < sizeScheduleInvInGroup; k++) {
-                    final String sRank = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getRank();
-                    final String sFirstName = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getFirstName();
-                    final String sLastName = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getLastName();
-                    final String sPosition = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getPosition();
+            for (int k = 0; k < sizeScheduleInvInGroup; k++) {
+                final String sRank = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getRank();
+                final String sFirstName = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getFirstName();
+                final String sLastName = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getLastName();
+                final String sPosition = apiScheduleGroups.get(i).getApiScheduleInvInGroup().get(k).getTbOfficial().getPosition();
 
-                    invinfo = invinfo + String.valueOf(k + 1) + ") " + sRank + " " + sFirstName + " " + sLastName + " " + sPosition + "\n";
-                }
-                Log.d(TAG, "รายชื่อ "  +invinfo);
+                invinfo = invinfo + String.valueOf(k + 1) + ") " + sRank + " " + sFirstName + " " + sLastName + " " + sPosition + "\n";
+            }
+            Log.d(TAG, "รายชื่อ " + invinfo);
 
-                txtSceneInvest.setText(invinfo);
+            txtSceneInvest.setText(invinfo);
 
             return view;
         }

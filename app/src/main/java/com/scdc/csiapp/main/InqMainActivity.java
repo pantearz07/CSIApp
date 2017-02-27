@@ -131,6 +131,7 @@ public class InqMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Consume input from header view. This disables the ripple effect
                 mDrawerLayout.closeDrawers();
+                mFragmentManager.popBackStack();
                 setFragment(profileFragment, 1);
             }
         });
@@ -151,14 +152,17 @@ public class InqMainActivity extends AppCompatActivity {
 
 
                 if (menuItem.getItemId() == R.id.nav_item_casescene) {
+                    mFragmentManager.popBackStack();
                     setFragment(noticeCaseListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_police) {
+                    mFragmentManager.popBackStack();
                     setFragment(policeListFragment, 1);
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_Settings) {
+                    mFragmentManager.popBackStack();
                     setFragment(settingFragment, 1);
                 }
                 if (menuItem.getItemId() == R.id.nav_item_logout) {
@@ -222,7 +226,7 @@ public class InqMainActivity extends AppCompatActivity {
     public void replaceFragment() {
 //        replaceFragment(CaseSceneListFragment.newInstance());
         noticeCaseListFragment.newInstance();
-        setFragment(noticeCaseListFragment, 1);
+        setFragment(noticeCaseListFragment, 0);
     }
 
     private void setUserProfile() {
@@ -293,6 +297,7 @@ public class InqMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            mFragmentManager.popBackStack();
             setFragment(settingFragment, 1);
         }
 

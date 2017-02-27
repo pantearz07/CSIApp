@@ -457,6 +457,7 @@ public class SummaryAssignTabFragment extends Fragment {
                                         Bundle i = new Bundle();
                                         i.putSerializable(csiDataTabFragment.Bundle_Key, AssignTabFragment.apiCaseScene);
                                         i.putString(csiDataTabFragment.Bundle_mode, "edit");
+                                        mFragmentManager.popBackStack();
                                         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                                         csiDataTabFragment.setArguments(i);
                                         fragmentTransaction.replace(R.id.containerView, csiDataTabFragment).addToBackStack(null).commit();

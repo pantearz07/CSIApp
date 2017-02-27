@@ -639,6 +639,7 @@ public class SummaryEmerTabFragment extends Fragment {
                                 .setAction(getString(R.string.ok), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
+                                        mFragmentManager.popBackStack();
                                         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                                         fragmentTransaction.replace(R.id.containerView, noticeCaseListFragment).addToBackStack(null).commit();
                                     }
@@ -826,6 +827,7 @@ public class SummaryEmerTabFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
                 boolean isSuccess = dbHelper.DeleteNoticeCase(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
                 if (isSuccess) {
+                    mFragmentManager.popBackStack();
                     FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.containerView, noticeCaseListFragment).addToBackStack(null).commit();
                 }
