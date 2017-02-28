@@ -173,7 +173,7 @@ public class AddPropertyLossFragment extends Fragment {
             editPropertyInsurance.setText(tbPropertyLoss.getPropInsurance());
 
         }
-        horizontal_gridView_PL_photo = (GridView) view.findViewById(R.id.horizontal_gridView_PL_photo);
+                horizontal_gridView_PL_photo = (GridView) view.findViewById(R.id.horizontal_gridView_PL_photo);
         horizontal_gridView_PL_video = (GridView) view.findViewById(R.id.horizontal_gridView_PL_video);
         txtPhoto = (TextView) view.findViewById(R.id.txtPhoto);
         txtVideo = (TextView) view.findViewById(R.id.txtVideo);
@@ -188,6 +188,11 @@ public class AddPropertyLossFragment extends Fragment {
             p.height = 0;
             fabBtnDetails.setLayoutParams(p);
             fabBtnDetails.hide();
+            editPropertyLossName.setEnabled(false);
+            editPropertyLossAmount.setEnabled(false);
+            autoPropertyLossUnit.setEnabled(false);
+            editPropertyLossPosition.setEnabled(false);
+            editPropertyInsurance.setEnabled(false);
         }
         return view;
     }

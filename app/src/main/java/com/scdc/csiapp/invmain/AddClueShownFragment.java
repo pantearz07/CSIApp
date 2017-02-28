@@ -171,6 +171,7 @@ public class AddClueShownFragment extends Fragment {
             p.height = 0;
             fabBtnDetails.setLayoutParams(p);
             fabBtnDetails.hide();
+            editClueShownPositionDetail.setEnabled(false);
         }
         return view;
     }

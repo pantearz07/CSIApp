@@ -265,11 +265,13 @@
         <item>การเจาะ</item>
     </string-array>
     <string-array name="property_unit">
+        <item>บาท</item>
         <item>กระบอก</item>
         <item>ชิ้น</item>
         <item>อัน</item>
         <item>แผ่น</item>
         <item>กล่อง</item>
+        <item>เครื่อง</item>
         <item>แท่ง</item>
         <item>ด้าม</item>
         <item>เส้น</item>
@@ -281,14 +283,15 @@
         <item>ลูก</item>
     </string-array>
     <string-array name="property_name">
-        <item>กำไร</item>
+        <item>กำไล</item>
         <item>สร้อยทอง</item>
         <item>เงิน</item>
         <item>ธนาบัติ</item>
         <item>นาฬิกา</item>
         <item>โทรทัศน์</item>
-        <item>คอมพิวเตอร์</item>
-        <item>โน๊ตบุ๊ค</item>
+        <item>โทรศัพท์มือถือ</item>
+        <item>คอมพิวเตอร์พีซี</item>
+        <item>คอมพิวเตอร์โน๊ตบุ๊ค</item>
         <item>ลำโพง</item>
         <item>เครื่องเสียง</item>
         <item>เครื่องเล่นดีวีดี</item>

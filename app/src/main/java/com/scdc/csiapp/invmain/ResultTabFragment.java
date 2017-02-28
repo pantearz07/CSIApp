@@ -466,7 +466,7 @@ public class ResultTabFragment extends Fragment {
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
             }
         }
-        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus);
+//        Log.i(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
@@ -701,8 +701,10 @@ public class ResultTabFragment extends Fragment {
         // TODO Auto-generated method stub
         super.onPause();
         Log.i("onPause", "onPause Result");
-        updateData();
-        savedata();
+        if (CSIDataTabFragment.mode != "view") {
+            updateData();
+            savedata();
+        }
         hiddenKeyboard();
     }
 

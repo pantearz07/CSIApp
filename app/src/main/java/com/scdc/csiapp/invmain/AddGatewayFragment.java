@@ -176,6 +176,7 @@ public class AddGatewayFragment extends Fragment {
             p.height = 0;
             fabBtnDetails.setLayoutParams(p);
             fabBtnDetails.hide();
+            editGatewayCriminalDetails.setEnabled(false);
         }
         return view;
     }

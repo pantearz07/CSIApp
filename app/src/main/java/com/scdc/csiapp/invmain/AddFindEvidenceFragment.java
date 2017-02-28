@@ -218,6 +218,12 @@ public class AddFindEvidenceFragment extends Fragment {
             p.height = 0;
             fabBtnDetails.setLayoutParams(p);
             fabBtnDetails.hide();
+            spnEvidenceType.setEnabled(false);
+            editEvidenceType.setEnabled(false);
+            editEvidenceNumber.setEnabled(false);
+            editFindEvidenceZone.setEnabled(false);
+            editMarking.setEnabled(false);
+            editParceling.setEnabled(false);
         }
         return view;
     }

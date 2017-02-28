@@ -203,6 +203,13 @@ public class AddFeatureInsideFragment extends Fragment {
             p.height = 0;
             fabBtnDetails.setLayoutParams(p);
             fabBtnDetails.hide();
+            editFeatureInsideFloor.setEnabled(false);
+            editFeatureInsideCave.setEnabled(false);
+            editFeatureInsideClassBack.setEnabled(false);
+            editFeatureInsideClassCenter.setEnabled(false);
+            editFeatureInsideClassRight.setEnabled(false);
+            editFeatureInsideClassFront.setEnabled(false);
+            editFeatureInsideClassLeft.setEnabled(false);
         }
         return view;
     }
