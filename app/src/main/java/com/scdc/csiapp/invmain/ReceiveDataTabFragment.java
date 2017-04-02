@@ -556,9 +556,9 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         super.onPause();
         Log.i("onPause", "onPause receive");
         hiddenKeyboard();
-        if (CSIDataTabFragment.mode != "view") {
-            savedata();
-        }
+//        if (CSIDataTabFragment.mode != "view") {
+//            savedata();
+//        }
     }
 
     @Override

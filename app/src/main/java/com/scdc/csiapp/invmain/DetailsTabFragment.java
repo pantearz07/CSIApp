@@ -1079,9 +1079,9 @@ public class DetailsTabFragment extends Fragment {
         super.onPause();
         Log.i(TAG, "onPause detailscase");
         hiddenKeyboard();
-        if (CSIDataTabFragment.mode != "view") {
-            updateData();
-        }
+//        if (CSIDataTabFragment.mode != "view") {
+//            updateData();
+//        }
     }
 
     private class DetailTextWatcher implements TextWatcher {

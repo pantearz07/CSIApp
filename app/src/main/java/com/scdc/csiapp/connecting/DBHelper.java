@@ -1763,6 +1763,34 @@ public class DBHelper extends SQLiteAssetHelper {
         }
     }
 
+    public boolean DeleteAllCaseScene(String CaseReportID) {
+        // TODO Auto-generated method stub
+        try {
+
+            SQLiteDatabase db;
+            db = this.getWritableDatabase(); // Write Data
+            db.beginTransaction();
+            db.delete("scenefeatureinside", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("propertyloss", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("findevidence", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("resultscene", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("scenefeatureoutside", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("sceneinvestigation", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("investigatorsinscene", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            db.delete("casescene", " CaseReportID = ?", new String[]{String.valueOf(CaseReportID)});
+            Log.d(TAG, "Delete casescene" + CaseReportID);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+
+            return true;
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error in DeleteNoticeCase " + e.getMessage().toString());
+            return false;
+        }
+    }
+
     public boolean DeleteMultimedia(ApiCaseScene apiCaseScene) {
         // TODO Auto-generated method stub
         try {
@@ -4866,6 +4894,7 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+
     public boolean deleteInvIncase(String sCaseReportID, ArrayList<String> InvestigatorArrayList) {
         if (InvestigatorArrayList.size() == 0) {
             return false;

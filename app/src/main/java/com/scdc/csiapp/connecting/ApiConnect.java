@@ -368,10 +368,42 @@ public class ApiConnect implements Parcelable {
                 ApiListNoticeCase apiListNoticeCaseServer = gson.fromJson(response.body().string(), ApiListNoticeCase.class);
                 // ข้อมูลจาก SQLite
                 mDbHelper = new DBHelper(mContext);
-                ApiListNoticeCase apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                ApiListNoticeCase apiListNoticeCaseSQLite_check = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                //check ข้อมูลในมือถือว่ามีในเซิร์ฟมั้ย ถ้าไม่มีค่อยลบทิ้ง
+                // apiListNoticeCaseSQLite ตั้ง
+//
+                int ser_size_check = apiListNoticeCaseServer.getData().getResult().size();
+                int sql_size_check;
+                if (apiListNoticeCaseSQLite_check.getData() == null) {
+                    sql_size_check = 0;
+                } else {
+                    sql_size_check = apiListNoticeCaseSQLite_check.getData().getResult().size();
+                }
+                for (int i = 0; i < sql_size_check; i++) {
+                    ApiNoticeCase temp_sql_check = apiListNoticeCaseSQLite_check.getData().getResult().get(i);
+                    ApiNoticeCase temp_ser_check;
+                    for (int j = 0; j < ser_size_check; j++) {
+                        temp_ser_check = apiListNoticeCaseServer.getData().getResult().get(j);
+                        if (temp_sql_check.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_ser_check.getTbNoticeCase().NoticeCaseID)) {
+                            Log.i(TAG, "check list noticecase มีบนserver");
+                        }else{
+                            boolean isSuccess = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
+                            if(isSuccess){Log.i(TAG, "check list noticecase ไม่มีบนserver ลบออกจาก sqlite");}
+
+                        }
+                    }
+                }
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListNoticeCaseServer.getData().getResult().size();
-                int sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+//                int sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+                int sql_size;
+                ApiListNoticeCase apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                if (apiListNoticeCaseSQLite.getData() == null) {
+                    sql_size = 0;
+                } else {
+                    sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+                }
+                Log.i(TAG, "sql_size: " + sql_size + " ser_size: " + ser_size);
                 for (int i = 0; i < ser_size; i++) {
                     ApiNoticeCase temp_ser = apiListNoticeCaseServer.getData().getResult().get(i);
                     ApiNoticeCase temp_sql;
@@ -395,6 +427,13 @@ public class ApiConnect implements Parcelable {
                                     }
                                 } else if (checkDateTime == 2) {
                                     Log.d(TAG, "update from mobile to server saveNoticeCase ");
+                                    //sendNewNoticeCase
+                                    ApiStatusResult apiStatusResult = sendNewNoticeCase(temp_sql.getTbNoticeCase());
+                                    if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
+                                        Log.d(TAG, "update from mobile to server saveNoticeCase : success");
+                                    }else{
+                                        Log.d(TAG, "update from mobile to server saveNoticeCase : fail");
+                                    }
                                     break;
                                 } else {
                                     Log.d(TAG, "no update saveNoticeCase ");
@@ -441,12 +480,36 @@ public class ApiConnect implements Parcelable {
 //            Log.d(TAG, "post data" + response.body().string());
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
+                mDbHelper = new DBHelper(mContext);
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListCaseScene apiListCaseSceneServer = gson.fromJson(response.body().string(), ApiListCaseScene.class);
                 // ข้อมูลจาก SQLite
-                mDbHelper = new DBHelper(mContext);
-                ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                //check deletecase
+                ApiListCaseScene apiListCaseSceneSQLite_check = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                int ser_size_check = apiListCaseSceneSQLite_check.getData().getResult().size();
+                int sql_size_check;
+                if (apiListCaseSceneSQLite_check.getData() == null) {
+                    sql_size_check = 0;
+                } else {
+                    sql_size_check = apiListCaseSceneSQLite_check.getData().getResult().size();
+                }
+                for (int i = 0; i < sql_size_check; i++) {
+                    ApiCaseScene temp_sql_check = apiListCaseSceneSQLite_check.getData().getResult().get(i);
+                    ApiCaseScene temp_ser_check;
+                    for (int j = 0; j < ser_size_check; j++) {
+                        temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
+                        if (temp_sql_check.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser_check.getTbCaseScene().CaseReportID)) {
+                            Log.i(TAG, "check list CaseScene มีบนserver");
+                        }else{
+                            boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_check);
+                            boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_check.getTbCaseScene().CaseReportID);
+                            boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
+                            if(isSuccess1){Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite");}
+                        }
+                    }
+                }
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+                ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
                 int ser_size = apiListCaseSceneServer.getData().getResult().size();
                 int sql_size;
                 if (apiListCaseSceneSQLite.getData() == null) {
@@ -482,6 +545,12 @@ public class ApiConnect implements Parcelable {
                                     }
                                 } else if (checkDateTime == 2) {
                                     Log.d(TAG, "update from mobile to server updateAlldataCase ");
+                                    ApiStatusData apiStatusData = saveCaseReport(temp_sql);
+                                    if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
+                                        Log.d(TAG, "update from mobile to server saveCaseReport : success");
+                                    }else{
+                                        Log.d(TAG, "update from mobile to server saveCaseReport : fail");
+                                    }
                                     break;
                                 } else {
                                     Log.d(TAG, "no update updateAlldataCase ");

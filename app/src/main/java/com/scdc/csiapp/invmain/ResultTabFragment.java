@@ -701,10 +701,10 @@ public class ResultTabFragment extends Fragment {
         // TODO Auto-generated method stub
         super.onPause();
         Log.i("onPause", "onPause Result");
-        if (CSIDataTabFragment.mode != "view") {
-            updateData();
-            savedata();
-        }
+//        if (CSIDataTabFragment.mode != "view") {
+//            updateData();
+//            savedata();
+//        }
         hiddenKeyboard();
     }
 

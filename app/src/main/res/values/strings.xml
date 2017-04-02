@@ -29,6 +29,7 @@
     <string name="processing">กำลังดำเนินการ...</string>
     <string name="update_database">อัพเดทฐานข้อมูล...</string>
     <string name="delete_noticecase">ยืนยันเพื่อลบคดีนี้</string>
+    <string name="upload_noticecase">ยืนยันเบันทึกคดีนี้ไปยังเซิร์ฟเวอร์</string>
     <string name="send_noticecase">ส่งเรื่องเเจ้งเหตุไปยัง...</string>
     <string name="upload_progress">กำลังอัพเดตข้อมูล...</string>
     <string name="save_error">บันทึกข้อมูลไม่สำเร็จ</string>
@@ -133,6 +134,7 @@
     <string name="casestatus_6">investigated</string>
     <string name="casestatus_7">reported</string>
     <string name="delete_case">ลบคดี</string>
+    <string name="upload_case">ส่งไปยังเซิร์ฟเวอร์</string>
     <string name="searchlatlng">บันทึกพิกัดที่เกิดเหตุ</string>
     <string name="searchmap">นำเส้นทาง</string>
     <string name="updatedata">อัพเดทล่าสุด </string>

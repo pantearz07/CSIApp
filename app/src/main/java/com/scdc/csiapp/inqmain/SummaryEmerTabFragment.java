@@ -81,7 +81,7 @@ public class SummaryEmerTabFragment extends Fragment {
     String[] mTypeCenterArray2, mTypeAgencyArray2, mSubCaseTypeArray2;
     ArrayAdapter<String> adapterSCDCcenter, adapterSCDCagency;
     boolean oldselectedCT, oldselectedSubCT = false;
-    Button btnNoticecase, btnDownloadfile;
+    Button btnNoticecase, btnDownloadfile, btnAcceptCase;
     String noticeCaseID, sSCDCAgencyCode;
     Snackbar snackbar;
     Spinner spnSCDCcenterType, spnSCDCagencyType;
@@ -204,7 +204,7 @@ public class SummaryEmerTabFragment extends Fragment {
         edtReportNo.setVisibility(View.GONE);
 
         layoutButton1 = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutButton1);
-        layoutButton1.setVisibility(View.GONE);
+//        layoutButton1.setVisibility(View.GONE);
         layoutSceneNoticeDate = (LinearLayout) viewSummaryCSI.findViewById(R.id.layoutSceneNoticeDate);
         layoutSceneNoticeDate.setVisibility(View.GONE);
         edtInqInfo = (TextView) viewSummaryCSI.findViewById(R.id.edtInqInfo);
@@ -222,13 +222,12 @@ public class SummaryEmerTabFragment extends Fragment {
         TextView edtCompleteSceneDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtCompleteSceneDateTime);
         //วันเวลาที่แก้ไขข้อมูลล่าสุด
         TextView edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
-
-
+        btnAcceptCase = (Button) viewSummaryCSI.findViewById(R.id.btnAcceptCase);
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
         btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
+        btnAcceptCase.setOnClickListener(new SummaryOnClickListener());
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
         btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
-
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         spnCaseType.setOnItemSelectedListener(new EmerOnItemSelectedListener());
@@ -383,25 +382,29 @@ public class SummaryEmerTabFragment extends Fragment {
             spnSubCaseType.setEnabled(false);
             edtReportNo.setEnabled(false);
             btnNoticecase.setVisibility(View.GONE);
-
+            layoutButton1.setVisibility(View.GONE);
+            btnDownloadfile.setVisibility(View.GONE);
             if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
                 btnNoticecase.setVisibility(View.VISIBLE);
                 btnDownloadfile.setVisibility(View.VISIBLE);
                 btnDownloadfile.setText(getString(R.string.delete_case));
-            } else {
-                btnDownloadfile.setVisibility(View.GONE);
             }
         } else if (EmergencyTabFragment.mode == "edit") {
-            btnDownloadfile.setVisibility(View.GONE);
+//            btnDownloadfile.setVisibility(View.GONE);
             if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
-                btnDownloadfile.setVisibility(View.VISIBLE);
+                btnNoticecase.setVisibility(View.VISIBLE);
+                btnDownloadfile.setVisibility(View.VISIBLE); //ลบคดี
                 btnDownloadfile.setText(getString(R.string.delete_case));
-                btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
+                layoutButton1.setVisibility(View.VISIBLE);
+                btnAcceptCase.setText(getString(R.string.upload_case));
             }
         } else {
+            //mode = new
             btnNoticecase.setVisibility(View.VISIBLE);
             btnDownloadfile.setVisibility(View.VISIBLE);
             btnDownloadfile.setText(getString(R.string.delete_case));
+            layoutButton1.setVisibility(View.VISIBLE);
+            btnAcceptCase.setText(getString(R.string.upload_case));
         }
 
         fabBtn.setOnClickListener(new SummaryOnClickListener());
@@ -522,10 +525,7 @@ public class SummaryEmerTabFragment extends Fragment {
                                     snackBarAlert.createSnacbar();
                                 }
                             }
-
-
                         }
-
                         //FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
                         //fragmentTransaction.replace(R.id.containerView, acceptListFragment).addToBackStack(null).commit();
                     }
@@ -564,6 +564,59 @@ public class SummaryEmerTabFragment extends Fragment {
 
                 } else {
                     Log.i(TAG, "btnDownloadfile");
+                }
+
+            }
+            if (v == btnAcceptCase) {
+                hiddenKeyboard();
+                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+                EmergencyTabFragment.tbNoticeCase.CaseStatus = "receive";
+                EmergencyTabFragment.tbNoticeCase.Mobile_CaseID = EmergencyTabFragment.tbNoticeCase.NoticeCaseID;
+                EmergencyTabFragment.tbNoticeCase.InvestigatorOfficialID = null;
+                EmergencyTabFragment.tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
+                EmergencyTabFragment.tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                EmergencyTabFragment.tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                EmergencyTabFragment.tbNoticeCase.SceneNoticeDate = null;
+                EmergencyTabFragment.tbNoticeCase.SceneNoticeTime = null;
+                EmergencyTabFragment.tbNoticeCase.CompleteSceneDate = null;
+                EmergencyTabFragment.tbNoticeCase.CompleteSceneTime = null;
+
+                if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive") || EmergencyTabFragment.mode == "new") {
+                    Log.i(TAG, "ส่งข้อมูลไปยัง server");
+
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(getActivity());
+                    builder.setMessage("ยืนยันการอัพโหลดข้อมูลไปยังเซิร์ฟเวอร์");
+                    builder.setPositiveButton("ยืนยัน", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (EmergencyTabFragment.tbNoticeCase != null) {
+
+                                boolean isSuccess = dbHelper.saveNoticeCase(EmergencyTabFragment.tbNoticeCase);
+                                if (isSuccess) {
+                                    UploadNoticeCaseToServer uploadNoticeCaseToServer = new UploadNoticeCaseToServer();
+                                    uploadNoticeCaseToServer.execute(EmergencyTabFragment.tbNoticeCase);
+                                    Log.i(TAG, "ส่งข้อมูลไปยัง server4");
+                                }
+                            } else {
+                                if (snackbar == null || !snackbar.isShown()) {
+                                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                                            getString(R.string.save_error)
+                                                    + " " + EmergencyTabFragment.tbNoticeCase.NoticeCaseID.toString());
+                                    snackBarAlert.createSnacbar();
+                                }
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //dialog.dismiss();
+                        }
+                    });
+                    builder.show();
+
+                } else {
+                    Log.i(TAG, "btnAcceptCase");
                 }
 
             }
@@ -657,6 +710,57 @@ public class SummaryEmerTabFragment extends Fragment {
                             getString(R.string.error_data) + " " + getString(R.string.network_error),
                             Toast.LENGTH_LONG).show();
                 }
+            }
+        }
+    }
+
+    class UploadNoticeCaseToServer extends AsyncTask<TbNoticeCase, Void, ApiStatusResult> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.processing));
+            progressDialog.show();
+        }
+
+        @Override
+        protected ApiStatusResult doInBackground(TbNoticeCase... params) {
+            return WelcomeActivity.api.sendNewNoticeCase(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatusResult apiStatusResult) {
+            super.onPostExecute(apiStatusResult);
+            progressDialog.dismiss();
+            if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
+                EmergencyTabFragment.tbNoticeCase.NoticeCaseID = apiStatusResult.getData().getResult();
+                boolean isSuccess = dbHelper.updateNoticeCaseID(EmergencyTabFragment.tbNoticeCase);
+                if (isSuccess) {
+                    if (snackbar == null || !snackbar.isShown()) {
+                        snackbar = Snackbar.make(rootLayout, "อัพโหลดข้อมูลสำเร็จเเล้ว"
+                                , Snackbar.LENGTH_INDEFINITE)
+                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Log.i(TAG, "ส่งข้อมูลไปยัง server3 รหัส :" + EmergencyTabFragment.tbNoticeCase.NoticeCaseID);
+                                    }
+                                });
+                        snackbar.show();
+                    }
+                }
+            } else {
+                Toast.makeText(getActivity(),
+                        getString(R.string.error_data) + " " + getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
+
             }
         }
     }

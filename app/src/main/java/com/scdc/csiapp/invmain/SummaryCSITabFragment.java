@@ -251,7 +251,7 @@ public class SummaryCSITabFragment extends Fragment {
         btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
         btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
-        btnNoticecase.setText("ส่งไปยังเซิร์ฟเวอร์");
+        btnNoticecase.setText(getString(R.string.upload_case));
         btnAcceptCase = (Button) viewSummaryCSI.findViewById(R.id.btnAcceptCase);
         btnAcceptCase.setVisibility(View.GONE);
 
