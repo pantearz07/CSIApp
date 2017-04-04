@@ -271,10 +271,10 @@ public class GetDateTime {
     public String formatTime(String time) {
         String snewTime = null;
 
-        if (time.length() == 5) {
+        if (time != null && time.length() == 5) {
             snewTime = time + ":00";
         } else {
-            snewTime = time;
+            snewTime = "00:01:00";
         }
         return snewTime;
     }
