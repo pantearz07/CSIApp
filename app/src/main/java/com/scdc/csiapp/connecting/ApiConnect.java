@@ -431,7 +431,7 @@ public class ApiConnect implements Parcelable {
                                     ApiStatusResult apiStatusResult = sendNewNoticeCase(temp_sql.getTbNoticeCase());
                                     if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
                                         Log.d(TAG, "update from mobile to server saveNoticeCase : success");
-                                    }else{
+                                    } else {
                                         Log.d(TAG, "update from mobile to server saveNoticeCase : fail");
                                     }
                                     break;
@@ -500,11 +500,13 @@ public class ApiConnect implements Parcelable {
                         temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
                         if (temp_sql_check.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser_check.getTbCaseScene().CaseReportID)) {
                             Log.i(TAG, "check list CaseScene มีบนserver");
-                        }else{
+                        } else {
                             boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_check);
                             boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_check.getTbCaseScene().CaseReportID);
                             boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
-                            if(isSuccess1){Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite");}
+                            if (isSuccess1) {
+                                Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite");
+                            }
                         }
                     }
                 }
@@ -548,7 +550,7 @@ public class ApiConnect implements Parcelable {
                                     ApiStatusData apiStatusData = saveCaseReport(temp_sql);
                                     if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
                                         Log.d(TAG, "update from mobile to server saveCaseReport : success");
-                                    }else{
+                                    } else {
                                         Log.d(TAG, "update from mobile to server saveCaseReport : fail");
                                     }
                                     break;
@@ -915,10 +917,15 @@ public class ApiConnect implements Parcelable {
         Gson gson1 = new GsonBuilder().create();
         formBuilder.addFormDataPart("tbOfficial", gson1.toJson(apiProfile.getTbOfficial()));
         formBuilder.addFormDataPart("tbUsers", gson1.toJson(apiProfile.getTbUsers()));
-        if (apiProfile.getTbOfficial().OfficialDisplayPic != null) {
+        if (apiProfile.getTbOfficial().OfficialDisplayPic == null || apiProfile.getTbOfficial().OfficialDisplayPic.equals("")) {
+            Log.d(TAG, "editProfile check OfficialDisplayPic null");
+//            formBuilder.addFormDataPart("filedisplay", null);
+        } else {
+            Log.d(TAG, "editProfile check OfficialDisplayPic not null");
 //            final String MEDIA_TYPE = MimeTypeMap.getFileExtensionFromUrl(strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
             File filePic = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
                     strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
+            Log.d(TAG, " filename: " + strSDCardPathName_temp + apiProfile.getTbOfficial().OfficialDisplayPic);
             if (filePic.exists()) {
 //                Log.d(TAG, "MEDIA_TYPE " + MEDIA_TYPE + " filename: " + apiProfile.getTbOfficial().OfficialDisplayPic);
                 formBuilder.addFormDataPart("filedisplay", apiProfile.getTbOfficial().OfficialDisplayPic,
@@ -970,7 +977,7 @@ public class ApiConnect implements Parcelable {
         mDbHelper = new DBHelper(mContext);
         String Username_old = mManager.getPreferenceData(mDbHelper.COL_id_users);
         String txt_pass = mManager.getPreferenceData(mDbHelper.COL_pass);
-
+        Log.d(TAG, "txt_pass: " + txt_pass);
         MultipartBody.Builder formBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("Username_old", Username_old)

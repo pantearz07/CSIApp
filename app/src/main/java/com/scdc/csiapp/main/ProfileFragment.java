@@ -1,5 +1,7 @@
 package com.scdc.csiapp.main;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -606,11 +609,30 @@ public class ProfileFragment extends Fragment {
 
                     boolean isSuccess2 = mManager.registerUser(WelcomeActivity.profile.getTbUsers(), WelcomeActivity.profile.getTbOfficial());
                     if (isSuccess2) {
-                        if (snackbar == null || !snackbar.isShown()) {
+                        String username_old = Username_old;
+                        String username_new = WelcomeActivity.profile.getTbUsers().id_users;
+                        Log.d(TAG, "Not Username_old " + username_old + " new " + WelcomeActivity.profile.getTbUsers().id_users);
+                        if(username_new == username_old) {
+                            if (snackbar == null || !snackbar.isShown()) {
 
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE, getString(R.string.save_complete)
-                                    + " " + apiStatus.getData().getResult().toString());
-                            snackBarAlert.createSnacbar();
+                                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE, getString(R.string.save_complete));
+//                                    + " " + apiStatus.getData().getResult().toString());
+                                snackBarAlert.createSnacbar();
+                            }
+                        }else{
+                            Toast.makeText(getActivity(),
+                                    getString(R.string.save_complete)
+                                            + "กำลังทำการเข้าสู่ระบบใหม่อีกครั้ง" + WelcomeActivity.profile.getTbOfficial().id_users.toString(),
+                                    Toast.LENGTH_SHORT).show();
+                            Boolean status = mManager.clearLoggedInOfficial();
+                            Log.d("clear logout", String.valueOf(status));
+                            Intent mStartActivity = new Intent(getActivity(), WelcomeActivity.class);
+                            int mPendingIntentId = 123456;
+                            PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                            AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 500, mPendingIntent);
+//                        getActivity().startActivity(i);
+                            System.exit(0);
                         }
 
                     } else {
@@ -618,8 +640,8 @@ public class ProfileFragment extends Fragment {
                         if (snackbar == null || !snackbar.isShown()) {
 
                             SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
-                                    getString(R.string.save_error) + "และบันทึก pref ไม่สำเร็จ"
-                                            + " " + apiStatus.getData().getResult().toString());
+                                    getString(R.string.save_error) + "และบันทึก pref ไม่สำเร็จ");
+//                                            + " " + apiStatus.getData().getResult().toString());
                             snackBarAlert.createSnacbar();
                         }
                     }
@@ -652,7 +674,7 @@ public class ProfileFragment extends Fragment {
         protected void onPostExecute(ApiStatus apiStatus) {
             super.onPostExecute(apiStatus);
 
-//            Log.d(TAG, apiStatus.getStatus());
+            Log.d(TAG, apiStatus.getStatus());
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Log.d(TAG, apiStatus.getData().getReason());
 
