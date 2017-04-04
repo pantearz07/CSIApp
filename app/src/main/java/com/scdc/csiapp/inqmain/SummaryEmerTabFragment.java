@@ -547,20 +547,35 @@ public class SummaryEmerTabFragment extends Fragment {
                 hiddenKeyboard();
                 if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive") || EmergencyTabFragment.mode == "new") {
                     Log.i(TAG, "ลบคดี");
-
-                    if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.delete_noticecase), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        DeleteNoticeCase deleteNoticeCase = new DeleteNoticeCase();
-                                        deleteNoticeCase.execute(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
-
-                                    }
-                                });
-                        snackbar.show();
-                    }
-
+//
+//                    if (snackbar == null || !snackbar.isShown()) {
+//                        snackbar = Snackbar.make(rootLayout, getString(R.string.delete_noticecase), Snackbar.LENGTH_INDEFINITE)
+//                                .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        DeleteNoticeCase deleteNoticeCase = new DeleteNoticeCase();
+//                                        deleteNoticeCase.execute(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
+//
+//                                    }
+//                                });
+//                        snackbar.show();
+//                    }
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(getActivity());
+                    builder.setMessage(getString(R.string.delete_noticecase));
+                    builder.setPositiveButton("ยืนยัน", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            DeleteNoticeCase deleteNoticeCase = new DeleteNoticeCase();
+                            deleteNoticeCase.execute(EmergencyTabFragment.tbNoticeCase.Mobile_CaseID);
+                        }
+                    });
+                    builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //dialog.dismiss();
+                        }
+                    });
+                    builder.show();
 
                 } else {
                     Log.i(TAG, "btnDownloadfile");

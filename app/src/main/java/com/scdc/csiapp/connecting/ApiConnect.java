@@ -368,31 +368,31 @@ public class ApiConnect implements Parcelable {
                 ApiListNoticeCase apiListNoticeCaseServer = gson.fromJson(response.body().string(), ApiListNoticeCase.class);
                 // ข้อมูลจาก SQLite
                 mDbHelper = new DBHelper(mContext);
-                ApiListNoticeCase apiListNoticeCaseSQLite_check = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                //check ข้อมูลในมือถือว่ามีในเซิร์ฟมั้ย ถ้าไม่มีค่อยลบทิ้ง
-                // apiListNoticeCaseSQLite ตั้ง
+//                ApiListNoticeCase apiListNoticeCaseSQLite_check = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+//                //check ข้อมูลในมือถือว่ามีในเซิร์ฟมั้ย ถ้าไม่มีค่อยลบทิ้ง
+//                // apiListNoticeCaseSQLite ตั้ง
+////
+//                int ser_size_check = apiListNoticeCaseServer.getData().getResult().size();
+//                int sql_size_check;
+//                if (apiListNoticeCaseSQLite_check.getData() == null) {
+//                    sql_size_check = 0;
+//                } else {
+//                    sql_size_check = apiListNoticeCaseSQLite_check.getData().getResult().size();
+//                }
+//                for (int i = 0; i < sql_size_check; i++) {
+//                    ApiNoticeCase temp_sql_check = apiListNoticeCaseSQLite_check.getData().getResult().get(i);
+//                    ApiNoticeCase temp_ser_check;
+//                    for (int j = 0; j < ser_size_check; j++) {
+//                        temp_ser_check = apiListNoticeCaseServer.getData().getResult().get(j);
+//                        if (temp_sql_check.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_ser_check.getTbNoticeCase().NoticeCaseID)) {
+//                            Log.i(TAG, "check list noticecase มีบนserver");
+//                        }else{
+//                            boolean isSuccess = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
+//                            if(isSuccess){Log.i(TAG, "check list noticecase ไม่มีบนserver ลบออกจาก sqlite");}
 //
-                int ser_size_check = apiListNoticeCaseServer.getData().getResult().size();
-                int sql_size_check;
-                if (apiListNoticeCaseSQLite_check.getData() == null) {
-                    sql_size_check = 0;
-                } else {
-                    sql_size_check = apiListNoticeCaseSQLite_check.getData().getResult().size();
-                }
-                for (int i = 0; i < sql_size_check; i++) {
-                    ApiNoticeCase temp_sql_check = apiListNoticeCaseSQLite_check.getData().getResult().get(i);
-                    ApiNoticeCase temp_ser_check;
-                    for (int j = 0; j < ser_size_check; j++) {
-                        temp_ser_check = apiListNoticeCaseServer.getData().getResult().get(j);
-                        if (temp_sql_check.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_ser_check.getTbNoticeCase().NoticeCaseID)) {
-                            Log.i(TAG, "check list noticecase มีบนserver");
-                        }else{
-                            boolean isSuccess = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
-                            if(isSuccess){Log.i(TAG, "check list noticecase ไม่มีบนserver ลบออกจาก sqlite");}
-
-                        }
-                    }
-                }
+//                        }
+//                    }
+//                }
                 // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListNoticeCaseServer.getData().getResult().size();
 //                int sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
