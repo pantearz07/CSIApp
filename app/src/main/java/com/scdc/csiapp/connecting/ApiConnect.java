@@ -449,6 +449,9 @@ public class ApiConnect implements Parcelable {
                     }
                 }
                 response.close();
+
+                //Load new data SQLite
+                apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
                 return apiListNoticeCaseSQLite;
             } else {
                 Log.d(TAG, "Not Success listNoticecase" + response.code());
