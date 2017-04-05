@@ -193,7 +193,7 @@ public class GcmDownstreamService extends GcmListenerService {
         PendingIntent piSnooze = PendingIntent.getActivity(this, 0, snoozeIntent,  PendingIntent.FLAG_CANCEL_CURRENT);*/
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            // API 16 onwards
+            // API 21 up
             Notification.Builder builder = new Notification.Builder(context);
             builder.setAutoCancel(true)
                     .setPriority(Notification.PRIORITY_MAX)
@@ -208,12 +208,12 @@ public class GcmDownstreamService extends GcmListenerService {
                     .setSound(defaultSoundUri)
                     .setDefaults(Notification.DEFAULT_ALL);
             Notification notification = builder.build();
-            notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+            notification.flags |= Notification.FLAG_ONGOING_EVENT; // | Notification.FLAG_AUTO_CANCEL
             mNotificationManager =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mNotificationManager.notify(1001, notification);
         } else {
-
+            //api < 19
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this)
                             .setPriority(NotificationCompat.PRIORITY_MAX) //HIGH, MAX, FULL_SCREEN and setDefaults(Notification.DEFAULT_ALL) will make it a Heads Up Display Style

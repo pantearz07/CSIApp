@@ -94,6 +94,8 @@ public class NoticeCaseListFragment extends Fragment {
     public static final String KEY_CONNECT = "key_connect";
     ApiProfile apiProfile;
     ApiConnect api;
+    ApiNoticeCase apiNoticeCase;
+    String mode, NoticeCaseID;
 
     public static NoticeCaseListFragment newInstance() {
         return new NoticeCaseListFragment();
@@ -205,7 +207,7 @@ public class NoticeCaseListFragment extends Fragment {
             swipeContainer.setRefreshing(true);
             mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
             mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-
+            new ConnectlistNoticecase().execute();
         } else {
             swipeContainer.setRefreshing(true);
             // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
@@ -223,8 +225,6 @@ public class NoticeCaseListFragment extends Fragment {
         }
     }
 
-    ApiNoticeCase apiNoticeCase;
-    String mode, NoticeCaseID;
     ApiNoticeCaseListAdapter.OnItemClickListener onItemClickListener = new ApiNoticeCaseListAdapter.OnItemClickListener() {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -291,427 +291,426 @@ public class NoticeCaseListFragment extends Fragment {
         }
     };
 
-        private void viewCase() {
-            final Bundle i = new Bundle();
-            FragmentTransaction fragmentTransaction;
-            i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
-            i.putString(emergencyTabFragment.Bundle_mode, "view");
-            fragmentTransaction = mFragmentManager.beginTransaction();
-            emergencyTabFragment.setArguments(i);
-            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+    private void viewCase() {
+        final Bundle i = new Bundle();
+        FragmentTransaction fragmentTransaction;
+        i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+        i.putString(emergencyTabFragment.Bundle_mode, "view");
+        fragmentTransaction = mFragmentManager.beginTransaction();
+        emergencyTabFragment.setArguments(i);
+        fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
 
-        }
+    }
 
-        private void editCase() {
-            final Bundle i = new Bundle();
-            FragmentTransaction fragmentTransaction;
-            if (mode.equals("online")) {
-                boolean isSuccess = mDbHelper.saveNoticeCase(apiNoticeCase.getTbNoticeCase());
-                if (isSuccess) {
-                    i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
-                    i.putString(emergencyTabFragment.Bundle_mode, "edit");
-                    fragmentTransaction = mFragmentManager.beginTransaction();
-                    emergencyTabFragment.setArguments(i);
-                    fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-                } else {
-                    if (snackbar == null || !snackbar.isShown()) {
-                        snackbar = Snackbar.make(rootLayout, getString(R.string.save_error), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-
-                                    }
-                                });
-                        snackbar.show();
-                    }
-                }
-            } else {
+    private void editCase() {
+        final Bundle i = new Bundle();
+        FragmentTransaction fragmentTransaction;
+        if (mode.equals("online")) {
+            boolean isSuccess = mDbHelper.saveNoticeCase(apiNoticeCase.getTbNoticeCase());
+            if (isSuccess) {
                 i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
                 i.putString(emergencyTabFragment.Bundle_mode, "edit");
                 fragmentTransaction = mFragmentManager.beginTransaction();
                 emergencyTabFragment.setArguments(i);
                 fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-            }
-        }
-
-        public void onBackPressed() {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-            dialog.setTitle(R.string.ad_title);
-            dialog.setIcon(R.drawable.ic_noti);
-            dialog.setCancelable(true);
-            dialog.setMessage(R.string.ad_message);
-            dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    getActivity().finish();
-                }
-
-            });
-
-            dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-
-                }
-            });
-
-            dialog.show();
-        }
-
-        public void selectApiNoticeCaseFromSQLite() {
-            ApiListNoticeCase apiListNoticeCase = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
-            caseList = apiListNoticeCase.getData().getResult();
-            Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
-
-            setAdapterList();
-        }
-
-        class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
-
-            @Override
-            protected ApiListNoticeCase doInBackground(Void... voids) {
-                try {
-                    return WelcomeActivity.api.listNoticecase();
-                } catch (RuntimeException e) {
-                    Log.e(TAG, e.getMessage());
-                    WelcomeActivity.api = new ApiConnect(getActivity());
-                    return WelcomeActivity.api.listNoticecase();
-                }
-            }
-
-            @Override
-            protected void onPostExecute(ApiListNoticeCase apiListNoticeCase) {
-                super.onPostExecute(apiListNoticeCase);
-                if (apiListNoticeCase != null) {
-                    Log.d(TAG, apiListNoticeCase.getStatus());
-                    Log.d(TAG, String.valueOf(apiListNoticeCase.getData().getResult().size()));
-
-                    // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
-                    caseList = apiListNoticeCase.getData().getResult();
-                    //caseList.get(2).setMode("online");
-
-                    Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
-                        @Override
-                        public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
-                            SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj1.getTbNoticeCase().ReceivingCaseTime);
-                            String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj2.getTbNoticeCase().ReceivingCaseTime);
-                            try {
-                                return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                return 0;
-                            }
-                        }
-                    });
-
-                    setAdapterList();
-                } else {
-                    selectApiNoticeCaseFromSQLite();
-                }
-            }
-        }
-
-        Runnable mHandlerTaskcheckConnect = new Runnable() {
-            @Override
-            public void run() {
-                ConnectApiCheckConnect connectApi = new ConnectApiCheckConnect();
-                connectApi.execute();
-                mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
-            }
-        };
-
-        class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
-
-            @Override
-            protected ApiStatus doInBackground(ApiStatus... apiStatuses) {
-                return WelcomeActivity.api.checkConnect();
-            }
-
-            @Override
-            protected void onPostExecute(ApiStatus apiStatus) {
-                super.onPostExecute(apiStatus);
-                if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
-                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-                    new ConnectlistNoticecase().execute();
-                } else {
-                    selectApiNoticeCaseFromSQLite();
-//                if (snackbar == null || !snackbar.isShown()) {
-                    snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
+            } else {
+                if (snackbar == null || !snackbar.isShown()) {
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.save_error), Snackbar.LENGTH_INDEFINITE)
                             .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (snackbar != null) {
-                                        snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
-                                    }
-                                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                                    AlertDialog.Builder builder =
-                                            new AlertDialog.Builder(getActivity());
-                                    LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                                    view = inflater.inflate(R.layout.ipsetting_dialog, null);
-                                    builder.setView(view);
-                                    final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
-                                    final String[] ip_list = getResources().getStringArray(
-                                            R.array.ip_list);
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,
-                                            ip_list);
-                                    ipvalueEdt.setThreshold(1);
-                                    ipvalueEdt.setAdapter(adapter);
-                                    ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
-                                        @Override
-                                        public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                                            ipvalueEdt.showDropDown();
-
-                                            return false;
-                                        }
-                                    });
-
-                                    builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (ipvalueEdt.getText().equals("")) {
-                                                Toast.makeText(getActivity(),
-                                                        getString(R.string.please_input_data),
-                                                        Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                String ipvalue = ipvalueEdt.getText().toString();
-                                                WelcomeActivity.api.updateIP(ipvalue);
-
-                                                if (snackbar != null) {
-                                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
-                                                }
-                                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                                                mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-
-                                                Toast.makeText(getActivity(),
-                                                        getString(R.string.save_complete),
-                                                        Toast.LENGTH_SHORT).show();
-                                                dialog.dismiss();
-                                            }
-                                        }
-                                    });
-
-                                    builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-
-                                    builder.show();
                                 }
                             });
                     snackbar.show();
-//                }
                 }
+            }
+        } else {
+            i.putSerializable(emergencyTabFragment.Bundle_Key, apiNoticeCase.getTbNoticeCase());
+            i.putString(emergencyTabFragment.Bundle_mode, "edit");
+            fragmentTransaction = mFragmentManager.beginTransaction();
+            emergencyTabFragment.setArguments(i);
+            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+        }
+    }
+
+    public void onBackPressed() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle(R.string.ad_title);
+        dialog.setIcon(R.drawable.ic_noti);
+        dialog.setCancelable(true);
+        dialog.setMessage(R.string.ad_message);
+        dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                getActivity().finish();
+            }
+
+        });
+
+        dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void selectApiNoticeCaseFromSQLite() {
+        ApiListNoticeCase apiListNoticeCase = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+        caseList = apiListNoticeCase.getData().getResult();
+        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
+
+        setAdapterList();
+    }
+
+    class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
+
+        @Override
+        protected ApiListNoticeCase doInBackground(Void... voids) {
+            try {
+                return WelcomeActivity.api.listNoticecase();
+            } catch (RuntimeException e) {
+                Log.e(TAG, e.getMessage());
+                WelcomeActivity.api = new ApiConnect(getActivity());
+                return WelcomeActivity.api.listNoticecase();
             }
         }
 
-        private class NoticeOnClickListener implements View.OnClickListener {
-            @Override
-            public void onClick(View view) {
+        @Override
+        protected void onPostExecute(ApiListNoticeCase apiListNoticeCase) {
+            super.onPostExecute(apiListNoticeCase);
+            if (apiListNoticeCase != null) {
+                Log.d(TAG, apiListNoticeCase.getStatus());
+                Log.d(TAG, String.valueOf(apiListNoticeCase.getData().getResult().size()));
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
+                // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
+                caseList = apiListNoticeCase.getData().getResult();
+                //caseList.get(2).setMode("online");
 
-                View view1 = inflater.inflate(R.layout.dialog_add_case, null);
-                dialog.setView(view1);
-
-                final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
-                final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
-                //ดึงค่าจาก TbCaseSceneType
-                final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
-                if (mCaseTypeArray != null) {
-                    String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
-                    for (int i = 0; i < mCaseTypeArray.length; i++) {
-                        mCaseTypeArray2[i] = mCaseTypeArray[i][1];
-                        Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
-                    }
-                    ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
-                            getActivity(), android.R.layout.simple_dropdown_item_1line,
-                            mCaseTypeArray2);
-                    spnCaseType.setAdapter(adapterTypeCase);
-                } else {
-                    Log.i(TAG + " show mCaseTypeArray", "null");
-                }
-                final String[] selectedCaseType = new String[1];
-                final String[] selectedSubCaseType = new String[1];
-                spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
+                Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedCaseType[0] = mCaseTypeArray[position][0];
-                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
-                        //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                        //ดึงค่าจาก TbSubCaseSceneType
-                        final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                        if (mSubCaseTypeArray != null) {
-                            String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
-                            for (int i = 0; i < mSubCaseTypeArray.length; i++) {
-                                mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
-                                Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
-                            }
-                            ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
-                                    android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
-                            spnSubCaseType.setAdapter(adapterSubCaseType);
-                        } else {
-                            spnSubCaseType.setAdapter(null);
-                            selectedSubCaseType[0] = null;
-                            Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
+                    public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                        SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj1.getTbNoticeCase().ReceivingCaseTime);
+                        String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj2.getTbNoticeCase().ReceivingCaseTime);
+                        try {
+                            return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return 0;
                         }
+                    }
+                });
 
-                        spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                setAdapterList();
+            } else {
+                selectApiNoticeCaseFromSQLite();
+            }
+        }
+    }
+
+    Runnable mHandlerTaskcheckConnect = new Runnable() {
+        @Override
+        public void run() {
+            ConnectApiCheckConnect connectApi = new ConnectApiCheckConnect();
+            connectApi.execute();
+            mHandler.postDelayed(mHandlerTaskcheckConnect, INTERVAL);
+        }
+    };
+
+    class ConnectApiCheckConnect extends AsyncTask<ApiStatus, Boolean, ApiStatus> {
+
+        @Override
+        protected ApiStatus doInBackground(ApiStatus... apiStatuses) {
+            return WelcomeActivity.api.checkConnect();
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
+                mHandler.removeCallbacks(mHandlerTaskcheckConnect);
+
+            } else {
+//                if (snackbar == null || !snackbar.isShown()) {
+                snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.ok), new View.OnClickListener() {
                             @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
-                                Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
-                            }
+                            public void onClick(View view) {
+                                if (snackbar != null) {
+                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                }
+                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(getActivity());
+                                LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                            public void onNothingSelected(AdapterView<?> parent) {
-                                selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
-                                Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                                view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                                builder.setView(view);
+                                final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
+                                final String[] ip_list = getResources().getStringArray(
+                                        R.array.ip_list);
+                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                                        ip_list);
+                                ipvalueEdt.setThreshold(1);
+                                ipvalueEdt.setAdapter(adapter);
+                                ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
+                                    @Override
+                                    public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                                        ipvalueEdt.showDropDown();
+
+                                        return false;
+                                    }
+                                });
+
+                                builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (ipvalueEdt.getText().equals("")) {
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.please_input_data),
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String ipvalue = ipvalueEdt.getText().toString();
+                                            WelcomeActivity.api.updateIP(ipvalue);
+
+                                            if (snackbar != null) {
+                                                snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                            }
+                                            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.save_complete),
+                                                    Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+                                });
+
+                                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+
+                                builder.show();
                             }
                         });
-                    }
-
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        selectedCaseType[0] = mCaseTypeArray[0][0];
-                        Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
-                        //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
-                    }
-                });
-
-                dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
-                dialog.setIcon(R.drawable.ic_noti);
-                dialog.setCancelable(true);
-                // Current Date
-                final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
-                final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
-
-
-                dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                        String NoticeCaseID = "MC_" + saveDataTime;
-                        TbNoticeCase tbNoticeCase = new TbNoticeCase();
-                        tbNoticeCase.NoticeCaseID = NoticeCaseID;
-                        tbNoticeCase.Mobile_CaseID = NoticeCaseID;
-                        tbNoticeCase.InquiryOfficialID = officialID;
-                        tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
-                        tbNoticeCase.InvestigatorOfficialID = null;
-                        tbNoticeCase.SCDCAgencyCode = null;
-                        tbNoticeCase.CaseTypeID = selectedCaseType[0];
-                        tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
-                        tbNoticeCase.CaseStatus = "receive";
-                        tbNoticeCase.ReceivingCaseDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                        tbNoticeCase.ReceivingCaseTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-                        tbNoticeCase.DISTRICT_ID = null;
-                        tbNoticeCase.AMPHUR_ID = null;
-                        tbNoticeCase.PROVINCE_ID = null;
-                        tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
-                        tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
-                        if (tbNoticeCase != null) {
-
-                            Bundle i = new Bundle();
-                            i.putSerializable(Bundle_Key, tbNoticeCase);
-
-                            i.putString(emergencyTabFragment.Bundle_mode, "new");
-                            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                            emergencyTabFragment.setArguments(i);
-                            fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
-
-                        }
-
-
-                    }
-
-                });
-
-                dialog.setCancelable(true);
-                dialog.setNeutralButton("ยกเลิก", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.create();
-                dialog.show();
+                snackbar.show();
+//                }
             }
         }
+    }
 
-        private void setUserProfile() {
-            try {
-                if (WelcomeActivity.profile.getTbOfficial() != null) {
-                    officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+    private class NoticeOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
 
-                } else {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+            LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                    Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
-                    getActivity().finish();
-                    startActivity(gotoWelcomeActivity);
+            View view1 = inflater.inflate(R.layout.dialog_add_case, null);
+            dialog.setView(view1);
+
+            final Spinner spnCaseType = (Spinner) view1.findViewById(R.id.spnCaseType);
+            final Spinner spnSubCaseType = (Spinner) view1.findViewById(R.id.spnSubCaseType);
+            //ดึงค่าจาก TbCaseSceneType
+            final String mCaseTypeArray[][] = mDbHelper.SelectCaseType();
+            if (mCaseTypeArray != null) {
+                String[] mCaseTypeArray2 = new String[mCaseTypeArray.length];
+                for (int i = 0; i < mCaseTypeArray.length; i++) {
+                    mCaseTypeArray2[i] = mCaseTypeArray[i][1];
+                    Log.i(TAG + " show mCaseTypeArray", mCaseTypeArray2[i].toString());
+                }
+                ArrayAdapter<String> adapterTypeCase = new ArrayAdapter<String>(
+                        getActivity(), android.R.layout.simple_dropdown_item_1line,
+                        mCaseTypeArray2);
+                spnCaseType.setAdapter(adapterTypeCase);
+            } else {
+                Log.i(TAG + " show mCaseTypeArray", "null");
+            }
+            final String[] selectedCaseType = new String[1];
+            final String[] selectedSubCaseType = new String[1];
+            spnCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selectedCaseType[0] = mCaseTypeArray[position][0];
+                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+                    //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                    //ดึงค่าจาก TbSubCaseSceneType
+                    final String mSubCaseTypeArray[][] = mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                    if (mSubCaseTypeArray != null) {
+                        String[] mSubCaseTypeArray2 = new String[mSubCaseTypeArray.length];
+                        for (int i = 0; i < mSubCaseTypeArray.length; i++) {
+                            mSubCaseTypeArray2[i] = mSubCaseTypeArray[i][2];
+                            Log.i(TAG + " show mSubCaseTypeArray2", mSubCaseTypeArray2[i].toString());
+                        }
+                        ArrayAdapter<String> adapterSubCaseType = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, mSubCaseTypeArray2);
+                        spnSubCaseType.setAdapter(adapterSubCaseType);
+                    } else {
+                        spnSubCaseType.setAdapter(null);
+                        selectedSubCaseType[0] = null;
+                        Log.i(TAG + " show mSubCaseTypeArray", String.valueOf(selectedSubCaseType[0]));
+                    }
+
+                    spnSubCaseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            selectedSubCaseType[0] = mSubCaseTypeArray[position][0];
+                            Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                        }
+
+                        public void onNothingSelected(AdapterView<?> parent) {
+                            selectedSubCaseType[0] = mSubCaseTypeArray[0][0];
+                            Log.i(TAG + " show mSubCaseTypeArray", selectedSubCaseType[0]);
+                        }
+                    });
+                }
+
+                public void onNothingSelected(AdapterView<?> parent) {
+                    selectedCaseType[0] = mCaseTypeArray[0][0];
+                    Log.i(TAG + " show mCaseTypeArray", selectedCaseType[0]);
+                    //String mSubCaseTypeArray[][]= mDbHelper.SelectSubCaseTypeByCaseType(selectedCaseType[0]);
+                }
+            });
+
+            dialog.setTitle("เพิ่มข้อมูลการตรวจสถานที่เกิดเหตุ");
+            dialog.setIcon(R.drawable.ic_noti);
+            dialog.setCancelable(true);
+            // Current Date
+            final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+            final String saveDataTime = dateTimeCurrent[0] + dateTimeCurrent[1] + dateTimeCurrent[2] + dateTimeCurrent[3] + dateTimeCurrent[4] + dateTimeCurrent[5];
+
+
+            dialog.setPositiveButton("ถัดไป", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    String NoticeCaseID = "MC_" + saveDataTime;
+                    TbNoticeCase tbNoticeCase = new TbNoticeCase();
+                    tbNoticeCase.NoticeCaseID = NoticeCaseID;
+                    tbNoticeCase.Mobile_CaseID = NoticeCaseID;
+                    tbNoticeCase.InquiryOfficialID = officialID;
+                    tbNoticeCase.PoliceStationID = WelcomeActivity.profile.getTbOfficial().PoliceStationID;
+                    tbNoticeCase.InvestigatorOfficialID = null;
+                    tbNoticeCase.SCDCAgencyCode = null;
+                    tbNoticeCase.CaseTypeID = selectedCaseType[0];
+                    tbNoticeCase.SubCaseTypeID = selectedSubCaseType[0];
+                    tbNoticeCase.CaseStatus = "receive";
+                    tbNoticeCase.ReceivingCaseDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                    tbNoticeCase.ReceivingCaseTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+                    tbNoticeCase.DISTRICT_ID = null;
+                    tbNoticeCase.AMPHUR_ID = null;
+                    tbNoticeCase.PROVINCE_ID = null;
+                    tbNoticeCase.LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+                    tbNoticeCase.LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
+                    if (tbNoticeCase != null) {
+
+                        Bundle i = new Bundle();
+                        i.putSerializable(Bundle_Key, tbNoticeCase);
+
+                        i.putString(emergencyTabFragment.Bundle_mode, "new");
+                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        emergencyTabFragment.setArguments(i);
+                        fragmentTransaction.replace(R.id.containerView, emergencyTabFragment).addToBackStack(null).commit();
+
+                    }
+
 
                 }
-            } catch (NullPointerException e) {
+
+            });
+
+            dialog.setCancelable(true);
+            dialog.setNeutralButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.create();
+            dialog.show();
+        }
+    }
+
+    private void setUserProfile() {
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+
+            } else {
+
                 Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
                 getActivity().finish();
                 startActivity(gotoWelcomeActivity);
-            }
-        }
-
-        @Override
-        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            if (savedInstanceState == null) {
-                // Fragment ถูกสร้างขึ้นมาครั้งแรก
-                //check user profile
-                setUserProfile();
-
-            } else {
-                // Fragment ถูก Restore ขึ้นมา
-                restoreInstanceState(savedInstanceState);
-                setUserProfile();
-                Log.i(TAG, "from onActivityCreated" + officialID);
 
             }
-        }
-
-        private void restoreInstanceState(Bundle savedInstanceState) {
-            apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
-            if (WelcomeActivity.profile == null) {
-                WelcomeActivity.profile = new ApiProfile();
-                WelcomeActivity.profile = apiProfile;
-            } else {
-                WelcomeActivity.profile = apiProfile;
-            }
-            api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
-            if (WelcomeActivity.api == null) {
-                WelcomeActivity.api = new ApiConnect(getActivity());
-                WelcomeActivity.api = api;
-            } else {
-                WelcomeActivity.api = api;
-            }
-        }
-
-        @Override
-        public void onSaveInstanceState(Bundle outState) {
-            if (apiProfile == null) {
-                apiProfile = new ApiProfile();
-                apiProfile = WelcomeActivity.profile;
-            } else {
-                apiProfile = WelcomeActivity.profile;
-            }
-            if (api == null) {
-                api = new ApiConnect(getActivity());
-                api = WelcomeActivity.api;
-            } else {
-                api = WelcomeActivity.api;
-            }
-            outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
-            outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
-            super.onSaveInstanceState(outState);
+        } catch (NullPointerException e) {
+            Intent gotoWelcomeActivity = new Intent(context, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
         }
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            //check user profile
+            setUserProfile();
+
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            setUserProfile();
+            Log.i(TAG, "from onActivityCreated" + officialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(getActivity());
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
+    }
+}
