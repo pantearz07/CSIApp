@@ -195,7 +195,7 @@ public class GcmDownstreamService extends GcmListenerService {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             // API 16 onwards
             Notification.Builder builder = new Notification.Builder(context);
-            builder.setAutoCancel(false)
+            builder.setAutoCancel(true)
                     .setPriority(Notification.PRIORITY_MAX)
                     .setContentIntent(pendingIntent)
                     .setSmallIcon(R.drawable.logo_csi)
