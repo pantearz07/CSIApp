@@ -207,11 +207,14 @@ public class GcmDownstreamService extends GcmListenerService {
                     .setWhen((new Date()).getTime())
                     .setSound(defaultSoundUri)
                     .setDefaults(Notification.DEFAULT_ALL);
-            Notification notification = builder.build();
-            notification.flags |= Notification.FLAG_ONGOING_EVENT; // | Notification.FLAG_AUTO_CANCEL
-            mNotificationManager =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mNotificationManager.notify(1001, notification);
+//            Notification notification = builder.build();
+//            notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
+//            mNotificationManager =
+//                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            mNotificationManager.notify(1001, notification);
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1001, builder.build());
         } else {
             //api < 19
             NotificationCompat.Builder notificationBuilder =
