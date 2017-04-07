@@ -530,6 +530,7 @@ public class ApiConnect implements Parcelable {
                                     // -end- เช็ควันเวลา LastUpdate เปรียบเทียบว่าฝั่งไหนใหม่หรือเก่ากว่า
                                     if (checkDateTime == 1) {
                                         // ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
+                                        flag_have = true;
                                         if (mDbHelper.DeleteMultimedia(temp_sql_old)) {
                                             boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser_check);
                                             if (isSuccess) {
@@ -543,6 +544,7 @@ public class ApiConnect implements Parcelable {
                                         // -end- ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
                                     } else if (checkDateTime == 2) {
                                         // ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
+                                        flag_have = true;
                                         Log.d(TAG, "update from mobile to server updateAlldataCase ");
                                         //อัพเดทข้อมูลจาก SQLite ไปยัง server
                                         ApiStatusData apiStatusData = saveCaseReport(temp_sql_old);
@@ -555,27 +557,28 @@ public class ApiConnect implements Parcelable {
                                         // -end- ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
                                     } else {
                                         // ถ้า วันที่ฝั่ง server เท่ากันกับ Sqlite
+                                        flag_have = true;
                                         Log.d(TAG, "no update updateAlldataCase");
                                         break;
                                     }
                                 }
-                            } else {
-                                //คดีที่อยู่ในมือถือ ไม่มีบน server  เลยต้องลบออกจาก sqlite
-                                //Delete Data in SQLite
-                                long checkcase = mDbHelper.CheckCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
-                                    if (checkcase == 1) {
-                                        boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_old);
-                                        boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
-                                        boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
-                                        if (isSuccess1) {
-                                            Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbCaseScene().CaseReportID);
-                                            flag_have = true;
-                                        }
-                                } else if (checkcase == 0) {
-                                    break;
+                            }
+                        }
+                        //ตรวจ flag_have หลังจากวนทั้งหมดแล้ว ถึงจะลบได้
+                        if (flag_have == false) {
+                            //คดีที่อยู่ในมือถือ ไม่มีบน server  เลยต้องลบออกจาก sqlite
+                            //Delete Data in SQLite
+                            long checkcase = mDbHelper.CheckCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
+                            if (checkcase == 1) {
+                                boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_old);
+                                boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
+                                boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
+                                if (isSuccess1) {
+                                    Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbCaseScene().CaseReportID);
                                 }
                             }
                         }
+                        
                     }
                     // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก Server เป็นหลัก
                     List<ApiCaseScene> newListCaseScene = new ArrayList<>();
@@ -591,11 +594,11 @@ public class ApiConnect implements Parcelable {
                     for (int i = 0; i < ser_size_check; i++) {
                         ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
                         ApiCaseScene temp_sql;
-                        if(sql_size == 0){
+                        if (sql_size == 0) {
                             Log.i(TAG, "online" + temp_ser.getTbCaseScene().CaseReportID);
                             temp_ser.setMode("online");
                             newListCaseScene.add(temp_ser);
-                        }else {
+                        } else {
                             for (int j = 0; j < sql_size; j++) {
                                 temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
                                 if (temp_ser.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_sql.getTbCaseScene().CaseReportID)) {
