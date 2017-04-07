@@ -134,8 +134,8 @@
     <string name="casestatus_6">investigated</string>
     <string name="casestatus_7">reported</string>
     <string name="delete_case">ลบคดี</string>
-    <string name="upload_case">ส่งไปยังเซิร์ฟเวอร์</string>
-    <string name="searchlatlng">บันทึกพิกัดที่เกิดเหตุ</string>
+    <string name="upload_case">อัพโหลดข้อมูล</string>
+    <string name="searchlatlng">ค้นหาพิกัดที่เกิดเหตุ</string>
     <string name="searchmap">นำเส้นทาง</string>
     <string name="updatedata">อัพเดทล่าสุด </string>
     <string-array name="accesstype">

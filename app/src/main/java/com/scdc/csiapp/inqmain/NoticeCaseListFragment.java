@@ -1,5 +1,7 @@
 package com.scdc.csiapp.inqmain;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -123,7 +125,6 @@ public class NoticeCaseListFragment extends Fragment {
         cd = new ConnectionDetector(context);
         //networkConnectivity = cd.isNetworkAvailable();
         getDateTime = new GetDateTime();
-
         emergencyTabFragment = new EmergencyTabFragment();
         csiDataTabFragment = new CSIDataTabFragment();
         rootLayout = (CoordinatorLayout) view.findViewById(R.id.rootLayout);
@@ -389,7 +390,7 @@ public class NoticeCaseListFragment extends Fragment {
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListNoticeCase.getData().getResult();
                 //caseList.get(2).setMode("online");
-
+                Log.i(TAG + " caseList size ", String.valueOf(caseList.size()));
                 Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
                     @Override
                     public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
@@ -404,10 +405,18 @@ public class NoticeCaseListFragment extends Fragment {
                         }
                     }
                 });
-
                 setAdapterList();
             } else {
-                selectApiNoticeCaseFromSQLite();
+                Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
+                        Toast.LENGTH_SHORT).show();
+                Boolean status = mManager.clearLoggedInOfficial();
+                Log.d("clear logout", String.valueOf(status));
+                Intent mStartActivity = new Intent(context, WelcomeActivity.class);
+                int mPendingIntentId = 123456;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 600, mPendingIntent);
+                System.exit(0);
             }
         }
     }

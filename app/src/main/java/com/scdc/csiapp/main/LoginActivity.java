@@ -183,6 +183,7 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 String ipvalue = ipvalueEdt.getText().toString();
+                                Log.d(TAG, "ipvalue " + ipvalue);
                                 WelcomeActivity.api.updateIP(ipvalue);
 
                                 if (snackbar != null) {

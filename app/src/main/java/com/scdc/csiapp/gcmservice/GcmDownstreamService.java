@@ -112,13 +112,12 @@ public class GcmDownstreamService extends GcmListenerService {
 
 
                     Log.e(TAG, "Investigator : " + Investigator);
-                    String message = Investigator
-                            + "\n" + "รับตรวจเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
+                    String message = "ที่อยู่ " + Address;
                     String bigmessage = "ที่อยู่ " + Address
                             + "\n" + Investigator
-                            + "\n" + "รับตรวจเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
+                            + "\n" + "เมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
 
-                    sendNotification("รับเรื่องแล้ว", message, bigmessage, nameintent, "noticecaselistfragment");
+                    sendNotification("รับคดีไปตรวจ", message, bigmessage, nameintent, "noticecaselistfragment");
                 }
                 if (Title.equals("newreceivingcase")) {
                     String nameintent = "InqMainActivity";
@@ -143,11 +142,31 @@ public class GcmDownstreamService extends GcmListenerService {
 
                     sendNotification("จ่ายงานแล้ว", message, bigmessage, nameintent, "noticecaselistfragment");
                 }
+                if (Title.equals("reportedcasescene")) {
+                    String nameintent = "InqMainActivity";
+                    String CaseReportID = data.getString("gcm.notification.CaseReportID");
+                    String Investigator = data.getString("gcm.notification.Investigator");
 
+                    String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.CompleteSceneDate"));
+                    String ReceivingCaseTime = data.getString("gcm.notification.CompleteSceneTime");
+                    String Address = data.getString("gcm.notification.Address");
+                    Log.e(TAG, "Investigator : " + Investigator);
+                    String message = "ที่อยู่ " + Address;
+                    String bigmessage = "ที่อยู่ " + Address
+                            + "\n" + Investigator
+                            + "\n" + "เสร็จเมื่อ " + ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
+
+                    sendNotification("มีคดีจัดทำรายงานเสร็จแล้ว", message, bigmessage, nameintent, "noticecaselistfragment");
+                }
             }
         }
         if (Title.equals("newofficial")) {
-            String nameintent = "MainActivity";
+            String nameintent = null;
+            if (accesstype.equals("investigator")) {
+                nameintent = "MainActivity";
+            }else{
+                nameintent = "InqMainActivity";
+            }
             String info = data.getString("gcm.notification.info");
             Log.e(TAG, "info : " + info);
             String message = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจใหม่";
@@ -155,10 +174,29 @@ public class GcmDownstreamService extends GcmListenerService {
             sendNotification("กรุณาอัพเดทข้อมูลรายชื่อ", message, bigmessage, nameintent, "settingfragment");
         }
         if (Title.equals("newdata")) {
-            String nameintent = "MainActivity";
+            String nameintent = null;
+            if (accesstype.equals("investigator")) {
+                nameintent = "MainActivity";
+            }else{
+                nameintent = "InqMainActivity";
+            }
             String message = "มีการอัพเดทข้อมูลเกี่ยวกับตำรวจใหม่";
             String bigmessage = "ไปที่การตั้งค่าในระบบ เพื่ออัพเดทข้อมูลเกี่ยวกับตำรวจใหม่";
             sendNotification("กรุณาอัพเดทข้อมูลเกี่ยวกับตำรวจ", message, bigmessage, nameintent, "settingfragment");
+        }
+        if (Title.equals("sendnoti")) {
+            String nameintent, namefragment = null;
+            if (accesstype.equals("investigator")) {
+                nameintent = "MainActivity";
+                namefragment = "CaseSceneListFragment";
+            }else{
+                nameintent = "InqMainActivity";
+                namefragment = "NoticeCaseListFragment";
+            }
+            String subtitle = data.getString("gcm.notification.subtitle");
+            String message = data.getString("gcm.notification.message");
+            String bigmessage = data.getString("gcm.notification.bigmessage");
+            sendNotification(subtitle, message, bigmessage, nameintent, namefragment);
         }
     }
 

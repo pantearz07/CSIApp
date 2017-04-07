@@ -615,7 +615,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
-        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLatitude());
+        Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLongitude());
         if (cd.isNetworkAvailable()) {
             Geocoder gcd = new Geocoder(context, Locale.getDefault());
             List<Address> addresses = null;

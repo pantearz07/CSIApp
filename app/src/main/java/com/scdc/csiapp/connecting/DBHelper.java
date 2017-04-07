@@ -4925,4 +4925,60 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+
+    public boolean saveOfficial(TbOfficial tbOfficial) {
+        if (tbOfficial == null) {
+            return false;
+        }
+        try {
+            mDb = this.getReadableDatabase();
+            SQLiteDatabase db;
+            db = this.getWritableDatabase();
+            int insert = 0;
+            int update = 0;
+            String PRIMARY_KEY;
+            String strSQL;
+            db.beginTransaction();
+
+            PRIMARY_KEY = tbOfficial.OfficialID;
+            strSQL = "SELECT * FROM official WHERE "
+                    + "OfficialID = '" + PRIMARY_KEY + "'";
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            TbOfficial temp = new TbOfficial();
+            ContentValues Val = new ContentValues();
+            Val.put(COL_OfficialID, tbOfficial.OfficialID);
+            Val.put(COL_FirstName, tbOfficial.FirstName);
+            Val.put(COL_LastName, tbOfficial.LastName);
+            Val.put(COL_Alias, tbOfficial.Alias);
+            Val.put(COL_Rank, tbOfficial.Rank);
+            Val.put(COL_Position, tbOfficial.Position);
+            Val.put(COL_SubPossition, tbOfficial.SubPossition);
+            Val.put(COL_PhoneNumber, tbOfficial.PhoneNumber);
+            Val.put(COL_OfficialEmail, tbOfficial.OfficialEmail);
+            Val.put(COL_OfficialDisplayPic, tbOfficial.OfficialDisplayPic);
+            Val.put(COL_AccessType, tbOfficial.AccessType);
+            Val.put(COL_SCDCAgencyCode, tbOfficial.SCDCAgencyCode);
+            Val.put(COL_PoliceStationID, tbOfficial.PoliceStationID);
+            Val.put(COL_id_users, tbOfficial.id_users);
+
+            if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
+                db.insert("official", null, Val);
+                insert++;
+            } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
+                db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                update++;
+            }
+            cursor.close();
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d(TAG, "Sync Table official: Insert " + insert + ", Update " + update);
+            db.close();
+            return true;
+        } catch (Exception e) {
+            Log.d(TAG, "Error in syncOfficial " + e.getMessage().toString());
+            return false;
+        }
+    }
 }

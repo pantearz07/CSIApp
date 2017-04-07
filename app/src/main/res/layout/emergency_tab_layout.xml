@@ -355,7 +355,7 @@
 
                     <Button
                         android:id="@+id/btnButtonSearchLatLong"
-                        style="@style/buttonStyle"
+                        style="@style/buttonStylePrimary"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
@@ -366,7 +366,7 @@
 
                     <Button
                         android:id="@+id/btnButtonSearchMap"
-                        style="@style/buttonStyle"
+                        style="@style/buttonStyleSuccess"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"

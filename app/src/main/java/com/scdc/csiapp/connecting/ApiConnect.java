@@ -51,6 +51,8 @@ import com.scdc.csiapp.tablemodel.TbNoticeCase;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
@@ -366,93 +368,80 @@ public class ApiConnect implements Parcelable {
                 Gson gson = new GsonBuilder().create();
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListNoticeCase apiListNoticeCaseServer = gson.fromJson(response.body().string(), ApiListNoticeCase.class);
-                // ข้อมูลจาก SQLite
-                mDbHelper = new DBHelper(mContext);
-//                ApiListNoticeCase apiListNoticeCaseSQLite_check = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
-//                //check ข้อมูลในมือถือว่ามีในเซิร์ฟมั้ย ถ้าไม่มีค่อยลบทิ้ง
-//                // apiListNoticeCaseSQLite ตั้ง
-////
-//                int ser_size_check = apiListNoticeCaseServer.getData().getResult().size();
-//                int sql_size_check;
-//                if (apiListNoticeCaseSQLite_check.getData() == null) {
-//                    sql_size_check = 0;
-//                } else {
-//                    sql_size_check = apiListNoticeCaseSQLite_check.getData().getResult().size();
-//                }
-//                for (int i = 0; i < sql_size_check; i++) {
-//                    ApiNoticeCase temp_sql_check = apiListNoticeCaseSQLite_check.getData().getResult().get(i);
-//                    ApiNoticeCase temp_ser_check;
-//                    for (int j = 0; j < ser_size_check; j++) {
-//                        temp_ser_check = apiListNoticeCaseServer.getData().getResult().get(j);
-//                        if (temp_sql_check.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_ser_check.getTbNoticeCase().NoticeCaseID)) {
-//                            Log.i(TAG, "check list noticecase มีบนserver");
-//                        }else{
-//                            boolean isSuccess = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
-//                            if(isSuccess){Log.i(TAG, "check list noticecase ไม่มีบนserver ลบออกจาก sqlite");}
-//
-//                        }
-//                    }
-//                }
-                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
-                int ser_size = apiListNoticeCaseServer.getData().getResult().size();
-//                int sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
-                int sql_size;
-                ApiListNoticeCase apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                if (apiListNoticeCaseSQLite.getData() == null) {
-                    sql_size = 0;
+                if (apiListNoticeCaseServer.getStatus().equals("fail")) {
+                    Log.d(TAG, "post data " + apiListNoticeCaseServer.getData().getReason());
+                    response.close();
+                    return null;
                 } else {
-                    sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
-                }
-                Log.i(TAG, "sql_size: " + sql_size + " ser_size: " + ser_size);
-                for (int i = 0; i < ser_size; i++) {
-                    ApiNoticeCase temp_ser = apiListNoticeCaseServer.getData().getResult().get(i);
-                    ApiNoticeCase temp_sql;
-                    boolean flag_have = false;
-                    for (int j = 0; j < sql_size; j++) {
-                        temp_sql = apiListNoticeCaseSQLite.getData().getResult().get(j);
-                        if (temp_ser.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_sql.getTbNoticeCase().NoticeCaseID)) {
-                            flag_have = true;
-                            if (temp_ser.getTbNoticeCase().LastUpdateDate != null && temp_sql.getTbNoticeCase().LastUpdateDate != null
-                                    && temp_ser.getTbNoticeCase().LastUpdateTime != null && temp_sql.getTbNoticeCase().LastUpdateTime != null) {
-                                int checkDateTime = 0;
-                                String LastUpdateDateTime_start = temp_ser.getTbNoticeCase().LastUpdateDate + " " + temp_ser.getTbNoticeCase().LastUpdateTime;
-                                String LastUpdateDateTime_end = temp_sql.getTbNoticeCase().LastUpdateDate + " " + temp_sql.getTbNoticeCase().LastUpdateTime;
-                                checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
-                                Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
-                                if (checkDateTime == 1) {
-                                    boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
-                                    if (isSuccess) {
-                                        Log.d(TAG, "update from server to mobile saveNoticeCase ");
+                    // ข้อมูลจาก SQLite
+                    mDbHelper = new DBHelper(mContext);
+                    // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+                    int ser_size = apiListNoticeCaseServer.getData().getResult().size();
+//                int sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+                    List<ApiNoticeCase> newListNoticeCase = new ArrayList<>();
+                    int sql_size;
+                    ApiListNoticeCase apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                    if (apiListNoticeCaseSQLite.getData() == null) {
+                        sql_size = 0;
+                    } else {
+                        sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+                    }
+                    Log.i(TAG, "sql_size: " + sql_size + " ser_size: " + ser_size);
+                    for (int i = 0; i < ser_size; i++) {
+                        ApiNoticeCase temp_ser = apiListNoticeCaseServer.getData().getResult().get(i);
+                        ApiNoticeCase temp_sql;
+                        boolean flag_have = false;
+                        for (int j = 0; j < sql_size; j++) {
+                            temp_sql = apiListNoticeCaseSQLite.getData().getResult().get(j);
+                            if (temp_ser.getTbNoticeCase().NoticeCaseID.equalsIgnoreCase(temp_sql.getTbNoticeCase().NoticeCaseID)) {
+                                flag_have = true;
+                                if (temp_ser.getTbNoticeCase().LastUpdateDate != null && temp_sql.getTbNoticeCase().LastUpdateDate != null
+                                        && temp_ser.getTbNoticeCase().LastUpdateTime != null && temp_sql.getTbNoticeCase().LastUpdateTime != null) {
+                                    int checkDateTime = 0;
+                                    String LastUpdateDateTime_start = temp_ser.getTbNoticeCase().LastUpdateDate + " " + temp_ser.getTbNoticeCase().LastUpdateTime;
+                                    String LastUpdateDateTime_end = temp_sql.getTbNoticeCase().LastUpdateDate + " " + temp_sql.getTbNoticeCase().LastUpdateTime;
+                                    checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
+                                    Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+                                    if (checkDateTime == 1) {
+                                        boolean isSuccess = mDbHelper.saveNoticeCase(temp_ser.getTbNoticeCase());
+                                        if (isSuccess) {
+                                            //add list in object
+                                            temp_ser.getMode().equals("offline");
+                                            newListNoticeCase.add(temp_ser);
+                                            Log.d(TAG, "update from server to mobile saveNoticeCase ");
+                                            break;
+                                        }
+                                    } else if (checkDateTime == 2) {
+                                        Log.d(TAG, "update from mobile to server saveNoticeCase ");
+                                        //sendNewNoticeCase
+                                        ApiStatusResult apiStatusResult = sendNewNoticeCase(temp_sql.getTbNoticeCase());
+                                        if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
+                                            temp_sql.setMode("offline");
+                                            newListNoticeCase.add(temp_sql);
+                                            Log.d(TAG, "update from mobile to server saveNoticeCase : success");
+                                        } else {
+                                            Log.d(TAG, "update from mobile to server saveNoticeCase : fail");
+                                        }
+                                        break;
+                                    } else {
+                                        Log.d(TAG, "no update saveNoticeCase ");
+                                        temp_sql.setMode("offline");
+                                        newListNoticeCase.add(temp_sql);
                                         break;
                                     }
-                                } else if (checkDateTime == 2) {
-                                    Log.d(TAG, "update from mobile to server saveNoticeCase ");
-                                    //sendNewNoticeCase
-                                    ApiStatusResult apiStatusResult = sendNewNoticeCase(temp_sql.getTbNoticeCase());
-                                    if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
-                                        Log.d(TAG, "update from mobile to server saveNoticeCase : success");
-                                    } else {
-                                        Log.d(TAG, "update from mobile to server saveNoticeCase : fail");
-                                    }
-                                    break;
-                                } else {
-                                    Log.d(TAG, "no update saveNoticeCase ");
-                                    break;
+
                                 }
                             }
                         }
-
+                        if (flag_have == false) {
+                            temp_ser.setMode("online");
+                            newListNoticeCase.add(temp_ser);
+                        }
                     }
-                    if (flag_have == false) {
-                        temp_ser.setMode("online");
-                        apiListNoticeCaseSQLite.getData().getResult().add(temp_ser);
-                    }
+                    response.close();
+                    apiListNoticeCaseSQLite.getData().setResult(newListNoticeCase);
+                    return apiListNoticeCaseSQLite;
                 }
-                response.close();
-
-                //Load new data SQLite
-                apiListNoticeCaseSQLite = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                return apiListNoticeCaseSQLite;
             } else {
                 Log.d(TAG, "Not Success listNoticecase" + response.code());
                 return null;
@@ -486,92 +475,118 @@ public class ApiConnect implements Parcelable {
                 mDbHelper = new DBHelper(mContext);
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListCaseScene apiListCaseSceneServer = gson.fromJson(response.body().string(), ApiListCaseScene.class);
-                // ข้อมูลจาก SQLite
-                //check deletecase
-                ApiListCaseScene apiListCaseSceneSQLite_check = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                int ser_size_check = apiListCaseSceneSQLite_check.getData().getResult().size();
-                int sql_size_check;
-                if (apiListCaseSceneSQLite_check.getData() == null) {
-                    sql_size_check = 0;
+                if (apiListCaseSceneServer.getStatus().equals("fail")) {
+                    Log.d(TAG, "post data " + apiListCaseSceneServer.getData().getReason());
+                    response.close();
+                    return null;
                 } else {
-                    sql_size_check = apiListCaseSceneSQLite_check.getData().getResult().size();
-                }
-                for (int i = 0; i < sql_size_check; i++) {
-                    ApiCaseScene temp_sql_check = apiListCaseSceneSQLite_check.getData().getResult().get(i);
-                    ApiCaseScene temp_ser_check;
-                    for (int j = 0; j < ser_size_check; j++) {
-                        temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
-                        if (temp_sql_check.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser_check.getTbCaseScene().CaseReportID)) {
-                            Log.i(TAG, "check list CaseScene มีบนserver");
-                        } else {
-                            boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_check);
-                            boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_check.getTbCaseScene().CaseReportID);
-                            boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
-                            if (isSuccess1) {
-                                Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite");
-                            }
-                        }
+                    // ข้อมูลจาก SQLite
+                    //check deletecase
+                    List<ApiCaseScene> newListCaseScene = new ArrayList<>();
+                    ApiListCaseScene apiListCaseSceneSQLite_check = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                    int ser_size_check = apiListCaseSceneServer.getData().getResult().size();
+                    Log.i(TAG, "ser_size_check " + apiListCaseSceneServer.getData().getResult().size());
+                    int sql_size_check;
+                    if (apiListCaseSceneSQLite_check.getData() == null) {
+                        sql_size_check = 0;
+                    } else {
+                        sql_size_check = apiListCaseSceneSQLite_check.getData().getResult().size();
                     }
-                }
-                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
-                ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                int ser_size = apiListCaseSceneServer.getData().getResult().size();
-                int sql_size;
-                if (apiListCaseSceneSQLite.getData() == null) {
-                    sql_size = 0;
-                } else {
-                    sql_size = apiListCaseSceneSQLite.getData().getResult().size();
-                }
-                for (int i = 0; i < ser_size; i++) {
-                    ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
-                    ApiCaseScene temp_sql;
-                    boolean flag_have = false;
-                    for (int j = 0; j < sql_size; j++) {
-                        temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
-                        if (temp_ser.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_sql.getTbCaseScene().CaseReportID)) {
-                            flag_have = true;
-                            if (temp_ser.getTbCaseScene().LastUpdateDate != null && temp_sql.getTbCaseScene().LastUpdateDate != null
-                                    && temp_ser.getTbCaseScene().LastUpdateTime != null && temp_sql.getTbCaseScene().LastUpdateTime != null) {
-                                int checkDateTime = 0;
-                                String LastUpdateDateTime_start = temp_ser.getTbCaseScene().LastUpdateDate + " " + temp_ser.getTbCaseScene().LastUpdateTime;
-                                String LastUpdateDateTime_end = temp_sql.getTbCaseScene().LastUpdateDate + " " + temp_sql.getTbCaseScene().LastUpdateTime;
-                                checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
-                                Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
-                                if (checkDateTime == 1) {
-                                    if (mDbHelper.DeleteMultimedia(temp_sql)) {
-                                        boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
-                                        if (isSuccess) {
-                                            Log.d(TAG, "update from server to mobile updateAlldataCase ");
+//                    for (int i = 0; i < sql_size_check; i++) {
+//                        ApiCaseScene temp_sql_check = apiListCaseSceneSQLite_check.getData().getResult().get(i);
+//                        ApiCaseScene temp_ser_check;
+//                        for (int j = 0; j < ser_size_check; j++) {
+//                            temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
+//                            if (temp_sql_check.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser_check.getTbCaseScene().CaseReportID)) {
+//                                Log.i(TAG, "check list CaseScene มีบนserver "+temp_sql_check.getTbCaseScene().CaseReportID);
+//                            } else {
+//                                boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_check);
+//                                boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_check.getTbCaseScene().CaseReportID);
+//                                boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_check.getTbNoticeCase().Mobile_CaseID);
+//                                if (isSuccess1) {
+//                                    Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite "+temp_sql_check.getTbCaseScene().CaseReportID);
+//                                }
+//                            }
+//                        }
+//                    }
+//                    for (int i = 0; i < ser_size_check; i++) {
+//                        ApiCaseScene temp_ser_check = apiListCaseSceneServer.getData().getResult().get(i);
+//                        ApiCaseScene temp_sql_check;
+//                        Log.i(TAG, " CaseScene from server" + temp_ser_check.getTbCaseScene().CaseReportID);
+//                    }
+                    // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
+                    ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                    int ser_size = apiListCaseSceneServer.getData().getResult().size();
+                    int sql_size;
+                    if (apiListCaseSceneSQLite.getData() == null) {
+                        sql_size = 0;
+                    } else {
+                        sql_size = apiListCaseSceneSQLite.getData().getResult().size();
+                    }
+                    for (int i = 0; i < ser_size; i++) {
+                        ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
+                        ApiCaseScene temp_sql;
+                        boolean flag_have = false;
+                        for (int j = 0; j < sql_size; j++) {
+                            temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
+                            if (temp_sql.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser.getTbCaseScene().CaseReportID)) {
+                                flag_have = true;
+                                //mobile have casescene same server
+                                if (temp_ser.getTbCaseScene().LastUpdateDate != null && temp_sql.getTbCaseScene().LastUpdateDate != null
+                                        && temp_ser.getTbCaseScene().LastUpdateTime != null && temp_sql.getTbCaseScene().LastUpdateTime != null) {
+                                    int checkDateTime = 0;
+                                    String LastUpdateDateTime_start = temp_ser.getTbCaseScene().LastUpdateDate + " " + temp_ser.getTbCaseScene().LastUpdateTime;
+                                    String LastUpdateDateTime_end = temp_sql.getTbCaseScene().LastUpdateDate + " " + temp_sql.getTbCaseScene().LastUpdateTime;
+                                    checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
+                                    Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+
+                                    if (checkDateTime == 1) {
+                                        if (mDbHelper.DeleteMultimedia(temp_sql)) {
+                                            boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
+                                            if (isSuccess) {
+//                                                apiListCaseSceneSQLite.getData().getResult().set(j, temp_ser);
+                                                temp_ser.setMode("offline");
+                                                newListCaseScene.add(temp_ser);
+                                                Log.d(TAG, "update from server to mobile updateAlldataCase ");
+                                                break;
+                                            }
+                                        } else {
+                                            Log.d(TAG, "DeleteMultimedia in Case error");
                                             break;
                                         }
+                                    } else if (checkDateTime == 2) {
+                                        Log.d(TAG, "update from mobile to server updateAlldataCase ");
+                                        temp_sql.setMode("offline");
+                                        ApiStatusData apiStatusData = saveCaseReport(temp_sql);
+                                        if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
+                                            newListCaseScene.add(temp_sql);
+                                            Log.d(TAG, "update from mobile to server saveCaseReport : success");
+                                        } else {
+                                            Log.d(TAG, "update from mobile to server saveCaseReport : fail");
+                                        }
+                                        break;
                                     } else {
-                                        Log.d(TAG, "DeleteMultimedia in Case error");
+                                        temp_sql.setMode("offline");
+                                        newListCaseScene.add(temp_sql);
+                                        Log.d(TAG, "no update updateAlldataCase");
                                         break;
                                     }
-                                } else if (checkDateTime == 2) {
-                                    Log.d(TAG, "update from mobile to server updateAlldataCase ");
-                                    ApiStatusData apiStatusData = saveCaseReport(temp_sql);
-                                    if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
-                                        Log.d(TAG, "update from mobile to server saveCaseReport : success");
-                                    } else {
-                                        Log.d(TAG, "update from mobile to server saveCaseReport : fail");
-                                    }
-                                    break;
-                                } else {
-                                    Log.d(TAG, "no update updateAlldataCase ");
-                                    break;
                                 }
                             }
+                            else {
+                                Log.d(TAG, " mobile not have Casescene " + temp_ser.getTbCaseScene().CaseReportID.toString());
+                            }
                         }
-
+                        if (flag_have == false) {
+                            temp_ser.setMode("online");
+//                            apiListCaseSceneSQLite.getData().getResult().add(temp_ser);
+                            newListCaseScene.add(temp_ser);
+                        }
                     }
-                    if (flag_have == false) {
-                        temp_ser.setMode("online");
-                        apiListCaseSceneSQLite.getData().getResult().add(temp_ser);
-                    }
+                    response.close();
+                    apiListCaseSceneSQLite.getData().setResult(newListCaseScene);
+                    return apiListCaseSceneSQLite;
                 }
-                response.close();
-                return apiListCaseSceneSQLite;
             } else {
                 Log.d(TAG, "Not Success listCasescene" + response.code());
                 return null;
@@ -732,33 +747,15 @@ public class ApiConnect implements Parcelable {
                 Gson gson = new GsonBuilder().create();
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListOfficial apiListOfficialServer = gson.fromJson(response.body().string(), ApiListOfficial.class);
-                // ข้อมูลจาก SQLite
+
                 mDbHelper = new DBHelper(mContext);
-                ApiListOfficial apiListOfficialSQLite = mDbHelper.selectApiOfficial(AccessType);
-                // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
                 int ser_size = apiListOfficialServer.getData().getResult().size();
-                int sql_size;
-                if (apiListOfficialSQLite.getData() == null) {
-                    sql_size = 0;
-                } else {
-                    sql_size = apiListOfficialSQLite.getData().getResult().size();
-                }
                 for (int i = 0; i < ser_size; i++) {
                     ApiOfficial temp_ser = apiListOfficialServer.getData().getResult().get(i);
-                    ApiOfficial temp_sql;
-                    boolean flag_have = false;
-                    for (int j = 0; j < sql_size; j++) {
-                        temp_sql = apiListOfficialSQLite.getData().getResult().get(j);
-                        if (temp_ser.getTbOfficial().OfficialID.equalsIgnoreCase(temp_sql.getTbOfficial().OfficialID)) {
-                            flag_have = true;
-                            break;
-                        }
-                    }
-                    if (flag_have == false) {
-                        temp_ser.setMode("online");
-                        apiListOfficialSQLite.getData().getResult().add(temp_ser);
-                    }
+                    // update หรือ add รายชื่อ จาก server
+                    mDbHelper.saveOfficial(temp_ser.getTbOfficial());
                 }
+                ApiListOfficial apiListOfficialSQLite = mDbHelper.selectApiOfficial(AccessType);
                 response.close();
                 return apiListOfficialSQLite;
             } else {
@@ -1095,29 +1092,36 @@ public class ApiConnect implements Parcelable {
                 Gson gson = new GsonBuilder().create();
                 // ข้อมูลจากเซิร์ฟเวอร์
                 ApiListScheduleInvestigates apiListScheduleInvestigatesServer = gson.fromJson(response.body().string(), ApiListScheduleInvestigates.class);
-                int ser_size = apiListScheduleInvestigatesServer.getData().getResult().size();
+                if (apiListScheduleInvestigatesServer.getStatus().equals("fail")) {
+                    Log.d(TAG, "post data " + apiListScheduleInvestigatesServer.getData().getReason());
+                    response.close();
+                    return null;
+                } else {
+                    mDbHelper = new DBHelper(mContext);
+                    int ser_size = apiListScheduleInvestigatesServer.getData().getResult().size();
 
-                for (int i = 0; i < ser_size; i++) {
-                    String x = apiListScheduleInvestigatesServer.getData().getResult().get(i).getTbScheduleInvestigates().ScheduleInvestigateID;
-                    Log.d(TAG, "ScheduleInvestigateID :" + x);
-                    String w = gson.toJson(apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup());
+                    for (int i = 0; i < ser_size; i++) {
+                        String x = apiListScheduleInvestigatesServer.getData().getResult().get(i).getTbScheduleInvestigates().ScheduleInvestigateID;
+                        Log.d(TAG, "ScheduleInvestigateID :" + x);
+                        String w = gson.toJson(apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup());
 //                    Log.d(TAG, "toJson " + w);
-                    for (int j = 0; j < apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().size(); j++) {
+                        for (int j = 0; j < apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().size(); j++) {
 
-                        String y = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID;
-                        Log.d(TAG, "ScheduleGroupID :" + y);
-                        int sizeScheduleInvInGroup = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().size();
-                        Log.d(TAG, "sizeScheduleInvInGroup" + String.valueOf(sizeScheduleInvInGroup));
-                        for (int k = 0; k < sizeScheduleInvInGroup; k++) {
-                            String InvOfficialID = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID;
-                            Log.d(TAG, "InvOfficialID :" + InvOfficialID);
-                            String AccessType = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbOfficial().AccessType;
-                            Log.d(TAG, "AccessType :" + AccessType);
+                            String y = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getTbScheduleGroup().ScheduleGroupID;
+                            Log.d(TAG, "ScheduleGroupID :" + y);
+                            int sizeScheduleInvInGroup = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().size();
+                            Log.d(TAG, "sizeScheduleInvInGroup" + String.valueOf(sizeScheduleInvInGroup));
+                            for (int k = 0; k < sizeScheduleInvInGroup; k++) {
+                                String InvOfficialID = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbScheduleInvInGroup().InvOfficialID;
+                                Log.d(TAG, "InvOfficialID :" + InvOfficialID);
+                                String AccessType = apiListScheduleInvestigatesServer.getData().getResult().get(i).getApiScheduleGroup().get(j).getApiScheduleInvInGroup().get(k).getTbOfficial().AccessType;
+                                Log.d(TAG, "AccessType :" + AccessType);
+                            }
                         }
                     }
+                    response.close();
+                    return apiListScheduleInvestigatesServer;
                 }
-                response.close();
-                return apiListScheduleInvestigatesServer;
             } else {
                 Log.d(TAG, "Not Success listScheduleInvestigates" + response.code());
                 return null;

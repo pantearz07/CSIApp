@@ -1,5 +1,7 @@
 package com.scdc.csiapp.invmain;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -101,6 +103,8 @@ public class CaseSceneListFragment extends Fragment {
     public static final String KEY_CONNECT = "key_connect";
     ApiProfile apiProfile;
     ApiConnect api;
+    ApiCaseScene apiNoticeCase;
+    String mode, caserepID;
 
     public static CaseSceneListFragment newInstance() {
         return new CaseSceneListFragment();
@@ -261,6 +265,7 @@ public class CaseSceneListFragment extends Fragment {
         ApiListCaseScene apiListNoticeCase = mDbHelper.selectApiCaseScene(officialID);
         caseList = apiListNoticeCase.getData().getResult();
 //        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
+
         setAdapterList();
     }
 
@@ -278,6 +283,7 @@ public class CaseSceneListFragment extends Fragment {
             swipeContainer.setRefreshing(true);
             mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
             mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+            new ConnectlistCasescene().execute();
         } else {
             swipeContainer.setRefreshing(true);
             // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
@@ -294,8 +300,6 @@ public class CaseSceneListFragment extends Fragment {
         }
     }
 
-    ApiCaseScene apiNoticeCase;
-    String mode, caserepID;
     ApiCaseSceneListAdapter.OnItemClickListener onItemClickListener = new ApiCaseSceneListAdapter.OnItemClickListener() {
 
 
@@ -309,7 +313,7 @@ public class CaseSceneListFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 //Creating the instance of PopupMenu
                 PopupMenu popup = null;
-                    popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
+                popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
 
                 //Inflating the Popup using xml file
                 popup.getMenuInflater().inflate(R.menu.csi_menu_1, popup.getMenu());
@@ -321,23 +325,22 @@ public class CaseSceneListFragment extends Fragment {
                     popupMenu.findItem(R.id.edit).setVisible(true);
                 }
                 //registering popup with OnMenuItemClickListener
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                                     public boolean onMenuItemClick(MenuItem item) {
+                popup.setOnMenuItemClickListener(
+                        new PopupMenu.OnMenuItemClickListener() {
+                            public boolean onMenuItemClick(MenuItem item) {
 
-                                                         switch (item.getItemId()) {
-                                                             case R.id.view:
-//                                                             Log.d(TAG, "view");
-                                                                 viewCase();
+                                switch (item.getItemId()) {
+                                    case R.id.view:
+                                        viewCase();
 
-                                                                 break;
-                                                             case R.id.edit:
-//                                                             Log.d(TAG, "edit");
-                                                                 editCase();
-                                                                 break;
-                                                         }
-                                                         return true;
-                                                     }
-                                                 }
+                                        break;
+                                    case R.id.edit:
+                                        editCase();
+                                        break;
+                                }
+                                return true;
+                            }
+                        }
                 );
                 popup.show();
             } else {
@@ -395,7 +398,8 @@ public class CaseSceneListFragment extends Fragment {
     private void editCase() {
         final Bundle i = new Bundle();
         if (mode.equals("online")) {
-
+            if (apiNoticeCase.getTbCaseScene().getLastUpdateDate() == "") {
+            }
             boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
             if (isSuccess1) {
                 i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
@@ -487,13 +491,22 @@ public class CaseSceneListFragment extends Fragment {
 
                 setAdapterList();
             } else {
-                if (snackbar == null || !snackbar.isShown()) {
-                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
-                            "ดาวน์โหลดข้อมูลผิดพลาด");
-                    snackBarAlert.createSnacbar();
-                }
-                selectApiCaseSceneFromSQLite();
-
+//                if (snackbar == null || !snackbar.isShown()) {
+//                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
+//                            "ดาวน์โหลดข้อมูลผิดพลาด");
+//                    snackBarAlert.createSnacbar();
+//                }
+//                selectApiCaseSceneFromSQLite();
+                Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
+                        Toast.LENGTH_SHORT).show();
+                Boolean status = mManager.clearLoggedInOfficial();
+                Log.d("clear logout", String.valueOf(status));
+                Intent mStartActivity = new Intent(context, WelcomeActivity.class);
+                int mPendingIntentId = 123456;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 600, mPendingIntent);
+                System.exit(0);
             }
         }
     }
@@ -519,10 +532,7 @@ public class CaseSceneListFragment extends Fragment {
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-                new ConnectlistCasescene().execute();
             } else {
-                selectApiCaseSceneFromSQLite();
-//                if (snackbar == null || !snackbar.isShown()) {
                 snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), LENGTH_INDEFINITE)
                         .setAction(getString(R.string.ok), new View.OnClickListener() {
                             @Override
@@ -590,7 +600,6 @@ public class CaseSceneListFragment extends Fragment {
                             }
                         });
                 snackbar.show();
-//                }
             }
         }
     }

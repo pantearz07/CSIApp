@@ -248,13 +248,14 @@ public class SummaryCSITabFragment extends Fragment {
         edtUpdateDateTime = (TextView) viewSummaryCSI.findViewById(R.id.edtUpdateDateTime);
 
         btnNoticecase = (Button) viewSummaryCSI.findViewById(R.id.btnNoticecase);
+        btnNoticecase.setBackgroundResource(R.drawable.selector_button_primary);
         btnDownloadfile = (Button) viewSummaryCSI.findViewById(R.id.btnDownloadfile);
+        btnDownloadfile.setBackgroundResource(R.drawable.selector_button_success);
         btnNoticecase.setOnClickListener(new SummaryOnClickListener());
         btnDownloadfile.setOnClickListener(new SummaryOnClickListener());
         btnNoticecase.setText(getString(R.string.upload_case));
         btnAcceptCase = (Button) viewSummaryCSI.findViewById(R.id.btnAcceptCase);
         btnAcceptCase.setVisibility(View.GONE);
-
         spnCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnCaseType);
         spnSubCaseType = (Spinner) viewSummaryCSI.findViewById(R.id.spnSubCaseType);
         sCaseTypeID = CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseTypeID;

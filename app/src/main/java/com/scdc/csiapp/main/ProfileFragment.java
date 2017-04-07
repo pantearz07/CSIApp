@@ -630,7 +630,7 @@ public class ProfileFragment extends Fragment {
                             int mPendingIntentId = 123456;
                             PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
                             AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
-                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 500, mPendingIntent);
+                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 600, mPendingIntent);
 //                        getActivity().startActivity(i);
                             System.exit(0);
                         }

@@ -103,7 +103,7 @@ public class InvestigatorListFragment extends Fragment {
                     swipeContainer.setRefreshing(true);
                     mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
                     mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-
+                    new ConnectlistOfficial().execute();
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
@@ -134,6 +134,7 @@ public class InvestigatorListFragment extends Fragment {
                     swipeContainer.setRefreshing(true);
                     mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
                     mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+                    new ConnectlistOfficial().execute();
                 } else {
                     swipeContainer.setRefreshing(true);
                     // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
@@ -184,9 +185,7 @@ public class InvestigatorListFragment extends Fragment {
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-                new ConnectlistOfficial().execute();
             } else {
-                selectApiOfficialFromSQLite();
                 snackbar = Snackbar.make(rootLayoutInv, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
                         .setAction(getString(R.string.ok), new View.OnClickListener() {
                             @Override
@@ -295,13 +294,6 @@ public class InvestigatorListFragment extends Fragment {
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 apiOfficialList = apiListOfficial.getData().getResult();
-                // เพิ่มข้อมูลที่ได้มาลง SQLite ด้วย syncOfficial ปิดไว้ก่อน เพราะไม่ต้องดึงมาทั้งหมดไม่งั้นจะหนักเครื่องเฉยๆ
-                int size = apiOfficialList.size();
-                List<TbOfficial> tbOfficials = new ArrayList<>(size);
-                for (int i = 0; i < size; i++) {
-                    tbOfficials.add(apiOfficialList.get(i).getTbOfficial());
-                }
-                mDbHelper.syncOfficial(tbOfficials);
                 // เอาข้อมูลไปแสดงใน RV
                 officialListAdapter.notifyDataSetChanged();
                 Log.d(TAG, "Update officialListAdapter");
@@ -312,6 +304,8 @@ public class InvestigatorListFragment extends Fragment {
                 officialListAdapter = new OfficialListAdapter(apiOfficialList);
                 rv.setAdapter(officialListAdapter);
                 officialListAdapter.setOnItemClickListener(onItemClickListener);
+            }else{
+                selectApiOfficialFromSQLite();
             }
         }
     }
