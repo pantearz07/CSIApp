@@ -482,15 +482,14 @@ public class ApiConnect implements Parcelable {
                 } else {
                     // ข้อมูลจาก SQLite
                     //check deletecase
-                    List<ApiCaseScene> newListCaseScene = new ArrayList<>();
-                    ApiListCaseScene apiListCaseSceneSQLite_check = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                    ApiListCaseScene apiListCaseSceneSQLite_old = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
                     int ser_size_check = apiListCaseSceneServer.getData().getResult().size();
                     Log.i(TAG, "ser_size_check " + apiListCaseSceneServer.getData().getResult().size());
-                    int sql_size_check;
-                    if (apiListCaseSceneSQLite_check.getData() == null) {
-                        sql_size_check = 0;
+                    int sql_size_old;
+                    if (apiListCaseSceneSQLite_old.getData() == null) {
+                        sql_size_old = 0;
                     } else {
-                        sql_size_check = apiListCaseSceneSQLite_check.getData().getResult().size();
+                        sql_size_old = apiListCaseSceneSQLite_old.getData().getResult().size();
                     }
 //                    for (int i = 0; i < sql_size_check; i++) {
 //                        ApiCaseScene temp_sql_check = apiListCaseSceneSQLite_check.getData().getResult().get(i);
@@ -509,44 +508,31 @@ public class ApiConnect implements Parcelable {
 //                            }
 //                        }
 //                    }
-//                    for (int i = 0; i < ser_size_check; i++) {
-//                        ApiCaseScene temp_ser_check = apiListCaseSceneServer.getData().getResult().get(i);
-//                        ApiCaseScene temp_sql_check;
-//                        Log.i(TAG, " CaseScene from server" + temp_ser_check.getTbCaseScene().CaseReportID);
-//                    }
-                    // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก SQLite เป็นหลัก
-                    ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                    int ser_size = apiListCaseSceneServer.getData().getResult().size();
-                    int sql_size;
-                    if (apiListCaseSceneSQLite.getData() == null) {
-                        sql_size = 0;
-                    } else {
-                        sql_size = apiListCaseSceneSQLite.getData().getResult().size();
-                    }
-                    for (int i = 0; i < ser_size; i++) {
-                        ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
-                        ApiCaseScene temp_sql;
+                    // ทำการ อัพเดทข้อมูลระหว่าง Server และ SQLite  และ ลบข้อมูลออกจาก SQLite กรณีที่ Server ไม่มีข้อมูลแล้ว
+                    for (int i = 0; i < sql_size_old; i++) {
+                        ApiCaseScene temp_sql_old = apiListCaseSceneSQLite_old.getData().getResult().get(i);
+                        ApiCaseScene temp_ser_check;
                         boolean flag_have = false;
-                        for (int j = 0; j < sql_size; j++) {
-                            temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
-                            if (temp_sql.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser.getTbCaseScene().CaseReportID)) {
-                                flag_have = true;
-                                //mobile have casescene same server
-                                if (temp_ser.getTbCaseScene().LastUpdateDate != null && temp_sql.getTbCaseScene().LastUpdateDate != null
-                                        && temp_ser.getTbCaseScene().LastUpdateTime != null && temp_sql.getTbCaseScene().LastUpdateTime != null) {
-                                    int checkDateTime = 0;
-                                    String LastUpdateDateTime_start = temp_ser.getTbCaseScene().LastUpdateDate + " " + temp_ser.getTbCaseScene().LastUpdateTime;
-                                    String LastUpdateDateTime_end = temp_sql.getTbCaseScene().LastUpdateDate + " " + temp_sql.getTbCaseScene().LastUpdateTime;
-                                    checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
-                                    Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+                        for (int j = 0; j < ser_size_check; j++) {
+                            temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
+                            //เช็คว่า ข้อมูลใน SQLite มีตรงกับ server มั้ย
+                            if (temp_sql_old.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser_check.getTbCaseScene().CaseReportID)) {
+                                //มีคดีที่ตรงกัน
 
+                                if (temp_ser_check.getTbCaseScene().LastUpdateDate != null && temp_sql_old.getTbCaseScene().LastUpdateDate != null
+                                        && temp_ser_check.getTbCaseScene().LastUpdateTime != null && temp_sql_old.getTbCaseScene().LastUpdateTime != null) {
+                                    //เช็ควันเวลา LastUpdate เปรียบเทียบว่าฝั่งไหนใหม่หรือเก่ากว่า
+                                    int checkDateTime = 0;
+                                    String LastUpdateDateTime_start = temp_ser_check.getTbCaseScene().LastUpdateDate + " " + temp_ser_check.getTbCaseScene().LastUpdateTime;
+                                    String LastUpdateDateTime_end = temp_sql_old.getTbCaseScene().LastUpdateDate + " " + temp_sql_old.getTbCaseScene().LastUpdateTime;
+                                    checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
+                                    Log.i(TAG, temp_ser_check.getTbCaseScene().CaseReportID + "CheckDates start ser:  " + LastUpdateDateTime_start + "- end sql: " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+                                    // -end- เช็ควันเวลา LastUpdate เปรียบเทียบว่าฝั่งไหนใหม่หรือเก่ากว่า
                                     if (checkDateTime == 1) {
-                                        if (mDbHelper.DeleteMultimedia(temp_sql)) {
-                                            boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
+                                        // ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
+                                        if (mDbHelper.DeleteMultimedia(temp_sql_old)) {
+                                            boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser_check);
                                             if (isSuccess) {
-//                                                apiListCaseSceneSQLite.getData().getResult().set(j, temp_ser);
-                                                temp_ser.setMode("offline");
-                                                newListCaseScene.add(temp_ser);
                                                 Log.d(TAG, "update from server to mobile updateAlldataCase ");
                                                 break;
                                             }
@@ -554,36 +540,139 @@ public class ApiConnect implements Parcelable {
                                             Log.d(TAG, "DeleteMultimedia in Case error");
                                             break;
                                         }
+                                        // -end- ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
                                     } else if (checkDateTime == 2) {
+                                        // ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
                                         Log.d(TAG, "update from mobile to server updateAlldataCase ");
-                                        temp_sql.setMode("offline");
-                                        ApiStatusData apiStatusData = saveCaseReport(temp_sql);
+                                        //อัพเดทข้อมูลจาก SQLite ไปยัง server
+                                        ApiStatusData apiStatusData = saveCaseReport(temp_sql_old);
                                         if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
-                                            newListCaseScene.add(temp_sql);
                                             Log.d(TAG, "update from mobile to server saveCaseReport : success");
                                         } else {
                                             Log.d(TAG, "update from mobile to server saveCaseReport : fail");
                                         }
                                         break;
+                                        // -end- ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
                                     } else {
-                                        temp_sql.setMode("offline");
-                                        newListCaseScene.add(temp_sql);
+                                        // ถ้า วันที่ฝั่ง server เท่ากันกับ Sqlite
                                         Log.d(TAG, "no update updateAlldataCase");
                                         break;
                                     }
                                 }
+                            } else {
+                                //คดีที่อยู่ในมือถือ ไม่มีบน server  เลยต้องลบออกจาก sqlite
+                                //Delete Data in SQLite
+                                long checkcase = mDbHelper.CheckCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
+                                    if (checkcase == 1) {
+                                        boolean isSuccess3 = mDbHelper.DeleteMultimedia(temp_sql_old);
+                                        boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
+                                        boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
+                                        if (isSuccess1) {
+                                            Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbCaseScene().CaseReportID);
+                                            flag_have = true;
+                                        }
+                                } else if (checkcase == 0) {
+                                    break;
+                                }
                             }
-                            else {
-                                Log.d(TAG, " mobile not have Casescene " + temp_ser.getTbCaseScene().CaseReportID.toString());
-                            }
-                        }
-                        if (flag_have == false) {
-                            temp_ser.setMode("online");
-//                            apiListCaseSceneSQLite.getData().getResult().add(temp_ser);
-                            newListCaseScene.add(temp_ser);
                         }
                     }
+                    // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก Server เป็นหลัก
+                    List<ApiCaseScene> newListCaseScene = new ArrayList<>();
+                    ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
+                    Log.d(TAG, "apiListCaseSceneSQLite new " + String.valueOf(apiListCaseSceneSQLite.getData().getResult().size()));
+//                    int ser_size = apiListCaseSceneServer.getData().getResult().size();
+                    int sql_size;
+                    if (apiListCaseSceneSQLite.getData() == null) {
+                        sql_size = 0;
+                    } else {
+                        sql_size = apiListCaseSceneSQLite.getData().getResult().size();
+                    }
+                    for (int i = 0; i < ser_size_check; i++) {
+                        ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
+                        ApiCaseScene temp_sql;
+                        if(sql_size == 0){
+                            Log.i(TAG, "online" + temp_ser.getTbCaseScene().CaseReportID);
+                            temp_ser.setMode("online");
+                            newListCaseScene.add(temp_ser);
+                        }else {
+                            for (int j = 0; j < sql_size; j++) {
+                                temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
+                                if (temp_ser.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_sql.getTbCaseScene().CaseReportID)) {
+                                    Log.i(TAG, "offline" + temp_sql.getTbCaseScene().CaseReportID);
+                                    temp_sql.setMode("offline");
+                                    newListCaseScene.add(temp_sql);
+                                    break;
+                                } else {
+                                    Log.i(TAG, "online" + temp_ser.getTbCaseScene().CaseReportID);
+                                    temp_ser.setMode("online");
+                                    newListCaseScene.add(temp_ser);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+//                    for (int i = 0; i < ser_size; i++) {
+//                        ApiCaseScene temp_ser = apiListCaseSceneServer.getData().getResult().get(i);
+//                        ApiCaseScene temp_sql;
+//                        boolean flag_have = false;
+//                        for (int j = 0; j < sql_size; j++) {
+//                            temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
+//                            if (temp_sql.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser.getTbCaseScene().CaseReportID)) {
+//                                flag_have = true;
+//                                //mobile have casescene same server
+//                                if (temp_ser.getTbCaseScene().LastUpdateDate != null && temp_sql.getTbCaseScene().LastUpdateDate != null
+//                                        && temp_ser.getTbCaseScene().LastUpdateTime != null && temp_sql.getTbCaseScene().LastUpdateTime != null) {
+//                                    int checkDateTime = 0;
+//                                    String LastUpdateDateTime_start = temp_ser.getTbCaseScene().LastUpdateDate + " " + temp_ser.getTbCaseScene().LastUpdateTime;
+//                                    String LastUpdateDateTime_end = temp_sql.getTbCaseScene().LastUpdateDate + " " + temp_sql.getTbCaseScene().LastUpdateTime;
+//                                    checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
+//                                    Log.i(TAG, "CheckDates start " + LastUpdateDateTime_start + "end " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+//
+//                                    if (checkDateTime == 1) {
+//                                        if (mDbHelper.DeleteMultimedia(temp_sql)) {
+//                                            boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser);
+//                                            if (isSuccess) {
+////                                                apiListCaseSceneSQLite.getData().getResult().set(j, temp_ser);
+//                                                temp_ser.setMode("offline");
+//                                                newListCaseScene.add(temp_ser);
+//                                                Log.d(TAG, "update from server to mobile updateAlldataCase ");
+//                                                break;
+//                                            }
+//                                        } else {
+//                                            Log.d(TAG, "DeleteMultimedia in Case error");
+//                                            break;
+//                                        }
+//                                    } else if (checkDateTime == 2) {
+//                                        Log.d(TAG, "update from mobile to server updateAlldataCase ");
+//                                        temp_sql.setMode("offline");
+//                                        ApiStatusData apiStatusData = saveCaseReport(temp_sql);
+//                                        if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
+//                                            newListCaseScene.add(temp_sql);
+//                                            Log.d(TAG, "update from mobile to server saveCaseReport : success");
+//                                        } else {
+//                                            Log.d(TAG, "update from mobile to server saveCaseReport : fail");
+//                                        }
+//                                        break;
+//                                    } else {
+//                                        temp_sql.setMode("offline");
+//                                        newListCaseScene.add(temp_sql);
+//                                        Log.d(TAG, "no update updateAlldataCase");
+//                                        break;
+//                                    }
+//                                }
+//                            } else {
+//                                Log.d(TAG, " mobile not have Casescene " + temp_ser.getTbCaseScene().CaseReportID.toString());
+//                            }
+//                        }
+//                        if (flag_have == false) {
+//                            temp_ser.setMode("online");
+////                            apiListCaseSceneSQLite.getData().getResult().add(temp_ser);
+//                            newListCaseScene.add(temp_ser);
+//                        }
+//                    }
                     response.close();
+                    Log.d(TAG, "newListCaseScene " + String.valueOf(newListCaseScene.size()));
                     apiListCaseSceneSQLite.getData().setResult(newListCaseScene);
                     return apiListCaseSceneSQLite;
                 }

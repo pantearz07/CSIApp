@@ -4981,4 +4981,37 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+    public long CheckCaseScene(String sCaseReportID) {
+        // TODO Auto-generated method stub
+
+        try {
+
+            mDb = this.getReadableDatabase(); // Read Data
+            long rows = 0;
+            String strSQL = "SELECT *" + " FROM casescene"
+                    + " WHERE " + COL_CaseReportID + "= '" + sCaseReportID + "'";
+//                    + "' AND InvOfficialID = '" + sOfficialID + "'";
+//            Log.i("show casescene", strSQL);
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            Log.i("Checkcasescene", String.valueOf(cursor.getCount()));
+
+            if (cursor.getCount() != 0) {
+                rows = 1;
+                Log.i("have casescene",
+                        String.valueOf(cursor.getCount()));
+
+            } else {
+                rows = 0;
+                Log.i("no casescene",
+                        String.valueOf(cursor.getCount()));
+            }
+            cursor.close();
+
+            return rows; // return rows inserted.
+
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 }
