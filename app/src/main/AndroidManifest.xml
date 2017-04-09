@@ -110,9 +110,9 @@
             android:name="com.scdc.csiapp.invmain.NoteActivity"
             android:label="note"
             android:theme="@style/AppThemeDarkActionBar" />
-
+        <!--com.google.android.maps.v2.API_KEY-->
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
+            android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD8rDLd38XOV6R3TZob8S6qtsZkMCtRssw" />
     </application>
 

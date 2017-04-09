@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -351,16 +352,21 @@ public class SummaryCSITabFragment extends Fragment {
         }
         if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_1))) {
             edtStatus.setText(getString(R.string.edtStatus_1));
+            edtStatus.setBackgroundColor(Color.parseColor("#c9302c"));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_2))) {
             edtStatus.setText(getString(R.string.edtStatus_2));
+            edtStatus.setBackgroundColor(Color.parseColor("#ec971f"));
             btnNoticecase.setEnabled(false);
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_3))) {
             edtStatus.setText(getString(R.string.edtStatus_3));
+            edtStatus.setBackgroundColor(Color.parseColor("#449d44"));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_4))) {
             if (CSIDataTabFragment.mode.equals("view")) {
                 edtStatus.setText(getString(R.string.edtStatus_4));
+                edtStatus.setBackgroundColor(Color.parseColor("#31b0d5"));
             } else {
                 edtStatus.setText(getString(R.string.edtStatus_5));
+                edtStatus.setBackgroundColor(Color.parseColor("#286090"));
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = getString(R.string.casestatus_5);
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = getString(R.string.casestatus_5);
@@ -371,19 +377,18 @@ public class SummaryCSITabFragment extends Fragment {
                 SaveCaseReport statusCase = new SaveCaseReport();
                 statusCase.execute(CSIDataTabFragment.apiCaseScene);
                 if (status_savecase = true) {
-
                     Log.i(TAG, "accept to investigating");
-//                    edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate) + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
-//                    edtStatus.setText(getString(R.string.edtStatus_5));
-
                 }
             }
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_5))) {
             edtStatus.setText(getString(R.string.edtStatus_5));
+            edtStatus.setBackgroundColor(Color.parseColor("#286090"));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_6))) {
             edtStatus.setText(getString(R.string.edtStatus_6));
+            edtStatus.setBackgroundColor(Color.parseColor("#9B26AF"));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_7))) {
             edtStatus.setText(getString(R.string.edtStatus_7));
+            edtStatus.setBackgroundColor(Color.parseColor("#9D9D9D"));
         }
 
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -326,17 +327,23 @@ public class SummaryAssignTabFragment extends Fragment {
 
         if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_1)) {
             edtStatus.setText(R.string.edtStatus_1);
+            edtStatus.setBackgroundColor(Color.parseColor("#c9302c"));
         } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_2)) {
             edtStatus.setText(R.string.edtStatus_2);
+            edtStatus.setBackgroundColor(Color.parseColor("#ec971f"));
             btnNoticecase.setEnabled(false);
         } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_3)) {
             edtStatus.setText(R.string.edtStatus_3);
+            edtStatus.setBackgroundColor(Color.parseColor("#449d44"));
         } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_4)) {
             edtStatus.setText(R.string.edtStatus_4);
+            edtStatus.setBackgroundColor(Color.parseColor("#31b0d5"));
         } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_5)) {
             edtStatus.setText(R.string.edtStatus_5);
+            edtStatus.setBackgroundColor(Color.parseColor("#286090"));
         } else if (AssignTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(R.string.casestatus_6)) {
             edtStatus.setText(R.string.edtStatus_6);
+            edtStatus.setBackgroundColor(Color.parseColor("#9B26AF"));
         }
         TextView txtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.txtSceneNoticeDateTime);
         txtSceneNoticeDateTime.setText(R.string.txtAssignDateTimeTitle);

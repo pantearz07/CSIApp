@@ -169,6 +169,7 @@
                             android:layout_weight="1"
                             android:freezesText="true"
                             android:textSize="@dimen/small_text" />
+
                         <ImageButton
                             android:id="@+id/btn_clear_txt_1"
                             android:layout_width="wrap_content"
@@ -216,6 +217,7 @@
                             android:layout_weight="1"
                             android:freezesText="true"
                             android:textSize="@dimen/small_text" />
+
                         <ImageButton
                             android:id="@+id/btn_clear_txt_2"
                             android:layout_width="wrap_content"
@@ -446,6 +448,18 @@
                             android:textSize="@dimen/small_text" />
                     </TableRow>
 
+                    <!--<TableRow-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginBottom="@dimen/margin_line"-->
+                        <!--android:layout_marginTop="@dimen/margin_line">-->
+
+                        <!--<fragment-->
+                            <!--android:id="@+id/map"-->
+                            <!--class="com.google.android.gms.maps.SupportMapFragment"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="150dp" />-->
+                    <!--</TableRow>-->
 
                     <TableRow
                         android:layout_width="match_parent"

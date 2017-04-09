@@ -49,6 +49,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
                         android:text="@string/report_no"
+                        android:textStyle="bold"
                         android:textSize="@dimen/small_text" />
 
                     <android.support.design.widget.TextInputLayout
@@ -71,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/case_type"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <Spinner
@@ -86,6 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/subcase_type"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <Spinner
@@ -101,6 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/inquiry_txt"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -130,6 +134,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/inv_txt"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -159,6 +164,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/police_station"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -177,17 +183,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/txtStatusTitle"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
                     android:id="@+id/edtStatus"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/margin_line"
+                    android:gravity="center"
                     android:freezesText="true"
                     android:text="@string/edtStatus_1"
-                    android:textSize="@dimen/mmedium_text" />
+                    android:textSize="@dimen/mmedium_text"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:background="#c9302c"/>
 
                 <TextView
                     android:id="@+id/txtSceneNoticeDateTime"
@@ -195,6 +207,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/txtSceneNoticeDateTime"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <TextView
@@ -213,6 +226,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/edtCompleteSceneDateTimeTitle"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <LinearLayout
@@ -259,6 +273,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="@string/txtUpdateDateTimeTitle"
+                    android:textStyle="bold"
                     android:textSize="@dimen/small_text" />
 
                 <TextView

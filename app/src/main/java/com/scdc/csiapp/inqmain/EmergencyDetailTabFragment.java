@@ -42,6 +42,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -68,7 +70,9 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     // Google play services
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-
+    LocationRequest request;
+    SupportMapFragment mFragment;
+    LatLng latLng;
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -616,7 +620,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "onConnected");
         Log.d(TAG, "Call Location Services");
-        LocationRequest request = new LocationRequest()
+        request = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setSmallestDisplacement(10)//อ่านค่าใหม่ทุก 10 เมตร
                 .setFastestInterval(1000)//อ่านค่าแบบรวดเร็วภายใน 1 วินาที
