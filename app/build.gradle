@@ -52,5 +52,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     testCompile 'junit:junit:4.12'
     compile 'org.parceler:parceler-api:1.1.6'
+    compile 'rongi.rotate-layout:rotate-layout:2.0.0'
 //    compile 'com.github.aviadmini:quickimagepick:2.1.5'
 }

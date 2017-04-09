@@ -2,13 +2,14 @@ package com.scdc.csiapp.inqmain;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.content.ContextCompat;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.scdc.csiapp.R;
@@ -44,14 +45,16 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         TextView sufferrerInfo;
         TextView receiviedatetime;
         TextView CaseStatus;
-        ImageView ic_CaseType;
         ImageView iv_mode;
+        TextView txt_status;
+        RelativeLayout rel_status;
 
         public CSIDataViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
             cvCSI = (CardView) itemView.findViewById(R.id.cvCSI);
-            ic_CaseType = (ImageView) itemView.findViewById(R.id.ic_CaseType);
+            rel_status = (RelativeLayout) itemView.findViewById(R.id.rel_status);
+            txt_status = (TextView) itemView.findViewById(R.id.txt_status);
             typeCase = (TextView) itemView.findViewById(R.id.casetype_name);
             positioncase = (TextView) itemView.findViewById(R.id.positioncase);
             policeStation = (TextView) itemView.findViewById(R.id.police_station);
@@ -165,19 +168,26 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         // เปลี่ยนสีเส้นตาม CaseStatus ด้วยการเปลี่ยนรูปใหม่มาใส่แทนตัวเก่า
         String CaseStatus = apiNoticeCase.getTbNoticeCase().CaseStatus;
         if (CaseStatus.equalsIgnoreCase("receive")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus1));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#c9302c"));
+            csidataholder.txt_status.setText(R.string.edtStatus_1);
         } else if (CaseStatus.equalsIgnoreCase("notice")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus2));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#ec971f"));
+            csidataholder.txt_status.setText(R.string.edtStatus_2);
         } else if (CaseStatus.equalsIgnoreCase("assign")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus3));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#449d44"));
+            csidataholder.txt_status.setText(R.string.edtStatus_3);
         } else if (CaseStatus.equalsIgnoreCase("accept")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus4));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#31b0d5"));
+            csidataholder.txt_status.setText(R.string.edtStatus_4);
         } else if (CaseStatus.equalsIgnoreCase("investigating")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus5));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#286090"));
+            csidataholder.txt_status.setText(R.string.edtStatus_5);
         } else if (CaseStatus.equalsIgnoreCase("investigated")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus6));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#9B26AF"));
+            csidataholder.txt_status.setText(R.string.edtStatus_6);
         }else if (CaseStatus.equalsIgnoreCase("reported")) {
-            csidataholder.ic_CaseType.setImageDrawable(ContextCompat.getDrawable(csidataholder.rootView.getContext(), R.drawable.label_casestatus7));
+            csidataholder.rel_status.setBackgroundColor(Color.parseColor("#9D9D9D"));
+            csidataholder.txt_status.setText(R.string.edtStatus_7);
         }
     }
 

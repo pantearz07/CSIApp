@@ -2477,8 +2477,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
             strSQL_main = "SELECT * FROM noticecase "
                     + " WHERE InquiryOfficialID = '" + OfficeID + "'" +
-                    " ORDER BY ReceivingCaseDate DESC, ReceivingCaseTime DESC," +
-                    " LastUpdateDate DESC, LastUpdateTime DESC";
+                    " ORDER BY ReceivingCaseDate DESC, ReceivingCaseTime DESC";
+//                    + " LastUpdateDate DESC, LastUpdateTime DESC";
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
                 cursor.moveToPosition(-1);
                 while (cursor.moveToNext()) {
@@ -3062,8 +3062,8 @@ public class DBHelper extends SQLiteAssetHelper {
 
             strSQL_main = "SELECT * FROM casescene "
                     + " WHERE InvestigatorOfficialID = '" + OfficeID + "'" +
-                    " ORDER BY ReceivingCaseDate DESC, ReceivingCaseTime DESC," +
-                    " LastUpdateDate DESC, LastUpdateTime DESC";
+                    " ORDER BY AssignmentDate DESC, AssignmentTime DESC";
+//                    + " LastUpdateDate DESC, LastUpdateTime DESC";
 
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
                 cursor.moveToPosition(-1);
@@ -4981,6 +4981,7 @@ public class DBHelper extends SQLiteAssetHelper {
             return false;
         }
     }
+
     public long CheckCaseScene(String sCaseReportID) {
         // TODO Auto-generated method stub
 
@@ -5004,6 +5005,40 @@ public class DBHelper extends SQLiteAssetHelper {
             } else {
                 rows = 0;
                 Log.i("no casescene",
+                        String.valueOf(cursor.getCount()));
+            }
+            cursor.close();
+
+            return rows; // return rows inserted.
+
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public long CheckNoticeCase(String sMobile_CaseID) {
+        // TODO Auto-generated method stub
+
+        try {
+
+            mDb = this.getReadableDatabase(); // Read Data
+            long rows = 0;
+            String strSQL = "SELECT *" + " FROM noticecase"
+                    + " WHERE " + COL_Mobile_CaseID + "= '" + sMobile_CaseID + "'";
+//                    + "' AND InvOfficialID = '" + sOfficialID + "'";
+//            Log.i("show casescene", strSQL);
+            Cursor cursor = mDb.rawQuery(strSQL, null);
+
+            Log.i("Check noticecase", String.valueOf(cursor.getCount()));
+
+            if (cursor.getCount() != 0) {
+                rows = 1;
+                Log.i("have noticecase",
+                        String.valueOf(cursor.getCount()));
+
+            } else {
+                rows = 0;
+                Log.i("no noticecase",
                         String.valueOf(cursor.getCount()));
             }
             cursor.close();

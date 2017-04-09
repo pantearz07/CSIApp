@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cvCSI"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    card_view:cardCornerRadius="4dp"
-    android:id="@+id/cvCSI"
-    >
+    card_view:cardCornerRadius="4dp">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        >
+        android:padding="5dp">
 
         <ImageView
             android:id="@+id/ic_CaseType"
@@ -20,45 +18,45 @@
             android:layout_height="@dimen/squre_height"
 
             android:layout_alignParentLeft="true"
-android:layout_centerVertical="true"
+            android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:src="@drawable/icon_squre_shape" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/report_no"
-            android:layout_toRightOf="@+id/ic_CaseType"
-            android:layout_alignParentTop="true"
-            android:textSize="@dimen/llarge_text"
-            android:text="รายงานที่ x/xxxx"
-            />
 
         <TextView
+            android:id="@+id/report_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/ic_CaseType"
+            android:text="รายงานที่ x/xxxx"
+            android:textSize="@dimen/llarge_text" />
+
+        <TextView
             android:id="@+id/casetype_name"
-            android:layout_toRightOf="@+id/ic_CaseType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/report_no"
+            android:layout_toRightOf="@+id/ic_CaseType"
             android:text="ประเภทคดี"
-            android:textSize="@dimen/mmedium_text"/>
+            android:textSize="@dimen/mmedium_text" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/police_station"
-            android:layout_toRightOf="@+id/ic_CaseType"
-            android:layout_below="@+id/casetype_name"
-            android:text="สถานีตำรวจภูธร"
-            android:textSize="@dimen/ssmall_text"
-            />
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/csidatetime"
+            android:layout_below="@+id/casetype_name"
             android:layout_toRightOf="@+id/ic_CaseType"
+            android:text="สถานีตำรวจภูธร"
+            android:textSize="@dimen/ssmall_text" />
+
+        <TextView
+            android:id="@+id/csidatetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/police_station"
+            android:layout_toRightOf="@+id/ic_CaseType"
             android:text="วันเวลาอัพเดต"
-            android:textSize="@dimen/ssmall_text"
-            />
+            android:textSize="@dimen/ssmall_text" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
 

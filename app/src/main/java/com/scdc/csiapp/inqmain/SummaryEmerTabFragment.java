@@ -445,6 +445,7 @@ public class SummaryEmerTabFragment extends Fragment {
                 hiddenKeyboard();
                 Log.i(TAG, "btnNoticecase " + WelcomeActivity.profile.getTbOfficial().SCDCAgencyCode);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+
                 LayoutInflater inflater = getActivity().getLayoutInflater();
 
                 View view1 = inflater.inflate(R.layout.emergency_send_case, null);
