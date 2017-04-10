@@ -42,8 +42,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -65,13 +67,16 @@ import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 
 public class EmergencyDetailTabFragment extends Fragment implements View.OnClickListener,
+        OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // Google play services
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest request;
-    SupportMapFragment mFragment;
+    Marker mMarker;
+    GoogleMap mMap;
+    double lat_val, lng_val;
     LatLng latLng;
     FloatingActionButton fabBtnRec;
     CoordinatorLayout rootLayout;
@@ -145,7 +150,8 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         getDateTime = new GetDateTime();
         emergencyTabFragment = new EmergencyTabFragment();
         cd = new ConnectionDetector(getActivity());
-
+//        MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
         // ทำการสร้างตัวเชื่อกับ Google services
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -648,8 +654,21 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
     public void onLocationChanged(Location location) {
         mLastLocation.set(location);
         Log.d(TAG, "Location " + location.getLatitude() + " " + location.getLongitude());
+        LatLng coordinate = new LatLng(location.getLatitude()
+                , location.getLongitude());
+        lat_val = location.getLatitude();
+        lng_val = location.getLongitude();
+//        if(mMarker != null)
+//            mMarker.remove();
+//
+//        mMarker = mMap.addMarker(new MarkerOptions()
+//                .position(new LatLng(lat_val, lng_val)));
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+//                coordinate, 16));
+
         Geocoder gcd = new Geocoder(context, Locale.getDefault());
         if (cd.isNetworkAvailable()) {
+
             List<Address> addresses = null;
             try {
                 // Here 1 represent max location result to returned, by documents it recommended 1 to 5
@@ -749,6 +768,11 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
                 Log.d(TAG, "get mLastLocation error" + e.getMessage());
             }
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 
     public class EmerOnItemSelectedListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
