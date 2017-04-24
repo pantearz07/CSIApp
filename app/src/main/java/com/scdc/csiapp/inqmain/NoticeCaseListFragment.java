@@ -34,7 +34,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -154,6 +153,23 @@ public class NoticeCaseListFragment extends Fragment {
     }
 
     private void setAdapterList() {
+        // จัดเรียงข้อมูลใน caseList ให้เรียงตามวันที่แจ้งเหตุ ReceivingCaseDate,ReceivingCaseTime ก่อนถึงจะเอาไปแสดง
+        // caseList เก็บข้อมูลในรูป List ใช้ Collections sort ได้
+        Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
+            @Override
+            public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + obj1.getTbNoticeCase().ReceivingCaseTime;
+                String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + obj2.getTbNoticeCase().ReceivingCaseTime;
+                try {
+                    return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
+
         apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
         rvDraft.setAdapter(apiNoticeCaseListAdapter);
         apiNoticeCaseListAdapter.notifyDataSetChanged();
@@ -391,20 +407,7 @@ public class NoticeCaseListFragment extends Fragment {
                 caseList = apiListNoticeCase.getData().getResult();
                 //caseList.get(2).setMode("online");
                 Log.i(TAG + " caseList size ", String.valueOf(caseList.size()));
-                Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
-                    @Override
-                    public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
-                        SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj1.getTbNoticeCase().ReceivingCaseTime);
-                        String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + getDateTime.formatTime(obj2.getTbNoticeCase().ReceivingCaseTime);
-                        try {
-                            return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return 0;
-                        }
-                    }
-                });
+
                 setAdapterList();
             } else {
                 Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
