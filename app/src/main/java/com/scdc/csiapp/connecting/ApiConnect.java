@@ -376,16 +376,16 @@ public class ApiConnect implements Parcelable {
                 } else {
                     // ข้อมูลจาก SQLite
                     ApiListNoticeCase apiListNoticeCaseSQLite_old = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                    int ser_size_check = apiListNoticeCaseServer.getData().getResult().size();
+                    int ser_size_check = apiListNoticeCaseServer.getData().getResult().size(); // จำนวนข้อมูลจากเซิร์ฟเวอร์
                     Log.i(TAG, "ser_size_check " + apiListNoticeCaseServer.getData().getResult().size());
                     Log.i(TAG, "sql_size_old " + apiListNoticeCaseSQLite_old.getData().getResult().size());
-                    int sql_size_old;
+                    int sql_size_old; // จำนวนข้อมูลจาก SQLite
                     if (apiListNoticeCaseSQLite_old.getData() == null) {
                         sql_size_old = 0;
                     } else {
                         sql_size_old = apiListNoticeCaseSQLite_old.getData().getResult().size();
                     }
-                    // ทำการ อัพเดทข้อมูลระหว่าง Server และ SQLite  และ ลบข้อมูลออกจาก SQLite กรณีที่ Server ไม่มีข้อมูลแล้ว
+                    // ทำการ อัพเดทข้อมูลระหว่าง Server และ SQLite
                     for (int i = 0; i < sql_size_old; i++) {
                         ApiNoticeCase temp_sql_old = apiListNoticeCaseSQLite_old.getData().getResult().get(i);
                         ApiNoticeCase temp_ser_check;
@@ -521,6 +521,7 @@ public class ApiConnect implements Parcelable {
                     }
                     response.close();
                     Log.d(TAG, "newListNoticeCase " + String.valueOf(newListNoticeCase.size()));
+                    //เอาลิสต์ใหม่ไปเเสดงผล
                     apiListNoticeCaseSQLite.getData().setResult(newListNoticeCase);
                     return apiListNoticeCaseSQLite;
                 }
