@@ -97,9 +97,9 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
 
         // set icon mode
         if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("online")) {
-            csidataholder.iv_mode.setImageResource(R.drawable.ic_router_black_24dp);
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_cloud_black_24dp);
         } else if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("offline")) {
-            csidataholder.iv_mode.setImageResource(R.drawable.ic_phone_android_black_24dp);
+            csidataholder.iv_mode.setImageResource(R.drawable.ic_cloud_download_black_24dp);
         } else {
             csidataholder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
         }

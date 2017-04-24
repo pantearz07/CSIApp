@@ -435,10 +435,13 @@ public class ApiConnect implements Parcelable {
                                         break;
                                     }
 
+                                } else {
+                                    Log.d(TAG, "LastUpdateDateTime null");
                                 }
                             }
                         }
 //                        if (flag_have == false) {
+//                            Log.d(TAG, "status "+temp_sql_old.getTbNoticeCase().Mobile_CaseID +temp_sql_old.getTbNoticeCase().CaseStatus);
 //                            Log.d(TAG, temp_sql_old.getTbNoticeCase().Mobile_CaseID);
 ////                            if (temp_sql_old.getTbNoticeCase().Mobile_CaseID == temp_ser_check.getTbNoticeCase().Mobile_CaseID) {
 //
@@ -459,7 +462,6 @@ public class ApiConnect implements Parcelable {
 //                        }
 
                     }
-//                    List<ApiNoticeCase> newListNoticeCase1 = new ArrayList<>();
 
                     // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก Server เป็นหลัก
                     List<ApiNoticeCase> newListNoticeCase = new ArrayList<>();
@@ -470,6 +472,25 @@ public class ApiConnect implements Parcelable {
                         sql_size = 0;
                     } else {
                         sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
+                    }
+                    for (int k = 0; k < sql_size; k++) {
+                        ApiNoticeCase temp_sql2 = apiListNoticeCaseSQLite.getData().getResult().get(k);
+                        ApiStatus apiStatus = checkNoticecase(temp_sql2.getTbNoticeCase().Mobile_CaseID);
+                        if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                            Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
+                            if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
+
+                                Log.d(TAG, "checkNoticecase : success_1" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
+                                break;
+                            } else {
+                                temp_sql2.setMode("storage");
+                                newListNoticeCase.add(temp_sql2);
+                                Log.d(TAG, "checkNoticecase : success_2" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
+
+                            }
+                        } else {
+                            Log.d(TAG, "checkNoticecase: fail");
+                        }
                     }
                     for (int i = 0; i < ser_size_check; i++) {
                         ApiNoticeCase temp_ser = apiListNoticeCaseServer.getData().getResult().get(i);
@@ -485,7 +506,7 @@ public class ApiConnect implements Parcelable {
                                 temp_sql = apiListNoticeCaseSQLite.getData().getResult().get(j);
 
                                 // ถ้า Mobile_CaseID เท่ากัน แปลว่า ใน mobile มี คดีเดียวกันกับบน server
-                                if (temp_ser.getTbNoticeCase().Mobile_CaseID.equals(temp_sql.getTbNoticeCase().Mobile_CaseID)) {
+                                if (temp_ser.getTbNoticeCase().Mobile_CaseID.equalsIgnoreCase(temp_sql.getTbNoticeCase().Mobile_CaseID)) {
                                     temp_sql.setMode("offline");
                                     newListNoticeCase.add(temp_sql);
                                     flag_status = true;
@@ -500,25 +521,7 @@ public class ApiConnect implements Parcelable {
                             }
                         }
                     }
-                    for (int k = 0; k < sql_size; k++) {
-                        ApiNoticeCase temp_sql2 = apiListNoticeCaseSQLite.getData().getResult().get(k);
-                        ApiStatus apiStatus = checkNoticecase(temp_sql2.getTbNoticeCase().Mobile_CaseID);
-                        if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                            Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
-                            if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
 
-                                Log.d(TAG, "checkNoticecase : success_1" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
-                                break;
-                            } else {
-                                temp_sql2.setMode("offline");
-                                newListNoticeCase.add(temp_sql2);
-                                Log.d(TAG, "checkNoticecase : success_2" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
-
-                            }
-                        } else {
-                            Log.d(TAG, "checkNoticecase: fail");
-                        }
-                    }
                     response.close();
                     Log.d(TAG, "newListNoticeCase " + String.valueOf(newListNoticeCase.size()));
                     //เอาลิสต์ใหม่ไปเเสดงผล
@@ -535,25 +538,6 @@ public class ApiConnect implements Parcelable {
 
             return null;
         }
-    }
-
-    public long checkListNoticeCase(ApiNoticeCase data) {
-        ApiStatus apiStatus = checkNoticecase(data.getTbNoticeCase().Mobile_CaseID);
-        if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-            Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
-            if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
-
-                Log.d(TAG, "checkNoticecase : success_1" + data.getTbNoticeCase().Mobile_CaseID.toString());
-                return 1;
-            } else {
-                Log.d(TAG, "checkNoticecase : success_2" + data.getTbNoticeCase().Mobile_CaseID.toString());
-                return 2;
-            }
-        } else {
-            Log.d(TAG, "checkNoticecase: fail");
-            return 0;
-        }
-
     }
 
     public ApiListCaseScene listCasescene() {
