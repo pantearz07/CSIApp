@@ -440,27 +440,35 @@ public class ApiConnect implements Parcelable {
                                 }
                             }
                         }
-//                        if (flag_have == false) {
-//                            Log.d(TAG, "status "+temp_sql_old.getTbNoticeCase().Mobile_CaseID +temp_sql_old.getTbNoticeCase().CaseStatus);
+                        //check for delete noticecase from  sqlite on casetatus != receive  if on server not have noticecase
+                        if (flag_have == false) {
+                            Log.d(TAG, String.valueOf(i) + " :status " + temp_sql_old.getTbNoticeCase().Mobile_CaseID + temp_sql_old.getTbNoticeCase().CaseStatus);
 //                            Log.d(TAG, temp_sql_old.getTbNoticeCase().Mobile_CaseID);
-////                            if (temp_sql_old.getTbNoticeCase().Mobile_CaseID == temp_ser_check.getTbNoticeCase().Mobile_CaseID) {
-//
-//                        }
-                        //ตรวจ flag_have หลังจากวนทั้งหมดแล้ว ถึงจะลบได้
-//                        if (flag_have == false) {
-//                            //คดีที่อยู่ในมือถือ ไม่มีบน server  เลยต้องลบออกจาก sqlite
-//                            //Delete Data in SQLite
-//                            long checkcase = mDbHelper.CheckNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
-//                            if (checkcase == 1) {
-//
-//                                boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
-//                                if (isSuccess1) {
-//                                    Log.i(TAG, "check list NoticeCase ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbNoticeCase().Mobile_CaseID);
-//                                }
-//                            }
-//
-//                        }
+                            if (temp_sql_old.getTbNoticeCase().CaseStatus.equals("receive")) {
+//                                Log.d(TAG, temp_sql_old.getTbNoticeCase().Mobile_CaseID + "status: receive");
+                            } else {
+                                Log.d(TAG, temp_sql_old.getTbNoticeCase().Mobile_CaseID);
 
+                                ApiStatus apiStatus = checkNoticecase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
+                                if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+//                                    Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
+                                    if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
+
+//                                        Log.d(TAG, "checkNoticecase : มีข้อมูลในserver " + temp_sql_old.getTbNoticeCase().Mobile_CaseID.toString());
+                                        break;
+                                    } else {
+                                        Log.d(TAG, "checkNoticecase : ไม่มีข้อมูลในserver " + temp_sql_old.getTbNoticeCase().Mobile_CaseID.toString());
+                                        boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
+                                        if (isSuccess1) {
+                                            Log.i(TAG, "check list NoticeCase ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbNoticeCase().Mobile_CaseID);
+                                        }
+                                    }
+                                } else {
+                                    Log.d(TAG, "checkNoticecase: fail");
+                                }
+                            }
+
+                        }
                     }
 
                     // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก Server เป็นหลัก
