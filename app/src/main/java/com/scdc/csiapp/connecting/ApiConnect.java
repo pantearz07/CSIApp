@@ -395,7 +395,7 @@ public class ApiConnect implements Parcelable {
                         for (int j = 0; j < ser_size_check; j++) {
                             temp_ser_check = apiListNoticeCaseServer.getData().getResult().get(j);
                             //เช็คว่า ข้อมูลใน SQLite มีตรงกับ server มั้ย
-                            if (temp_sql_old.getTbNoticeCase().Mobile_CaseID == temp_ser_check.getTbNoticeCase().Mobile_CaseID) {
+                            if (temp_sql_old.getTbNoticeCase().Mobile_CaseID.equalsIgnoreCase(temp_ser_check.getTbNoticeCase().Mobile_CaseID)) {
                                 //มีคดีที่ตรงกัน
                                 if (temp_ser_check.getTbNoticeCase().LastUpdateDate != null && temp_sql_old.getTbNoticeCase().LastUpdateDate != null
                                         && temp_ser_check.getTbNoticeCase().LastUpdateTime != null && temp_sql_old.getTbNoticeCase().LastUpdateTime != null) {
@@ -473,25 +473,7 @@ public class ApiConnect implements Parcelable {
                     } else {
                         sql_size = apiListNoticeCaseSQLite.getData().getResult().size();
                     }
-                    for (int k = 0; k < sql_size; k++) {
-                        ApiNoticeCase temp_sql2 = apiListNoticeCaseSQLite.getData().getResult().get(k);
-                        ApiStatus apiStatus = checkNoticecase(temp_sql2.getTbNoticeCase().Mobile_CaseID);
-                        if (apiStatus.getStatus().equalsIgnoreCase("success")) {
-                            Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
-                            if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
 
-                                Log.d(TAG, "checkNoticecase : success_1" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
-                                break;
-                            } else {
-                                temp_sql2.setMode("storage");
-                                newListNoticeCase.add(temp_sql2);
-                                Log.d(TAG, "checkNoticecase : success_2" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
-
-                            }
-                        } else {
-                            Log.d(TAG, "checkNoticecase: fail");
-                        }
-                    }
                     for (int i = 0; i < ser_size_check; i++) {
                         ApiNoticeCase temp_ser = apiListNoticeCaseServer.getData().getResult().get(i);
                         ApiNoticeCase temp_sql;
@@ -521,7 +503,25 @@ public class ApiConnect implements Parcelable {
                             }
                         }
                     }
+                    for (int k = 0; k < sql_size; k++) {
+                        ApiNoticeCase temp_sql2 = apiListNoticeCaseSQLite.getData().getResult().get(k);
+                        ApiStatus apiStatus = checkNoticecase(temp_sql2.getTbNoticeCase().Mobile_CaseID);
+                        if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                            Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
+                            if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
 
+                                Log.d(TAG, "checkNoticecase : success_1" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
+                                break;
+                            } else {
+                                temp_sql2.setMode("storage");
+                                newListNoticeCase.add(temp_sql2);
+                                Log.d(TAG, "checkNoticecase : success_2" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
+
+                            }
+                        } else {
+                            Log.d(TAG, "checkNoticecase: fail");
+                        }
+                    }
                     response.close();
                     Log.d(TAG, "newListNoticeCase " + String.valueOf(newListNoticeCase.size()));
                     //เอาลิสต์ใหม่ไปเเสดงผล

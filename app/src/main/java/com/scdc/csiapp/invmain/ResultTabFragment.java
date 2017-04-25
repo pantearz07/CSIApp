@@ -446,8 +446,8 @@ public class ResultTabFragment extends Fragment {
         if (editCompleteSceneTime.getText().toString() == null || editCompleteSceneTime.getText().toString().equals("")) {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = null;
         } else {
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = editCompleteSceneTime.getText().toString();
-            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneTime = editCompleteSceneTime.getText().toString();
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneTime = getDateTime.formatTime(editCompleteSceneTime.getText().toString());
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CompleteSceneTime = getDateTime.formatTime(editCompleteSceneTime.getText().toString());
         }
     }
 

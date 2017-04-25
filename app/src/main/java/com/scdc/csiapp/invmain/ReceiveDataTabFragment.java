@@ -731,7 +731,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         if (editHappenCaseTime.getText().toString() == null || editHappenCaseTime.getText().toString().equals("")) {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = null;
         } else {
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = editHappenCaseTime.getText().toString();
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().HappenCaseTime = getDateTime.formatTime(editHappenCaseTime.getText().toString());
         }
         if (editKnowCaseDate.getText().toString() == null || editKnowCaseDate.getText().toString().equals("")) {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseDate = null;
@@ -741,7 +741,7 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
         if (editKnowCaseTime.getText().toString() == null || editKnowCaseTime.getText().toString().equals("")) {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = null;
         } else {
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = editKnowCaseTime.getText().toString();
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = getDateTime.formatTime(editKnowCaseTime.getText().toString());
         }
 
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {

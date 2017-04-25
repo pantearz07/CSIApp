@@ -169,7 +169,10 @@ public class NoticeCaseListFragment extends Fragment {
                 }
             }
         });
-
+//        for(int i=0; i < caseList.size(); i++){
+//            Log.d(TAG, "TEST Date "+ caseList.get(i).getTbNoticeCase().getReceivingCaseDate() +
+//            " "+ caseList.get(i).getTbNoticeCase().getReceivingCaseTime());
+//        }
         apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
         rvDraft.setAdapter(apiNoticeCaseListAdapter);
         apiNoticeCaseListAdapter.notifyDataSetChanged();

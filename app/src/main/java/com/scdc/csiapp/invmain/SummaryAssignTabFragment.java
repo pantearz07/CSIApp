@@ -518,7 +518,7 @@ public class SummaryAssignTabFragment extends Fragment {
                 if (editSceneNoticeTime.getText().toString().isEmpty()) {
                     AssignTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime = "";
                 } else {
-                    AssignTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime = editSceneNoticeTime.getText().toString();
+                    AssignTabFragment.apiCaseScene.getTbNoticeCase().SceneNoticeTime = getDateTime.formatTime(editSceneNoticeTime.getText().toString());
 
                 }
                 AssignTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];

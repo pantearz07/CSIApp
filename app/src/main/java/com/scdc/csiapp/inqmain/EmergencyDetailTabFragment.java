@@ -974,7 +974,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         if (editHappenCaseTime.getText().toString() == null || editHappenCaseTime.getText().toString().equals("")) {
             EmergencyTabFragment.tbNoticeCase.HappenCaseTime = null;
         } else {
-            EmergencyTabFragment.tbNoticeCase.HappenCaseTime = editHappenCaseTime.getText().toString();
+            EmergencyTabFragment.tbNoticeCase.HappenCaseTime = getDateTime.formatTime(editHappenCaseTime.getText().toString());
         }
         if (editReceiveCaseDate.getText().toString() == null || editReceiveCaseDate.getText().toString().equals("")) {
             EmergencyTabFragment.tbNoticeCase.ReceivingCaseDate = null;
@@ -984,7 +984,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         if (editReceiveCaseTime.getText().toString() == null || editReceiveCaseTime.getText().toString().equals("")) {
             EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = null;
         } else {
-            EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = editReceiveCaseTime.getText().toString();
+            EmergencyTabFragment.tbNoticeCase.ReceivingCaseTime = getDateTime.formatTime(editReceiveCaseTime.getText().toString());
         }
         if (editKnowCaseDate.getText().toString() == null || editKnowCaseDate.getText().toString().equals("")) {
             EmergencyTabFragment.tbNoticeCase.KnowCaseDate = null;
@@ -994,7 +994,7 @@ public class EmergencyDetailTabFragment extends Fragment implements View.OnClick
         if (editKnowCaseTime.getText().toString() == null || editKnowCaseTime.getText().toString().equals("")) {
             EmergencyTabFragment.tbNoticeCase.KnowCaseTime = null;
         } else {
-            EmergencyTabFragment.tbNoticeCase.KnowCaseTime = editKnowCaseTime.getText().toString();
+            EmergencyTabFragment.tbNoticeCase.KnowCaseTime = getDateTime.formatTime(editKnowCaseTime.getText().toString());
         }
 
 
