@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -97,6 +98,10 @@ public class NoticeCaseListFragment extends Fragment {
     ApiConnect api;
     ApiNoticeCase apiNoticeCase;
     String mode, NoticeCaseID;
+    private static final String[] sortlists =
+            {"วันเวลารับเเจ้งเหตุล่าสุด", "วันเวลารับเเจ้งเหตุเก่าสุด", "วันเวลาเเก้ไขล่าสุด", "วันเวลาเเก้ไขเก่าสุด"};
+    String mSelected;
+    int wSelected = 0;
 
     public static NoticeCaseListFragment newInstance() {
         return new NoticeCaseListFragment();
@@ -109,6 +114,7 @@ public class NoticeCaseListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BusProvider.getInstance().register(this);
+        setHasOptionsMenu(true);//Make sure you have this line of code.
     }
 
     @Nullable
@@ -382,8 +388,8 @@ public class NoticeCaseListFragment extends Fragment {
         ApiListNoticeCase apiListNoticeCase = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
         caseList = apiListNoticeCase.getData().getResult();
         Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
-
-        setAdapterList();
+        setAdapterList_sort();
+//        setAdapterList();
     }
 
     class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
@@ -410,8 +416,8 @@ public class NoticeCaseListFragment extends Fragment {
                 caseList = apiListNoticeCase.getData().getResult();
                 //caseList.get(2).setMode("online");
                 Log.i(TAG + " caseList size ", String.valueOf(caseList.size()));
-
-                setAdapterList();
+                setAdapterList_sort();
+//                setAdapterList();
             } else {
                 Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
                         Toast.LENGTH_SHORT).show();
@@ -727,5 +733,136 @@ public class NoticeCaseListFragment extends Fragment {
         outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
         outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sorting:
+                // Do Fragment menu item stuff here
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getActivity());
+                builder.setTitle("จัดเรียงตาม");
+                builder.setSingleChoiceItems(sortlists, wSelected, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSelected = sortlists[which];
+                        wSelected = which;
+                    }
+                });
+                builder.setPositiveButton("เลือก", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
+                        swipeContainer.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                setAdapterData();
+                            }
+                        });
+                        Toast.makeText(getActivity(), "จัดเรียงตาม " +
+                                mSelected, Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("ยกเลิก", null);
+                builder.create();
+
+// สุดท้ายอย่าลืม show() ด้วย
+                builder.show();
+                return true;
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    private void setAdapterList_sort() {
+        // จัดเรียงข้อมูลใน caseList ให้เรียงตามวันที่แจ้งเหตุ ReceivingCaseDate,ReceivingCaseTime ก่อนถึงจะเอาไปแสดง
+        // caseList เก็บข้อมูลในรูป List ใช้ Collections sort ได้
+        if (wSelected == 0) {
+            Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
+                @Override
+                public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + obj1.getTbNoticeCase().ReceivingCaseTime;
+                    String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + obj2.getTbNoticeCase().ReceivingCaseTime;
+                    try {
+                        return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        } else if (wSelected == 1) {
+            Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
+                @Override
+                public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + obj1.getTbNoticeCase().ReceivingCaseTime;
+                    String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + obj2.getTbNoticeCase().ReceivingCaseTime;
+                    try {
+                        return dfDate.parse(date_source).compareTo(dfDate.parse(date_des));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        } else if (wSelected == 2) {
+            Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
+                @Override
+                public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbNoticeCase().LastUpdateDate + " " + obj1.getTbNoticeCase().LastUpdateTime;
+                    String date_des = obj2.getTbNoticeCase().LastUpdateDate + " " + obj2.getTbNoticeCase().LastUpdateTime;
+                    try {
+                        return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        } else if (wSelected == 3) {
+            Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
+                @Override
+                public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbNoticeCase().LastUpdateDate + " " + obj1.getTbNoticeCase().LastUpdateTime;
+                    String date_des = obj2.getTbNoticeCase().LastUpdateDate + " " + obj2.getTbNoticeCase().LastUpdateTime;
+                    try {
+                        return dfDate.parse(date_source).compareTo(dfDate.parse(date_des));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        }
+//
+//
+//        for(int i=0; i < caseList.size(); i++){
+//            Log.d(TAG, "TEST Date "+ caseList.get(i).getTbNoticeCase().getReceivingCaseDate() +
+//            " "+ caseList.get(i).getTbNoticeCase().getReceivingCaseTime());
+//        }
+        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
+        rvDraft.setAdapter(apiNoticeCaseListAdapter);
+        apiNoticeCaseListAdapter.notifyDataSetChanged();
+        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+        swipeContainer.setRefreshing(false);
     }
 }

@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -105,6 +106,10 @@ public class CaseSceneListFragment extends Fragment {
     ApiConnect api;
     ApiCaseScene apiNoticeCase;
     String mode, caserepID;
+    private static final String[] sortlists =
+            {"วันเวลารับเเจ้งเหตุล่าสุด", "วันเวลารับเเจ้งเหตุเก่าสุด", "วันเวลาเเก้ไขล่าสุด", "วันเวลาเเก้ไขเก่าสุด"};
+    String mSelected;
+    int wSelected = 0;
 
     public static CaseSceneListFragment newInstance() {
         return new CaseSceneListFragment();
@@ -117,6 +122,7 @@ public class CaseSceneListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BusProvider.getInstance().register(this);
+        setHasOptionsMenu(true);//Make sure you have this line of code.
     }
 
     @Nullable
@@ -266,7 +272,7 @@ public class CaseSceneListFragment extends Fragment {
         caseList = apiListNoticeCase.getData().getResult();
 //        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
 
-        setAdapterList();
+        setAdapterList_sort();
     }
 
     private void setAdapterList() {
@@ -487,7 +493,7 @@ public class CaseSceneListFragment extends Fragment {
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListCaseScene.getData().getResult();
 
-                setAdapterList();
+                setAdapterList_sort();
             } else {
 //                if (snackbar == null || !snackbar.isShown()) {
 //                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
@@ -621,4 +627,131 @@ public class CaseSceneListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sorting:
+                // Do Fragment menu item stuff here
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getActivity());
+                builder.setTitle("จัดเรียงตาม");
+                builder.setSingleChoiceItems(sortlists, wSelected, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSelected = sortlists[which];
+                        wSelected = which;
+                    }
+                });
+                builder.setPositiveButton("เลือก", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
+                        swipeContainer.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                setAdapterData(); 
+                            }
+                        });
+                        Toast.makeText(getActivity(), "จัดเรียงตาม " +
+                                mSelected, Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("ยกเลิก", null);
+                builder.create();
+
+// สุดท้ายอย่าลืม show() ด้วย
+                builder.show();
+                return true;
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    private void setAdapterList_sort() {
+
+        // จัดเรียงข้อมูลใน caseList ให้เรียงตามวันที่แจ้งเหตุ ReceivingCaseDate,ReceivingCaseTime ก่อนถึงจะเอาไปแสดง
+        // caseList เก็บข้อมูลในรูป List ใช้ Collections sort ได้
+        if (wSelected == 0) {
+            Collections.sort(caseList, new Comparator<ApiCaseScene>() {
+                @Override
+                public int compare(ApiCaseScene obj1, ApiCaseScene obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbCaseScene().ReceivingCaseDate + " " + obj1.getTbCaseScene().ReceivingCaseTime;
+                    String date_des = obj2.getTbCaseScene().ReceivingCaseDate + " " + obj2.getTbCaseScene().ReceivingCaseTime;
+                    try {
+                        return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        } else if (wSelected == 1) {
+
+            Collections.sort(caseList, new Comparator<ApiCaseScene>() {
+                @Override
+                public int compare(ApiCaseScene obj1, ApiCaseScene obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbCaseScene().ReceivingCaseDate + " " + obj1.getTbCaseScene().ReceivingCaseTime;
+                    String date_des = obj2.getTbCaseScene().ReceivingCaseDate + " " + obj2.getTbCaseScene().ReceivingCaseTime;
+                    try {
+                        return dfDate.parse(date_source).compareTo(dfDate.parse(date_des));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        } else if (wSelected == 2) {
+            Collections.sort(caseList, new Comparator<ApiCaseScene>() {
+                @Override
+                public int compare(ApiCaseScene obj1, ApiCaseScene obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbCaseScene().LastUpdateDate + " " + obj1.getTbCaseScene().LastUpdateTime;
+                    String date_des = obj2.getTbCaseScene().LastUpdateDate + " " + obj2.getTbCaseScene().LastUpdateTime;
+                    try {
+                        return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        } else if (wSelected == 3) {
+            Collections.sort(caseList, new Comparator<ApiCaseScene>() {
+                @Override
+                public int compare(ApiCaseScene obj1, ApiCaseScene obj2) {
+                    SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date_source = obj1.getTbCaseScene().LastUpdateDate + " " + obj1.getTbCaseScene().LastUpdateTime;
+                    String date_des = obj2.getTbCaseScene().LastUpdateDate + " " + obj2.getTbCaseScene().LastUpdateTime;
+                    try {
+                        return dfDate.parse(date_source).compareTo(dfDate.parse(date_des));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+            Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
+        }
+
+        apiCaseSceneListAdapter = new ApiCaseSceneListAdapter(caseList);
+        rvDraft.setAdapter(apiCaseSceneListAdapter);
+        apiCaseSceneListAdapter.notifyDataSetChanged();
+        apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
+        swipeContainer.setRefreshing(false);
+    }
 }
