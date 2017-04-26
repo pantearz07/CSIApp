@@ -30,6 +30,10 @@ public class PreferenceData {
     public static final String ARG_UPDATE_DATA_RECEIVINGCASE = "updatedate";
     public static final String ARG_UPDATE_DATA_DRAFTCASE = "updatedate";
     public static final String PREF_REPORTSTATUS = "status";
+
+    public static final String PREF_SORTING = "wSorting";
+    public static final String KEY_SORTING = "wSortingValue";
+
     //setting
     public static final String PREF_IP = "pref_ip";
     public static final String KEY_IP = "IPValue";
@@ -137,4 +141,5 @@ public class PreferenceData {
     public boolean getPreferenceDataBoolean(String valuePrefName) {
         return mPrefs.getBoolean(valuePrefName, false);
     }
+
 }

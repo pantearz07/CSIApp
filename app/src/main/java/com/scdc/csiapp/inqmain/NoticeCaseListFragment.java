@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -102,6 +103,8 @@ public class NoticeCaseListFragment extends Fragment {
             {"วันเวลารับเเจ้งเหตุล่าสุด", "วันเวลารับเเจ้งเหตุเก่าสุด", "วันเวลาเเก้ไขล่าสุด", "วันเวลาเเก้ไขเก่าสุด"};
     String mSelected;
     int wSelected = 0;
+    int wSorting = 0;
+    String wSorting_value = "0";
 
     public static NoticeCaseListFragment newInstance() {
         return new NoticeCaseListFragment();
@@ -749,7 +752,10 @@ public class NoticeCaseListFragment extends Fragment {
                 AlertDialog.Builder builder =
                         new AlertDialog.Builder(getActivity());
                 builder.setTitle("จัดเรียงตาม");
-                builder.setSingleChoiceItems(sortlists, wSelected, new DialogInterface.OnClickListener() {
+                SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_SORTING, context.MODE_PRIVATE);
+                wSorting = Integer.parseInt(sp.getString(PreferenceData.KEY_SORTING, wSorting_value));
+                Log.i(TAG, "wSorting " + String.valueOf(wSorting));
+                builder.setSingleChoiceItems(sortlists, wSorting, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mSelected = sortlists[which];
@@ -760,6 +766,7 @@ public class NoticeCaseListFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
+                        WelcomeActivity.api.setSorting(String.valueOf(wSelected));
                         swipeContainer.post(new Runnable() {
                             @Override
                             public void run() {
@@ -786,9 +793,11 @@ public class NoticeCaseListFragment extends Fragment {
     }
 
     private void setAdapterList_sort() {
+        SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_SORTING, context.MODE_PRIVATE);
+        wSorting = Integer.parseInt(sp.getString(PreferenceData.KEY_SORTING, wSorting_value));
         // จัดเรียงข้อมูลใน caseList ให้เรียงตามวันที่แจ้งเหตุ ReceivingCaseDate,ReceivingCaseTime ก่อนถึงจะเอาไปแสดง
         // caseList เก็บข้อมูลในรูป List ใช้ Collections sort ได้
-        if (wSelected == 0) {
+        if (wSorting == 0) {
             Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
                 @Override
                 public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
@@ -804,7 +813,7 @@ public class NoticeCaseListFragment extends Fragment {
                 }
             });
             Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
-        } else if (wSelected == 1) {
+        } else if (wSorting == 1) {
             Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
                 @Override
                 public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
@@ -820,7 +829,7 @@ public class NoticeCaseListFragment extends Fragment {
                 }
             });
             Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
-        } else if (wSelected == 2) {
+        } else if (wSorting == 2) {
             Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
                 @Override
                 public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
@@ -836,7 +845,7 @@ public class NoticeCaseListFragment extends Fragment {
                 }
             });
             Log.i(TAG, "จัดเรียงตาม " + String.valueOf(wSelected));
-        } else if (wSelected == 3) {
+        } else if (wSorting == 3) {
             Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
                 @Override
                 public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {

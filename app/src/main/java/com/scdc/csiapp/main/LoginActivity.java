@@ -369,7 +369,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setEnabled(true);
         boolean isLoginstatus = mManager.setPreferenceDataBoolean(mManager.KEY_USER_LOGGEDIN_STATUS, true);
         if (isLoginstatus) {
-            // new SaveOfficialDataToSQLiteTask().execute(strOfficialID);
+            WelcomeActivity.api.setSorting("0");
             //switchPageToMain();
             registerReceiver();
             if (checkPlayServices()) {

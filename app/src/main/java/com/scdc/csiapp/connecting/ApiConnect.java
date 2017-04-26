@@ -152,6 +152,15 @@ public class ApiConnect implements Parcelable {
         return true;
     }
 
+    public boolean setSorting(String wSorting) {
+        SharedPreferences sp = mContext.getSharedPreferences(PreferenceData.PREF_SORTING, mContext.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(PreferenceData.KEY_SORTING, wSorting);
+        editor.commit();
+        Log.d(TAG, "wSorting " + wSorting);
+        return true;
+    }
+
     // ตรวจสอบการ Login และข้อมูลผู้ใช้งาน User , Official ผ่าน function login
     public ApiLoginStatus login(ApiLoginRequest dataLogin) {
         RequestBody formBody = new FormBody.Builder()
