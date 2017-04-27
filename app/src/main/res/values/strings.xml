@@ -322,6 +322,9 @@
     <string name="investigated">ยืนยันตรวจเสร็จ</string>
     <string name="sendtoserver">อัพโหลดข้อมูลเข้าสู่เซิร์ฟเวอร์</string>
     <string name="editInvestigator">แก้ไขรายชื่อผู้ตรวจ</string>
+    <string name="sortitem">จัดเรียงตาม</string>
+    <string name="sortstatus">แสดงผลตามสถานะ</string>
+    <string name="sortstatus_title">เลือกแสดงผลตามสถานะ</string>
     <string-array name="ip_list">
         <item>180.183.251.32/mcsi</item>
         <item>04.mcsi</item>

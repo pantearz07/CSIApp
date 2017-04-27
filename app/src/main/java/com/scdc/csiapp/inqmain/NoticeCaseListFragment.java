@@ -73,6 +73,8 @@ public class NoticeCaseListFragment extends Fragment {
     Context context;
     //Recycle view
     private List<ApiNoticeCase> caseList;
+    private ArrayList<Integer> mMultiSelected;
+    ArrayList<Boolean> mMultiChecked;
     RecyclerView rvDraft;
     SwipeRefreshLayout swipeContainer;
     private ApiNoticeCaseListAdapter apiNoticeCaseListAdapter;
@@ -105,6 +107,15 @@ public class NoticeCaseListFragment extends Fragment {
     int wSelected = 0;
     int wSorting = 0;
     String wSorting_value = "0";
+    //"ทั้งหมด", true,
+    private static final String[] sortStatuslists =
+            {"รับแจ้ง", "แจ้งเหตุ", "รับเรื่อง", "รอตรวจ", "กำลังตรวจ", "ตรวจเสร็จ", "รายงานเสร็จ"};
+    private static final String[] sortStatus =
+            {"receive", "notice", "assign", "accept", "investigating", "investigated", "reported"};
+    boolean[] CheckedSortStatuslists = new boolean[7];
+    //            {false, false, false, false, false, false, false};
+    boolean setstatusorting = false;
+
 
     public static NoticeCaseListFragment newInstance() {
         return new NoticeCaseListFragment();
@@ -159,34 +170,6 @@ public class NoticeCaseListFragment extends Fragment {
             }
         });
         return view;
-    }
-
-    private void setAdapterList() {
-        // จัดเรียงข้อมูลใน caseList ให้เรียงตามวันที่แจ้งเหตุ ReceivingCaseDate,ReceivingCaseTime ก่อนถึงจะเอาไปแสดง
-        // caseList เก็บข้อมูลในรูป List ใช้ Collections sort ได้
-        Collections.sort(caseList, new Comparator<ApiNoticeCase>() {
-            @Override
-            public int compare(ApiNoticeCase obj1, ApiNoticeCase obj2) {
-                SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String date_source = obj1.getTbNoticeCase().ReceivingCaseDate + " " + obj1.getTbNoticeCase().ReceivingCaseTime;
-                String date_des = obj2.getTbNoticeCase().ReceivingCaseDate + " " + obj2.getTbNoticeCase().ReceivingCaseTime;
-                try {
-                    return dfDate.parse(date_des).compareTo(dfDate.parse(date_source));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return 0;
-                }
-            }
-        });
-//        for(int i=0; i < caseList.size(); i++){
-//            Log.d(TAG, "TEST Date "+ caseList.get(i).getTbNoticeCase().getReceivingCaseDate() +
-//            " "+ caseList.get(i).getTbNoticeCase().getReceivingCaseTime());
-//        }
-        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
-        rvDraft.setAdapter(apiNoticeCaseListAdapter);
-        apiNoticeCaseListAdapter.notifyDataSetChanged();
-        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
-        swipeContainer.setRefreshing(false);
     }
 
     @Override
@@ -392,7 +375,6 @@ public class NoticeCaseListFragment extends Fragment {
         caseList = apiListNoticeCase.getData().getResult();
         Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
         setAdapterList_sort();
-//        setAdapterList();
     }
 
     class ConnectlistNoticecase extends AsyncTask<Void, Void, ApiListNoticeCase> {
@@ -420,7 +402,6 @@ public class NoticeCaseListFragment extends Fragment {
                 //caseList.get(2).setMode("online");
                 Log.i(TAG + " caseList size ", String.valueOf(caseList.size()));
                 setAdapterList_sort();
-//                setAdapterList();
             } else {
                 Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
                         Toast.LENGTH_SHORT).show();
@@ -751,7 +732,7 @@ public class NoticeCaseListFragment extends Fragment {
                 // Do Fragment menu item stuff here
                 AlertDialog.Builder builder =
                         new AlertDialog.Builder(getActivity());
-                builder.setTitle("จัดเรียงตาม");
+                builder.setTitle(R.string.sortitem);
                 SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_SORTING, context.MODE_PRIVATE);
                 wSorting = Integer.parseInt(sp.getString(PreferenceData.KEY_SORTING, wSorting_value));
                 Log.i(TAG, "wSorting " + String.valueOf(wSorting));
@@ -767,6 +748,7 @@ public class NoticeCaseListFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
                         WelcomeActivity.api.setSorting(String.valueOf(wSelected));
+//                        WelcomeActivity.api.setSortingByStatus(String.valueOf(wSelected));
                         swipeContainer.post(new Runnable() {
                             @Override
                             public void run() {
@@ -785,6 +767,49 @@ public class NoticeCaseListFragment extends Fragment {
 // สุดท้ายอย่าลืม show() ด้วย
                 builder.show();
                 return true;
+            case R.id.action_sorting_status:
+                // Do Fragment menu item stuff here
+                mMultiSelected = new ArrayList<Integer>();
+                AlertDialog.Builder builder2 =
+                        new AlertDialog.Builder(getActivity());
+                builder2.setTitle(R.string.sortstatus_title);
+                if (setstatusorting) {
+                    CheckedSortStatuslists = WelcomeActivity.api.loadArray("SortStatusArray", 7);
+                } else {
+                    CheckedSortStatuslists = new boolean[]{true, true, true, true, true, true, true};}
+                builder2.setMultiChoiceItems(sortStatuslists, CheckedSortStatuslists, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        CheckedSortStatuslists[which] = isChecked;
+                        if (isChecked) {
+                            mMultiSelected.add(which);
+                        } else if (mMultiSelected.contains(which)) {
+                            mMultiSelected.remove(Integer.valueOf(which));
+                        }
+                    }
+                });
+                builder2.setPositiveButton("เลือก", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
+                        WelcomeActivity.api.storeArray(CheckedSortStatuslists, "SortStatusArray");
+                        setstatusorting = true;
+                        swipeContainer.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                setAdapterData();
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
+
+                builder2.setNegativeButton("ยกเลิก", null);
+                builder2.create();
+
+// สุดท้ายอย่าลืม show() ด้วย
+                builder2.show();
+                return true;
             default:
                 break;
         }
@@ -793,6 +818,24 @@ public class NoticeCaseListFragment extends Fragment {
     }
 
     private void setAdapterList_sort() {
+        if (setstatusorting) {
+            CheckedSortStatuslists = WelcomeActivity.api.loadArray("SortStatusArray", 7);
+            List<ApiNoticeCase> newListNoticeCase = new ArrayList<>();
+
+            for (int i = 0; i < CheckedSortStatuslists.length; i++) {
+                boolean checked = CheckedSortStatuslists[i];
+                String status = sortStatus[i];
+                if (checked) {
+                    Log.i(TAG, "CheckedSortStatuslists " + String.valueOf(i) + " " + status);
+                    for (int j = 0; j < caseList.size(); j++) {
+                        if (caseList.get(j).getTbNoticeCase().CaseStatus.equals(status)) {
+                            newListNoticeCase.add(caseList.get(j));
+                        }
+                    }
+                }
+            }
+            caseList = newListNoticeCase;
+        }
         SharedPreferences sp = context.getSharedPreferences(PreferenceData.PREF_SORTING, context.MODE_PRIVATE);
         wSorting = Integer.parseInt(sp.getString(PreferenceData.KEY_SORTING, wSorting_value));
         // จัดเรียงข้อมูลใน caseList ให้เรียงตามวันที่แจ้งเหตุ ReceivingCaseDate,ReceivingCaseTime ก่อนถึงจะเอาไปแสดง

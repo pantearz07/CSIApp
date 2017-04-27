@@ -5,6 +5,11 @@
     <item
         android:id="@+id/action_sorting"
         android:orderInCategory="100"
-        android:title="จัดเรียงตาม"
+        android:title="@string/sortitem"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sorting_status"
+        android:orderInCategory="100"
+        android:title="@string/sortstatus"
         app:showAsAction="never" />
 </menu>

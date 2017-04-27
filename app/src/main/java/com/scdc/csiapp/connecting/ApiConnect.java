@@ -52,7 +52,9 @@ import com.scdc.csiapp.tablemodel.TbNoticeCase;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
@@ -159,6 +161,28 @@ public class ApiConnect implements Parcelable {
         editor.commit();
         Log.d(TAG, "wSorting " + wSorting);
         return true;
+    }
+
+    public boolean storeArray(boolean[] array, String arrayName) {
+
+        SharedPreferences prefs = mContext.getSharedPreferences(PreferenceData.PREF_SORTING_BY_STATUS, 0);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(arrayName + "_size", array.length);
+
+        for (int i = 0; i < array.length; i++)
+            editor.putBoolean(arrayName + "_" + i, array[i]);
+
+        return editor.commit();
+    }
+
+    public boolean[] loadArray(String arrayName, int arraydefaultlength) {
+        SharedPreferences prefs = mContext.getSharedPreferences(PreferenceData.PREF_SORTING_BY_STATUS, 0);
+        int size = prefs.getInt(arrayName + "_size", arraydefaultlength);
+        boolean array[] = new boolean[size];
+        for (int i = 0; i < size; i++)
+            array[i] = prefs.getBoolean(arrayName + "_" + i, true);
+
+        return array;
     }
 
     // ตรวจสอบการ Login และข้อมูลผู้ใช้งาน User , Official ผ่าน function login

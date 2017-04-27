@@ -30,9 +30,10 @@ public class PreferenceData {
     public static final String ARG_UPDATE_DATA_RECEIVINGCASE = "updatedate";
     public static final String ARG_UPDATE_DATA_DRAFTCASE = "updatedate";
     public static final String PREF_REPORTSTATUS = "status";
-
+    //SORTING
     public static final String PREF_SORTING = "wSorting";
     public static final String KEY_SORTING = "wSortingValue";
+    public static final String PREF_SORTING_BY_STATUS = "wSortingStatus";
 
     //setting
     public static final String PREF_IP = "pref_ip";
@@ -41,7 +42,6 @@ public class PreferenceData {
     TbOfficial tbOfficial = new TbOfficial();
     TbUsers tbUsers = new TbUsers();
     DBHelper dbHelper;
-// SharedPreferences mPrefs; mPrefs = getSharedPreferences("pref_ip", MODE_PRIVATE);
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
