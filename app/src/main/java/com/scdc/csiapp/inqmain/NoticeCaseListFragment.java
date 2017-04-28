@@ -113,7 +113,6 @@ public class NoticeCaseListFragment extends Fragment {
     private static final String[] sortStatus =
             {"receive", "notice", "assign", "accept", "investigating", "investigated", "reported"};
     boolean[] CheckedSortStatuslists = new boolean[7];
-    //            {false, false, false, false, false, false, false};
     boolean setstatusorting = false;
 
 

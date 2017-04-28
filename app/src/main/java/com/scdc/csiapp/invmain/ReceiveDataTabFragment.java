@@ -744,6 +744,20 @@ public class ReceiveDataTabFragment extends Fragment implements GoogleApiClient.
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().KnowCaseTime = getDateTime.formatTime(editKnowCaseTime.getText().toString());
         }
 
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+        } else {
+            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals("reported")) {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "reported";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "reported";
+            } else {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+            }
+        }
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {

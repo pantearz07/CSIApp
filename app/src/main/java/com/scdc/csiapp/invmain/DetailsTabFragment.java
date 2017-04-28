@@ -621,6 +621,21 @@ public class DetailsTabFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
+        if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+        } else {
+            if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals("reported")) {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "reported";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "reported";
+            } else {
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigated";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigated";
+            }
+        }
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene() != null) {
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
