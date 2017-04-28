@@ -326,27 +326,27 @@ public class SummaryEmerTabFragment extends Fragment {
         if (mTypePoliceStationArray != null) {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
-
-        if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_1)) {
+        if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("receive")) {
             edtStatus.setText(R.string.edtStatus_1);
             edtStatus.setBackgroundColor(Color.parseColor("#c9302c"));
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_2)) {
+            Log.i(TAG, "CaseStatus edtStatus_1" + EmergencyTabFragment.tbNoticeCase.getCaseStatus().toString());
+        } else if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("notice")) {
             edtStatus.setText(R.string.edtStatus_2);
             edtStatus.setBackgroundColor(Color.parseColor("#ec971f"));
             btnNoticecase.setEnabled(false);
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_3)) {
+        } else if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("assign")) {
             edtStatus.setText(R.string.edtStatus_3);
             edtStatus.setBackgroundColor(Color.parseColor("#449d44"));
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_4)) {
+        } else if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("accept")) {
             edtStatus.setText(R.string.edtStatus_4);
             edtStatus.setBackgroundColor(Color.parseColor("#31b0d5"));
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_5)) {
+        } else if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("investigating")) {
             edtStatus.setText(R.string.edtStatus_5);
             edtStatus.setBackgroundColor(Color.parseColor("#286090"));
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_6)) {
+        } else if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("investigated")) {
             edtStatus.setText(R.string.edtStatus_6);
             edtStatus.setBackgroundColor(Color.parseColor("#9B26AF"));
-        } else if (EmergencyTabFragment.tbNoticeCase.getCaseStatus().equals(R.string.casestatus_7)) {
+        } else if (EmergencyTabFragment.tbNoticeCase.CaseStatus.equals("reported")) {
             edtStatus.setText(R.string.edtStatus_7);
             edtStatus.setBackgroundColor(Color.parseColor("#9D9D9D"));
         }

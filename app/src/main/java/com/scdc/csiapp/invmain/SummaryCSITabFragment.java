@@ -350,17 +350,18 @@ public class SummaryCSITabFragment extends Fragment {
         if (mTypePoliceStationArray != null) {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
-        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_1))) {
+        Log.i(TAG, "CaseStatus" + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.toString());
+        if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_1))) {
             edtStatus.setText(getString(R.string.edtStatus_1));
             edtStatus.setBackgroundColor(Color.parseColor("#c9302c"));
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_2))) {
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_2))) {
             edtStatus.setText(getString(R.string.edtStatus_2));
             edtStatus.setBackgroundColor(Color.parseColor("#ec971f"));
             btnNoticecase.setEnabled(false);
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_3))) {
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_3))) {
             edtStatus.setText(getString(R.string.edtStatus_3));
             edtStatus.setBackgroundColor(Color.parseColor("#449d44"));
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_4))) {
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_4))) {
             if (CSIDataTabFragment.mode.equals("view")) {
                 edtStatus.setText(getString(R.string.edtStatus_4));
                 edtStatus.setBackgroundColor(Color.parseColor("#31b0d5"));
@@ -380,13 +381,13 @@ public class SummaryCSITabFragment extends Fragment {
                     Log.i(TAG, "accept to investigating");
                 }
             }
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_5))) {
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_5))) {
             edtStatus.setText(getString(R.string.edtStatus_5));
             edtStatus.setBackgroundColor(Color.parseColor("#286090"));
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_6))) {
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_6))) {
             edtStatus.setText(getString(R.string.edtStatus_6));
             edtStatus.setBackgroundColor(Color.parseColor("#9B26AF"));
-        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().getCaseStatus().equals(getString(R.string.casestatus_7))) {
+        } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_7))) {
             edtStatus.setText(getString(R.string.edtStatus_7));
             edtStatus.setBackgroundColor(Color.parseColor("#9D9D9D"));
         }
