@@ -277,7 +277,7 @@ public class InqMainActivity extends AppCompatActivity {
             finish();
             startActivity(gotoWelcomeActivity);
         }
-        Log.i(TAG, officialID);
+//        Log.i(TAG, officialID);
     }
 
 //    @Override
