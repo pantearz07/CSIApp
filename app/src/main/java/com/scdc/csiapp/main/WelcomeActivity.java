@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -59,6 +61,7 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
     boolean userlogin = false;
     String ipvalue;
     DBHelper dbHelper;
+    boolean flag_firstRun = true;
     //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     // private boolean isReceiverRegistered;
     private static final String TAG = "DEBUG-WelcomeActivity";
@@ -102,6 +105,49 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
             }
         }
 
+        // ตรวจสอบการทำงานของระบบ GPS
+        // ถ้าไม่เปิดจะไม่ให้ทำงานต่อเลย จะหยุดที่ขั้นตอนนี้เท่านั้นช
+        LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        if (!gps_enabled && !network_enabled) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+            dialog.setMessage(mContext.getResources().getString(R.string.gps_network_not_enabled));
+            dialog.setPositiveButton(mContext.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    mContext.startActivity(myIntent);
+                }
+            });
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    checkLoginAndGo();
+                }
+            });
+            dialog.show();
+        } else {
+            // กรณีผ่านการตรวจสอบ GPS แล้วก็จะทำการเช็คว่าเคย Login แล้วหรือยัง
+            // และส่งไปตามสิทธิ์ที่ได้ Login ไว้
+            checkLoginAndGo();
+        }
+    }
+
+    private void checkLoginAndGo() {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -180,7 +226,6 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
         profile.setTbUsers(users);
     }
 
-
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "onStartWelcome");
@@ -224,6 +269,15 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
             mGoogleApiClient.connect();
         }
         Log.d(TAG, "onResume");
+
+        // ตรวจสอบการ Login จะไม่ทำงานครั้งแรกที่เข้า onResume
+        // เพราะ onCreate -> onResume ครั้งแรกเสมอ 
+        if (flag_firstRun) {
+            flag_firstRun = false;
+        } else {
+            // กรณีผ่านกลับมาเปิดหน้านั้นให้ทำการตรวจ Login ใหม่
+            checkLoginAndGo();
+        }
     }
 
     @Override

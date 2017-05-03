@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">CSIApp</string>
 
+    <string name="gps_network_not_enabled">กรุณาเปิดใช้งานระบบ GPS</string>
+    <string name="open_location_settings">เปิดการตั้งค่า GPS</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="offline_mode_status">โหมดออฟไลน์</string>
