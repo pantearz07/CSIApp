@@ -20,11 +20,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -43,7 +45,6 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
-import com.scdc.csiapp.apimodel.ApiNoticeCase;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ApiConnect;
@@ -71,7 +72,7 @@ import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 /**
  * Created by Pantearz07 on 14/9/2559.
  */
-public class CaseSceneListFragment extends Fragment {
+public class CaseSceneListFragment extends Fragment implements SearchView.OnQueryTextListener {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -617,7 +618,86 @@ public class CaseSceneListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
+
+        //Set listener for SearchView
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        if (query.length() == 0) {
+            apiCaseSceneListAdapter = new ApiCaseSceneListAdapter(caseList);
+            rvDraft.setAdapter(apiCaseSceneListAdapter);
+            apiCaseSceneListAdapter.notifyDataSetChanged();
+            apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
+            return false;
+        }
+
+        // กระบวนการค้นหาจากข้อความที่พิมพ์เข้ามา
+        ArrayList<ApiCaseScene> src_list = new ArrayList<ApiCaseScene>();
+        int textlength = query.length();
+        for (int i = 0; i < caseList.size(); i++) {
+            try {
+                // Copy from ApiNoticeCaseListAdapter
+                String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
+                if (caseList.get(i).getTbDistrict() != null) {
+                    DISTRICT_NAME = caseList.get(i).getTbDistrict().DISTRICT_NAME;
+                }
+                if (caseList.get(i).getTbAmphur() != null) {
+                    AMPHUR_NAME = caseList.get(i).getTbAmphur().AMPHUR_NAME;
+                }
+                if (caseList.get(i).getTbProvince() != null) {
+                    PROVINCE_NAME = caseList.get(i).getTbProvince().PROVINCE_NAME;
+                }
+                String positioncase = "";
+                if (caseList.get(i).getTbNoticeCase().LocaleName != null) {
+                    positioncase = caseList.get(i).getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
+                            + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+                } else {
+                    positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+                }
+                String inq = "";
+                if (caseList.get(i).getTbCaseScene().InvestigatorOfficialID != null || caseList.get(i).getTbCaseScene().InvestigatorOfficialID != "") {
+                    inq = caseList.get(i).getTbOfficial().Rank + " " + caseList.get(i).getTbOfficial().FirstName + " " + caseList.get(i).getTbOfficial().LastName
+                            + " (" + caseList.get(i).getTbOfficial().Position
+                            + ") โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
+                }
+                String receiving = caseList.get(i).getTbCaseScene().ReceivingCaseDate +
+                        " เวลา " + caseList.get(i).getTbCaseScene().ReceivingCaseTime + " น.";
+                // End copy from ApiNoticeCaseListAdapter
+
+                if (positioncase.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (caseList.get(i).getTbCaseScene().LocaleName.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (caseList.get(i).getTbCaseSceneType().CaseTypeName.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (receiving.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (inq.contains(query)) {
+                    src_list.add(caseList.get(i));
+                }
+            } catch (Exception e) {
+            }
+        }
+
+
+        // อัพเดทข้อมูลไปแสดงใน Recycle View
+        apiCaseSceneListAdapter = new ApiCaseSceneListAdapter(src_list);
+        rvDraft.setAdapter(apiCaseSceneListAdapter);
+        apiCaseSceneListAdapter.notifyDataSetChanged();
+        apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        // ไม่ต้องสนใจให้ไปจัดการใน onQueryTextChange
+        return false;
     }
 
     @Override
