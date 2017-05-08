@@ -19,11 +19,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -66,7 +68,7 @@ import java.util.List;
 /**
  * Created by Pantearz07 on 14/9/2559.
  */
-public class NoticeCaseListFragment extends Fragment {
+public class NoticeCaseListFragment extends Fragment implements SearchView.OnQueryTextListener {
     FloatingActionButton fabBtn;
     CoordinatorLayout rootLayout;
     FragmentManager mFragmentManager;
@@ -721,7 +723,86 @@ public class NoticeCaseListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
+
+        //Set listener for SearchView
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        if (query.length() == 0) {
+            apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
+            rvDraft.setAdapter(apiNoticeCaseListAdapter);
+            apiNoticeCaseListAdapter.notifyDataSetChanged();
+            apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+            return false;
+        }
+
+        // กระบวนการค้นหาจากข้อความที่พิมพ์เข้ามา
+        ArrayList<ApiNoticeCase> src_list = new ArrayList<ApiNoticeCase>();
+        int textlength = query.length();
+        for (int i = 0; i < caseList.size(); i++) {
+            try {
+                // Copy from ApiNoticeCaseListAdapter
+                String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
+                if (caseList.get(i).getTbDistrict() != null) {
+                    DISTRICT_NAME = caseList.get(i).getTbDistrict().DISTRICT_NAME;
+                }
+                if (caseList.get(i).getTbAmphur() != null) {
+                    AMPHUR_NAME = caseList.get(i).getTbAmphur().AMPHUR_NAME;
+                }
+                if (caseList.get(i).getTbProvince() != null) {
+                    PROVINCE_NAME = caseList.get(i).getTbProvince().PROVINCE_NAME;
+                }
+                String positioncase = "";
+                if (caseList.get(i).getTbNoticeCase().LocaleName != null) {
+                    positioncase = caseList.get(i).getTbNoticeCase().LocaleName + " " + DISTRICT_NAME
+                            + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+                } else {
+                    positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
+                }
+                String inq = "";
+                if (caseList.get(i).getTbNoticeCase().InvestigatorOfficialID != null || caseList.get(i).getTbNoticeCase().InvestigatorOfficialID != "") {
+                    inq = caseList.get(i).getTbOfficial().Rank + " " + caseList.get(i).getTbOfficial().FirstName + " " + caseList.get(i).getTbOfficial().LastName
+                            + " (" + caseList.get(i).getTbOfficial().Position
+                            + ") โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
+                }
+                String receiving = caseList.get(i).getTbNoticeCase().ReceivingCaseDate +
+                        " เวลา " + caseList.get(i).getTbNoticeCase().ReceivingCaseTime + " น.";
+                // End copy from ApiNoticeCaseListAdapter
+
+                if (positioncase.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (caseList.get(i).getTbNoticeCase().LocaleName.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (caseList.get(i).getTbCaseSceneType().CaseTypeName.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (receiving.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (inq.contains(query)) {
+                    src_list.add(caseList.get(i));
+                }
+            } catch (Exception e) {
+            }
+        }
+
+
+        // อัพเดทข้อมูลไปแสดงใน Recycle View
+        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(src_list);
+        rvDraft.setAdapter(apiNoticeCaseListAdapter);
+        apiNoticeCaseListAdapter.notifyDataSetChanged();
+        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        // ไม่ต้องสนใจให้ไปจัดการใน onQueryTextChange
+        return false;
     }
 
     @Override
@@ -775,7 +856,8 @@ public class NoticeCaseListFragment extends Fragment {
                 if (setstatusorting) {
                     CheckedSortStatuslists = WelcomeActivity.api.loadArray("SortStatusArray", 7);
                 } else {
-                    CheckedSortStatuslists = new boolean[]{true, true, true, true, true, true, true};}
+                    CheckedSortStatuslists = new boolean[]{true, true, true, true, true, true, true};
+                }
                 builder2.setMultiChoiceItems(sortStatuslists, CheckedSortStatuslists, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
