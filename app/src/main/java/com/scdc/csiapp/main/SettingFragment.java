@@ -39,12 +39,11 @@ public class SettingFragment extends Fragment {
 
     SQLiteDatabase mDb;
     SQLiteDBHelper mDbHelper;
-    private Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
     private static final String TAG = "DEBUG-SettingFragment";
-    //ProgressDialog progressBar;
     public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
+    public static Context mContext;
     private ProgressDialog mProgressDialog;
     private static final String[] MenuSetting = new String[]{
             "ตั้งค่า IP ใหม่", "อัพเดตข้อมูลทั้งหมด", "อัพเดตข้อมูลพื้นฐานสำหรับตำรวจ", "อัพเดตข้อมูลพื้นฐานสำหรับที่อยู่"};
@@ -62,6 +61,7 @@ public class SettingFragment extends Fragment {
         mDb = mDbHelper.getWritableDatabase();
         mManager = new PreferenceData(getActivity());
         cd = new ConnectionDetector(getActivity());
+        mContext = getContext();
 
         listMenuSetting = (ListView) view.findViewById(R.id.listSetting);
         listMenuSetting.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, MenuSetting));
@@ -127,7 +127,6 @@ public class SettingFragment extends Fragment {
                         SyncData syncData = new SyncData();
                         syncData.execute();
                     } else if (position == 2) {
-
                         Log.i(TAG, "savePoliceData");
                         SyncDataPolice syncDataPolice = new SyncDataPolice();
                         syncDataPolice.execute();

@@ -1,17 +1,27 @@
 package com.scdc.csiapp.connecting;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.main.MainActivity;
+import com.scdc.csiapp.main.SettingFragment;
 import com.scdc.csiapp.main.WelcomeActivity;
 
 /**
  * Created by Amnart on 18/9/2559.
  */
 public class SyncData extends AsyncTask<Void, Void, Void> {
+    protected ProgressDialog progressDialog;
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressDialog = ProgressDialog.show(SettingFragment.mContext, "กำลังดำเนินการ", "อัพเดตข้อมูลทั้งหมดจากเซิร์ฟเวอร์", true, false);
+    }
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -54,5 +64,7 @@ public class SyncData extends AsyncTask<Void, Void, Void> {
         // ถ้าส่งมาจากหน้า loginactivity จะ error
         Toast.makeText(WelcomeActivity.mContext, R.string.save_complete,
                 Toast.LENGTH_LONG).show();
+
+        progressDialog.dismiss();
     }
 }
