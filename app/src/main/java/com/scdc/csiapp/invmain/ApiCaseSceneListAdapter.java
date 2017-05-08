@@ -103,8 +103,12 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
         } else {
             csidataholder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
         }
+        if (apiNoticeCase.getTbCaseSceneType()!= null) {
+            csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
+        } else {
+            csidataholder.typeCase.setText("ประเภทคดี: -");
+        }
 
-        csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
         String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
         if (apiNoticeCase.getTbDistrict() != null) {
             DISTRICT_NAME = apiNoticeCase.getTbDistrict().DISTRICT_NAME;
@@ -130,10 +134,15 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
             csidataholder.policeStation.setText("สภ. " + apiNoticeCase.getTbPoliceStation().PoliceStationName);
 
         }
-
+        String ReceivingCaseDate = "", ReceivingCaseTime = "";
+        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseDate != null) {
+            ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate);
+        }
+        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseTime != null) {
+            ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
+        }
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " +
-                getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate) +
-                " เวลา " + getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime) + " น.");
+                ReceivingCaseDate + " เวลา " + ReceivingCaseTime + " น.");
 
         if (apiNoticeCase.getTbNoticeCase().InquiryOfficialID != null) {
             csidataholder.inqInfo.setVisibility(View.VISIBLE);

@@ -12,7 +12,6 @@ import com.scdc.csiapp.main.WelcomeActivity;
  * Created by Pantearz07 on 18/9/2559.
  */
 public class SyncDataPolice extends AsyncTask<Void, Void, Void> {
-
     @Override
     protected Void doInBackground(Void... voids) {
         if (WelcomeActivity.api != null) {

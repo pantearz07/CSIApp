@@ -50,6 +50,7 @@ public class SyncData extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void voice) {
         super.onPostExecute(voice);
         Log.d("TEST", "END");
+
         // ถ้าส่งมาจากหน้า loginactivity จะ error
         Toast.makeText(WelcomeActivity.mContext, R.string.save_complete,
                 Toast.LENGTH_LONG).show();

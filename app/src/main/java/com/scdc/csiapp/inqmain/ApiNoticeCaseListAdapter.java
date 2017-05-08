@@ -107,7 +107,11 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
             csidataholder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
         }
 
-        csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
+        if (apiNoticeCase.getTbCaseSceneType() != null) {
+            csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
+        } else {
+            csidataholder.typeCase.setText("ประเภทคดี: -");
+        }
         String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
         if (apiNoticeCase.getTbDistrict() != null) {
             DISTRICT_NAME = apiNoticeCase.getTbDistrict().DISTRICT_NAME;
@@ -133,10 +137,15 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
             csidataholder.policeStation.setText("สภ. " + apiNoticeCase.getTbPoliceStation().PoliceStationName);
 
         }
-
+        String ReceivingCaseDate = "", ReceivingCaseTime = "";
+        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseDate != null) {
+            ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate);
+        }
+        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseTime != null) {
+            ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
+        }
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " +
-                getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate) +
-                " เวลา " + getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime) + " น.");
+                ReceivingCaseDate + " เวลา " + ReceivingCaseTime + " น.");
 
         if (apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != null || apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != "") {
             if (apiNoticeCase.getTbOfficial() == null) {
@@ -188,7 +197,7 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         } else if (CaseStatus.equalsIgnoreCase("investigated")) {
             csidataholder.rel_status.setBackgroundColor(Color.parseColor("#9B26AF"));
             csidataholder.txt_status.setText(R.string.edtStatus_6);
-        }else if (CaseStatus.equalsIgnoreCase("reported")) {
+        } else if (CaseStatus.equalsIgnoreCase("reported")) {
             csidataholder.rel_status.setBackgroundColor(Color.parseColor("#9D9D9D"));
             csidataholder.txt_status.setText(R.string.edtStatus_7);
         }
