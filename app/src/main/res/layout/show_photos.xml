@@ -7,24 +7,21 @@
         android:id="@+id/imgPhoto"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/ic_imagefile" />
 
     <TextView
         android:id="@+id/txtDescPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imgPhoto"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/imgPhoto"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:text="xxx"
         android:gravity="center_horizontal"
-        android:textSize="@dimen/ssmall_text"
-        android:minLines="2">
-
-    </TextView>
-
+        android:minLines="2"
+        android:text="xxx"
+        android:textSize="@dimen/ssmall_text" />
 
 </RelativeLayout>

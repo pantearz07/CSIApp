@@ -10,43 +10,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView_setting"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:orientation="vertical">
 
                 <ListView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     android:id="@+id/listSetting"
-                    />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
-        <!--<android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabBtnSetting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:src="@drawable/ic_plus"
-            app:backgroundTint="@color/red_pink"
-            app:fabSize="normal"
-            app:layout_behavior="com.scdc.csiapp.main.ScrollAwareBehavior"
-            app:rippleColor="#FFF" />
-            -->
 
     </android.support.design.widget.CoordinatorLayout>
 

@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:padding="20dip">
 
-
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="fill_parent"
@@ -14,13 +13,13 @@
         android:layout_marginBottom="10dp"
         android:text="ชื่อไฟล์"
         android:textSize="@dimen/small_text" />
+
     <Chronometer
         android:id="@+id/chronometer"
-        android:gravity="center_horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="50dp"
-        />
+        android:gravity="center_horizontal"
+        android:textSize="50dp" />
 
     <View
         android:id="@+id/view1"
@@ -34,39 +33,45 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <ImageButton
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@color/transparent"
-            android:src="@drawable/ic_cancel"/>
+            android:src="@drawable/ic_cancel" />
+
         <View
             android:id="@+id/view2"
             android:layout_width="1dp"
             android:layout_height="match_parent"
 
             android:background="@color/orange" />
+
         <ImageButton
             android:id="@+id/btnStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@color/transparent"
-            android:src="@drawable/ic_record"/>
+            android:src="@drawable/ic_record" />
+
         <ImageButton
             android:id="@+id/btnPause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@color/transparent"
-            android:src="@drawable/ic_pause"/>
+            android:src="@drawable/ic_pause" />
+
         <View
             android:id="@+id/view3"
             android:layout_width="1dp"
             android:layout_height="match_parent"
 
             android:background="@color/orange" />
+
         <ImageButton
             android:id="@+id/btnStop"
             android:layout_width="wrap_content"

@@ -56,8 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="8dp"
-            android:scaleType="centerInside"
             android:background="@color/transparent"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_edit" />
 
         <ImageButton
@@ -66,8 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:layout_marginEnd="5dp"
-            android:scaleType="centerInside"
             android:background="@color/transparent"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_delete_file" />
     </LinearLayout>
 

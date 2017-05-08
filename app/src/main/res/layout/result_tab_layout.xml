@@ -11,23 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="20dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:id="@+id/edtUpdateDateTime3"
@@ -45,8 +40,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy"
-                        android:layout_marginTop="5dp">
+                        android:layout_marginTop="5dp"
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtCriminalGate"
@@ -97,8 +92,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy"
-                        android:layout_marginTop="5dp">
+                        android:layout_marginTop="5dp"
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtCriminalClue"
@@ -149,8 +144,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy"
-                        android:layout_marginTop="5dp">
+                        android:layout_marginTop="5dp"
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtPropertyLoss"
@@ -202,8 +197,8 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/navy"
-                        android:layout_marginTop="5dp">
+                        android:layout_marginTop="5dp"
+                        android:background="@color/navy">
 
                         <TextView
                             android:id="@+id/txtRealEvidences"
@@ -589,10 +584,12 @@
                             android:src="@drawable/ic_delete"
                             android:visibility="visible" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp">
+
                         <Button
                             android:id="@+id/btnSubmitInvestigated"
                             style="@style/buttonStyle"
@@ -605,7 +602,7 @@
                     </TableRow>
                 </TableLayout>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabBtnResult"

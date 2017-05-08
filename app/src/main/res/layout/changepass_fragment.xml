@@ -11,22 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:orientation="vertical">
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/edtPasswordLayout1"
@@ -37,8 +32,8 @@
                         android:id="@+id/edtPasswordOld"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="รหัสผ่านเก่า"
                         android:freezesText="true"
+                        android:hint="รหัสผ่านเก่า"
                         android:inputType="textPassword"
                         android:textSize="@dimen/small_text" />
 
@@ -53,8 +48,8 @@
                         android:id="@+id/edtPasswordNew"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="รหัสผ่านใหม่"
                         android:freezesText="true"
+                        android:hint="รหัสผ่านใหม่"
                         android:inputType="textPassword"
                         android:textSize="@dimen/small_text" />
 
@@ -69,8 +64,8 @@
                         android:id="@+id/edtPasswordNewConfirm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="ยืนยันรหัสผ่านใหม่"
                         android:freezesText="true"
+                        android:hint="ยืนยันรหัสผ่านใหม่"
                         android:inputType="textPassword"
                         android:textSize="@dimen/small_text" />
 
@@ -86,7 +81,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/small_text" />
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

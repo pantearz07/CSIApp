@@ -10,15 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView_inv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/swipeContainer"
@@ -38,6 +35,6 @@
                         android:layout_marginBottom="@dimen/margin_line" />
                 </LinearLayout>
             </android.support.v4.widget.SwipeRefreshLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

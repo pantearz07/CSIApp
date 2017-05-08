@@ -11,15 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -30,10 +27,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/toolbar"
+                    android:layout_marginBottom="50dp"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
                     android:layout_marginTop="50dp"
-                    android:layout_marginBottom="50dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
@@ -101,6 +98,7 @@
                     android:id="@+id/txt_ipvalue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
                     android:layout_gravity="left|bottom"
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="10dp"
@@ -108,13 +106,14 @@
                     android:gravity="right"
                     android:paddingEnd="60dp"
                     android:text="ip............"
-                    android:textSize="@dimen/ssmall_text"
-                    android:layout_alignParentBottom="true" />
+                    android:textSize="@dimen/ssmall_text" />
 
                 <ImageButton
                     android:id="@+id/settingip_btn"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="right|bottom"
                     android:layout_marginBottom="10dp"
@@ -122,10 +121,8 @@
                     android:background="@color/transparent"
                     android:scaleType="fitStart"
                     android:src="@drawable/ic_ipaddress"
-                    android:text="@string/setip"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true" />
+                    android:text="@string/setip" />
             </RelativeLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -11,23 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView_Receive"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="20dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:id="@+id/edtUpdateDateTime2"
@@ -168,6 +163,7 @@
                             android:freezesText="true"
                             android:inputType="time"
                             android:textSize="@dimen/small_text" />
+
                         <ImageButton
                             android:id="@+id/btn_clear_txt_1"
                             android:layout_width="wrap_content"
@@ -215,6 +211,7 @@
                             android:layout_weight="1"
                             android:freezesText="true"
                             android:textSize="@dimen/small_text" />
+
                         <ImageButton
                             android:id="@+id/btn_clear_txt_2"
                             android:layout_width="wrap_content"
@@ -718,8 +715,8 @@
                         android:id="@+id/tableRowInvestigatorLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_line"
-                        android:layout_marginBottom="5dp">
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="@dimen/margin_line">
 
 
                         <ListView
@@ -733,10 +730,12 @@
                             android:textSize="@dimen/small_text" />
 
                     </TableRow>
+
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp">
+
                         <Button
                             android:id="@+id/btnEditInvestigator"
                             style="@style/buttonStyle"
@@ -749,7 +748,7 @@
                     </TableRow>
                 </TableLayout>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabBtnRec"

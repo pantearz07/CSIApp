@@ -6,35 +6,17 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <!--<TextView-->
-        <!--android:id="@+id/txtSCDCcenterType"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="@dimen/margin_line"-->
-        <!--android:text="ศูนย์พิสูจน์หลักฐาน"-->
-        <!--android:textSize="@dimen/small_text" />-->
-
     <Spinner
         android:id="@+id/spnSCDCcenterType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        />
-
-    <!--<TextView-->
-    <!--android:id="@+id/txtSCDCagencyType"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="@dimen/margin_line"-->
-    <!--android:text="พิสูจน์หลักฐานจังหวัด"-->
-    <!--android:textSize="@dimen/small_text" />-->
+        android:layout_marginTop="10dp" />
 
     <Spinner
         android:id="@+id/spnSCDCagencyType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        />
+        android:layout_marginTop="15dp" />
 </LinearLayout>
 
 

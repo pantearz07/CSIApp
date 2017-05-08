@@ -11,22 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:orientation="vertical">
 
                 <TableLayout
                     android:id="@+id/tableFeatureInsideClass"
@@ -114,8 +109,8 @@
                                 android:id="@+id/editFeatureInsideClassFront"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="ด้านหน้า"
                                 android:ems="10"
+                                android:hint="ด้านหน้า"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -136,8 +131,8 @@
                                 android:id="@+id/editFeatureInsideClassLeft"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="ด้านซ้าย"
                                 android:ems="10"
+                                android:hint="ด้านซ้าย"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -159,8 +154,8 @@
                                 android:id="@+id/editFeatureInsideClassCenter"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="ตรงกลาง"
                                 android:ems="10"
+                                android:hint="ตรงกลาง"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -182,8 +177,8 @@
                                 android:id="@+id/editFeatureInsideClassRight"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="ด้านขวา"
                                 android:ems="10"
+                                android:hint="ด้านขวา"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -204,8 +199,8 @@
                                 android:id="@+id/editFeatureInsideClassBack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="ด้านหลัง"
                                 android:ems="10"
+                                android:hint="ด้านหลัง"
                                 android:inputType="text"
                                 android:textSize="@dimen/small_text" />
                         </android.support.design.widget.TextInputLayout>
@@ -331,7 +326,7 @@
                     </HorizontalScrollView>
                 </LinearLayout>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabBtnDetails"

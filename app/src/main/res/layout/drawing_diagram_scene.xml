@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    android:orientation="vertical" >
     <RelativeLayout
         android:id="@+id/layoutHead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_s"
+        android:background="@drawable/background_heading"
+        android:paddingBottom="@dimen/padding_s"
         android:paddingLeft="@dimen/padding_m"
         android:paddingRight="@dimen/padding_m"
-        android:paddingTop="@dimen/padding_s"
-        android:paddingBottom="@dimen/padding_s"
-        android:background="@drawable/background_heading"
-        >
+        android:paddingTop="@dimen/padding_s">
+
         <LinearLayout
             android:id="@+id/layoutFileName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            android:orientation="horizontal" >
             <TextView
                 android:id="@+id/txtFiles"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
                 android:layout_gravity="left|center_vertical"
+                android:layout_weight="0.3"
                 android:text="ชื่อไฟล์  :"
                 android:textSize="@dimen/ssmall_text" />
 
@@ -35,24 +34,25 @@
                 android:id="@+id/txtFilesName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="left|center_vertical"
+                android:layout_weight="1"
 
                 android:textSize="@dimen/ssmall_text" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/layoutFileDesc"
-            android:layout_below="@+id/layoutFileName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/layoutFileName"
+            android:orientation="horizontal">
 
-            android:orientation="horizontal" >
             <TextView
                 android:id="@+id/txtDesc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
                 android:layout_gravity="left|center_vertical"
+                android:layout_weight="0.3"
                 android:text="คำอธิบาย :"
                 android:textSize="@dimen/ssmall_text" />
 
@@ -60,17 +60,18 @@
                 android:id="@+id/txtDescFile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="left|center_vertical"
+                android:layout_weight="1"
 
                 android:textSize="@dimen/ssmall_text" />
         </LinearLayout>
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/new_btn"
@@ -117,7 +118,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <!-- Top Row -->
 
@@ -125,7 +126,7 @@
             android:id="@+id/paint_colors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:layout_width="@dimen/iconbrush"
@@ -192,7 +193,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:layout_width="@dimen/iconbrush"

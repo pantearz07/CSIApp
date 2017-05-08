@@ -1,7 +1,5 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayoutReceive"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,23 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView_Receive"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="20dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:id="@+id/edtUpdateDateTime2"
@@ -449,16 +442,16 @@
                     </TableRow>
 
                     <!--<TableRow-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginBottom="@dimen/margin_line"-->
-                        <!--android:layout_marginTop="@dimen/margin_line">-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginBottom="@dimen/margin_line"-->
+                    <!--android:layout_marginTop="@dimen/margin_line">-->
 
-                        <!--<fragment-->
-                            <!--android:id="@+id/map"-->
-                            <!--class="com.google.android.gms.maps.MapFragment"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="150dp" />-->
+                    <!--<fragment-->
+                    <!--android:id="@+id/map"-->
+                    <!--class="com.google.android.gms.maps.MapFragment"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="150dp" />-->
                     <!--</TableRow>-->
 
                     <TableRow
@@ -663,7 +656,7 @@
                     </TableRow>
                 </TableLayout>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabBtnRec"

@@ -6,7 +6,6 @@
     android:orientation="horizontal"
     android:padding="6dip">
 
-
     <TextView
         android:id="@+id/txtInvestigatorRank"
         android:layout_width="wrap_content"
@@ -31,6 +30,7 @@
         android:text="Lname"
 
         android:textSize="@dimen/small_text" />
+
     <TextView
         android:id="@+id/txtPosition"
         android:layout_width="wrap_content"

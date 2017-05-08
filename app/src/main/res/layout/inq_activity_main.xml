@@ -24,7 +24,7 @@
 
                 android:titleTextColor="@color/white"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="CSI Report" />
+                app:title="CSI Report" />
         </android.support.design.widget.AppBarLayout>
 
 
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </android.support.design.widget.CoordinatorLayout>
 

@@ -10,24 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView_Draft"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
-            <android.support.v4.widget.SwipeRefreshLayout
-
-                xmlns:android="http://schemas.android.com/apk/res/android"
-
+            <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/swipeContainer"
-
                 android:layout_width="match_parent"
-
                 android:layout_height="match_parent">
 
                 <LinearLayout
@@ -52,7 +44,7 @@
                 </LinearLayout>
             </android.support.v4.widget.SwipeRefreshLayout>
 
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
 
         <android.support.design.widget.FloatingActionButton
@@ -63,11 +55,11 @@
             android:layout_marginBottom="@dimen/codelab_fab_margin_bottom"
             android:layout_marginRight="@dimen/codelab_fab_margin_right"
             android:src="@drawable/ic_plus"
+            android:visibility="gone"
             app:backgroundTint="@color/red_pink"
             app:fabSize="normal"
             app:layout_behavior="com.example.pantearz07.main.ScrollAwareBehavior"
-            app:rippleColor="#FFF"
-            android:visibility="gone"/>
+            app:rippleColor="#FFF" />
 
     </android.support.design.widget.CoordinatorLayout>
 

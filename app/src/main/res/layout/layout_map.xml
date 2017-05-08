@@ -34,7 +34,7 @@
                     android:id="@+id/txtCurrentlatlng"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-android:layout_marginRight="5dp"
+                    android:layout_marginRight="5dp"
                     android:text="จากพิกัดปัจจุบัน"
 
                     android:textSize="@dimen/ssmall_text" />
@@ -42,9 +42,9 @@ android:layout_marginRight="5dp"
                 <TextView
                     android:id="@+id/sh_currentlatlng"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
+                    android:layout_weight="1"
                     android:lines="2"
                     android:text="Latitude: \nLongitude:"
                     android:textSize="@dimen/ssmall_text" />
@@ -110,8 +110,8 @@ android:layout_marginRight="5dp"
                 <TextView
                     android:id="@+id/txt_location"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:lines="2"
                     android:paddingBottom="5dp"
                     android:text="Latitude: \nLongitude:"
@@ -126,7 +126,6 @@ android:layout_marginRight="5dp"
 
                     android:textSize="@dimen/ssmall_text" />
             </LinearLayout>
-
 
 
             <Button
@@ -154,10 +153,10 @@ android:layout_marginRight="5dp"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:titleTextColor="@color/white"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="ค้นหาเส้นทาง" />
+            app:title="ค้นหาเส้นทาง"
+            app:titleTextColor="@color/white" />
 
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

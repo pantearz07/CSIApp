@@ -11,23 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/ScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/codelab_fab_margin_right"
-            android:layout_marginRight="@dimen/codelab_fab_margin_right"
-            android:layout_marginTop="@dimen/codelab_fab_margin_right"
             android:fillViewport="true"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="20dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:paddingBottom="20dp">
 
                 <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                     android:id="@+id/calendarView"
@@ -41,8 +36,9 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/margin_line"
                     android:text="รายชื่อผุ้ตรวจประจำวัน"
-                    android:textSize="@dimen/small_text"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="@dimen/small_text" />
+
                 <ListView
                     android:id="@+id/listViewInvestigator"
                     android:layout_width="wrap_content"
@@ -52,7 +48,7 @@
                     android:padding="5dp"
                     android:textSize="@dimen/small_text" />
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
     </android.support.design.widget.CoordinatorLayout>
 
