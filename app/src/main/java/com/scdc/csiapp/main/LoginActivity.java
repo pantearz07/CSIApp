@@ -48,7 +48,7 @@ import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
-import com.scdc.csiapp.connecting.SyncData;
+import com.scdc.csiapp.connecting.SyncDataLogin;
 import com.scdc.csiapp.gcmservice.GcmRegisterService;
 import com.scdc.csiapp.tablemodel.TbOfficial;
 import com.scdc.csiapp.tablemodel.TbUsers;
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     ImageButton settingip_btn;
     private EditText mUsername;
     private EditText mPassword;
-    private Context mContext;
+    public static Context mContext;
     private PreferenceData mManager;
     ConnectionDetector cd;
     ApiConnect api;
@@ -334,7 +334,7 @@ public class LoginActivity extends AppCompatActivity {
                     downloadDocFile.execute(apiLoginStatus.getData().getResult().getUsers().getPicture());
                 }
                 // ดึงข้อมูลอัพเดทจากเซิร์ฟเวอร์
-                SyncData syncData = new SyncData();
+                SyncDataLogin syncData = new SyncDataLogin();
                 syncData.execute();
             } else {
                 loginButton.setEnabled(true);
