@@ -23,9 +23,6 @@ import java.util.List;
  * Created by cbnuke on 9/19/16.
  */
 public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneListAdapter.CSIDataViewHolder> {
-    SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
-    Cursor mCursor;
     List<ApiCaseScene> apiNoticeCases;
     OnItemClickListener mItemClickListener;
     GetDateTime getDateTime = new GetDateTime();

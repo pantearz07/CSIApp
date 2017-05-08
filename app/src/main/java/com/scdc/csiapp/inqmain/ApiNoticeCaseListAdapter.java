@@ -23,9 +23,6 @@ import java.util.List;
  * Created by cbnuke on 9/19/16.
  */
 public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCaseListAdapter.CSIDataViewHolder> {
-    SQLiteDatabase mDb;
-    SQLiteDBHelper mDbHelper;
-    Cursor mCursor;
     List<ApiNoticeCase> apiNoticeCases;
     OnItemClickListener mItemClickListener;
     GetDateTime getDateTime = new GetDateTime();
