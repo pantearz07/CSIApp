@@ -57,13 +57,12 @@
 
                             <AutoCompleteTextView
                                 android:id="@+id/editGatewayCriminalDetails"
-
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="อธิบายการงัด, การเจาะ"
-
-                                android:lines="5" />
+                                android:maxLines="5"
+                                android:minLines="1" />
 
 
                         </android.support.design.widget.TextInputLayout>

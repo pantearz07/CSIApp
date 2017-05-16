@@ -263,6 +263,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog = new ProgressDialog(LoginActivity.this,
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
             progressDialog.setMessage(getString(R.string.authenticating));
             progressDialog.show();
         }
@@ -593,8 +594,10 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog = new ProgressDialog(LoginActivity.this,
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
             progressDialog.setMessage(getString(R.string.send_token));
             progressDialog.show();
+
         }
 
         @Override

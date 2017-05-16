@@ -78,11 +78,12 @@
 
                             <AutoCompleteTextView
                                 android:id="@+id/autoCompleteTypeOutside"
+                                style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="ลักษณะอาคาร เช่น บ้านคอนกรีต"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                         <Button
@@ -218,9 +219,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="อธิบายเกี่ยวกับลักษณะภายนอกเพิ่มเติม"
-                                android:inputType="text"
-                                android:maxLines="4"
-                                android:minLines="4" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                         <Button
@@ -288,14 +288,12 @@
 
                             <MultiAutoCompleteTextView
                                 android:id="@+id/autoCompleteOutsideAroundBack"
+                                style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านหลังติด"
-                                android:inputType="text"
                                 android:maxLines="3"
-                                android:minLines="1"
-                                android:textSize="@dimen/small_text" />
+                                android:minLines="1" />
 
                         </android.support.design.widget.TextInputLayout>
 
@@ -325,9 +323,7 @@
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านซ้ายติด"
-                                android:inputType="text"
                                 android:maxLines="5"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
@@ -359,9 +355,7 @@
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านขวาติด"
-                                android:inputType="text"
                                 android:maxLines="5"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
@@ -391,9 +385,7 @@
                                 style="@style/edtMultiLine"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านหน้าติด"
-                                android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
@@ -520,9 +512,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="อธิบายลักษณะภายในอื่นๆ"
-                                android:inputType="text"
-                                android:maxLines="3"
-                                android:minLines="3" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                         <Button
@@ -554,9 +545,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="บริเวณที่เกิดเหตุ"
-                                android:inputType="text"
-                                android:maxLines="3"
-                                android:minLines="2" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                         <Button

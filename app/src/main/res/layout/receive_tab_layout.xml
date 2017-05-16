@@ -304,7 +304,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="สถานที่เกิดเหตุ (ตย. ร้านอาหาร)"
-                                android:inputType="text"
                                 android:maxLines="3"
                                 android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
@@ -645,9 +644,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="คำอธิบาย"
-                                android:inputType="text"
-                                android:maxLines="3"
-                                android:minLines="2" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                     </TableRow>

@@ -109,10 +109,10 @@
                                 android:id="@+id/editFeatureInsideClassFront"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านหน้า"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1"  />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
@@ -131,10 +131,10 @@
                                 android:id="@+id/editFeatureInsideClassLeft"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านซ้าย"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                     </TableRow>
@@ -154,10 +154,10 @@
                                 android:id="@+id/editFeatureInsideClassCenter"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ตรงกลาง"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1"  />
                         </android.support.design.widget.TextInputLayout>
 
                     </TableRow>
@@ -177,10 +177,10 @@
                                 android:id="@+id/editFeatureInsideClassRight"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านขวา"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1"  />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
@@ -199,10 +199,10 @@
                                 android:id="@+id/editFeatureInsideClassBack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
                                 android:hint="ด้านหลัง"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 

@@ -12,7 +12,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -891,6 +890,7 @@ public class SummaryCSITabFragment extends Fragment {
             progressDialog = new ProgressDialog(getActivity(),
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
             progressDialog.setMessage(getString(R.string.upload_progress));
             progressDialog.show();
         }
@@ -959,6 +959,7 @@ public class SummaryCSITabFragment extends Fragment {
             progressDialog = new ProgressDialog(getActivity(),
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
             progressDialog.setMessage(getString(R.string.processing));
             progressDialog.show();
         }

@@ -263,8 +263,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="การดำเนินการเกี่ยวกับวัตถุพยาน"
-                                android:inputType="text"
-                                android:minLines="3" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                         <ImageButton
@@ -296,7 +296,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="หมายเหตุ"
-                                android:inputType="text"
+                                android:maxLines="5"
                                 android:minLines="2" />
 
 
@@ -469,8 +469,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="มีการใช้อาวุธ เช่น มีด, ปืน"
-                                android:inputType="text"
-                                android:minLines="3" />
+                                android:maxLines="5"
+                                android:minLines="1" />
 
 
                         </android.support.design.widget.TextInputLayout>
@@ -519,8 +519,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="อธิบายการพันธนาการผู้เสียหาย"
-                                android:inputType="text"
-                                android:minLines="3" />
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
 
                         <ImageButton

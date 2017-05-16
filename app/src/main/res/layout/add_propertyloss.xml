@@ -39,10 +39,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:completionThreshold="1"
-                            android:ems="10"
                             android:hint="ทรัพย์สินที่หายไป"
-                            android:inputType="text"
-                            android:textSize="@dimen/small_text" />
+                            style="@style/edtMultiLine"
+                            android:maxLines="5"
+                            android:minLines="1" />
                         <!--<EditText-->
                         <!--android:id="@+id/editPropertyLossName"-->
                         <!--android:layout_width="match_parent"-->
@@ -111,8 +111,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="บริเวณ"
-                        android:inputType="text"
-                        android:textSize="@dimen/small_text" />
+                        style="@style/edtMultiLine"
+                        android:maxLines="5"
+                        android:minLines="1" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -125,8 +126,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="การประกันทรัพย์สิน"
-                        android:inputType="text"
-                        android:textSize="@dimen/small_text" />
+                        style="@style/edtMultiLine"
+                        android:maxLines="5"
+                        android:minLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
@@ -141,7 +143,6 @@
                         android:layout_width="@dimen/icon_image_l"
                         android:layout_height="@dimen/icon_image_l"
                         android:layout_marginRight="10dp"
-
                         android:background="@drawable/ic_camera_wh"
                         android:gravity="center|center_horizontal" />
 

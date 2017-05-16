@@ -418,6 +418,7 @@ public class SummaryAssignTabFragment extends Fragment {
             progressDialog = new ProgressDialog(getActivity(),
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
             progressDialog.setMessage(getString(R.string.processing));
             progressDialog.show();
         }

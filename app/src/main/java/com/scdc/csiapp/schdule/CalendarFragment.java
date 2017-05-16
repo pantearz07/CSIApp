@@ -260,6 +260,9 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         @Override
         protected void onPreExecute() {
             // show progress spinner
+
+            spinner.setIndeterminate(true);
+            spinner.setCancelable(false);
             spinner.setMessage("กำลังโหลดข้อมูล...");
             spinner.show();
 

@@ -37,8 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="คำอธิบาย"
-            android:lines="3"
+            style="@style/edtMultiLine"
             android:maxLines="5"
+            android:minLines="1"
             android:textSize="@dimen/ssmall_text" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

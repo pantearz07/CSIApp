@@ -121,8 +121,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="บริเวณที่พบ"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1"  />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
@@ -142,8 +143,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="การทำเครื่องหมาย"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1" />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
@@ -163,8 +165,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="การบรรจุหีบห่อ"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1"  />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
 
@@ -184,8 +187,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="การดำเนินการเกี่ยวกับวัตุพยาน"
-                                android:inputType="text"
-                                android:textSize="@dimen/small_text" />
+                                style="@style/edtMultiLine"
+                                android:maxLines="5"
+                                android:minLines="1"  />
                         </android.support.design.widget.TextInputLayout>
                     </TableRow>
                 </TableLayout>
