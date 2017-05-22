@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CSIApp</string>
+    <string name="app_name">CSI 04</string>
 
     <string name="gps_network_not_enabled">กรุณาเปิดใช้งานระบบ GPS</string>
     <string name="open_location_settings">เปิดการตั้งค่า GPS</string>

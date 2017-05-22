@@ -12,14 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:src="@mipmap/app_logo"
-        android:layout_weight="0.15" />
+        android:layout_weight="0.25"
+        android:src="@mipmap/app_logo" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|center_horizontal"
-        android:text="Management System"
+        android:text="CSI 04"
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold" />

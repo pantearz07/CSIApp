@@ -2,6 +2,7 @@ package com.scdc.csiapp.main;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -58,6 +59,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 /**
  * Created by Pantearz07 on 23/9/2558.
@@ -591,6 +594,22 @@ public class ProfileFragment extends Fragment {
     }
 
     class EditProfile extends AsyncTask<ApiProfile, Void, ApiStatusResult> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("กำลังดำเนินการ");
+            progressDialog.show();
+        }
 
         @Override
         protected ApiStatusResult doInBackground(ApiProfile... apiProfiles) {
@@ -612,14 +631,14 @@ public class ProfileFragment extends Fragment {
                         String username_old = Username_old;
                         String username_new = WelcomeActivity.profile.getTbUsers().id_users;
                         Log.d(TAG, "Not Username_old " + username_old + " new " + WelcomeActivity.profile.getTbUsers().id_users);
-                        if(username_new == username_old) {
+                        if (username_new == username_old) {
                             if (snackbar == null || !snackbar.isShown()) {
 
-                                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE, getString(R.string.save_complete));
+                                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG, getString(R.string.save_complete));
 //                                    + " " + apiStatus.getData().getResult().toString());
                                 snackBarAlert.createSnacbar();
                             }
-                        }else{
+                        } else {
                             Toast.makeText(getActivity(),
                                     getString(R.string.save_complete)
                                             + "กำลังทำการเข้าสู่ระบบใหม่อีกครั้ง" + WelcomeActivity.profile.getTbOfficial().id_users.toString(),
@@ -628,8 +647,8 @@ public class ProfileFragment extends Fragment {
                             Log.d("clear logout", String.valueOf(status));
                             Intent mStartActivity = new Intent(getActivity(), WelcomeActivity.class);
                             int mPendingIntentId = 123456;
-                            PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                            AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+                            PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                            AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                             mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 600, mPendingIntent);
 //                        getActivity().startActivity(i);
                             System.exit(0);
@@ -639,7 +658,7 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getActivity(), "บันทึก pref ไม่สำเร็จ", Toast.LENGTH_LONG).show();
                         if (snackbar == null || !snackbar.isShown()) {
 
-                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_INDEFINITE,
+                            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
                                     getString(R.string.save_error) + "และบันทึก pref ไม่สำเร็จ");
 //                                            + " " + apiStatus.getData().getResult().toString());
                             snackBarAlert.createSnacbar();
@@ -656,10 +675,19 @@ public class ProfileFragment extends Fragment {
                 }
 
             } else {
-                Toast.makeText(getActivity(),
-                        getString(R.string.error_data) + " " + getString(R.string.network_error),
-                        Toast.LENGTH_LONG).show();
+
+                String username_new = WelcomeActivity.profile.getTbUsers().id_users;
+                if (username_new == Username_old) {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.error_data) + " " + getString(R.string.network_error),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            "ไม่สามารถบันทึกได้ กรุณาเปลี่ยนชื่อผู้ใช้ (Username)");
+                    snackBarAlert.createSnacbar();
+                }
             }
+            progressDialog.dismiss();
         }
     }
 
@@ -701,8 +729,8 @@ public class ProfileFragment extends Fragment {
 //                        Toast.makeText(getActivity(),
 //                                "มีผู้ใช้ Username นี้เเล้ว",
 //                                Toast.LENGTH_SHORT).show();
-                        WelcomeActivity.profile.getTbOfficial().setId_users(Username_old);
-                        WelcomeActivity.profile.getTbUsers().setId_users(Username_old);
+                        WelcomeActivity.profile.getTbOfficial().setId_users(Username_new);
+                        WelcomeActivity.profile.getTbUsers().setId_users(Username_new);
                     }
                 } else {
 
