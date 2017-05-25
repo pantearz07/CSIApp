@@ -196,6 +196,12 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume api");
@@ -748,6 +754,11 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
         for (int i = 0; i < caseList.size(); i++) {
             try {
                 // Copy from ApiNoticeCaseListAdapter
+                String sCaseTypeName = "";
+                if (caseList.get(i).getTbCaseSceneType().CaseTypeName != null) {
+                    sCaseTypeName = caseList.get(i).getTbCaseSceneType().CaseTypeName;
+                }
+
                 String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
                 if (caseList.get(i).getTbDistrict() != null) {
                     DISTRICT_NAME = caseList.get(i).getTbDistrict().DISTRICT_NAME;
@@ -771,20 +782,54 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                             + " (" + caseList.get(i).getTbOfficial().Position
                             + ") โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
                 }
-                String receiving = caseList.get(i).getTbNoticeCase().ReceivingCaseDate +
-                        " เวลา " + caseList.get(i).getTbNoticeCase().ReceivingCaseTime + " น.";
+                String SuffererInfo = "", SuffererPrename = "", SuffererName = "", SuffererPhoneNum = "";
+                if (caseList.get(i).getTbNoticeCase().SuffererPrename != null) {
+                    SuffererPrename = caseList.get(i).getTbNoticeCase().SuffererPrename;
+                }
+
+                if (caseList.get(i).getTbNoticeCase().SuffererName != null) {
+                    SuffererName = caseList.get(i).getTbNoticeCase().SuffererName;
+                }
+                if (caseList.get(i).getTbNoticeCase().SuffererPhoneNum != null) {
+                    SuffererPhoneNum = caseList.get(i).getTbNoticeCase().SuffererPhoneNum;
+                }
+
+                SuffererInfo = SuffererPrename + " " + SuffererName + " " + SuffererPhoneNum;
+                String receiving = "", ReceivingCaseDate = "", ReceivingCaseTime = "";
+                if (caseList.get(i).getTbNoticeCase().ReceivingCaseDate != null) {
+                    ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(caseList.get(i).getTbNoticeCase().ReceivingCaseDate);
+                }
+                if (caseList.get(i).getTbNoticeCase().ReceivingCaseTime != null) {
+                    ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
+                }
+                receiving = ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
                 // End copy from ApiNoticeCaseListAdapter
 
                 if (positioncase.contains(query)) {
                     src_list.add(caseList.get(i));
-                } else if (caseList.get(i).getTbNoticeCase().LocaleName.contains(query)) {
+                    Toast.makeText(getActivity(),
+                            positioncase,
+                            Toast.LENGTH_SHORT).show();
+                } else if (sCaseTypeName.contains(query)) {
                     src_list.add(caseList.get(i));
-                } else if (caseList.get(i).getTbCaseSceneType().CaseTypeName.contains(query)) {
-                    src_list.add(caseList.get(i));
+                    Toast.makeText(getActivity(),
+                            sCaseTypeName,
+                            Toast.LENGTH_SHORT).show();
                 } else if (receiving.contains(query)) {
                     src_list.add(caseList.get(i));
+                    Toast.makeText(getActivity(),
+                            receiving,
+                            Toast.LENGTH_SHORT).show();
                 } else if (inq.contains(query)) {
                     src_list.add(caseList.get(i));
+                    Toast.makeText(getActivity(),
+                            inq,
+                            Toast.LENGTH_SHORT).show();
+                } else if (SuffererInfo.contains(query)) {
+                    src_list.add(caseList.get(i));
+                    Toast.makeText(getActivity(),
+                            SuffererInfo,
+                            Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
             }

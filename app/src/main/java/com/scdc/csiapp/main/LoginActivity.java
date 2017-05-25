@@ -376,7 +376,7 @@ public class LoginActivity extends AppCompatActivity {
             if (checkPlayServices()) {
                 registerGcm();
             }
-
+            showNotification();
         }
 
     }
@@ -387,25 +387,28 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             // API 16 onwards
             Notification.Builder builder = new Notification.Builder(mContext);
-            builder.setAutoCancel(false)
+            builder.setAutoCancel(true)
                     //.setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.logo_csi)
+                    .setSmallIcon(R.mipmap.app_logo)
                     .setContentTitle("CSI Report ยินดีต้อนรับ")
                     .setContentText("คุณได้ทำการเข้าสู่ระบบ CSI Report เรียบร้อยแล้ว")
                     .setAutoCancel(true)
                     .setWhen((new Date()).getTime())
                     .setSound(defaultSoundUri)
                     .setDefaults(Notification.DEFAULT_ALL);
-            Notification notification = builder.build();
-            notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-            mNotificationManager =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mNotificationManager.notify(1000, notification);
+//            Notification notification = builder.build();
+//            notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+//            mNotificationManager =
+//                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            mNotificationManager.notify(1000, notification);
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1001, builder.build());
         } else {
 
             Notification notification =
                     new NotificationCompat.Builder(this) // this is context
-                            .setSmallIcon(R.drawable.logo_csi)
+                            .setSmallIcon(R.mipmap.app_logo)
                             .setContentTitle("CSI Report ยินดีต้อนรับ")
                             .setContentText("คุณได้ทำการเข้าสู่ระบบ CSI Report เรียบร้อยแล้ว")
                             .setAutoCancel(true)

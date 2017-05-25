@@ -661,24 +661,44 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                     positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
                 }
                 String inq = "";
-                if (caseList.get(i).getTbCaseScene().InvestigatorOfficialID != null || caseList.get(i).getTbCaseScene().InvestigatorOfficialID != "") {
+                if (caseList.get(i).getTbNoticeCase().InquiryOfficialID != null || caseList.get(i).getTbNoticeCase().InquiryOfficialID != "") {
                     inq = caseList.get(i).getTbOfficial().Rank + " " + caseList.get(i).getTbOfficial().FirstName + " " + caseList.get(i).getTbOfficial().LastName
                             + " (" + caseList.get(i).getTbOfficial().Position
                             + ") โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
                 }
-                String receiving = caseList.get(i).getTbCaseScene().ReceivingCaseDate +
-                        " เวลา " + caseList.get(i).getTbCaseScene().ReceivingCaseTime + " น.";
+                String SuffererInfo = "", SuffererPrename = "", SuffererName = "", SuffererPhoneNum = "";
+                if (caseList.get(i).getTbNoticeCase().SuffererPrename != null) {
+                    SuffererPrename = caseList.get(i).getTbNoticeCase().SuffererPrename;
+                }
+
+                if (caseList.get(i).getTbNoticeCase().SuffererName != null) {
+                    SuffererName = caseList.get(i).getTbNoticeCase().SuffererName;
+                }
+                if (caseList.get(i).getTbNoticeCase().SuffererPhoneNum != null) {
+                    SuffererPhoneNum = caseList.get(i).getTbNoticeCase().SuffererPhoneNum;
+                }
+
+                SuffererInfo = SuffererPrename + " " + SuffererName + " " + SuffererPhoneNum;
+
+                String receiving = "", ReceivingCaseDate = "", ReceivingCaseTime = "";
+                if (caseList.get(i).getTbNoticeCase().ReceivingCaseDate != null) {
+                    ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(caseList.get(i).getTbNoticeCase().ReceivingCaseDate);
+                }
+                if (caseList.get(i).getTbNoticeCase().ReceivingCaseTime != null) {
+                    ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
+                }
+                receiving = ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
                 // End copy from ApiNoticeCaseListAdapter
 
                 if (positioncase.contains(query)) {
-                    src_list.add(caseList.get(i));
-                } else if (caseList.get(i).getTbCaseScene().LocaleName.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (caseList.get(i).getTbCaseSceneType().CaseTypeName.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (receiving.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (inq.contains(query)) {
+                    src_list.add(caseList.get(i));
+                } else if (SuffererInfo.contains(query)) {
                     src_list.add(caseList.get(i));
                 }
             } catch (Exception e) {

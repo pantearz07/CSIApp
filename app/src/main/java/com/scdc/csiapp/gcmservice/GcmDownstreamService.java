@@ -236,7 +236,7 @@ public class GcmDownstreamService extends GcmListenerService {
             builder.setAutoCancel(true)
                     .setPriority(Notification.PRIORITY_MAX)
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.logo_csi)
+                    .setSmallIcon(R.mipmap.app_logo)
                     .setContentTitle(Title)
                     .setContentText(message)
                     .setStyle(new Notification.BigTextStyle()
@@ -258,7 +258,7 @@ public class GcmDownstreamService extends GcmListenerService {
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this)
                             .setPriority(NotificationCompat.PRIORITY_MAX) //HIGH, MAX, FULL_SCREEN and setDefaults(Notification.DEFAULT_ALL) will make it a Heads Up Display Style
-                            .setSmallIcon(R.drawable.logo_csi)
+                            .setSmallIcon(R.mipmap.app_logo)
                             .setContentTitle(Title)
                             .setContentText(message)
 

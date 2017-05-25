@@ -723,7 +723,7 @@ public class DBHelper extends SQLiteAssetHelper {
                 strSQL = "SELECT * FROM official WHERE "
                         + "OfficialID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
-
+                Log.d(TAG, "cursor select OfficialID" + String.valueOf(cursor.getCount()));
                 TbOfficial temp = new TbOfficial();
                 ContentValues Val = new ContentValues();
                 Val.put(COL_OfficialID, tbOfficials.get(i).OfficialID);
