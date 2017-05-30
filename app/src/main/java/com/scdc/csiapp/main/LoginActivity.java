@@ -376,7 +376,7 @@ public class LoginActivity extends AppCompatActivity {
             if (checkPlayServices()) {
                 registerGcm();
             }
-            showNotification();
+//            showNotification();
         }
 
     }

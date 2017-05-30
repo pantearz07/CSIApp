@@ -252,6 +252,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
             apiNoticeCase = caseList.get(position);
             mode = apiNoticeCase.getMode().toString();
             NoticeCaseID = apiNoticeCase.getTbNoticeCase().getNoticeCaseID().toString();
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 PopupMenu popup = new PopupMenu(getActivity(), view, Gravity.RIGHT);
                 //Inflating the Popup using xml file
@@ -807,29 +808,14 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
 
                 if (positioncase.contains(query)) {
                     src_list.add(caseList.get(i));
-                    Toast.makeText(getActivity(),
-                            positioncase,
-                            Toast.LENGTH_SHORT).show();
                 } else if (sCaseTypeName.contains(query)) {
                     src_list.add(caseList.get(i));
-                    Toast.makeText(getActivity(),
-                            sCaseTypeName,
-                            Toast.LENGTH_SHORT).show();
                 } else if (receiving.contains(query)) {
                     src_list.add(caseList.get(i));
-                    Toast.makeText(getActivity(),
-                            receiving,
-                            Toast.LENGTH_SHORT).show();
                 } else if (inq.contains(query)) {
                     src_list.add(caseList.get(i));
-                    Toast.makeText(getActivity(),
-                            inq,
-                            Toast.LENGTH_SHORT).show();
                 } else if (SuffererInfo.contains(query)) {
                     src_list.add(caseList.get(i));
-                    Toast.makeText(getActivity(),
-                            SuffererInfo,
-                            Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
             }
