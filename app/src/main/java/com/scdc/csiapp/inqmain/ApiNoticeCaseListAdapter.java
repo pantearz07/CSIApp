@@ -1,7 +1,5 @@
 package com.scdc.csiapp.inqmain;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiNoticeCase;
-import com.scdc.csiapp.connecting.SQLiteDBHelper;
 import com.scdc.csiapp.main.GetDateTime;
 
 import java.util.List;
@@ -138,9 +135,9 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         if (apiNoticeCase.getTbNoticeCase().ReceivingCaseDate != null) {
             ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate);
         }
-        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseTime != null) {
+//        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseTime != null) {
             ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
-        }
+//        }
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " +
                 ReceivingCaseDate + " เวลา " + ReceivingCaseTime + " น.");
 

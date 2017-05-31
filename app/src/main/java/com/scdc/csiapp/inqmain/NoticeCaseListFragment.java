@@ -75,6 +75,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
     Context context;
     //Recycle view
     private List<ApiNoticeCase> caseList;
+    private List<ApiNoticeCase> caseListTemp;
     private ArrayList<Integer> mMultiSelected;
     ArrayList<Boolean> mMultiChecked;
     RecyclerView rvDraft;
@@ -152,6 +153,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
         fabBtn.setOnClickListener(new NoticeOnClickListener());
 
         caseList = new ArrayList<>();
+        caseListTemp = new ArrayList<>();
         rvDraft = (RecyclerView) view.findViewById(R.id.rvDraft);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rvDraft.setLayoutManager(llm);
@@ -381,6 +383,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
     public void selectApiNoticeCaseFromSQLite() {
         ApiListNoticeCase apiListNoticeCase = mDbHelper.selectApiNoticeCase(WelcomeActivity.profile.getTbOfficial().OfficialID);
         caseList = apiListNoticeCase.getData().getResult();
+        caseListTemp = apiListNoticeCase.getData().getResult();
         Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
         setAdapterList_sort();
     }
@@ -407,6 +410,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListNoticeCase.getData().getResult();
+                caseListTemp = apiListNoticeCase.getData().getResult();
                 //caseList.get(2).setMode("online");
                 Log.i(TAG + " caseList size ", String.valueOf(caseList.size()));
                 setAdapterList_sort();
@@ -741,6 +745,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
 
     @Override
     public boolean onQueryTextChange(String query) {
+        caseList = caseListTemp;
         if (query.length() == 0) {
             apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(caseList);
             rvDraft.setAdapter(apiNoticeCaseListAdapter);
@@ -750,7 +755,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
         }
 
         // กระบวนการค้นหาจากข้อความที่พิมพ์เข้ามา
-        ArrayList<ApiNoticeCase> src_list = new ArrayList<ApiNoticeCase>();
+        List<ApiNoticeCase> src_list = new ArrayList<>();
         int textlength = query.length();
         for (int i = 0; i < caseList.size(); i++) {
             try {
@@ -800,9 +805,9 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                 if (caseList.get(i).getTbNoticeCase().ReceivingCaseDate != null) {
                     ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(caseList.get(i).getTbNoticeCase().ReceivingCaseDate);
                 }
-                if (caseList.get(i).getTbNoticeCase().ReceivingCaseTime != null) {
+//                if (caseList.get(i).getTbNoticeCase().ReceivingCaseTime != null) {
                     ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
-                }
+//                }
                 receiving = ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
                 // End copy from ApiNoticeCaseListAdapter
 
@@ -821,18 +826,15 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
             }
         }
 
-
-        // อัพเดทข้อมูลไปแสดงใน Recycle View
-        apiNoticeCaseListAdapter = new ApiNoticeCaseListAdapter(src_list);
-        rvDraft.setAdapter(apiNoticeCaseListAdapter);
-        apiNoticeCaseListAdapter.notifyDataSetChanged();
-        apiNoticeCaseListAdapter.setOnItemClickListener(onItemClickListener);
+        caseList = src_list;
+        setAdapterList_sort();
         return false;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         // ไม่ต้องสนใจให้ไปจัดการใน onQueryTextChange
+        Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
         return false;
     }
 

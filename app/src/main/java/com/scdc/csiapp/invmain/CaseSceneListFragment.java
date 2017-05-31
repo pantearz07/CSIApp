@@ -79,6 +79,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
     Context context;
     //Recycle view
     private List<ApiCaseScene> caseList;
+    private List<ApiCaseScene> caseListTemp;
     private static Bundle mBundleRecyclerViewState;
     RecyclerView rvDraft;
     SwipeRefreshLayout swipeContainer;
@@ -158,6 +159,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
         fabBtn.setVisibility(View.GONE);
 
         caseList = new ArrayList<>();
+        caseListTemp = new ArrayList<>();
         rvDraft = (RecyclerView) viewlayout.findViewById(R.id.rvDraft);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rvDraft.setLayoutManager(llm);
@@ -281,6 +283,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
     public void selectApiCaseSceneFromSQLite() {
         ApiListCaseScene apiListNoticeCase = mDbHelper.selectApiCaseScene(officialID);
         caseList = apiListNoticeCase.getData().getResult();
+        caseListTemp = apiListNoticeCase.getData().getResult();
 //        Log.d(TAG, "Update apiNoticeCaseListAdapter SQLite");
 
         setAdapterList_sort();
@@ -480,6 +483,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 caseList = apiListCaseScene.getData().getResult();
+                caseListTemp = apiListCaseScene.getData().getResult();
 
                 setAdapterList_sort();
             } else {
@@ -629,6 +633,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String query) {
+        caseList = caseListTemp;
         if (query.length() == 0) {
             apiCaseSceneListAdapter = new ApiCaseSceneListAdapter(caseList);
             rvDraft.setAdapter(apiCaseSceneListAdapter);
@@ -638,7 +643,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
         }
 
         // กระบวนการค้นหาจากข้อความที่พิมพ์เข้ามา
-        ArrayList<ApiCaseScene> src_list = new ArrayList<ApiCaseScene>();
+        List<ApiCaseScene> src_list = new ArrayList<>();
         int textlength = query.length();
         for (int i = 0; i < caseList.size(); i++) {
             try {
@@ -705,12 +710,8 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
             }
         }
 
-
-        // อัพเดทข้อมูลไปแสดงใน Recycle View
-        apiCaseSceneListAdapter = new ApiCaseSceneListAdapter(src_list);
-        rvDraft.setAdapter(apiCaseSceneListAdapter);
-        apiCaseSceneListAdapter.notifyDataSetChanged();
-        apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
+        caseList = src_list;
+        setAdapterList_sort();
         return false;
     }
 

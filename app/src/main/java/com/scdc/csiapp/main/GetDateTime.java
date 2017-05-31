@@ -232,7 +232,7 @@ public class GetDateTime {
         try {
 
             if (time == null) {
-                return "";
+                return "00:00";
             }
             String[] split = time.split(":");
             //String $temp = ('/', date);
