@@ -782,11 +782,28 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                 } else {
                     positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
                 }
-                String inq = "";
+                String inv = "", Rank = "", FirstName = "", LastName = "", Position = "", PhoneNumber = "";
                 if (caseList.get(i).getTbNoticeCase().InvestigatorOfficialID != null || caseList.get(i).getTbNoticeCase().InvestigatorOfficialID != "") {
-                    inq = caseList.get(i).getTbOfficial().Rank + " " + caseList.get(i).getTbOfficial().FirstName + " " + caseList.get(i).getTbOfficial().LastName
-                            + " (" + caseList.get(i).getTbOfficial().Position
-                            + ") โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
+                    if (caseList.get(i).getTbOfficial() == null) {
+                        inv = "";
+                    } else {
+                        if (caseList.get(i).getTbOfficial().Rank != null) {
+                            Rank = caseList.get(i).getTbOfficial().Rank;
+                        }
+                        if (caseList.get(i).getTbOfficial().FirstName != null) {
+                            FirstName = caseList.get(i).getTbOfficial().FirstName;
+                        }
+                        if (caseList.get(i).getTbOfficial().LastName != null) {
+                            LastName = caseList.get(i).getTbOfficial().LastName;
+                        }
+                        if (caseList.get(i).getTbOfficial().Position != null) {
+                            Position = " (" + caseList.get(i).getTbOfficial().Position + ")";
+                        }
+                        if (caseList.get(i).getTbOfficial().PhoneNumber != null) {
+                            PhoneNumber = " โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
+                        }
+                        inv = Rank + " " + FirstName + " " + LastName + Position + PhoneNumber;
+                    }
                 }
                 String SuffererInfo = "", SuffererPrename = "", SuffererName = "", SuffererPhoneNum = "";
                 if (caseList.get(i).getTbNoticeCase().SuffererPrename != null) {
@@ -805,19 +822,16 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                 if (caseList.get(i).getTbNoticeCase().ReceivingCaseDate != null) {
                     ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(caseList.get(i).getTbNoticeCase().ReceivingCaseDate);
                 }
-//                if (caseList.get(i).getTbNoticeCase().ReceivingCaseTime != null) {
-                    ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
-//                }
+                ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
                 receiving = ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
                 // End copy from ApiNoticeCaseListAdapter
-
                 if (positioncase.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (sCaseTypeName.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (receiving.contains(query)) {
                     src_list.add(caseList.get(i));
-                } else if (inq.contains(query)) {
+                } else if (inv.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (SuffererInfo.contains(query)) {
                     src_list.add(caseList.get(i));

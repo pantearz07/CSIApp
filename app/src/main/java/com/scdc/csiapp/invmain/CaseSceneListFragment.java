@@ -648,6 +648,10 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
         for (int i = 0; i < caseList.size(); i++) {
             try {
                 // Copy from ApiNoticeCaseListAdapter
+                String sCaseTypeName = "";
+                if (caseList.get(i).getTbCaseSceneType().CaseTypeName != null) {
+                    sCaseTypeName = caseList.get(i).getTbCaseSceneType().CaseTypeName;
+                }
                 String DISTRICT_NAME = "", AMPHUR_NAME = "", PROVINCE_NAME = "";
                 if (caseList.get(i).getTbDistrict() != null) {
                     DISTRICT_NAME = caseList.get(i).getTbDistrict().DISTRICT_NAME;
@@ -665,17 +669,33 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                 } else {
                     positioncase = DISTRICT_NAME + " " + AMPHUR_NAME + " " + PROVINCE_NAME;
                 }
-                String inq = "";
-                if (caseList.get(i).getTbNoticeCase().InquiryOfficialID != null || caseList.get(i).getTbNoticeCase().InquiryOfficialID != "") {
-                    inq = caseList.get(i).getTbOfficial().Rank + " " + caseList.get(i).getTbOfficial().FirstName + " " + caseList.get(i).getTbOfficial().LastName
-                            + " (" + caseList.get(i).getTbOfficial().Position
-                            + ") โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
+                String inq = "", Rank = "", FirstName = "", LastName = "", Position = "", PhoneNumber = "";
+                if (caseList.get(i).getTbNoticeCase().InvestigatorOfficialID != null || caseList.get(i).getTbNoticeCase().InvestigatorOfficialID != "") {
+                    if (caseList.get(i).getTbOfficial() == null) {
+                        inq = "";
+                    } else {
+                        if (caseList.get(i).getTbOfficial().Rank != null) {
+                            Rank = caseList.get(i).getTbOfficial().Rank;
+                        }
+                        if (caseList.get(i).getTbOfficial().FirstName != null) {
+                            FirstName = caseList.get(i).getTbOfficial().FirstName;
+                        }
+                        if (caseList.get(i).getTbOfficial().LastName != null) {
+                            LastName = caseList.get(i).getTbOfficial().LastName;
+                        }
+                        if (caseList.get(i).getTbOfficial().Position != null) {
+                            Position = " (" + caseList.get(i).getTbOfficial().Position + ")";
+                        }
+                        if (caseList.get(i).getTbOfficial().PhoneNumber != null) {
+                            PhoneNumber = " โทร. " + caseList.get(i).getTbOfficial().PhoneNumber;
+                        }
+                        inq = Rank + " " + FirstName + " " + LastName + Position + PhoneNumber;
+                    }
                 }
                 String SuffererInfo = "", SuffererPrename = "", SuffererName = "", SuffererPhoneNum = "";
                 if (caseList.get(i).getTbNoticeCase().SuffererPrename != null) {
                     SuffererPrename = caseList.get(i).getTbNoticeCase().SuffererPrename;
                 }
-
                 if (caseList.get(i).getTbNoticeCase().SuffererName != null) {
                     SuffererName = caseList.get(i).getTbNoticeCase().SuffererName;
                 }
@@ -689,15 +709,13 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                 if (caseList.get(i).getTbNoticeCase().ReceivingCaseDate != null) {
                     ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(caseList.get(i).getTbNoticeCase().ReceivingCaseDate);
                 }
-                if (caseList.get(i).getTbNoticeCase().ReceivingCaseTime != null) {
-                    ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
-                }
+                ReceivingCaseTime = getDateTime.changeTimeFormatToDB(caseList.get(i).getTbNoticeCase().ReceivingCaseTime);
                 receiving = ReceivingCaseDate + " " + ReceivingCaseTime + " น.";
                 // End copy from ApiNoticeCaseListAdapter
 
                 if (positioncase.contains(query)) {
                     src_list.add(caseList.get(i));
-                } else if (caseList.get(i).getTbCaseSceneType().CaseTypeName.contains(query)) {
+                } else if (sCaseTypeName.contains(query)) {
                     src_list.add(caseList.get(i));
                 } else if (receiving.contains(query)) {
                     src_list.add(caseList.get(i));

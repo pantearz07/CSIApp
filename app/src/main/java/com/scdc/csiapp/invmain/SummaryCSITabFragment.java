@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -352,21 +351,17 @@ public class SummaryCSITabFragment extends Fragment {
         Log.i(TAG, "CaseStatus" + CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.toString());
         if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_1))) {
             edtStatus.setText(getString(R.string.edtStatus_1));
-            edtStatus.setBackgroundColor(Color.parseColor("#c9302c"));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_2))) {
             edtStatus.setText(getString(R.string.edtStatus_2));
-            edtStatus.setBackgroundColor(Color.parseColor("#ec971f"));
             btnNoticecase.setEnabled(false);
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_3))) {
             edtStatus.setText(getString(R.string.edtStatus_3));
-            edtStatus.setBackgroundColor(Color.parseColor("#449d44"));
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_4))) {
             if (CSIDataTabFragment.mode.equals("view")) {
                 edtStatus.setText(getString(R.string.edtStatus_4));
-                edtStatus.setBackgroundColor(Color.parseColor("#31b0d5"));
+
             } else {
                 edtStatus.setText(getString(R.string.edtStatus_5));
-                edtStatus.setBackgroundColor(Color.parseColor("#286090"));
                 final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = getString(R.string.casestatus_5);
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = getString(R.string.casestatus_5);
@@ -382,13 +377,13 @@ public class SummaryCSITabFragment extends Fragment {
             }
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_5))) {
             edtStatus.setText(getString(R.string.edtStatus_5));
-            edtStatus.setBackgroundColor(Color.parseColor("#286090"));
+            Log.i(TAG, "statusCase to investigating");
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_6))) {
             edtStatus.setText(getString(R.string.edtStatus_6));
-            edtStatus.setBackgroundColor(Color.parseColor("#9B26AF"));
+            Log.i(TAG, "statusCase to investigated");
         } else if (CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus.equals(getString(R.string.casestatus_7))) {
             edtStatus.setText(getString(R.string.edtStatus_7));
-            edtStatus.setBackgroundColor(Color.parseColor("#9D9D9D"));
+            Log.i(TAG, "statusCase to reported");
         }
 
         //วันเวลาที่ผู้ตรวจสถานที่เกิดเหตุออกไปตรวจ
@@ -454,7 +449,7 @@ public class SummaryCSITabFragment extends Fragment {
 
     public void onStart() {
         super.onStart();
-        Log.i("Check", "onStartSummary");
+        Log.i(TAG, "onStartSummary");
 
     }
 
@@ -462,7 +457,7 @@ public class SummaryCSITabFragment extends Fragment {
     public void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        Log.i("onPause", "onPause sum");
+        Log.i(TAG, "onPause sum");
 
     }
 
@@ -476,8 +471,8 @@ public class SummaryCSITabFragment extends Fragment {
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
-            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
         } else {
             if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals("reported")) {
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "reported";

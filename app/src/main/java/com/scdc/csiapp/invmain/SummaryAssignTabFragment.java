@@ -325,7 +325,6 @@ public class SummaryAssignTabFragment extends Fragment {
             edtPoliceStation.setText(mTypePoliceStationArray[2].toString());
         }
         edtStatus.setText(R.string.edtStatus_3);
-        edtStatus.setBackgroundColor(Color.parseColor("#449d44"));
 
         TextView txtSceneNoticeDateTime = (TextView) viewSummaryCSI.findViewById(R.id.txtSceneNoticeDateTime);
         txtSceneNoticeDateTime.setText(R.string.txtAssignDateTimeTitle);

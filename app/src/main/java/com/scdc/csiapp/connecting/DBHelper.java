@@ -723,7 +723,7 @@ public class DBHelper extends SQLiteAssetHelper {
                 strSQL = "SELECT * FROM official WHERE "
                         + "OfficialID = '" + PRIMARY_KEY + "'";
                 Cursor cursor = mDb.rawQuery(strSQL, null);
-                Log.d(TAG, "cursor select OfficialID" + String.valueOf(cursor.getCount()));
+//                Log.d(TAG, "cursor select OfficialID" + PRIMARY_KEY);
                 TbOfficial temp = new TbOfficial();
                 ContentValues Val = new ContentValues();
                 Val.put(COL_OfficialID, tbOfficials.get(i).OfficialID);
@@ -740,10 +740,15 @@ public class DBHelper extends SQLiteAssetHelper {
                 Val.put(COL_SCDCAgencyCode, tbOfficials.get(i).SCDCAgencyCode);
                 Val.put(COL_PoliceStationID, tbOfficials.get(i).PoliceStationID);
                 Val.put(COL_id_users, tbOfficials.get(i).id_users);
-
+                long intInsert = 0;
                 if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                    db.insert("official", null, Val);
-                    insert++;
+                    intInsert = db.insert("official", null, Val);
+                    if (intInsert >= 0) {
+                        insert++;
+                    } else {
+                        db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                        update++;
+                    }
                 } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                     db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
                     update++;
