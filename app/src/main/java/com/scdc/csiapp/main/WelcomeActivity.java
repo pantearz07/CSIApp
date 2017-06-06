@@ -58,7 +58,7 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
     Boolean networkConnectivity = false;
     long isConnectingToInternet = 0;
     String officialID, username, password, accestype = "";
-    boolean userlogin = false;
+    boolean userlogin;
     String ipvalue;
     DBHelper dbHelper;
     boolean flag_firstRun = true;
@@ -95,6 +95,9 @@ public class WelcomeActivity extends AppCompatActivity implements GoogleApiClien
         // ถ้าไม่ต่อจะเตะออกแอพก่อน เพื่อให้ไปต่อก่อนถึงเข้าได้
         // แต่ถ้าเคย Login อยู่แล้ว ไม่ต่อก็ยังเข้าใช้ได้ไม่เตะออก
         cd = new ConnectionDetector(getApplicationContext());
+//        Toast.makeText(getBaseContext(),
+//                String.valueOf(userlogin),
+//                Toast.LENGTH_SHORT).show();
         if (userlogin == false) {
             if (cd.isNetworkAvailable() == false) {
                 Toast.makeText(getBaseContext(),

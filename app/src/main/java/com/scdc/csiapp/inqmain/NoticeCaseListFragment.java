@@ -415,16 +415,17 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                 Log.i(TAG + " caseList size ", String.valueOf(caseList.size()));
                 setAdapterList_sort();
             } else {
-                Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
-                        Toast.LENGTH_SHORT).show();
-                Boolean status = mManager.clearLoggedInOfficial();
-                Log.d("clear logout", String.valueOf(status));
-                Intent mStartActivity = new Intent(context, WelcomeActivity.class);
-                int mPendingIntentId = 123456;
-                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 600, mPendingIntent);
-                System.exit(0);
+//                Toast.makeText(getActivity(), "ชื่อผู้ใช้ไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
+//                        Toast.LENGTH_SHORT).show();
+//                Boolean status = mManager.clearLoggedInOfficial();
+//                Log.d("clear logout", String.valueOf(status));
+//                Intent mStartActivity = new Intent(context, WelcomeActivity.class);
+//                int mPendingIntentId = 123456;
+//                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+//                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+//                System.exit(0);
+                selectApiNoticeCaseFromSQLite();
             }
         }
     }
@@ -450,78 +451,89 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-
+//                selectApiNoticeCaseFromSQLite();
             } else {
 //                if (snackbar == null || !snackbar.isShown()) {
-                snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.ok), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (snackbar != null) {
-                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
-                                }
-                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                                AlertDialog.Builder builder =
-                                        new AlertDialog.Builder(getActivity());
-                                LayoutInflater inflater = getActivity().getLayoutInflater();
-
-                                view = inflater.inflate(R.layout.ipsetting_dialog, null);
-                                builder.setView(view);
-                                final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
-                                final String[] ip_list = getResources().getStringArray(
-                                        R.array.ip_list);
-                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,
-                                        ip_list);
-                                ipvalueEdt.setThreshold(1);
-                                ipvalueEdt.setAdapter(adapter);
-                                ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
-                                    @Override
-                                    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                                        ipvalueEdt.showDropDown();
-
-                                        return false;
+                try {
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.cannot_connect_server_offline), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (snackbar != null) {
+                                        snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
                                     }
-                                });
+                                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                    AlertDialog.Builder builder =
+                                            new AlertDialog.Builder(getActivity());
+                                    LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                                builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (ipvalueEdt.getText().equals("")) {
-                                            Toast.makeText(getActivity(),
-                                                    getString(R.string.please_input_data),
-                                                    Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            String ipvalue = ipvalueEdt.getText().toString();
-                                            WelcomeActivity.api.updateIP(ipvalue);
+                                    view = inflater.inflate(R.layout.ipsetting_dialog, null);
+                                    builder.setView(view);
+                                    final AutoCompleteTextView ipvalueEdt = (AutoCompleteTextView) view.findViewById(R.id.ipvalueEdt);
+                                    final String[] ip_list = getResources().getStringArray(
+                                            R.array.ip_list);
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                                            ip_list);
+                                    ipvalueEdt.setThreshold(1);
+                                    ipvalueEdt.setAdapter(adapter);
+                                    ipvalueEdt.setOnTouchListener(new View.OnTouchListener() {
+                                        @Override
+                                        public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                                            if (snackbar != null) {
-                                                snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
-                                            }
-                                            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                                            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+                                            ipvalueEdt.showDropDown();
 
-                                            Toast.makeText(getActivity(),
-                                                    getString(R.string.save_complete),
-                                                    Toast.LENGTH_SHORT).show();
-                                            dialog.dismiss();
+                                            return false;
                                         }
-                                    }
-                                });
+                                    });
 
-                                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                    builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (ipvalueEdt.getText().equals("")) {
+                                                Toast.makeText(getActivity(),
+                                                        getString(R.string.please_input_data),
+                                                        Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                String ipvalue = ipvalueEdt.getText().toString();
+                                                WelcomeActivity.api.updateIP(ipvalue);
 
-                                    }
-                                });
+                                                if (snackbar != null) {
+                                                    snackbar.dismiss();//ปิดการแจ้งเตือนเก่าออกให้หมดก่อนตรวจใหม่
+                                                }
+                                                mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+                                                mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
 
-                                builder.show();
-                            }
-                        });
-                snackbar.show();
+                                                Toast.makeText(getActivity(),
+                                                        getString(R.string.save_complete),
+                                                        Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                    });
+
+                                    builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+
+                                    builder.show();
+                                }
+                            });
+                    snackbar.show();
 //                }
+                } catch (Exception e) {
+//                    Intent mStartActivity = new Intent(context, WelcomeActivity.class);
+//                    int mPendingIntentId = 123456;
+//                    PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+//                    AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+//                    System.exit(0);
+//                    selectApiNoticeCaseFromSQLite();
+                }
             }
+
         }
     }
 
