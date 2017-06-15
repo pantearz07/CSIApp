@@ -273,13 +273,13 @@ public class DiagramTabFragment extends Fragment {
         editMediaName.setText(sDiagramID);
         editMediaDescription = (EditText) Viewlayout
                 .findViewById(R.id.editMediaDescription);
-        edtMediaDescription = editMediaDescription.getText().toString();
         editMediaDescription.setHint("คำอธิบายภาพ");
         // Button OK
         addDialog.setPositiveButton(getString(R.string.save),
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
+                        edtMediaDescription = editMediaDescription.getText().toString();
                         dialog.dismiss();
                         Bundle i = new Bundle();
                         i.putString(Bundle_ID, sDiagramID);

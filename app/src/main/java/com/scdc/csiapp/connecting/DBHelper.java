@@ -2327,10 +2327,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_EvidencePerformed, apiCaseScene.getTbFindEvidences().get(i).EvidencePerformed);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("FindEvidence", null, Val);
-//                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Insert ");
+                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("FindEvidence", Val, " FindEvidenceID = ?", new String[]{String.valueOf(apiCaseScene.getTbFindEvidences().get(i).FindEvidenceID)});
-//                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Update ");
+                            Log.d(TAG, "Sync Table FindEvidence [" + i + "]: Update ");
                         }
                     }
                 }
@@ -2349,10 +2349,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbResultScenes().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-//                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbResultScenes().get(i).RSID)});
-//                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
                         }
                     }
                 }
@@ -2371,10 +2371,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbGatewayCriminals().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Insert ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbGatewayCriminals().get(i).RSID)});
-//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Update ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbGatewayCriminals: Update ");
                         }
                     }
                 }
@@ -2393,10 +2393,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbClueShowns().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Insert ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbClueShowns().get(i).RSID)});
-//                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Update ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbClueShowns: Update ");
                         }
                     }
                 }
@@ -2418,10 +2418,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_PropInsurance, apiCaseScene.getTbPropertyLosses().get(i).PropInsurance);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("propertyloss", null, Val);
-//                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Insert ");
+                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("propertyloss", Val, " PropertyLossID = ?", new String[]{String.valueOf(apiCaseScene.getTbPropertyLosses().get(i).PropertyLossID)});
-//                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Update ");
+                            Log.d(TAG, "Sync Table propertyloss [" + i + "]: Update ");
                         }
                     }
                 }

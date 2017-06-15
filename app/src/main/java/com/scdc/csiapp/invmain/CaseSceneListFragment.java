@@ -577,7 +577,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                                                 }
                                                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
                                                 mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-
+                                                setAdapterData();
                                                 Toast.makeText(getActivity(),
                                                         getString(R.string.save_complete),
                                                         Toast.LENGTH_SHORT).show();

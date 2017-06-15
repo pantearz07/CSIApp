@@ -63,7 +63,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String SubCaseTypeName = data.getString("gcm.notification.SubCaseTypeName");
                     String PoliceStation = data.getString("gcm.notification.PoliceStation");
                     String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.ReceivingCaseDate"));
-                    String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
+                    String ReceivingCaseTime = getDateTime.changeTimeFormatToDB(data.getString("gcm.notification.ReceivingCaseTime"));
                     String Address = data.getString("gcm.notification.Address");
                     String InquiryOfficial = data.getString("gcm.notification.InquiryOfficial");
 
@@ -107,7 +107,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String Investigator = data.getString("gcm.notification.Investigator");
 
                     String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.ReceivingCaseDate"));
-                    String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
+                    String ReceivingCaseTime = getDateTime.changeTimeFormatToDB(data.getString("gcm.notification.ReceivingCaseTime"));
                     String Address = data.getString("gcm.notification.Address");
 
 
@@ -125,7 +125,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String SubCaseTypeName = data.getString("gcm.notification.SubCaseTypeName");
                     String PoliceStation = data.getString("gcm.notification.PoliceStation");
                     String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.ReceivingCaseDate"));
-                    String ReceivingCaseTime = data.getString("gcm.notification.ReceivingCaseTime");
+                    String ReceivingCaseTime = getDateTime.changeTimeFormatToDB(data.getString("gcm.notification.ReceivingCaseTime"));
                     String Address = data.getString("gcm.notification.Address");
 
                     Log.e(TAG, "CaseReportID : " + CaseReportID);
@@ -148,7 +148,7 @@ public class GcmDownstreamService extends GcmListenerService {
                     String Investigator = data.getString("gcm.notification.Investigator");
 
                     String ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(data.getString("gcm.notification.CompleteSceneDate"));
-                    String ReceivingCaseTime = data.getString("gcm.notification.CompleteSceneTime");
+                    String ReceivingCaseTime = getDateTime.changeTimeFormatToDB(data.getString("gcm.notification.CompleteSceneTime"));
                     String Address = data.getString("gcm.notification.Address");
                     Log.e(TAG, "Investigator : " + Investigator);
                     String message = "ที่อยู่ " + Address;
@@ -169,8 +169,8 @@ public class GcmDownstreamService extends GcmListenerService {
             }
             String info = data.getString("gcm.notification.info");
             Log.e(TAG, "info : " + info);
-            String message = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจใหม่";
-            String bigmessage = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจใหม่" + "\n" + "ชื่อ " + info;
+            String message = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจ";
+            String bigmessage = "มีการอัพเดทรายชื่อเจ้าหน้าที่ตำรวจ" + "\n" + "ชื่อ " + info;
             sendNotification("กรุณาอัพเดทข้อมูลรายชื่อ", message, bigmessage, nameintent, "settingfragment");
         }
         if (Title.equals("newdata")) {
@@ -180,8 +180,8 @@ public class GcmDownstreamService extends GcmListenerService {
             }else{
                 nameintent = "InqMainActivity";
             }
-            String message = "มีการอัพเดทข้อมูลเกี่ยวกับตำรวจใหม่";
-            String bigmessage = "ไปที่การตั้งค่าในระบบ เพื่ออัพเดทข้อมูลเกี่ยวกับตำรวจใหม่";
+            String message = "มีการอัพเดทข้อมูลเกี่ยวกับตำรวจ";
+            String bigmessage = "ไปที่การตั้งค่าในระบบ เพื่ออัพเดทข้อมูลเกี่ยวกับตำรวจ";
             sendNotification("กรุณาอัพเดทข้อมูลเกี่ยวกับตำรวจ", message, bigmessage, nameintent, "settingfragment");
         }
         if (Title.equals("sendnoti")) {

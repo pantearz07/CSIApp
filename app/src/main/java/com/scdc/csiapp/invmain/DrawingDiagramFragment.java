@@ -46,7 +46,9 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
     // custom drawing view
     private DrawingView drawView;
     // buttons
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn,
+            paint_btn_1, paint_btn_2, paint_btn_3, paint_btn_4, paint_btn_5,
+            paint_btn_6, paint_btn_7, paint_btn_8, paint_btn_9, paint_btn_10, paint_btn_11, paint_btn_12;
     // sizes
     private float smallBrush, mediumBrush, largeBrush;
     GetDateTime getDateTime;
@@ -121,6 +123,31 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
         // save button
         saveBtn = (ImageButton) rootView.findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
+
+        paint_btn_1 = (ImageButton) rootView.findViewById(R.id.paint_btn_1);
+        paint_btn_1.setOnClickListener(this);
+        paint_btn_2 = (ImageButton) rootView.findViewById(R.id.paint_btn_2);
+        paint_btn_2.setOnClickListener(this);
+        paint_btn_3 = (ImageButton) rootView.findViewById(R.id.paint_btn_3);
+        paint_btn_3.setOnClickListener(this);
+        paint_btn_4 = (ImageButton) rootView.findViewById(R.id.paint_btn_4);
+        paint_btn_4.setOnClickListener(this);
+        paint_btn_5 = (ImageButton) rootView.findViewById(R.id.paint_btn_5);
+        paint_btn_5.setOnClickListener(this);
+        paint_btn_6 = (ImageButton) rootView.findViewById(R.id.paint_btn_6);
+        paint_btn_6.setOnClickListener(this);
+        paint_btn_7 = (ImageButton) rootView.findViewById(R.id.paint_btn_7);
+        paint_btn_7.setOnClickListener(this);
+        paint_btn_8 = (ImageButton) rootView.findViewById(R.id.paint_btn_8);
+        paint_btn_8.setOnClickListener(this);
+        paint_btn_9 = (ImageButton) rootView.findViewById(R.id.paint_btn_9);
+        paint_btn_9.setOnClickListener(this);
+        paint_btn_10 = (ImageButton) rootView.findViewById(R.id.paint_btn_10);
+        paint_btn_10.setOnClickListener(this);
+        paint_btn_11 = (ImageButton) rootView.findViewById(R.id.paint_btn_11);
+        paint_btn_11.setOnClickListener(this);
+        paint_btn_12 = (ImageButton) rootView.findViewById(R.id.paint_btn_12);
+        paint_btn_12.setOnClickListener(this);
         return rootView;
     }
 
@@ -269,7 +296,7 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                             drawView.setDrawingCacheEnabled(true);
                             Bitmap finalBitmap = drawView.getDrawingCache();
 
-                            File myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"/CSIFiles/");
+                            File myDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/CSIFiles/");
                             myDir.mkdirs();
                             String[] CurrentDate_ID = getDateTime.getDateTimeCurrent();
                             String timeStamp = CurrentDate_ID[0] + "-" + CurrentDate_ID[1] + "-" + CurrentDate_ID[2] + " " + CurrentDate_ID[3] + ":" + CurrentDate_ID[4] + ":" + CurrentDate_ID[5];
@@ -335,6 +362,34 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                         }
                     });
             saveDialog.show();
+        } else if (view.getId() == R.id.paint_btn_1 || view.getId() == R.id.paint_btn_2
+                || view.getId() == R.id.paint_btn_3 || view.getId() == R.id.paint_btn_4
+                || view.getId() == R.id.paint_btn_5 || view.getId() == R.id.paint_btn_6
+                || view.getId() == R.id.paint_btn_7 || view.getId() == R.id.paint_btn_8
+                || view.getId() == R.id.paint_btn_9 || view.getId() == R.id.paint_btn_10
+                || view.getId() == R.id.paint_btn_11 || view.getId() == R.id.paint_btn_12) {
+
+            // set erase false
+            drawView.setErase(false);
+            drawView.setBrushSize(drawView.getLastBrushSize());
+
+            if (view != currPaint) {
+                ImageButton imgView = (ImageButton) view;
+                String color = view.getTag().toString();
+                drawView.setColor(color);
+                // update ui
+
+                imgView.setImageResource(getResources().getIdentifier(
+                        "paint_pressed", "drawable", "com.scdc.csiapp"));
+
+                currPaint.setImageResource(getResources().getIdentifier(
+                        "paint", "drawable", "com.scdc.csiapp"));
+
+                currPaint.setImageResource(getResources().getIdentifier(
+                        "paint", "drawable", "com.scdc.csiapp"));
+
+                currPaint = (ImageButton) view;
+            }
         }
     }
 }

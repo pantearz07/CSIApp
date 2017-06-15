@@ -22,7 +22,6 @@ android {
     }
     dexOptions {
         dexInProcess false
-
     }
 
 }
