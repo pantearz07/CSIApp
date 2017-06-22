@@ -2349,10 +2349,10 @@ public class DBHelper extends SQLiteAssetHelper {
                         Val.put(COL_RSDetail, apiCaseScene.getTbResultScenes().get(i).RSDetail);
                         if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
                             db.insert("resultscene", null, Val);
-                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Insert ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbResultScenes: Insert ");
                         } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                             db.update("resultscene", Val, " RSID = ?", new String[]{String.valueOf(apiCaseScene.getTbResultScenes().get(i).RSID)});
-                            Log.d(TAG, "Sync Table resultscene [" + i + "]: Update ");
+                            Log.d(TAG, "Sync Table resultscene [" + i + "] getTbResultScenes: Update ");
                         }
                     }
                 }
@@ -5054,4 +5054,5 @@ public class DBHelper extends SQLiteAssetHelper {
             return -1;
         }
     }
+
 }

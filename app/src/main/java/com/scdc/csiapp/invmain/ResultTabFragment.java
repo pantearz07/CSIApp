@@ -437,6 +437,7 @@ public class ResultTabFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        Log.i(TAG, "updateData : " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
         if (editCompleteSceneDate.getText().toString() == null || editCompleteSceneDate.getText().toString().equals("")) {
             CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate = null;
         } else {
@@ -712,16 +713,13 @@ public class ResultTabFragment extends Fragment {
     public void ShowSelectedGatewayCriminal() {
         // TODO Auto-generated method stub
 
-
         if (CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals() != null) {
-            setListViewHeightBasedOnItems(listViewGatewayCriminal);
-            Log.i(TAG, "show getTbGatewayCriminals" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
-            listViewGatewayCriminal.setVisibility(View.VISIBLE);
             listViewGatewayCriminal.setAdapter(new GatewayFoundClueAdapter(
                     getActivity()));
+            Log.i(TAG, "show getTbGatewayCriminals" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
+            setListViewHeightBasedOnItems(listViewGatewayCriminal);
+            listViewGatewayCriminal.setVisibility(View.VISIBLE);
         } else {
-
-
             listViewGatewayCriminal.setVisibility(View.GONE);
         }
 
@@ -847,24 +845,22 @@ public class ResultTabFragment extends Fragment {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
 
-
+                                    if (CSIDataTabFragment.apiCaseScene.getTbResultScenes() != null) {
+                                        for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getTbResultScenes().size(); i++) {
+                                            if (CSIDataTabFragment.apiCaseScene.getTbResultScenes().get(i).RSID.equals(sRSID)) {
+                                                CSIDataTabFragment.apiCaseScene.getTbResultScenes().remove(i);
+                                            }
+                                        }
+                                    }
                                     CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("resultscene", "RSID", sRSID);
 //
                                     if (flg > 0) {
+                                        updateData();
                                         Log.i(TAG, "resultscene getTbGatewayCriminals" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
                                         ShowSelectedGatewayCriminal();
-                                        if (snackbar == null || !snackbar.isShown()) {
-                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
-                                                    , Snackbar.LENGTH_INDEFINITE)
-                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            ShowSelectedGatewayCriminal();
-                                                        }
-                                                    });
-                                            snackbar.show();
-                                        }
+                                        savedata();
+
 //                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllResultScene(sRSID);
 //                                        if (saveStatus2 <= 0) {
 //                                            Log.i("DeletePhotoOf gateway", "Cannot delete!! ");
@@ -1042,23 +1038,33 @@ public class ResultTabFragment extends Fragment {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
 
+                                    if (CSIDataTabFragment.apiCaseScene.getTbResultScenes() != null) {
+                                        for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getTbResultScenes().size(); i++) {
+                                            if (CSIDataTabFragment.apiCaseScene.getTbResultScenes().get(i).RSID.equals(sRSID)) {
+                                                CSIDataTabFragment.apiCaseScene.getTbResultScenes().remove(i);
+                                            }
+                                        }
+                                    }
                                     CSIDataTabFragment.apiCaseScene.getTbClueShowns().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("resultscene", "RSID", sRSID);
 //
                                     if (flg > 0) {
+                                        updateData();
                                         Log.i(TAG, "resultscene getTbClueShowns" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbClueShowns().size()));
                                         ShowSelectedClueShown();
-                                        if (snackbar == null || !snackbar.isShown()) {
-                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
-                                                    , Snackbar.LENGTH_INDEFINITE)
-                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            ShowSelectedClueShown();
-                                                        }
-                                                    });
-                                            snackbar.show();
-                                        }
+                                        savedata();
+
+//                                        if (snackbar == null || !snackbar.isShown()) {
+//                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+//                                                    , Snackbar.LENGTH_INDEFINITE)
+//                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View view) {
+//                                                            ShowSelectedClueShown();
+//                                                        }
+//                                                    });
+//                                            snackbar.show();
+//                                        }
                                     } else {
                                         if (snackbar == null || !snackbar.isShown()) {
                                             snackbar = Snackbar.make(rootLayout, getString(R.string.save_error)
@@ -1248,23 +1254,26 @@ public class ResultTabFragment extends Fragment {
                             new AlertDialog.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
+
                                     CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("propertyloss", "PropertyLossID", sPropertyLossID);
 //
                                     if (flg > 0) {
+                                        updateData();
                                         Log.i(TAG, "propertyloss " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbPropertyLosses().size()));
                                         ShowSelectedPropertyloss();
-                                        if (snackbar == null || !snackbar.isShown()) {
-                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
-                                                    , Snackbar.LENGTH_INDEFINITE)
-                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            ShowSelectedPropertyloss();
-                                                        }
-                                                    });
-                                            snackbar.show();
-                                        }
+                                        savedata();
+//                                        if (snackbar == null || !snackbar.isShown()) {
+//                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+//                                                    , Snackbar.LENGTH_INDEFINITE)
+//                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View view) {
+//                                                            ShowSelectedPropertyloss();
+//                                                        }
+//                                                    });
+//                                            snackbar.show();
+//                                        }
 //                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllPropertyLoss(sPropertyLossID);
 //                                        if (saveStatus2 <= 0) {
 //                                            Log.i("DeletePhoto Property", "Cannot delete!! ");
@@ -1504,19 +1513,21 @@ public class ResultTabFragment extends Fragment {
                                     long flg = dbHelper.DeleteSelectedData("findevidence", "FindEvidenceID", sFindEvidenceID);
 
                                     if (flg > 0) {
+                                        updateData();
                                         Log.i(TAG, "findevidence " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbFindEvidences().size()));
                                         ShowSelectedFindEvidence();
-                                        if (snackbar == null || !snackbar.isShown()) {
-                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
-                                                    , Snackbar.LENGTH_INDEFINITE)
-                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            ShowSelectedFindEvidence();
-                                                        }
-                                                    });
-                                            snackbar.show();
-                                        }
+                                        savedata();
+//                                        if (snackbar == null || !snackbar.isShown()) {
+//                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+//                                                    , Snackbar.LENGTH_INDEFINITE)
+//                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View view) {
+//                                                            ShowSelectedFindEvidence();
+//                                                        }
+//                                                    });
+//                                            snackbar.show();
+//                                        }
 //                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllEvidence(sFindEvidenceID);
 //                                        if (saveStatus2 <= 0) {
 //                                            Log.i("DeletePhotoOf Evidence", "Cannot delete!! ");

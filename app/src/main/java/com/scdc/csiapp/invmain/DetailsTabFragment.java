@@ -621,7 +621,7 @@ public class DetailsTabFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
-
+        Log.i(TAG, "updateData : " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
@@ -924,22 +924,23 @@ public class DetailsTabFragment extends Fragment {
                                                     int which) {
                                     CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().remove(position);
                                     long flg = dbHelper.DeleteSelectedData("scenefeatureinside", "FeatureInsideID", sFeatureInsideID);
-//                                    long flg = dbHelper
-//                                            .DeleteSelectedFeatureInside(sFeatureInsideID);
                                     if (flg > 0) {
+
                                         Log.i(TAG, "scenefeatureinside " + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbSceneFeatureInSide().size()));
                                         ShowSelectedFeatureInside();
-                                        if (snackbar == null || !snackbar.isShown()) {
-                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
-                                                    , Snackbar.LENGTH_INDEFINITE)
-                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            ShowSelectedFeatureInside();
-                                                        }
-                                                    });
-                                            snackbar.show();
-                                        }
+                                        updateData();
+
+//                                        if (snackbar == null || !snackbar.isShown()) {
+//                                            snackbar = Snackbar.make(rootLayout, getString(R.string.delete_complete)
+//                                                    , Snackbar.LENGTH_INDEFINITE)
+//                                                    .setAction(getString(R.string.ok), new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View view) {
+//                                                            ShowSelectedFeatureInside();
+//                                                        }
+//                                                    });
+//                                            snackbar.show();
+//                                        }
 //                                        long saveStatus2 = mDbHelper.DeletePhotoOfAllInside(sFeatureInsideID);
 //                                        if (saveStatus2 <= 0) {
 //                                            Log.i("DeletePhotoOf inside", "Cannot delete!! ");

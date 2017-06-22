@@ -623,6 +623,7 @@ public class ApiConnect implements Parcelable {
                         ApiCaseScene temp_sql_old = apiListCaseSceneSQLite_old.getData().getResult().get(i);
                         ApiCaseScene temp_ser_check;
                         boolean flag_have = false;
+                        boolean flag_update = false;
                         for (int j = 0; j < ser_size_check; j++) {
                             temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
                             //เช็คว่า ข้อมูลใน SQLite มีตรงกับ server มั้ย
@@ -642,6 +643,11 @@ public class ApiConnect implements Parcelable {
                                         // ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
                                         flag_have = true;
                                         if (mDbHelper.DeleteMultimedia(temp_sql_old)) {
+//                                            flag_update = true;
+                                            boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
+                                            Log.i("DeleteAllCaseScene", String.valueOf(isSuccess2));
+                                            boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
+                                            Log.i("DeleteNoticeCase", String.valueOf(isSuccess1));
                                             boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser_check);
                                             if (isSuccess) {
                                                 Log.d(TAG, "update from server to mobile updateAlldataCase ");

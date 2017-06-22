@@ -187,6 +187,7 @@ public class AddGatewayFragment extends Fragment {
         CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
         CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        Log.d(TAG, CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
     }
 
     private class InsideOnClickListener implements View.OnClickListener {
@@ -205,7 +206,7 @@ public class AddGatewayFragment extends Fragment {
                 if (isSuccess) {
                     if (mode == "edit") {
                         CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().remove(position);
-                        Log.i(TAG, typeid + " tbGatewayCriminals remove num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
+                        Log.i(TAG, typeid + "edit tbGatewayCriminals remove num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));
 
                     } else {
                         Log.i(TAG, typeid + " tbGatewayCriminals num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getTbGatewayCriminals().size()));

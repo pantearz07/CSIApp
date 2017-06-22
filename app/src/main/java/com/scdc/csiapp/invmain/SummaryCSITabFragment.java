@@ -471,8 +471,8 @@ public class SummaryCSITabFragment extends Fragment {
         if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate == null ||
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("0000-00-00") ||
                 CSIDataTabFragment.apiCaseScene.getTbCaseScene().CompleteSceneDate.equals("")) {
-                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
+            CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
         } else {
             if (CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus.equals("reported")) {
                 CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "reported";
@@ -513,11 +513,8 @@ public class SummaryCSITabFragment extends Fragment {
             if (v == fabBtn) {
                 hiddenKeyboard();
                 updateData();
-//                CSIDataTabFragment.apiCaseScene.getTbNoticeCase().CaseStatus = "investigating";
-//                CSIDataTabFragment.apiCaseScene.getTbCaseScene().ReportStatus = "investigating";
 
                 if (CSIDataTabFragment.apiCaseScene != null) {
-
                     boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                     if (isSuccess) {
                         if (snackbar == null || !snackbar.isShown()) {
@@ -568,9 +565,6 @@ public class SummaryCSITabFragment extends Fragment {
         SaveCaseReport statusCase = new SaveCaseReport();
         statusCase.execute(CSIDataTabFragment.apiCaseScene);
         if (status_savecase = true) {
-//
-//                            edtUpdateDateTime.setText(getDateTime.changeDateFormatToCalendar(CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate)
-//                                    + " เวลาประมาณ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime + " น.");
 
         }
     }
