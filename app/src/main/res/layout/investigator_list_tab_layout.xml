@@ -27,7 +27,12 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+                    <android.support.v7.widget.SearchView
+                        android:id="@+id/search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:queryHint="ค้นหารายชื่อ"
+                        android:clickable="true" />
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rv"
                         android:layout_width="match_parent"

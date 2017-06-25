@@ -757,7 +757,7 @@ public class DBHelper extends SQLiteAssetHelper {
             }
             db.setTransactionSuccessful();
             db.endTransaction();
-            Log.d(TAG, "Sync Table official: Insert " + insert + ", Update " + update);
+//            Log.d(TAG, "Sync Table official: Insert " + insert + ", Update " + update);
             db.close();
             return true;
         } catch (Exception e) {
@@ -2727,7 +2727,8 @@ public class DBHelper extends SQLiteAssetHelper {
             String strSQL, strSQL_main;
 
             strSQL_main = "SELECT * FROM official "
-                    + " WHERE AccessType = '" + AccessType + "'";
+                    + " WHERE AccessType = '" + AccessType + "'"
+                    + " ORDER BY FirstName ASC";
 
             try (Cursor cursor = db.rawQuery(strSQL_main, null)) {
                 cursor.moveToPosition(-1);
@@ -4966,10 +4967,15 @@ public class DBHelper extends SQLiteAssetHelper {
             Val.put(COL_SCDCAgencyCode, tbOfficial.SCDCAgencyCode);
             Val.put(COL_PoliceStationID, tbOfficial.PoliceStationID);
             Val.put(COL_id_users, tbOfficial.id_users);
-
+            long intInsert = 0;
             if (cursor.getCount() == 0) { // กรณีไม่เคยมีข้อมูลนี้
-                db.insert("official", null, Val);
-                insert++;
+                intInsert = db.insert("official", null, Val);
+                if (intInsert >= 0) {
+                    insert++;
+                } else {
+                    db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
+                    update++;
+                }
             } else if (cursor.getCount() == 1) { // กรณีเคยมีข้อมูลแล้ว
                 db.update("official", Val, " OfficialID = ?", new String[]{String.valueOf(PRIMARY_KEY)});
                 update++;

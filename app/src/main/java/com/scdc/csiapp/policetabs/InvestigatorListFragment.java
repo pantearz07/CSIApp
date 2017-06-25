@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,15 +39,19 @@ import android.widget.Toast;
 import com.scdc.csiapp.R;
 import com.scdc.csiapp.apimodel.ApiListOfficial;
 import com.scdc.csiapp.apimodel.ApiOfficial;
+import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.main.BusProvider;
 import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.main.WelcomeActivity;
 import com.scdc.csiapp.tablemodel.TbOfficial;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,17 +69,37 @@ public class InvestigatorListFragment extends Fragment {
     SwipeRefreshLayout swipeContainer;
     OfficialListAdapter officialListAdapter;
     private List<ApiOfficial> apiOfficialList;
+    private List<ApiOfficial> apiOfficialListTemp;
     private Context mContext;
     private PreferenceData mManager;
     SQLiteDatabase mDb;
     DBHelper mDbHelper;
     ConnectionDetector cd;
     Snackbar snackbar;
-
+    SearchView searchView;
     GetDateTime getDateTime;
-
+    ApiProfile apiProfile;
+    ApiConnect api;
+    String officialID;
+    private static Bundle mBundleRecyclerViewState;
+    private final String KEY_RECYCLER_STATE = "recycler_state";
+    public static final String KEY_PROFILE = "key_profile";
+    public static final String KEY_CONNECT = "key_connect";
     Handler mHandler = new Handler();
     private final static int INTERVAL = 1000 * 20; //20 second
+
+    public static InvestigatorListFragment newInstance() {
+        return new InvestigatorListFragment();
+    }
+
+    public InvestigatorListFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BusProvider.getInstance().register(this);
+    }
 
     @Nullable
     @Override
@@ -89,78 +115,92 @@ public class InvestigatorListFragment extends Fragment {
         getDateTime = new GetDateTime();
 
         apiOfficialList = new ArrayList<>();
+
+        apiOfficialListTemp = new ArrayList<>();
         LinearLayoutManager llm = new LinearLayoutManager(mContext);
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
         swipeContainer = (SwipeRefreshLayout) viewinvestigator.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-
-            public void onRefresh() {
-                if (cd.isNetworkAvailable()) {
-                    Log.i("log_show draft", "Refreshing!! ");
-                    swipeContainer.setRefreshing(true);
-                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-                    new ConnectlistOfficial().execute();
-                } else {
-                    swipeContainer.setRefreshing(true);
-                    // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    selectApiOfficialFromSQLite();
-                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayoutInv, LENGTH_INDEFINITE,
-                            getString(R.string.offline_mode));
-                    snackBarAlert.createSnacbar();
-
-                    Log.i("log_show draft", "fail network");
-                }
-
-            }
-
-        });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        swipeContainer.post(new Runnable() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void run() {
-                Log.i("log_show draft", "Runnable");
-
-                if (cd.isNetworkAvailable()) {
-                    Log.i("log_show draft", "Refreshing!! ");
-                    swipeContainer.setRefreshing(true);
-                    mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-                    mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
-                    new ConnectlistOfficial().execute();
-                } else {
-                    swipeContainer.setRefreshing(true);
-                    // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
-                    selectApiOfficialFromSQLite();
-
-                    Log.i("log_show draft", "fail network");
-                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayoutInv, LENGTH_INDEFINITE,
-                            getString(R.string.offline_mode));
-                    snackBarAlert.createSnacbar();
-
-                }
+            public void onRefresh() {
+                setAdapterData();
             }
         });
-        officialListAdapter = new OfficialListAdapter(apiOfficialList);
-        rv.setAdapter(officialListAdapter);
+        searchView = (SearchView) viewinvestigator.findViewById(R.id.search);
+        searchView.setQueryHint("ค้นหารายชื่อ");
+        searchView.setIconifiedByDefault(false);
+// perform set on query text listener event
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+// do something on text submit
+                return false;
+            }
 
-        officialListAdapter.setOnItemClickListener(onItemClickListener);
-        if (cd.isNetworkAvailable()) {
-            new ConnectlistOfficial().execute();
-            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
-            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+            @Override
+            public boolean onQueryTextChange(String query) {
+// do something when text changes
+                apiOfficialList = apiOfficialListTemp;
+                Log.d(TAG, "onQueryTextChange " + query);
+                if (query.length() == 0) {
+                    setAdapterList();
+                }
+                List<ApiOfficial> src_list = new ArrayList<>();
+                for (int i = 0; i < apiOfficialList.size(); i++) {
+                    try {
+                        String Rank = "", Position = "", FirstName = "", LastName = "", SCDCAgencyName = "", Alias = "", PhoneNumber = "";
+                        if (apiOfficialList.get(i).getTbOfficial() != null) {
+                            if (apiOfficialList.get(i).getTbOfficial().Rank != null) {
+                                Rank = apiOfficialList.get(i).getTbOfficial().Rank;
+                            }
+                            if (apiOfficialList.get(i).getTbOfficial().FirstName != null) {
+                                FirstName = apiOfficialList.get(i).getTbOfficial().FirstName;
+                            }
+                            if (apiOfficialList.get(i).getTbOfficial().LastName != null) {
+                                LastName = apiOfficialList.get(i).getTbOfficial().LastName;
+                            }
+                            if (apiOfficialList.get(i).getTbOfficial().Alias != null) {
+                                Alias = apiOfficialList.get(i).getTbOfficial().Alias;
+                            }
+                            if (apiOfficialList.get(i).getTbOfficial().Position != null) {
+                                Position = apiOfficialList.get(i).getTbOfficial().Position;
+                            }
+                            if (apiOfficialList.get(i).getTbOfficial().PhoneNumber != null) {
+                                PhoneNumber = apiOfficialList.get(i).getTbOfficial().PhoneNumber;
+                            }
+                            if (apiOfficialList.get(i).getTbSCDCagency().SCDCAgencyName != null) {
+                                SCDCAgencyName = apiOfficialList.get(i).getTbSCDCagency().SCDCAgencyName;
+                            }
+                        }
+                        String offInfo = "";
+                        offInfo = Rank + " " + FirstName + " " + LastName;
+                        if (offInfo.contains(query)) {
+                            src_list.add(apiOfficialList.get(i));
+                        } else if (Alias.contains(query)) {
+                            src_list.add(apiOfficialList.get(i));
+                        } else if (Position.contains(query)) {
+                            src_list.add(apiOfficialList.get(i));
+                        } else if (PhoneNumber.contains(query)) {
+                            src_list.add(apiOfficialList.get(i));
+                        } else if (SCDCAgencyName.contains(query)) {
+                            src_list.add(apiOfficialList.get(i));
+                        }
 
-        } else {
-            selectApiOfficialFromSQLite();
-        }
-
+                    } catch (Exception e) {
+                    }
+                }
+                apiOfficialList = src_list;
+                setAdapterList();
+                return false;
+            }
+        });
         return viewinvestigator;
     }
 
@@ -264,16 +304,9 @@ public class InvestigatorListFragment extends Fragment {
     public void selectApiOfficialFromSQLite() {
         ApiListOfficial apiListOfficial = mDbHelper.selectApiOfficial("investigator");
         apiOfficialList = apiListOfficial.getData().getResult();
-
+        apiOfficialListTemp = apiListOfficial.getData().getResult();
         Log.d(TAG, "Update OfficialListAdapter SQLite");
-
-        if (swipeContainer != null && swipeContainer.isRefreshing()) {
-            swipeContainer.setRefreshing(false);
-        }
-        officialListAdapter = new OfficialListAdapter(apiOfficialList);
-        rv.setAdapter(officialListAdapter);
-        officialListAdapter.notifyDataSetChanged();
-        officialListAdapter.setOnItemClickListener(onItemClickListener);
+        setAdapterList();
     }
 
     class ConnectlistOfficial extends AsyncTask<Void, Void, ApiListOfficial> {
@@ -298,16 +331,9 @@ public class InvestigatorListFragment extends Fragment {
 
                 // ข้อมูล ApiNoticeCase ที่ได้จากเซิร์ฟเวอร์
                 apiOfficialList = apiListOfficial.getData().getResult();
+                apiOfficialListTemp = apiListOfficial.getData().getResult();
                 // เอาข้อมูลไปแสดงใน RV
-                officialListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "Update officialListAdapter");
-
-                if (swipeContainer.isRefreshing()) {
-                    swipeContainer.setRefreshing(false);
-                }
-                officialListAdapter = new OfficialListAdapter(apiOfficialList);
-                rv.setAdapter(officialListAdapter);
-                officialListAdapter.setOnItemClickListener(onItemClickListener);
+                setAdapterList();
             } else {
                 selectApiOfficialFromSQLite();
             }
@@ -361,6 +387,135 @@ public class InvestigatorListFragment extends Fragment {
             } catch (ActivityNotFoundException activityException) {
                 Log.e("Calling a Phone Number", "Call failed", activityException);
             }
+        }
+    }
+
+    private void setAdapterData() {
+        if (cd.isNetworkAvailable()) {
+//                    Log.i("log_show draft", "Refreshing!! ");
+            swipeContainer.setRefreshing(true);
+            mHandler.removeCallbacks(mHandlerTaskcheckConnect);//หยุดการตรวจการเชื่อมกับเซิร์ฟเวอร์เก่า
+            mHandlerTaskcheckConnect.run();//เริ่มการทำงานส่วนตรวจสอบการเชื่อมต่อเซิร์ฟเวอร์ใหม่
+            selectApiOfficialFromSQLite();
+            new ConnectlistOfficial().execute();
+        } else {
+            swipeContainer.setRefreshing(true);
+            // ดึงค่าจาก SQLite เพราะไม่มีการต่อเน็ต
+            selectApiOfficialFromSQLite();
+//                    Log.i("log_show draft", "fail network");
+            SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayoutInv, LENGTH_INDEFINITE,
+                    getString(R.string.offline_mode));
+            snackBarAlert.createSnacbar();
+        }
+    }
+
+    private void setAdapterList() {
+        if (swipeContainer != null && swipeContainer.isRefreshing()) {
+            swipeContainer.setRefreshing(false);
+        }
+        officialListAdapter = new OfficialListAdapter(apiOfficialList);
+        rv.setAdapter(officialListAdapter);
+        officialListAdapter.notifyDataSetChanged();
+        officialListAdapter.setOnItemClickListener(onItemClickListener);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        swipeContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                setAdapterData();
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // save RecyclerView state
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = rv.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+        Log.i(TAG, "onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fragment ถูกสร้างขึ้นมาครั้งแรก
+            //check user profile
+            setUserProfile();
+
+        } else {
+            // Fragment ถูก Restore ขึ้นมา
+            restoreInstanceState(savedInstanceState);
+            setUserProfile();
+            Log.i(TAG, "from onActivityCreated" + officialID);
+
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        apiProfile = Parcels.unwrap(savedInstanceState.getParcelable(KEY_PROFILE));
+        if (WelcomeActivity.profile == null) {
+            WelcomeActivity.profile = new ApiProfile();
+            WelcomeActivity.profile = apiProfile;
+        } else {
+            WelcomeActivity.profile = apiProfile;
+        }
+        api = Parcels.unwrap(savedInstanceState.getParcelable(KEY_CONNECT));
+        if (WelcomeActivity.api == null) {
+            WelcomeActivity.api = new ApiConnect(mContext);
+            WelcomeActivity.api = api;
+        } else {
+            WelcomeActivity.api = api;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (apiProfile == null) {
+            apiProfile = new ApiProfile();
+            apiProfile = WelcomeActivity.profile;
+        } else {
+            apiProfile = WelcomeActivity.profile;
+        }
+        if (api == null) {
+            api = new ApiConnect(getActivity());
+            api = WelcomeActivity.api;
+        } else {
+            api = WelcomeActivity.api;
+        }
+        outState.putParcelable(KEY_PROFILE, Parcels.wrap(apiProfile));
+        outState.putParcelable(KEY_CONNECT, Parcels.wrap(api));
+        super.onSaveInstanceState(outState);
+    }
+
+    private void setUserProfile() {
+        try {
+            if (WelcomeActivity.profile.getTbOfficial() != null) {
+                officialID = WelcomeActivity.profile.getTbOfficial().OfficialID;
+
+            } else {
+
+                Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+                getActivity().finish();
+                startActivity(gotoWelcomeActivity);
+
+            }
+        } catch (NullPointerException e) {
+            Intent gotoWelcomeActivity = new Intent(mContext, WelcomeActivity.class);
+            getActivity().finish();
+            startActivity(gotoWelcomeActivity);
         }
     }
 }

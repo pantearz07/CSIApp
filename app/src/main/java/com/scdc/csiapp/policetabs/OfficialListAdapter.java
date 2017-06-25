@@ -109,7 +109,6 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
         if (apiOfficial.getTbOfficial() != null) {
             OfficialViewHolder.personName.setText(apiOfficial.getTbOfficial().Rank + " " + apiOfficial.getTbOfficial().FirstName + " " + apiOfficial.getTbOfficial().LastName);
 
-            OfficialViewHolder.personPosition.setText(apiOfficial.getTbOfficial().Position);
             OfficialViewHolder.personTel.setText("เบอร์โทร " + apiOfficial.getTbOfficial().PhoneNumber);
 
             if (apiOfficial.getTbOfficial().AccessType.equalsIgnoreCase("investigator") || apiOfficial.getTbOfficial().AccessType.equalsIgnoreCase("investigator2")) {
@@ -118,6 +117,12 @@ public class OfficialListAdapter extends RecyclerView.Adapter<OfficialListAdapte
             } else {
                 OfficialViewHolder.personStationname.setText("สภ. " + apiOfficial.getTbPoliceStation().PoliceStationName);
                 OfficialViewHolder.personAgencyname.setVisibility(View.GONE);
+            }
+            if (apiOfficial.getTbOfficial().Alias.equals("") || apiOfficial.getTbOfficial().Alias == null) {
+                OfficialViewHolder.personPosition.setText(apiOfficial.getTbOfficial().Position);
+            } else {
+                String sAlias = apiOfficial.getTbOfficial().Alias + " ";
+                OfficialViewHolder.personPosition.setText(sAlias + apiOfficial.getTbOfficial().Position);
             }
         }
         if (apiOfficial.getTbOfficial().OfficialDisplayPic != null) {
