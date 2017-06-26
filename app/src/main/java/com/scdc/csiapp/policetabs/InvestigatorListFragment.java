@@ -135,7 +135,7 @@ public class InvestigatorListFragment extends Fragment {
         });
         searchView = (SearchView) viewinvestigator.findViewById(R.id.search);
         searchView.setQueryHint("ค้นหารายชื่อ");
-        searchView.setIconifiedByDefault(false);
+//        searchView.setIconifiedByDefault(false);
 // perform set on query text listener event
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

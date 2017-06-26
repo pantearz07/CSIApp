@@ -32,7 +32,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:queryHint="ค้นหารายชื่อ"
-                        android:clickable="true" />
+                        android:clickable="true"/>
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rv"
                         android:layout_width="match_parent"
