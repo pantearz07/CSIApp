@@ -13,9 +13,9 @@
     <string name="offline_mode">โหมดออฟไลน์ กรุณาตรวจสอบการเชื่อมต่อ</string>
     <string name="please_input_data">กรุณาป้อนข้อมูล</string>
     <string name="save">บันทึก</string>
-    <string name="network_error">กรุณาตรวจสอบการเชื่อมต่อ</string>
+    <string name="network_error">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
 
-    <string name="error_data">เกิดเข้อผิดพลาดบางประการ</string>
+    <string name="error_data">เกิดข้อผิดพลาดบางประการ</string>
     <string name="save_complete">บันทึกเรียบร้อย</string>
     <string name="delete_complete">ลบข้อมูลเรียบร้อย</string>
     <string name="download_complete">ดาวน์โหลดไฟล์เรียบร้อย</string>

@@ -35,6 +35,7 @@ import com.scdc.csiapp.R;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
 import com.scdc.csiapp.connecting.PreferenceData;
+import com.scdc.csiapp.main.GetDateTime;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.picasso.Picasso;
 
@@ -347,6 +348,7 @@ public class SlideshowDialogFragment extends DialogFragment {
                     if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
                         CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
                         curfile.delete();
+                        saveToDB();
 //                        Log.v(TAG, "media size after delete file " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().size());
                         Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
                         Intent data = new Intent();
@@ -600,7 +602,7 @@ public class SlideshowDialogFragment extends DialogFragment {
     // save ข้อมูลรูปภาพไว้ใน list table และ sqlite
     private void saveToDB() {
         try {
-
+            updateData();
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
                 Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
@@ -609,5 +611,14 @@ public class SlideshowDialogFragment extends DialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    private void updateData() {
+        GetDateTime getDateTime = new GetDateTime();
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
     }
 }

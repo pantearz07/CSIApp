@@ -62,6 +62,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by Pantearz07 on 14/3/2559.
  */
@@ -524,9 +525,9 @@ public class VoiceTabFragment extends Fragment {
             TextView txtVoiceDesc = (TextView) convertView
                     .findViewById(R.id.txtVoiceDesc);
             final String descvoice = tbMultimediaFileList.get(position).FileDescription.toString();
-            if(tbMultimediaFileList.get(position).FileDescription == null ||
-                    tbMultimediaFileList.get(position).FileDescription.length() == 0){
-            }else {
+            if (tbMultimediaFileList.get(position).FileDescription == null ||
+                    tbMultimediaFileList.get(position).FileDescription.length() == 0) {
+            } else {
                 txtVoiceDesc.setText("คำอธิบาย: " + tbMultimediaFileList.get(position).FileDescription.toString());
             }
             final String strPath = strSDCardPathName_Voi + sVoiceName;
@@ -593,7 +594,7 @@ public class VoiceTabFragment extends Fragment {
                                             output.close();
                                             input.close();
                                         } catch (Exception e) {
-                                            Log.e("Error: ", e.getMessage());
+//                                            Log.e("Error: ", e.getMessage());
                                             Toast.makeText(getActivity(), getString(R.string.save_error), Toast.LENGTH_SHORT).show();
                                         }
                                     } else {
@@ -630,13 +631,18 @@ public class VoiceTabFragment extends Fragment {
                                                     if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
                                                         CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i)
                                                                 .getTbMultimediaFile().FileDescription = editMediaDescription.getText().toString();
-                                                        Toast.makeText(mContext, getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
                                                         Log.v(TAG, "Click FileDescription " + i + " " + sVoiceID + " " +
                                                                 CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileDescription.toString());
                                                     }
                                                 }
+                                                updateData();
                                                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                                                 if (isSuccess) {
+                                                    Toast.makeText(getActivity().getApplicationContext(),
+                                                            getString(R.string.save_complete)
+                                                                    + " เมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime,
+                                                            Toast.LENGTH_LONG).show();
                                                     showListVoiceRecord();
                                                 }
                                                 dialog.dismiss();
@@ -655,30 +661,34 @@ public class VoiceTabFragment extends Fragment {
                                 addDialog.show();
                             }
                             if (id == R.id.deletevoice) {
-                                if (curfile.exists()) {
-                                    long saveStatus = dbHelper.DeleteSelectedData("multimediafile", "FileID", sVoiceID);
-                                    if (saveStatus <= 0) {
-                                        Toast.makeText(getActivity().getApplicationContext(),
-                                                getString(R.string.delete_error),
-                                                Toast.LENGTH_LONG).show();
-                                    } else {
-                                        Toast.makeText(getActivity().getApplicationContext(),
-                                                "ลบไฟล์เสียงเรียบร้อยเเล้ว",
-                                                Toast.LENGTH_LONG).show();
-                                        for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                                            if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
-                                                CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
-                                                Log.i(TAG, "delete file name " + sVoiceID);
+
+                                long saveStatus = dbHelper.DeleteSelectedData("multimediafile", "FileID", sVoiceID);
+                                if (saveStatus <= 0) {
+                                    Toast.makeText(getActivity().getApplicationContext(),
+                                            getString(R.string.delete_error),
+                                            Toast.LENGTH_LONG).show();
+                                } else {
+
+                                    for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                                        if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(sVoiceID)) {
+                                            CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                                            Log.i(TAG, "delete file name " + sVoiceID);
+                                            if (curfile.exists()) {
                                                 curfile.delete();
                                             }
                                         }
                                     }
-                                } else {
-                                    Toast.makeText(getActivity().getApplicationContext(),
-                                            "ไม่มีไฟล์เสียง ไม่สามารถลบได้",
-                                            Toast.LENGTH_LONG).show();
                                 }
-                                showListVoiceRecord();
+                                updateData();
+                                boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+                                if (isSuccess) {
+                                    Toast.makeText(getActivity().getApplicationContext(),
+                                            "ลบไฟล์เสียงเรียบร้อยเเล้ว"
+                                                    + " เมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime,
+                                            Toast.LENGTH_LONG).show();
+                                    showListVoiceRecord();
+                                }
                             }
                             return true;
                         }
@@ -905,9 +915,17 @@ public class VoiceTabFragment extends Fragment {
             CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
 //                CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
             Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            updateData();
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
                 Log.i(TAG, "voice saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID + ".3gp");
+                Toast savedToast = Toast.makeText(getActivity()
+                                .getApplicationContext(),
+                        getString(R.string.save_complete)
+                                + " เมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime,
+                        Toast.LENGTH_SHORT);
+                savedToast.show();
                 showListVoiceRecord();
             }
         } catch (Exception e) {
@@ -973,4 +991,12 @@ public class VoiceTabFragment extends Fragment {
         }
     }
 
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
+    }
 }

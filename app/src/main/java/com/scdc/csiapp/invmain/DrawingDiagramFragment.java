@@ -336,13 +336,14 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                                         Bitmap.CompressFormat.JPEG, 100, out);
                                 out.flush();
                                 out.close();
-
+                                updateData();
                                 boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
                                 if (isSuccess) {
                                     Toast savedToast = Toast.makeText(getActivity()
                                                     .getApplicationContext(),
-                                            "บันทึกภาพลงอัลบั้มเรียบร้อย :" + myDir
-                                                    + " : " + fname,
+                                            getString(R.string.save_complete)
+                                                    + " เมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime,
                                             Toast.LENGTH_SHORT);
                                     savedToast.show();
                                     getActivity().onBackPressed();
@@ -391,5 +392,14 @@ public class DrawingDiagramFragment extends Fragment implements OnClickListener 
                 currPaint = (ImageButton) view;
             }
         }
+    }
+
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
     }
 }

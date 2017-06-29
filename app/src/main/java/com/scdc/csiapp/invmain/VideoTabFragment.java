@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -39,6 +40,7 @@ import com.scdc.csiapp.connecting.PreferenceData;
 import com.scdc.csiapp.main.ActivityResultBus;
 import com.scdc.csiapp.main.ActivityResultEvent;
 import com.scdc.csiapp.main.GetDateTime;
+import com.scdc.csiapp.main.SnackBarAlert;
 import com.scdc.csiapp.tablemodel.TbMultimediaFile;
 import com.squareup.otto.Subscribe;
 
@@ -49,6 +51,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 /**
  * Created by Pantearz07 on 14/3/2559.
@@ -78,6 +82,7 @@ public class VideoTabFragment extends Fragment {
     String defaultIP = "180.183.251.32/mcsi";
     ConnectionDetector cd;
     GetPathUri getPathUri;
+    Snackbar snackbar;
 
     @Nullable
     @Override
@@ -159,10 +164,10 @@ public class VideoTabFragment extends Fragment {
 
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
-            if(tbMultimediaFileList.get(position).FileDescription == null ||
-                    tbMultimediaFileList.get(position).FileDescription.length() == 0){
+            if (tbMultimediaFileList.get(position).FileDescription == null ||
+                    tbMultimediaFileList.get(position).FileDescription.length() == 0) {
                 textView.setVisibility(View.GONE);
-            }else {
+            } else {
                 textView.setText(tbMultimediaFileList.get(position).FileDescription.toString());
             }
             String strPath = strSDCardPathName_Vid
@@ -528,10 +533,17 @@ public class VideoTabFragment extends Fragment {
             apiMultimediaList.add(apiMultimedia);
             CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
             Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            updateData();
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
                 Log.i(TAG, "video saved to Gallery! Video/" + " : " + videoID + sFileType);
-
+                if (snackbar == null || !snackbar.isShown()) {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            getString(R.string.save_complete)
+                                    + " เมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                    + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime);
+                    snackBarAlert.createSnacbar();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -549,5 +561,14 @@ public class VideoTabFragment extends Fragment {
 
         cursor.close();
         return imageEncoded;
+    }
+
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
     }
 }

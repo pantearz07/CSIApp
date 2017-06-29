@@ -64,6 +64,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 
@@ -489,25 +490,47 @@ public class SummaryCSITabFragment extends Fragment {
             if (v == btnNoticecase) {
                 // ซ่อน Keyborad หลังจากกด Login แล้ว
                 hiddenKeyboard();
-                updateData();
-                String title = getString(R.string.sendtoserver);
+                if (cd.isNetworkAvailable()) {
+                    updateData();
+                    String title = getString(R.string.sendtoserver);
 
-                CharSequence[] itemlist = {getString(R.string.draftreport),
-                        getString(R.string.reported)
-                };
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setIcon(R.drawable.ic_noti);
-                builder.setTitle(title);
-                builder.setItems(itemlist, new DialogInterfaceOnClickListener());
-                AlertDialog alert = builder.create();
-                alert.setCancelable(true);
-                alert.show();
+                    CharSequence[] itemlist = {getString(R.string.draftreport),
+                            getString(R.string.reported)
+                    };
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setIcon(R.drawable.ic_noti);
+                    builder.setTitle(title);
+                    builder.setItems(itemlist, new DialogInterfaceOnClickListener());
+                    AlertDialog alert = builder.create();
+                    alert.setCancelable(true);
+                    alert.show();
+                }else{
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                }
+                            });
+                    snackbar.show();
+                }
             }
             if (v == btnDownloadfile) {
                 hiddenKeyboard();
                 Log.i(TAG, "btnDownloadfile");
-                DownloadDocFile downloadDocFile = new DownloadDocFile();
-                downloadDocFile.execute(CSIDataTabFragment.apiCaseScene);
+                if (cd.isNetworkAvailable()) {
+                    DownloadDocFile downloadDocFile = new DownloadDocFile();
+                    downloadDocFile.execute(CSIDataTabFragment.apiCaseScene);
+                }else{
+                    snackbar = Snackbar.make(rootLayout, getString(R.string.offline_mode), LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                }
+                            });
+                    snackbar.show();
+                }
             }
 
             if (v == fabBtn) {

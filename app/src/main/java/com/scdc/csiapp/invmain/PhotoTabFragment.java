@@ -50,6 +50,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by Pantearz07 on 14/3/2559.
  */
@@ -147,10 +148,10 @@ public class PhotoTabFragment extends Fragment {
 
             TextView textView = (TextView) convertView
                     .findViewById(R.id.txtDescPhoto);
-            if(tbMultimediaFileList.get(position).FileDescription == null ||
-                    tbMultimediaFileList.get(position).FileDescription.length() == 0){
+            if (tbMultimediaFileList.get(position).FileDescription == null ||
+                    tbMultimediaFileList.get(position).FileDescription.length() == 0) {
                 textView.setVisibility(View.GONE);
-            }else {
+            } else {
                 textView.setText(tbMultimediaFileList.get(position).FileDescription.toString());
             }
 
@@ -463,9 +464,17 @@ public class PhotoTabFragment extends Fragment {
             CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
 //                    CSIDataTabFragment.apiCaseScene.setApiMultimedia(apiMultimediaList);
             Log.i(TAG, "apiMultimediaList " + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+            updateData();
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
                 Log.i(TAG, "PHOTO saved to Gallery!  : " + PhotoID + sImageType);
+                Toast savedToast = Toast.makeText(getActivity()
+                                .getApplicationContext(),
+                        getString(R.string.save_complete)
+                                + " เมื่อ " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate
+                                + " " + CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime,
+                        Toast.LENGTH_SHORT);
+                savedToast.show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -578,5 +587,14 @@ public class PhotoTabFragment extends Fragment {
 
         cursor.close();
         return imageEncoded;
+    }
+
+    private void updateData() {
+        final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbCaseScene().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateDate = dateTimeCurrent[0] + "-" + dateTimeCurrent[1] + "-" + dateTimeCurrent[2];
+        CSIDataTabFragment.apiCaseScene.getTbNoticeCase().LastUpdateTime = dateTimeCurrent[3] + ":" + dateTimeCurrent[4] + ":" + dateTimeCurrent[5];
+
     }
 }
