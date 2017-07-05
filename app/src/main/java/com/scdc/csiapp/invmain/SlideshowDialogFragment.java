@@ -338,34 +338,36 @@ public class SlideshowDialogFragment extends DialogFragment {
     }
 
     private void deletePhoto() {
-        if (curfile.exists()) {
-            Log.i(TAG, "  delete file name " + fileid);
-            int flag = 0;
-            flag = deletefile(fileid);
-            if (flag > 0) {
+//        if (curfile.exists()) {
+        Log.i(TAG, "  delete file name " + fileid);
+        int flag = 0;
+        flag = deletefile(fileid);
+        if (flag > 0) {
 //                Log.i(TAG, "deletePhoto  currentphoto " + String.valueOf(currentphoto));
-                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
-                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+            for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
+                    CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                    if (curfile.exists()) {
                         curfile.delete();
-                        saveToDB();
-//                        Log.v(TAG, "media size after delete file " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().size());
-                        Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
-                        Intent data = new Intent();
-//                        data.putExtra("fileid", fileid);
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
-                        getDialog().dismiss();
                     }
+                    saveToDB();
+//                        Log.v(TAG, "media size after delete file " + CSIDataTabFragment.apiCaseScene.getApiMultimedia().size());
+                    Toast.makeText(mContext, getString(R.string.delete_photo_success), Toast.LENGTH_SHORT).show();
+                    Intent data = new Intent();
+//                        data.putExtra("fileid", fileid);
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+                    getDialog().dismiss();
                 }
-
-            } else {
-                Toast.makeText(mContext.getApplicationContext(),
-                        getString(R.string.delete_error),
-                        Toast.LENGTH_LONG).show();
             }
+
         } else {
-            Toast.makeText(mContext, getString(R.string.no_photo), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext.getApplicationContext(),
+                    getString(R.string.delete_error),
+                    Toast.LENGTH_LONG).show();
         }
+//        } else {
+//            Toast.makeText(mContext, getString(R.string.no_photo), Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private void initData() {
@@ -612,6 +614,7 @@ public class SlideshowDialogFragment extends DialogFragment {
             e.printStackTrace();
         }
     }
+
     private void updateData() {
         GetDateTime getDateTime = new GetDateTime();
         final String dateTimeCurrent[] = getDateTime.getDateTimeCurrent();

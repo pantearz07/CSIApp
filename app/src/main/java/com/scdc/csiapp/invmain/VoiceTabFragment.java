@@ -248,7 +248,7 @@ public class VoiceTabFragment extends Fragment {
             public void onClick(View v) {
                 myChronometer.stop();
                 stopRecording();
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi + sVoiceID1 + ".3gp");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi + sVoiceID1 + ".mp3");
 
                 if (file.exists()) {
                     file.delete();
@@ -270,7 +270,7 @@ public class VoiceTabFragment extends Fragment {
                         "Stop Recording", Toast.LENGTH_SHORT).show();
                 stopRecording();
 
-                saveToListDB(sVoiceID1, stimeStamp, ".3gp", sVoiceDescription1);
+                saveToListDB(sVoiceID1, stimeStamp, ".mp3", sVoiceDescription1);
                 dialog.dismiss();
 
             }
@@ -284,10 +284,10 @@ public class VoiceTabFragment extends Fragment {
         recorder = new MediaRecorder();
 
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         recorder.setOutputFile(getFilename(sVoiceID1));
-        Log.i("show Filename", getFilename(sVoiceID1));
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        Log.i(TAG, "show Filename " + getFilename(sVoiceID1));
         recorder.setOnErrorListener(errorListener);
         recorder.setOnInfoListener(infoListener);
 
@@ -317,8 +317,8 @@ public class VoiceTabFragment extends Fragment {
         if (!file.exists()) {
             file.mkdirs();
         }
-
-        return file.getPath() + "/" + sVoiceID1 + ".3gp";
+        Log.i(TAG, "show Filename " + file.getPath() + "/" + sVoiceID1 + ".mp3");
+        return file.getPath() + "/" + sVoiceID1 + ".mp3";
     }
 
     private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
@@ -918,7 +918,7 @@ public class VoiceTabFragment extends Fragment {
             updateData();
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
-                Log.i(TAG, "voice saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID + ".3gp");
+                Log.i(TAG, "voice saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID + ".mp3");
                 Toast savedToast = Toast.makeText(getActivity()
                                 .getApplicationContext(),
                         getString(R.string.save_complete)

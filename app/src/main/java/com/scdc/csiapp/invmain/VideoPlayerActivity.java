@@ -266,32 +266,34 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void deleteVideo() {
-        if (curfile.exists()) {
-            Log.i(TAG, "  delete file name " + fileid);
-            int flag = 0;
-            flag = deletefile(fileid);
-            if (flag > 0) {
-                for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
-                    if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
-                        CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
-                        Log.i(TAG, "delete file name " + fileid);
+//        if (curfile.exists()) {
+        Log.i(TAG, "  delete file name " + fileid);
+        int flag = 0;
+        flag = deletefile(fileid);
+        if (flag > 0) {
+            for (int i = 0; i < CSIDataTabFragment.apiCaseScene.getApiMultimedia().size(); i++) {
+                if (CSIDataTabFragment.apiCaseScene.getApiMultimedia().get(i).getTbMultimediaFile().FileID.equals(fileid)) {
+                    CSIDataTabFragment.apiCaseScene.getApiMultimedia().remove(i);
+                    Log.i(TAG, "delete file name " + fileid);
+                    if (curfile.exists()) {
                         curfile.delete();
-                        saveToDB();
-                        Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
-                        Intent _result = new Intent();
-                        setResult(Activity.RESULT_OK, _result);
-                        VideoPlayerActivity.this.finish();
                     }
+                    saveToDB();
+                    Toast.makeText(VideoPlayerActivity.this, getString(R.string.delete_video_success), Toast.LENGTH_SHORT).show();
+                    Intent _result = new Intent();
+                    setResult(Activity.RESULT_OK, _result);
+                    VideoPlayerActivity.this.finish();
                 }
-
-            } else {
-                Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
-                        getString(R.string.delete_error),
-                        Toast.LENGTH_LONG).show();
             }
+
         } else {
-            Toast.makeText(VideoPlayerActivity.this, getString(R.string.no_video), Toast.LENGTH_SHORT).show();
+            Toast.makeText(VideoPlayerActivity.this.getApplicationContext(),
+                    getString(R.string.delete_error),
+                    Toast.LENGTH_LONG).show();
         }
+//        } else {
+//            Toast.makeText(VideoPlayerActivity.this, getString(R.string.no_video), Toast.LENGTH_SHORT).show();
+//        }
     }
 
     protected Dialog createdDialog(int id) {
