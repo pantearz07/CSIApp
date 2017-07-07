@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -213,6 +214,7 @@ public class VoiceTabFragment extends Fragment {
         final String sVoiceDescription1 = sVoiceDescription;
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.voicerecord_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("บันทึกเสียง");
         final Chronometer myChronometer = (Chronometer) dialog.findViewById(R.id.chronometer);
         // set the custom dialog components - text, image and
@@ -248,7 +250,7 @@ public class VoiceTabFragment extends Fragment {
             public void onClick(View v) {
                 myChronometer.stop();
                 stopRecording();
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi + sVoiceID1 + ".mp3");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strSDCardPathName_Voi + sVoiceID1 + ".3gp");
 
                 if (file.exists()) {
                     file.delete();
@@ -270,7 +272,7 @@ public class VoiceTabFragment extends Fragment {
                         "Stop Recording", Toast.LENGTH_SHORT).show();
                 stopRecording();
 
-                saveToListDB(sVoiceID1, stimeStamp, ".mp3", sVoiceDescription1);
+                saveToListDB(sVoiceID1, stimeStamp, ".3gp", sVoiceDescription1);
                 dialog.dismiss();
 
             }
@@ -282,23 +284,24 @@ public class VoiceTabFragment extends Fragment {
     private void startRecording(String sVoiceID1) {
         // TODO Auto-generated method stub
         recorder = new MediaRecorder();
-
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
         recorder.setOutputFile(getFilename(sVoiceID1));
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         Log.i(TAG, "show Filename " + getFilename(sVoiceID1));
         recorder.setOnErrorListener(errorListener);
         recorder.setOnInfoListener(infoListener);
 
         try {
             recorder.prepare();
-            recorder.start();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        recorder.start();
+
     }
 
     private void stopRecording() {
@@ -317,8 +320,8 @@ public class VoiceTabFragment extends Fragment {
         if (!file.exists()) {
             file.mkdirs();
         }
-        Log.i(TAG, "show Filename " + file.getPath() + "/" + sVoiceID1 + ".mp3");
-        return file.getPath() + "/" + sVoiceID1 + ".mp3";
+        Log.i(TAG, "show Filename " + file.getPath() + "/" + sVoiceID1 + ".3gp");
+        return file.getPath() + "/" + sVoiceID1 + ".3gp";
     }
 
     private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
@@ -342,11 +345,12 @@ public class VoiceTabFragment extends Fragment {
         // TODO Auto-generated method stub
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.voiceplay_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("ฟังเสียง");
         final TextView textView1 = (TextView) dialog
                 .findViewById(R.id.textView1);
         textView1.setText("ชื่อไฟล์ : " + sVoiceID);
-
+        Button buttonCancel = (Button) dialog.findViewById(R.id.button_cancel);
         Uri uri = Uri.parse(filepath);
 
         mMedia = new MediaPlayer();
@@ -412,7 +416,13 @@ public class VoiceTabFragment extends Fragment {
 
                 }
             });
-
+            buttonCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMedia.stop();
+                    dialog.dismiss();
+                }
+            });
             dialog.show();
         } else {
             Toast.makeText(getActivity(), R.string.no_voice, Toast.LENGTH_SHORT).show();
@@ -532,8 +542,7 @@ public class VoiceTabFragment extends Fragment {
             }
             final String strPath = strSDCardPathName_Voi + sVoiceName;
             final String filepath = "http://" + defaultIP + "/assets/csifiles/"
-                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/"
-                    + sVoiceName;
+                    + CSIDataTabFragment.apiCaseScene.getTbCaseScene().CaseReportID + "/voice/" + sVoiceName;
             final File curfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), strPath);
             final ImageView btnExpandmenu = (ImageView) convertView.findViewById(R.id.btnExpandmenu);
             if (CSIDataTabFragment.mode.equals("view")) {
@@ -918,7 +927,7 @@ public class VoiceTabFragment extends Fragment {
             updateData();
             boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
             if (isSuccess) {
-                Log.i(TAG, "voice saved to Gallery!" + ResultTabFragment.strSDCardPathName + "Voice/" + " : " + sVoiceID + ".mp3");
+                Log.i(TAG, "voice saved to collection!" + ResultTabFragment.strSDCardPathName + sVoiceID + sFileType);
                 Toast savedToast = Toast.makeText(getActivity()
                                 .getApplicationContext(),
                         getString(R.string.save_complete)
