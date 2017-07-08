@@ -97,7 +97,7 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
     private static final String Bundle_Key = "noticecase";
     Snackbar snackbar;
     Handler mHandler = new Handler();
-    private final static int INTERVAL = 1000 * 20; //20 second
+    private final static int INTERVAL = 1000 * 10; //20 second
     public static final String KEY_PROFILE = "key_profile";
     public static final String KEY_CONNECT = "key_connect";
     ApiProfile apiProfile;
@@ -261,8 +261,10 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                 popup.getMenuInflater().inflate(R.menu.csi_menu_1, popup.getMenu());
                 Menu popupMenu = popup.getMenu();
                 popupMenu.findItem(R.id.edit).setVisible(false);
+                popupMenu.findItem(R.id.upload).setVisible(false);
                 if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("receive")) {
                     popupMenu.findItem(R.id.edit).setVisible(true);
+                    popupMenu.findItem(R.id.view).setVisible(false);
                 }
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -287,16 +289,18 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
                 AlertDialog.Builder builder =
                         new AlertDialog.Builder(getActivity());
                 builder.setMessage("ดูข้อมูลการตรวจนี้ " + NoticeCaseID);
-                builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        viewCase();
-                    }
-                });
+
                 if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("receive")) {
                     builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             editCase();
+                        }
+                    });
+                } else {
+                    builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            viewCase();
                         }
                     });
                 }
@@ -451,7 +455,6 @@ public class NoticeCaseListFragment extends Fragment implements SearchView.OnQue
             super.onPostExecute(apiStatus);
             if (apiStatus != null && apiStatus.getStatus().equalsIgnoreCase("success")) {
                 mHandler.removeCallbacks(mHandlerTaskcheckConnect);
-//                selectApiNoticeCaseFromSQLite();
             } else {
 //                if (snackbar == null || !snackbar.isShown()) {
                 try {

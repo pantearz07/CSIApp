@@ -328,6 +328,7 @@
     <string name="sortitem">จัดเรียงตาม</string>
     <string name="sortstatus">แสดงผลตามสถานะ</string>
     <string name="sortstatus_title">เลือกแสดงผลตามสถานะ</string>
+    <string name="modeupload">ัอัพโหลดข้อมูล</string>
     <string-array name="ip_list">
         <item>180.183.251.32/mcsi</item>
         <item>04.mcsi</item>

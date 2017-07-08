@@ -93,11 +93,15 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
         if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("online")) {
             csidataholder.iv_mode.setImageResource(R.drawable.ic_cloud_black_24dp);
         } else if (apiNoticeCase.getMode() != null && apiNoticeCase.getMode().equalsIgnoreCase("offline")) {
-            csidataholder.iv_mode.setImageResource(R.drawable.ic_cloud_download_black_24dp);
+            if (apiNoticeCase.getModeUpload() != null && apiNoticeCase.getModeUpload().equalsIgnoreCase("waitupload")) {
+                csidataholder.iv_mode.setImageResource(R.drawable.ic_cloud_upload_black_24dp);
+            } else {
+                csidataholder.iv_mode.setImageResource(R.drawable.ic_cloud_download_black_24dp);
+            }
         } else {
             csidataholder.iv_mode.setImageResource(R.drawable.ic_help_black_24dp);
         }
-        if (apiNoticeCase.getTbCaseSceneType()!= null) {
+        if (apiNoticeCase.getTbCaseSceneType() != null) {
             csidataholder.typeCase.setText("ประเภทคดี: " + apiNoticeCase.getTbCaseSceneType().CaseTypeName);
         } else {
             csidataholder.typeCase.setText("ประเภทคดี: -");
@@ -132,11 +136,16 @@ public class ApiCaseSceneListAdapter extends RecyclerView.Adapter<ApiCaseSceneLi
         if (apiNoticeCase.getTbNoticeCase().ReceivingCaseDate != null) {
             ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate);
         }
-//        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseTime != null) {
-            ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
-//        }
+        ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
+        String LastUpdateDate = "", LastUpdateTime = "";
+        if (apiNoticeCase.getTbNoticeCase().LastUpdateDate != null) {
+            LastUpdateDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().LastUpdateDate);
+        }
+        LastUpdateTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().LastUpdateTime);
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " +
-                ReceivingCaseDate + " เวลา " + ReceivingCaseTime + " น.");
+                ReceivingCaseDate + " " + ReceivingCaseTime + " น.\n"+
+                "แก้ไขล่าสุด: " +
+                LastUpdateDate + " " + LastUpdateTime + " น.");
 
         if (apiNoticeCase.getTbNoticeCase().InquiryOfficialID != null) {
             csidataholder.inqInfo.setVisibility(View.VISIBLE);

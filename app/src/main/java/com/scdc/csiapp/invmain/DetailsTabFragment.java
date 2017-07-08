@@ -1336,12 +1336,13 @@ public class DetailsTabFragment extends Fragment {
             apiMultimediaList.add(apiMultimedia);
 
             CSIDataTabFragment.apiCaseScene.getApiMultimedia().add(apiMultimedia);
-            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
-            if (isSuccess) {
-                Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
-                Log.i(TAG, "PHOTO saved to Gallery! : " + PhotoID + sImageType);
-
-            }
+            updateData();
+//            boolean isSuccess = dbHelper.updateAlldataCase(CSIDataTabFragment.apiCaseScene);
+//            if (isSuccess) {
+//                Log.i(TAG, "apiMultimediaList num:" + String.valueOf(CSIDataTabFragment.apiCaseScene.getApiMultimedia().size()));
+//                Log.i(TAG, "PHOTO saved to Gallery! : " + PhotoID + sImageType);
+//
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

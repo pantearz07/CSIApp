@@ -30,7 +30,7 @@ import java.util.List;
 public class ApiCaseScene implements Serializable {
     // โหมดเตรียมไว้ ใช้บอกว่า online, offline
     String mode;
-
+    String modeUpload;
     // ตารางหลัก
     TbCaseScene tbCaseScene;
 
@@ -263,5 +263,13 @@ public class ApiCaseScene implements Serializable {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public String getModeUpload() {
+        return modeUpload;
+    }
+
+    public void setModeUpload(String modeUpload) {
+        this.modeUpload = modeUpload;
     }
 }

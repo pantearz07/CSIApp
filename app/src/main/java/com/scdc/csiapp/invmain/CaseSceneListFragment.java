@@ -1,7 +1,6 @@
 package com.scdc.csiapp.invmain;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,7 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -47,6 +46,7 @@ import com.scdc.csiapp.apimodel.ApiCaseScene;
 import com.scdc.csiapp.apimodel.ApiListCaseScene;
 import com.scdc.csiapp.apimodel.ApiProfile;
 import com.scdc.csiapp.apimodel.ApiStatus;
+import com.scdc.csiapp.apimodel.ApiStatusData;
 import com.scdc.csiapp.connecting.ApiConnect;
 import com.scdc.csiapp.connecting.ConnectionDetector;
 import com.scdc.csiapp.connecting.DBHelper;
@@ -67,6 +67,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 /**
@@ -108,7 +109,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
     ApiProfile apiProfile;
     ApiConnect api;
     ApiCaseScene apiNoticeCase;
-    String mode, caserepID;
+    String mode, caserepID, modeUpload;
     private static final String[] sortlists =
             {"วันเวลารับเเจ้งเหตุล่าสุด", "วันเวลารับเเจ้งเหตุเก่าสุด", "วันเวลาเเก้ไขล่าสุด", "วันเวลาเเก้ไขเก่าสุด"};
     String mSelected;
@@ -319,6 +320,10 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
         public void onItemClick(View view, int position) {
             apiNoticeCase = caseList.get(position);
             mode = apiNoticeCase.getMode().toString();
+            modeUpload = "";
+            if (apiNoticeCase.getModeUpload() != null) {
+                modeUpload = apiNoticeCase.getModeUpload().toString();
+            }
             caserepID = apiNoticeCase.getTbCaseScene().getCaseReportID().toString();
 
             Log.d(TAG, "onItemClick");
@@ -330,12 +335,26 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                 //Inflating the Popup using xml file
                 popup.getMenuInflater().inflate(R.menu.csi_menu_1, popup.getMenu());
                 Menu popupMenu = popup.getMenu();
+                popupMenu.findItem(R.id.view).setVisible(false);
                 popupMenu.findItem(R.id.edit).setVisible(false);
+                popupMenu.findItem(R.id.upload).setVisible(false);
                 if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept")
                         || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")
                         || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigated")) {
                     popupMenu.findItem(R.id.edit).setVisible(true);
                 }
+                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
+                    popupMenu.findItem(R.id.view).setVisible(true);
+                    popupMenu.findItem(R.id.view).setTitle("รับเรื่องมาตรวจ");
+                }
+                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("reported")) {
+                    popupMenu.findItem(R.id.view).setVisible(true);
+                    popupMenu.findItem(R.id.view).setTitle("ดู");
+                }
+                if (modeUpload.equalsIgnoreCase("waitupload")) {
+                    popupMenu.findItem(R.id.upload).setVisible(true);
+                }
+
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(
                         new PopupMenu.OnMenuItemClickListener() {
@@ -344,10 +363,14 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                                 switch (item.getItemId()) {
                                     case R.id.view:
                                         viewCase();
-
                                         break;
                                     case R.id.edit:
                                         editCase();
+                                        break;
+                                    case R.id.upload:
+                                        Log.d(TAG, modeUpload);
+                                        SaveCaseReport statusCase = new SaveCaseReport();
+                                        statusCase.execute(apiNoticeCase);
                                         break;
                                 }
                                 return true;
@@ -357,31 +380,69 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
                 popup.show();
             } else {
                 Log.d(TAG, "AlertDialog");
-                AlertDialog.Builder builder =
-                        new AlertDialog.Builder(getActivity());
-                builder.setMessage("ดูข้อมูลการตรวจนี้ " + caserepID);
-                builder.setPositiveButton("ดู", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        viewCase();
-                    }
-                });
+                String title = "จัดการข้อมูลคดี";
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.manage_dialog, null);
+                dialogBuilder.setView(dialogView);
+
+                Button button_view = (Button) dialogView.findViewById(R.id.button_view);
+                Button button_edit = (Button) dialogView.findViewById(R.id.button_edit);
+                Button button_upload = (Button) dialogView.findViewById(R.id.button_upload);
+                Button button_cancel = (Button) dialogView.findViewById(R.id.button_cancel);
+                button_edit.setVisibility(View.GONE);
+                button_upload.setVisibility(View.GONE);
+                button_view.setVisibility(View.GONE);
+                final AlertDialog builder = dialogBuilder.create();
+                builder.setIcon(R.drawable.ic_noti);
+                builder.setTitle(title);
+
                 if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("accept")
                         || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigating")
                         || apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("investigated")) {
-                    builder.setNeutralButton("แก้ไข", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            editCase();
-                        }
-                    });
+                    button_edit.setVisibility(View.VISIBLE);
                 }
-                builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("assign")) {
+                    button_view.setVisibility(View.VISIBLE);
+                    button_view.setText("รับเรื่องมาตรวจ");
+                }
+                if (apiNoticeCase.getTbNoticeCase().CaseStatus.equalsIgnoreCase("reported")) {
+                    button_view.setVisibility(View.VISIBLE);
+                    button_view.setText("ดู");
+                }
+                if (modeUpload.equalsIgnoreCase("waitupload")) {
+                    button_upload.setVisibility(View.VISIBLE);
+                }
+                button_view.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                    public void onClick(View view) {
+                        builder.dismiss();
+                        viewCase();
                     }
                 });
-                builder.create();
+                button_edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        builder.dismiss();
+                        editCase();
+                    }
+                });
+                button_upload.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, modeUpload);
+                        builder.dismiss();
+                        SaveCaseReport statusCase = new SaveCaseReport();
+                        statusCase.execute(apiNoticeCase);
+                    }
+                });
+                button_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        builder.dismiss();
+                    }
+                });
+
                 builder.show();
             }
         }
@@ -410,8 +471,7 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
     private void editCase() {
         final Bundle i = new Bundle();
         if (mode.equals("online")) {
-            if (apiNoticeCase.getTbCaseScene().getLastUpdateDate() == "") {
-            }
+
             boolean isSuccess1 = mDbHelper.updateAlldataCase(apiNoticeCase);
             if (isSuccess1) {
                 i.putSerializable(csiDataTabFragment.Bundle_Key, apiNoticeCase);
@@ -927,5 +987,51 @@ public class CaseSceneListFragment extends Fragment implements SearchView.OnQuer
         apiCaseSceneListAdapter.notifyDataSetChanged();
         apiCaseSceneListAdapter.setOnItemClickListener(onItemClickListener);
         swipeContainer.setRefreshing(false);
+    }
+
+    class SaveCaseReport extends AsyncTask<ApiCaseScene, Void, ApiStatusData> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage(getString(R.string.upload_progress));
+            progressDialog.show();
+        }
+
+        @Override
+        protected ApiStatusData doInBackground(ApiCaseScene... params) {
+            return WelcomeActivity.api.saveCaseReport(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatusData apiStatus) {
+            super.onPostExecute(apiStatus);
+            progressDialog.dismiss();
+            if (apiStatus != null) {
+                if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                    setAdapterData();
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            apiStatus.getData().getReason().toString());
+                    snackBarAlert.createSnacbar();
+                } else {
+                    SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                            getString(R.string.error_data) + " " + getString(R.string.network_error));
+                    snackBarAlert.createSnacbar();
+                }
+            } else {
+                SnackBarAlert snackBarAlert = new SnackBarAlert(snackbar, rootLayout, LENGTH_LONG,
+                        getString(R.string.error_data) + " " + getString(R.string.network_error));
+                snackBarAlert.createSnacbar();
+            }
+        }
     }
 }

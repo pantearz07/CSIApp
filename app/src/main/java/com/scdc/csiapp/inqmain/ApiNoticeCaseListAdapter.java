@@ -135,11 +135,17 @@ public class ApiNoticeCaseListAdapter extends RecyclerView.Adapter<ApiNoticeCase
         if (apiNoticeCase.getTbNoticeCase().ReceivingCaseDate != null) {
             ReceivingCaseDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().ReceivingCaseDate);
         }
-//        if (apiNoticeCase.getTbNoticeCase().ReceivingCaseTime != null) {
-            ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
-//        }
+        ReceivingCaseTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().ReceivingCaseTime);
+        String LastUpdateDate = "", LastUpdateTime = "";
+        if (apiNoticeCase.getTbNoticeCase().LastUpdateDate != null) {
+            LastUpdateDate = getDateTime.changeDateFormatToCalendar(apiNoticeCase.getTbNoticeCase().LastUpdateDate);
+        }
+        LastUpdateTime = getDateTime.changeTimeFormatToDB(apiNoticeCase.getTbNoticeCase().LastUpdateTime);
         csidataholder.receiviedatetime.setText("แจ้งเหตุ: " +
-                ReceivingCaseDate + " เวลา " + ReceivingCaseTime + " น.");
+                ReceivingCaseDate + " " + ReceivingCaseTime + " น.\n" +
+                "แก้ไขล่าสุด: " +
+                LastUpdateDate + " " + LastUpdateTime + " น.");
+
 
         if (apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != null || apiNoticeCase.getTbNoticeCase().InvestigatorOfficialID != "") {
             if (apiNoticeCase.getTbOfficial() == null) {

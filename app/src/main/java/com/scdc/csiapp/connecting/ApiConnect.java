@@ -607,6 +607,7 @@ public class ApiConnect implements Parcelable {
                     response.close();
                     return null;
                 } else {
+                    ArrayList<String> mCaseSceneUpload = new ArrayList<String>();
                     // ข้อมูลจาก SQLite
                     //check deletecase
                     ApiListCaseScene apiListCaseSceneSQLite_old = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
@@ -623,7 +624,6 @@ public class ApiConnect implements Parcelable {
                         ApiCaseScene temp_sql_old = apiListCaseSceneSQLite_old.getData().getResult().get(i);
                         ApiCaseScene temp_ser_check;
                         boolean flag_have = false;
-                        boolean flag_update = false;
                         for (int j = 0; j < ser_size_check; j++) {
                             temp_ser_check = apiListCaseSceneServer.getData().getResult().get(j);
                             //เช็คว่า ข้อมูลใน SQLite มีตรงกับ server มั้ย
@@ -643,7 +643,6 @@ public class ApiConnect implements Parcelable {
                                         // ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
                                         flag_have = true;
                                         if (mDbHelper.DeleteMultimedia(temp_sql_old)) {
-//                                            flag_update = true;
                                             boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
                                             Log.i("DeleteAllCaseScene", String.valueOf(isSuccess2));
                                             boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
@@ -661,14 +660,9 @@ public class ApiConnect implements Parcelable {
                                     } else if (checkDateTime == 2) {
                                         // ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
                                         flag_have = true;
-                                        Log.d(TAG, "update from mobile to server updateAlldataCase ");
+                                        Log.d(TAG, "waitupload : " + temp_ser_check.getTbCaseScene().CaseReportID);
                                         //อัพเดทข้อมูลจาก SQLite ไปยัง server
-                                        ApiStatusData apiStatusData = saveCaseReport(temp_sql_old);
-                                        if (apiStatusData.getStatus().equalsIgnoreCase("success")) {
-                                            Log.d(TAG, "update from mobile to server saveCaseReport : success");
-                                        } else {
-                                            Log.d(TAG, "update from mobile to server saveCaseReport : fail");
-                                        }
+                                        mCaseSceneUpload.add(temp_ser_check.getTbCaseScene().CaseReportID);
                                         break;
                                         // -end- ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
                                     } else {
@@ -714,12 +708,26 @@ public class ApiConnect implements Parcelable {
                         if (sql_size == 0) {
 //                            Log.i(TAG, "online" + temp_ser.getTbCaseScene().CaseReportID);
                             temp_ser.setMode("online");
+                            temp_ser.setModeUpload("notupload");
                             newListCaseScene.add(temp_ser);
                         } else {
                             boolean flag_status = false;
                             for (int j = 0; j < sql_size; j++) {
                                 temp_sql = apiListCaseSceneSQLite.getData().getResult().get(j);
                                 if (temp_sql.getTbCaseScene().CaseReportID.equalsIgnoreCase(temp_ser.getTbCaseScene().CaseReportID)) {
+                                    boolean flag_upload = false;
+                                    for (int k = 0; k < mCaseSceneUpload.size(); k++) {
+                                        if (temp_sql.getTbCaseScene().CaseReportID.equalsIgnoreCase(mCaseSceneUpload.get(k))) {
+                                            temp_sql.setModeUpload("waitupload");
+                                            Log.d(TAG, "offline waitupload " + temp_sql.getTbCaseScene().CaseReportID);
+                                            flag_upload = true;
+                                            break;
+                                        }
+                                    }
+                                    if (flag_upload == false) {
+                                        temp_sql.setModeUpload("notupload");
+                                        Log.d(TAG, "offline notupload " + temp_sql.getTbCaseScene().CaseReportID);
+                                    }
                                     temp_sql.setMode("offline");
                                     newListCaseScene.add(temp_sql);
                                     flag_status = true;
@@ -728,10 +736,13 @@ public class ApiConnect implements Parcelable {
                             }
                             if (flag_status == false) {
                                 temp_ser.setMode("online");
+                                temp_ser.setModeUpload("notupload");
+                                Log.d(TAG, "online notupload " + temp_ser.getTbCaseScene().CaseReportID);
                                 newListCaseScene.add(temp_ser);
                             }
                         }
                     }
+
                     response.close();
                     Log.d(TAG, "newListCaseScene " + String.valueOf(newListCaseScene.size()));
                     apiListCaseSceneSQLite.getData().setResult(newListCaseScene);
@@ -756,10 +767,6 @@ public class ApiConnect implements Parcelable {
                 .add("Registration_id", data.getRegistration_id())
                 .add("RegisOfficialID", data.getRegisOfficialID())
                 .build();
-//        Log.d(TAG, "Not User " + data.getUsername());
-//        Log.d(TAG, "Not Pass " + data.getPassword());
-//        Log.d(TAG, "Not Token " + data.getRegistration_id());
-//        Log.d(TAG, "Not OffID " + data.getRegisOfficialID());
         Request.Builder builder = new Request.Builder();
         Request request = builder
                 .url(urlMobileIP + "getRegistrationGCM")
