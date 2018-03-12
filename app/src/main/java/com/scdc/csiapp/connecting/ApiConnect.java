@@ -437,7 +437,7 @@ public class ApiConnect implements Parcelable {
                                     String LastUpdateDateTime_start = temp_ser_check.getTbNoticeCase().LastUpdateDate + " " + temp_ser_check.getTbNoticeCase().LastUpdateTime;
                                     String LastUpdateDateTime_end = temp_sql_old.getTbNoticeCase().LastUpdateDate + " " + temp_sql_old.getTbNoticeCase().LastUpdateTime;
                                     checkDateTime = getDateTime.CheckDates(LastUpdateDateTime_start, LastUpdateDateTime_end);
-                                    Log.i(TAG, temp_ser_check.getTbNoticeCase().Mobile_CaseID + "CheckDates start ser:  " + LastUpdateDateTime_start + "- end sql: " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
+//                                    Log.i(TAG, temp_ser_check.getTbNoticeCase().Mobile_CaseID + "CheckDates start ser:  " + LastUpdateDateTime_start + "- end sql: " + LastUpdateDateTime_end + " checkDateTime: " + String.valueOf(checkDateTime));
                                     // -end- เช็ควันเวลา LastUpdate เปรียบเทียบว่าฝั่งไหนใหม่หรือเก่ากว่า
                                     if (checkDateTime == 1) {
                                         // ถ้า วันที่ฝั่ง server ใหม่กว่า Sqlite
@@ -455,9 +455,9 @@ public class ApiConnect implements Parcelable {
                                         //sendNewNoticeCase
                                         ApiStatusResult apiStatusResult = sendNewNoticeCase(temp_sql_old.getTbNoticeCase());
                                         if (apiStatusResult.getStatus().equalsIgnoreCase("success")) {
-                                            Log.d(TAG, "update from mobile to server saveNoticeCase : success");
+//                                            Log.d(TAG, "update from mobile to server saveNoticeCase : success");
                                         } else {
-                                            Log.d(TAG, "update from mobile to server saveNoticeCase : fail");
+//                                            Log.d(TAG, "update from mobile to server saveNoticeCase : fail");
                                         }
                                         break;
                                         // -end- ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
@@ -490,7 +490,7 @@ public class ApiConnect implements Parcelable {
 //                                        Log.d(TAG, "checkNoticecase : มีข้อมูลในserver " + temp_sql_old.getTbNoticeCase().Mobile_CaseID.toString());
                                         break;
                                     } else {
-                                        Log.d(TAG, "checkNoticecase : ไม่มีข้อมูลในserver " + temp_sql_old.getTbNoticeCase().Mobile_CaseID.toString());
+//                                        Log.d(TAG, "checkNoticecase : ไม่มีข้อมูลในserver " + temp_sql_old.getTbNoticeCase().Mobile_CaseID.toString());
                                         boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
                                         if (isSuccess1) {
                                             Log.i(TAG, "check list NoticeCase ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbNoticeCase().Mobile_CaseID);
@@ -533,12 +533,12 @@ public class ApiConnect implements Parcelable {
                                     temp_sql.setMode("offline");
                                     newListNoticeCase.add(temp_sql);
                                     flag_status = true;
-                                    Log.d(TAG, "flag_status true offline" + temp_sql.getTbNoticeCase().Mobile_CaseID.toString());
+//                                    Log.d(TAG, "flag_status true offline" + temp_sql.getTbNoticeCase().Mobile_CaseID.toString());
                                     break;
                                 }
                             }
                             if (flag_status == false) {
-                                Log.d(TAG, "flag_status false online" + temp_ser.getTbNoticeCase().Mobile_CaseID.toString());
+//                                Log.d(TAG, "flag_status false online" + temp_ser.getTbNoticeCase().Mobile_CaseID.toString());
                                 temp_ser.setMode("online");
                                 newListNoticeCase.add(temp_ser);
                             }
@@ -551,12 +551,12 @@ public class ApiConnect implements Parcelable {
                             Log.d(TAG, "checkNoticecase : success" + apiStatus.getData().getReason().toString());
                             if (apiStatus.getData().getReason().equals("1")) { //มีข้อมูลในserver
 
-                                Log.d(TAG, "checkNoticecase : success_1" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
+//                                Log.d(TAG, "checkNoticecase : success_1" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
                                 break;
                             } else {
                                 temp_sql2.setMode("storage");
                                 newListNoticeCase.add(temp_sql2);
-                                Log.d(TAG, "checkNoticecase : success_2" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
+//                                Log.d(TAG, "checkNoticecase : success_2" + temp_sql2.getTbNoticeCase().Mobile_CaseID.toString());
 
                             }
                         } else {
@@ -644,9 +644,9 @@ public class ApiConnect implements Parcelable {
                                         flag_have = true;
                                         if (mDbHelper.DeleteMultimedia(temp_sql_old)) {
                                             boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
-                                            Log.i("DeleteAllCaseScene", String.valueOf(isSuccess2));
+//                                            Log.i("DeleteAllCaseScene", String.valueOf(isSuccess2));
                                             boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
-                                            Log.i("DeleteNoticeCase", String.valueOf(isSuccess1));
+//                                            Log.i("DeleteNoticeCase", String.valueOf(isSuccess1));
                                             boolean isSuccess = mDbHelper.updateAlldataCase(temp_ser_check);
                                             if (isSuccess) {
                                                 Log.d(TAG, "update from server to mobile updateAlldataCase ");
@@ -660,7 +660,7 @@ public class ApiConnect implements Parcelable {
                                     } else if (checkDateTime == 2) {
                                         // ถ้า วันที่ฝั่ง server เก่ากว่า Sqlite
                                         flag_have = true;
-                                        Log.d(TAG, "waitupload : " + temp_ser_check.getTbCaseScene().CaseReportID);
+//                                        Log.d(TAG, "waitupload : " + temp_ser_check.getTbCaseScene().CaseReportID);
                                         //อัพเดทข้อมูลจาก SQLite ไปยัง server
                                         mCaseSceneUpload.add(temp_ser_check.getTbCaseScene().CaseReportID);
                                         break;
@@ -668,7 +668,7 @@ public class ApiConnect implements Parcelable {
                                     } else {
                                         // ถ้า วันที่ฝั่ง server เท่ากันกับ Sqlite
                                         flag_have = true;
-                                        Log.d(TAG, "no update updateAlldataCase");
+//                                        Log.d(TAG, "no update updateAlldataCase");
                                         break;
                                     }
                                 }
@@ -684,7 +684,7 @@ public class ApiConnect implements Parcelable {
                                 boolean isSuccess2 = mDbHelper.DeleteAllCaseScene(temp_sql_old.getTbCaseScene().CaseReportID);
                                 boolean isSuccess1 = mDbHelper.DeleteNoticeCase(temp_sql_old.getTbNoticeCase().Mobile_CaseID);
                                 if (isSuccess1) {
-                                    Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbCaseScene().CaseReportID);
+//                                    Log.i(TAG, "check list CaseScene ไม่มีบนserver ลบออกจาก sqlite " + temp_sql_old.getTbCaseScene().CaseReportID);
                                 }
                             }
                         }
@@ -693,7 +693,7 @@ public class ApiConnect implements Parcelable {
                     // รวมข้อมูลเข้าเป็นก้อนเดียว โดยสนใจที่ข้อมูลจาก Server เป็นหลัก
                     List<ApiCaseScene> newListCaseScene = new ArrayList<>();
                     ApiListCaseScene apiListCaseSceneSQLite = mDbHelper.selectApiCaseScene(WelcomeActivity.profile.getTbOfficial().OfficialID);
-                    Log.d(TAG, "apiListCaseSceneSQLite new " + String.valueOf(apiListCaseSceneSQLite.getData().getResult().size()));
+//                    Log.d(TAG, "apiListCaseSceneSQLite new " + String.valueOf(apiListCaseSceneSQLite.getData().getResult().size()));
 //                    int ser_size = apiListCaseSceneServer.getData().getResult().size();
                     int sql_size;
                     if (apiListCaseSceneSQLite.getData() == null) {
@@ -719,14 +719,14 @@ public class ApiConnect implements Parcelable {
                                     for (int k = 0; k < mCaseSceneUpload.size(); k++) {
                                         if (temp_sql.getTbCaseScene().CaseReportID.equalsIgnoreCase(mCaseSceneUpload.get(k))) {
                                             temp_sql.setModeUpload("waitupload");
-                                            Log.d(TAG, "offline waitupload " + temp_sql.getTbCaseScene().CaseReportID);
+//                                            Log.d(TAG, "offline waitupload " + temp_sql.getTbCaseScene().CaseReportID);
                                             flag_upload = true;
                                             break;
                                         }
                                     }
                                     if (flag_upload == false) {
                                         temp_sql.setModeUpload("notupload");
-                                        Log.d(TAG, "offline notupload " + temp_sql.getTbCaseScene().CaseReportID);
+//                                        Log.d(TAG, "offline notupload " + temp_sql.getTbCaseScene().CaseReportID);
                                     }
                                     temp_sql.setMode("offline");
                                     newListCaseScene.add(temp_sql);
@@ -737,14 +737,14 @@ public class ApiConnect implements Parcelable {
                             if (flag_status == false) {
                                 temp_ser.setMode("online");
                                 temp_ser.setModeUpload("notupload");
-                                Log.d(TAG, "online notupload " + temp_ser.getTbCaseScene().CaseReportID);
+//                                Log.d(TAG, "online notupload " + temp_ser.getTbCaseScene().CaseReportID);
                                 newListCaseScene.add(temp_ser);
                             }
                         }
                     }
 
                     response.close();
-                    Log.d(TAG, "newListCaseScene " + String.valueOf(newListCaseScene.size()));
+//                    Log.d(TAG, "newListCaseScene " + String.valueOf(newListCaseScene.size()));
                     apiListCaseSceneSQLite.getData().setResult(newListCaseScene);
                     return apiListCaseSceneSQLite;
                 }
